@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Hunter World Siege Countdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            transition: background-image 1s ease-in-out;
+            position: relative;
+        }
+        #countdown {
+            font-size: 40px;
+            margin-top: 20px;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            bottom: 42%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body id="body">
+
+<div id="countdown"></div>
+
+<script>
+    function updateCountdown() {
+        // Define the start date of the Kulve Taroth siege
+        const kulveStartDate = new Date('2023-06-16');
+
+        // Define the duration of each siege in milliseconds
+        const siegeDuration = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
+
+        // Get the current date and time
+        const currentDateTime = new Date();
+
+        // Calculate the number of milliseconds between the current date and the start date of the Kulve Taroth siege
+        const millisecondsPassed = currentDateTime - kulveStartDate;
+
+        // Calculate the number of sieges that have occurred since the start date of the Kulve Taroth siege
+        const siegeCount = Math.floor(millisecondsPassed / siegeDuration);
+
+        // Determine the current siege
+        const isKulveActive = siegeCount % 2 === 0;
+
+        // Set background image based on the current siege
+        const bodyElement = document.getElementById('body');
+        if (isKulveActive) {
+            bodyElement.style.backgroundImage = "url('https://i.imgur.com/lqJznRA.png')";
+        } else {
+            bodyElement.style.backgroundImage = "url('https://i.imgur.com/1bLpvtv.png')";
+        }
+
+        // Calculate the start date and time of the next siege
+        const nextSiegeStartDateTime = new Date(kulveStartDate.getTime() + (siegeCount + 1) * siegeDuration);
+
+        // Calculate the remaining time until the next siege
+        const millisecondsRemaining = nextSiegeStartDateTime - currentDateTime;
+        const daysRemaining = Math.floor(millisecondsRemaining / (24 * 60 * 60 * 1000));
+        const hoursRemaining = Math.floor((millisecondsRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+        const minutesRemaining = Math.floor((millisecondsRemaining % (60 * 60 * 1000)) / (60 * 1000));
+        const secondsRemaining = Math.floor((millisecondsRemaining % (60 * 1000)) / 1000);
+
+        // Display the remaining time
+        const countdownElement = document.getElementById('countdown');
+        countdownElement.innerHTML = `${daysRemaining} days, ${hoursRemaining} hours, ${minutesRemaining} minutes, ${secondsRemaining} seconds`;
+    }
+
+    // Update the countdown every second
+    setInterval(updateCountdown, 1000);
+
+    // Initial update
+    updateCountdown();
+</script>
+
+</body>
+</html>

@@ -17,14 +17,29 @@
             transition: background-image 1s ease-in-out;
             position: relative;
         }
+
         #countdown {
-            font-size: 40px;
-            margin-top: 20px;
             font-weight: bold;
             color: white;
             position: absolute;
             bottom: 42%;
             width: 100%;
+        }
+
+        /* Larger font size for desktop */
+        @media screen and (min-width: 768px) {
+            #countdown {
+                font-size: 40px;
+                margin-top: 20px;
+            }
+        }
+
+        /* Smaller font size for mobile */
+        @media screen and (max-width: 767px) {
+            #countdown {
+                font-size: 20px;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>

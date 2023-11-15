@@ -87,7 +87,7 @@
 
         // Display the remaining time
         const countdownElement = document.getElementById('countdown');
-        countdownElement.innerHTML = `${daysRemaining} days, ${hoursRemaining} hours, ${minutesRemaining} minutes, ${secondsRemaining} seconds`;
+        countdownElement.innerHTML = `${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}, ${hoursRemaining} hour${hoursRemaining !== 1 ? 's' : ''}, ${minutesRemaining} minute${minutesRemaining !== 1 ? 's' : ''}, ${secondsRemaining} second${secondsRemaining !== 1 ? 's' : ''}`;
     }
 
     // Update the countdown every second

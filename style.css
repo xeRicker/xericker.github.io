@@ -126,16 +126,24 @@ button:hover {
 /* Raport */
 .raport {
   background: #e9ecef;
-  padding: 30px;
+  padding: 5px 40px 40px 40px;
   border-radius: 12px;
   margin-top: 60px;
   white-space: pre-wrap;
   font-family: monospace;
-  font-size: 24px;
-  width: 500px;
+  font-size: 38px;
+  line-height: 1.7;
+  width: 800px;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid #ccc;
+}
+
+.raport h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 52px;
+  font-weight: bold;
 }
 
 /* Responsywność */

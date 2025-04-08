@@ -40,15 +40,16 @@ input[type="number"] {
 }
 
 button {
-  margin-top: 25px;
-  padding: 14px 24px;
-  font-size: 18px;
+  margin-top: 30px;
+  padding: 20px;
+  font-size: 22px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
 }
 
 button:hover {
@@ -57,8 +58,8 @@ button:hover {
 
 .produkty-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
   margin-bottom: 30px;
 }
 

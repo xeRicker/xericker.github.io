@@ -126,5 +126,6 @@ function generujRaport() {
     link.download = `lista_${lokal.toLowerCase()}_${formatted}.png`;
     link.href = canvas.toDataURL();
     link.click();
+    raportElement.style.display = "none";
   });
 }

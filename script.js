@@ -108,7 +108,10 @@ function generujRaport() {
   document.getElementById("raportContent").textContent = raport;
 
   // Generowanie obrazka
-  html2canvas(document.getElementById("raport")).then(canvas => {
+  html2canvas(document.getElementById("raport"), {
+    scale: 2, // poprawia jakość i rozdzielczość
+    width: 500, // ustalona szerokość
+  }).then(canvas => {
     const link = document.createElement("a");
     link.download = "raport.png";
     link.href = canvas.toDataURL();

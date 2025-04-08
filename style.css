@@ -118,7 +118,7 @@ button:hover {
   border-radius: 12px;
   margin-top: 60px;
   white-space: pre;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', Courier, 'Droid Sans Mono', monospace;
   font-size: 38px;
   line-height: 1.7;
   width: 1200px;

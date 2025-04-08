@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Raport Dobowy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Raport Dobowy</h1>
+
+    <label for="lokal">Wybierz lokalizację:</label>
+    <select id="lokal">
+      <option>Oświęcim</option>
+      <option>Osiek</option>
+    </select>
+
+    <h2>Pracownicy</h2>
+    <div id="pracownicy">
+      <div><label>Paweł: Od <input type="time" id="pawel_od"> Do <input type="time" id="pawel_do"></label></div>
+      <div><label>Radek: Od <input type="time" id="radek_od"> Do <input type="time" id="radek_do"></label></div>
+      <div><label>Sebastian: Od <input type="time" id="sebastian_od"> Do <input type="time" id="sebastian_do"></label></div>
+      <div><label>Dominik: Od <input type="time" id="dominik_od"> Do <input type="time" id="dominik_do"></label></div>
+      <div><label>Tomek: Od <input type="time" id="tomek_od"> Do <input type="time" id="tomek_do"></label></div>
+    </div>
+
+    <h2>Składniki</h2>
+    <div id="produkty" class="produkty-grid">
+      <!-- Produkty będą wygenerowane dynamicznie -->
+    </div>
+
+    <button onclick="generujRaport()">Wygeneruj Raport</button>
+
+    <h2>Podgląd Raportu</h2>
+    <div id="raport" class="raport">
+      <h3>Raport Dobowy</h3>
+      <div id="raportContent"></div>
+    </div>
+  </div>
+
+  <script src="html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

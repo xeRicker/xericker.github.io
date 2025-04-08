@@ -1,0 +1,128 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  color: #343a40;
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin: 8px 0;
+}
+
+select, input[type="time"], input[type="number"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-left: 8px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.produkty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.produkt {
+  background-color: #f1f3f5;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.produkt-name {
+  flex: 1;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.counter button {
+  padding: 5px 12px;
+  font-size: 18px;
+  background-color: #ffffff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.counter button:hover {
+  background-color: #e2e6ea;
+}
+.counter span {
+  min-width: 24px;
+  text-align: center;
+}
+
+.raport {
+  background: #e9ecef;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+.produkt.highlight-1 {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.produkt.highlight-2 {
+  background-color: #a8e0b6;
+  border-color: #91d1a3;
+}
+
+.produkt.highlight-3 {
+  background-color: #7cd29c;
+  border-color: #64c18a;
+}
+
+.counter input[type="number"] {
+  width: 50px;
+  padding: 4px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

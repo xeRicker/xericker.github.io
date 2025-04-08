@@ -1,4 +1,4 @@
-// Lista składników
+// Kategorie i składniki
 const kategorie = {
   "Warzywa": ["Sałata", "Pomidory", "Cebula", "Jalapeno", "Cytryna", "Ostre papryczki", "Ogórki kanapkowe", "Krążki cebulowe"],
   "Mięso": ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Tłuszcz wołowy", "Frytura", "Boczek"],
@@ -10,15 +10,14 @@ const kategorie = {
   "Inne": ["Cebula prażona", "Dobry materiał", "Serwetki", "Czyścidło", "Rękawiczki", "Przyprawa do grilla", "Sól do frytek", "Majonez", "Płyn do mycia", "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"]
 };
 
-
-
 window.onload = () => {
   const container = document.getElementById("produkty");
 
+  // Tworzenie kategorii i produktów
   Object.entries(kategorie).forEach(([kategoria, produkty]) => {
     const section = document.createElement("div");
     section.innerHTML = `<h3>${kategoria}</h3>`;
-    
+
     const grupa = document.createElement("div");
     grupa.className = "produkty-grid";
 
@@ -40,9 +39,13 @@ window.onload = () => {
     section.appendChild(grupa);
     container.appendChild(section);
   });
+
+  // Ustaw dzisiejszą datę jako domyślną
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("data").value = today;
 };
 
-// Zmieniamy ilość składnika
+// Zmiana ilości +/-
 function zmienIlosc(nazwa, delta) {
   const input = document.getElementById(`input-${nazwa}`);
   let current = parseInt(input.value) || 0;
@@ -51,6 +54,7 @@ function zmienIlosc(nazwa, delta) {
   podswietlProdukt(nazwa, current);
 }
 
+// Wpisanie ilości ręcznie
 function ustawIlosc(nazwa) {
   const input = document.getElementById(`input-${nazwa}`);
   let value = parseInt(input.value) || 0;
@@ -59,6 +63,7 @@ function ustawIlosc(nazwa) {
   podswietlProdukt(nazwa, value);
 }
 
+// Podświetlanie kolorami
 function podswietlProdukt(nazwa, ilosc) {
   const box = document.querySelector(`[data-nazwa="${nazwa}"]`);
   box.classList.remove("highlight-1", "highlight-2", "highlight-3");
@@ -68,19 +73,20 @@ function podswietlProdukt(nazwa, ilosc) {
   else if (ilosc >= 3) box.classList.add("highlight-3");
 }
 
-
-
-// Zbieramy godziny pracowników
+// Godziny pracowników
 function pobierzGodziny(imie) {
   const od = document.getElementById(`${imie}_od`).value || "-";
   const do_ = document.getElementById(`${imie}_do`).value || "-";
   return `${od} – ${do_}`;
 }
 
-// Generujemy raport
+// Generowanie raportu
 function generujRaport() {
   const lokal = document.getElementById("lokal").value;
-  let raport = `Lokalizacja: ${lokal}\n\n`;
+  const data = document.getElementById("data").value;
+  const dataStr = new Date(data).toLocaleDateString("pl-PL");
+
+  let raport = `Lokalizacja: ${lokal}\nData: ${dataStr}\n\n`;
 
   // Pracownicy
   raport += "Godziny pracy:\n";
@@ -98,24 +104,22 @@ function generujRaport() {
         kategoriaZawartosc += `  - ${nazwa}: ${ilosc}\n`;
       }
     });
-
     if (kategoriaZawartosc.length > 0) {
       raport += `${kategoria}:\n${kategoriaZawartosc}\n`;
     }
   });
 
-  // Wyświetlenie w HTML
   document.getElementById("raportContent").textContent = raport;
 
   // Generowanie obrazka
   html2canvas(document.getElementById("raport"), {
-    scale: 2, // poprawia jakość i rozdzielczość
-    width: 500, // ustalona szerokość
+    scale: 2,
+    width: 500,
   }).then(canvas => {
     const link = document.createElement("a");
-    link.download = "raport.png";
+    const formatted = dataStr.replace(/\./g, "_");
+    link.download = `lista_${lokal.toLowerCase()}_${formatted}.png`;
     link.href = canvas.toDataURL();
     link.click();
   });
 }
-

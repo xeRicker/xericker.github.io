@@ -29,7 +29,8 @@ label {
 
 select,
 input[type="time"],
-input[type="number"] {
+input[type="number"],
+input[type="date"] {
   padding: 16px;
   font-size: 24px;
   border: 1px solid #ccc;
@@ -155,7 +156,8 @@ button:hover {
   }
 
   select,
-  input[type="time"] {
+  input[type="time"],
+  input[type="date"] {
     font-size: 26px;
     width: 100%;
   }

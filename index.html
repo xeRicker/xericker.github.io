@@ -2,18 +2,21 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Raport Dobowy</title>
+  <title>Lista Produktów</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Raport Dobowy</h1>
+    <h1>Lista Produktów</h1>
 
     <label for="lokal">Wybierz lokalizację:</label>
     <select id="lokal">
       <option>Oświęcim</option>
       <option>Osiek</option>
     </select>
+
+    <label for="data">Wybierz datę:</label>
+    <input type="date" id="data">
 
     <h2>Pracownicy</h2>
     <div id="pracownicy">
@@ -26,14 +29,14 @@
 
     <h2>Składniki</h2>
     <div id="produkty" class="produkty-grid">
-      <!-- Produkty będą wygenerowane dynamicznie -->
+      <!-- Produkty generowane dynamicznie -->
     </div>
 
-    <button onclick="generujRaport()">Wygeneruj Raport</button>
+    <button onclick="generujRaport()">Wygeneruj Listę</button>
 
-    <h2>Podgląd Raportu</h2>
+    <h2>Podgląd</h2>
     <div id="raport" class="raport">
-      <h3>Raport Dobowy</h3>
+      <h3>Lista Produktów</h3>
       <div id="raportContent"></div>
     </div>
   </div>

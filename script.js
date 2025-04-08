@@ -86,30 +86,32 @@ function generujRaport() {
   const data = document.getElementById("data").value;
   const dataStr = new Date(data).toLocaleDateString("pl-PL");
 
-  let raport = `Lokalizacja: ${lokal}\nData: ${dataStr}\n\n`;
+  let raport = `<p><strong>Lokalizacja:</strong> ${lokal}</p>`;
+  raport += `<p><strong>Data:</strong> ${dataStr}</p><br>`;
+
 
   // Pracownicy
-  raport += "Godziny pracy:\n";
-  raport += `Paweł: ${pobierzGodziny("pawel")}\n`;
-  raport += `Radek: ${pobierzGodziny("radek")}\n`;
-  raport += `Sebastian: ${pobierzGodziny("sebastian")}\n`;
-  raport += `Dominik: ${pobierzGodziny("dominik")}\n`;
-  raport += `Tomek: ${pobierzGodziny("tomek")}\n\n`;
+  raport += `<strong>Godziny pracy:</strong><br>`;
+  raport += `Paweł: <strong>${pobierzGodziny("pawel")}</strong><br>`;
+  raport += `Radek: <strong>${pobierzGodziny("radek")}</strong><br>`;
+  raport += `Sebastian: <strong>${pobierzGodziny("sebastian")}</strong><br>`;
+  raport += `Dominik: <strong>${pobierzGodziny("dominik")}</strong><br>`;
+  raport += `Tomek: <strong>${pobierzGodziny("tomek")}</strong><br><br>`;
 
   Object.entries(kategorie).forEach(([kategoria, produkty]) => {
     let kategoriaZawartosc = "";
     produkty.forEach(nazwa => {
       const ilosc = parseInt(document.getElementById(`input-${nazwa}`).value) || 0;
       if (ilosc > 0) {
-        kategoriaZawartosc += `  - ${nazwa}: ${ilosc}\n`;
+        kategoriaZawartosc += `  - ${nazwa}: <strong>${ilosc}</strong><br>`;
       }
     });
     if (kategoriaZawartosc.length > 0) {
-      raport += `${kategoria}:\n${kategoriaZawartosc}\n`;
+      raport += `<strong>${kategoria}:</strong><br>${kategoriaZawartosc}<br>`;
     }
   });
 
-  document.getElementById("raportContent").textContent = raport;
+  document.getElementById("raportContent").innerHTML = raport;
 
   // Generowanie obrazka
   html2canvas(document.getElementById("raport"), {

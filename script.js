@@ -116,7 +116,7 @@ function generujRaport() {
   // Generowanie obrazka
   html2canvas(document.getElementById("raport"), {
     scale: 2,
-    width: 1500,
+    width: 2000,
   }).then(canvas => {
     const link = document.createElement("a");
     const formatted = dataStr.replace(/\./g, "_");

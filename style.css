@@ -113,24 +113,24 @@ button:hover {
 .produkt.highlight-3 { background-color: #7cd29c; border-color: #64c18a; }
 
 .raport {
-  background: #e9ecef;
-  padding: 0 40px 40px 40px;
+  background: #fdfdfd;
+  padding: 30px 40px;
   border-radius: 12px;
   margin-top: 60px;
-  white-space: pre-wrap;
-  font-family: monospace;
-  font-size: 38px;
-  line-height: 1.7;
-  width: 1500px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 85px;
+  line-height: 1.5;
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .raport h3 {
   margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 52px;
+  margin-bottom: 20px;
+  font-size: 26px;
   font-weight: bold;
   text-align: center;
 }

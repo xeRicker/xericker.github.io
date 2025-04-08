@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>Lista Produktów</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="container">
-    <h3>Lista Produktów</h3>
+    <h1>Lista Produktów</h1>
 
     <label for="lokal">Wybierz lokalizację:</label>
     <select id="lokal">
@@ -29,14 +30,17 @@
 
     <h2>Składniki</h2>
     <div id="produkty" class="produkty-grid">
-      <!-- Produkty generowane dynamicznie -->
+      <!-- Produkty generowane dynamicznie przez JS -->
     </div>
 
     <button onclick="generujRaport()">Wygeneruj Listę</button>
 
     <h2>Podgląd</h2>
-    <div id="raport" class="raport">
-      <div id="raportContent"></div>
+    <div style="overflow-x: auto;">
+      <div id="raport" class="raport">
+        <h3>Lista Produktów</h3>
+        <div id="raportContent"></div>
+      </div>
     </div>
   </div>
 

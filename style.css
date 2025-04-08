@@ -118,10 +118,10 @@ button:hover {
   border-radius: 12px;
   margin-top: 60px;
   white-space: pre-wrap;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 85px;
+  font-family: monospace;
+  font-size: 38px;
   line-height: 1.7;
-  width: 1500px;
+  width: 1000px;
   margin-left: auto;
   margin-right: auto;
   border: 1px solid #ccc;

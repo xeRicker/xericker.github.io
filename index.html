@@ -2,12 +2,12 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Lista Produktów</title>
   <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="container">
+    <h1>Lista Produktów</h1>
+
     <label for="lokal">Wybierz lokalizację:</label>
     <select id="lokal">
       <option>Oświęcim</option>
@@ -28,16 +28,14 @@
 
     <h2>Składniki</h2>
     <div id="produkty" class="produkty-grid">
-      <!-- Produkty generowane dynamicznie przez JS -->
+      <!-- Produkty generowane dynamicznie -->
     </div>
 
     <button onclick="generujRaport()">Wygeneruj Listę</button>
 
     <h2>Podgląd</h2>
-    <div style="overflow-x: auto;">
-      <div id="raport" class="raport">
-        <div id="raportContent"></div>
-      </div>
+    <div id="raport" class="raport">
+      <div id="raportContent"></div>
     </div>
   </div>
 

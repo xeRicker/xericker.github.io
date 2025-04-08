@@ -111,6 +111,9 @@ function generujRaport() {
     }
   });
 
+  const raportElement = document.getElementById("raport");
+  raportElement.style.display = "block";
+
   document.getElementById("raportContent").innerHTML = raport;
 
   // Generowanie obrazka

@@ -1,27 +1,32 @@
 // Kategorie i składniki
 const kategorie = {
-  "Warzywa": ["Sałata", "Pomidory", "Cebula", "Jalapeno", "Cytryna", "Ostre papryczki", "Ogórki kanapkowe", "Krążki cebulowe"],
-  "Mięso": ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Tłuszcz wołowy", "Frytura", "Boczek"],
-  "Sosy": ["Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ", "Sos sweet chilli", "Ketchup saszetki", "Tabasco", "Pojemniki na sos", "Delikeli na sos"],
-  "Napoje": ["Pepsi", "Woda 5L"],
-  "Nabiał / Sery": ["Ser cheddar", "Ser halloumi"],
-  "Pieczywo": ["Bułki", "Placki Ziemniaczane"],
-  "Opakowania": ["Torby małe", "Torby średnie", "Torby duże", "Opakowania na frytki", "Folia aluminiowa", "Worki na śmieci"],
-  "Inne": ["Cebula prażona", "Dobry materiał", "Serwetki", "Czyścidło", "Rękawiczki", "Przyprawa do grilla", "Sól do frytek", "Majonez", "Płyn do mycia", "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"]
+  "Warzywa": { icon: "icons/warzywa.png", items: ["Sałata", "Pomidory", "Cebula", "Jalapeno", "Cytryna", "Ostre papryczki", "Ogórki kanapkowe", "Krążki cebulowe"] },
+  "Mięso": { icon: "icons/mieso.png", items: ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Tłuszcz wołowy", "Frytura", "Boczek"] },
+  "Sosy": { icon: "icons/sosy.png", items: ["Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ", "Sos sweet chilli", "Ketchup saszetki", "Tabasco", "Pojemniki na sos", "Delikeli na sos"] },
+  "Napoje": { icon: "icons/napoje.png", items: ["Pepsi", "Woda 5L"] },
+  "Nabiał / Sery": { icon: "icons/nabial.png", items: ["Ser cheddar", "Ser halloumi"] },
+  "Pieczywo": { icon: "icons/pieczywo.png", items: ["Bułki", "Placki Ziemniaczane"] },
+  "Opakowania": { icon: "icons/opakowania.png", items: ["Torby małe", "Torby średnie", "Torby duże", "Opakowania na frytki", "Folia aluminiowa", "Worki na śmieci"] },
+  "Inne": { icon: "icons/inne.png", items: ["Frytki", "Cebula prażona", "Dobry materiał", "Serwetki", "Czyścidło", "Rękawiczki", "Przyprawa do grilla", "Sól do frytek", "Majonez", "Płyn do mycia", "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"] }
 };
 
 window.onload = () => {
   const container = document.getElementById("produkty");
 
   // Tworzenie kategorii i produktów
-  Object.entries(kategorie).forEach(([kategoria, produkty]) => {
+  Object.entries(kategorie).forEach(([kategoria, { icon, items }]) => {
     const section = document.createElement("div");
-    section.innerHTML = `<h3>${kategoria}</h3>`;
+    section.innerHTML = `
+      <h3 class="kategoria-naglowek">
+        <img src="${icon}" alt="${kategoria}" class="kategoria-ikona">
+        ${kategoria}
+      </h3>
+    `;
 
     const grupa = document.createElement("div");
     grupa.className = "produkty-grid";
 
-    produkty.forEach(nazwa => {
+    items.forEach(nazwa => {
       const el = document.createElement("div");
       el.className = "produkt";
       el.setAttribute("data-nazwa", nazwa);
@@ -44,6 +49,7 @@ window.onload = () => {
   const today = new Date().toISOString().split("T")[0];
   document.getElementById("data").value = today;
 };
+
 
 // Zmiana ilości +/-
 function zmienIlosc(nazwa, delta) {
@@ -100,7 +106,7 @@ function generujRaport() {
 
   Object.entries(kategorie).forEach(([kategoria, produkty]) => {
     let kategoriaZawartosc = "";
-    produkty.forEach(nazwa => {
+    produkty.items.forEach(nazwa => {
       const ilosc = parseInt(document.getElementById(`input-${nazwa}`).value) || 0;
       if (ilosc > 0) {
         kategoriaZawartosc += `  - ${nazwa}: <strong>${ilosc}</strong><br>`;
@@ -110,6 +116,7 @@ function generujRaport() {
       raport += `<strong>${kategoria}:</strong><br>${kategoriaZawartosc}<br>`;
     }
   });
+
 
   const raportElement = document.getElementById("raport");
   raportElement.style.display = "block";

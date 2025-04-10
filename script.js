@@ -91,7 +91,7 @@ function fallbackCopyToClipboard(text) {
   document.body.removeChild(textarea);
 }
 
-function generujRaport() {
+function generujListe() {
   const lokal = document.getElementById("lokal").value;
   const data = document.getElementById("data").value;
   const dataStr = new Date(data).toLocaleDateString("pl-PL");

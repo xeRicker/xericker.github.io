@@ -51,7 +51,7 @@ window.onload = () => {
 };
 
 
-// Zmiana ilości +/-
+// Zmiana ilości
 function zmienIlosc(nazwa, delta) {
   const input = document.getElementById(`input-${nazwa}`);
   let current = parseInt(input.value) || 0;
@@ -60,7 +60,6 @@ function zmienIlosc(nazwa, delta) {
   podswietlProdukt(nazwa, current);
 }
 
-// Wpisanie ilości ręcznie
 function ustawIlosc(nazwa) {
   const input = document.getElementById(`input-${nazwa}`);
   let value = parseInt(input.value) || 0;
@@ -69,7 +68,6 @@ function ustawIlosc(nazwa) {
   podswietlProdukt(nazwa, value);
 }
 
-// Podświetlanie kolorami
 function podswietlProdukt(nazwa, ilosc) {
   const box = document.querySelector(`[data-nazwa="${nazwa}"]`);
   box.classList.remove("highlight-1", "highlight-2", "highlight-3");
@@ -79,60 +77,71 @@ function podswietlProdukt(nazwa, ilosc) {
   else if (ilosc >= 3) box.classList.add("highlight-3");
 }
 
-// Godziny pracowników
-function pobierzGodziny(imie) {
-  const od = document.getElementById(`${imie}_od`).value || "-";
-  const do_ = document.getElementById(`${imie}_do`).value || "-";
-  return `${od} – ${do_}`;
+function fallbackCopyToClipboard(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    alert("Lista została skopiowana alternatywnie!");
+  } catch (err) {
+    alert("Kopiowanie nieudane.");
+  }
+  document.body.removeChild(textarea);
 }
 
-// Generowanie raportu
 function generujRaport() {
   const lokal = document.getElementById("lokal").value;
   const data = document.getElementById("data").value;
   const dataStr = new Date(data).toLocaleDateString("pl-PL");
 
-  let raport = `<p><strong>Lokalizacja:</strong> ${lokal}</p>`;
-  raport += `<p><strong>Data:</strong> ${dataStr}</p><br>`;
+  let htmlRaport = `<p><strong>Lokalizacja:</strong> ${lokal}</p>`;
+  htmlRaport += `<p><strong>Data:</strong> ${dataStr}</p><br>`;
 
+  const pracownicy = {
+    "Paweł": "pawel",
+    "Radek": "radek",
+    "Sebastian": "sebastian",
+    "Dominik": "dominik",
+    "Tomek": "tomek"
+  };
 
-  // Pracownicy
-  raport += `<strong>Godziny pracy:</strong><br>`;
-  raport += `Paweł: <strong>${pobierzGodziny("pawel")}</strong><br>`;
-  raport += `Radek: <strong>${pobierzGodziny("radek")}</strong><br>`;
-  raport += `Sebastian: <strong>${pobierzGodziny("sebastian")}</strong><br>`;
-  raport += `Dominik: <strong>${pobierzGodziny("dominik")}</strong><br>`;
-  raport += `Tomek: <strong>${pobierzGodziny("tomek")}</strong><br><br>`;
+  htmlRaport += `<strong>Godziny pracy:</strong><br>`;
+  let plainRaport = `🧾 Lista Produktów\n${lokal} ${dataStr}\n\nGodziny pracy:\n`;
+
+  Object.entries(pracownicy).forEach(([imie, id]) => {
+    const od = document.getElementById(`${id}_od`).value || "-";
+    const do_ = document.getElementById(`${id}_do`).value || "-";
+    htmlRaport += `${imie}: <strong>${od} – ${do_}</strong><br>`;
+    plainRaport += `  • ${imie}: ${od} – ${do_}\n`;
+  });
+
+  htmlRaport += `<br>`;
+  plainRaport += `\n`;
 
   Object.entries(kategorie).forEach(([kategoria, produkty]) => {
-    let kategoriaZawartosc = "";
+    let htmlKategoria = "";
+    let textKategoria = "";
+
     produkty.items.forEach(nazwa => {
       const ilosc = parseInt(document.getElementById(`input-${nazwa}`).value) || 0;
       if (ilosc > 0) {
-        kategoriaZawartosc += `  - ${nazwa}: <strong>${ilosc}</strong><br>`;
+        htmlKategoria += `  - ${nazwa}: <strong>${ilosc}</strong><br>`;
+        textKategoria += `  - ${nazwa}: ${ilosc}\n`;
       }
     });
-    if (kategoriaZawartosc.length > 0) {
-      raport += `<strong>${kategoria}:</strong><br>${kategoriaZawartosc}<br>`;
+
+    if (htmlKategoria.length > 0) {
+      htmlRaport += `<strong>${kategoria}:</strong><br>${htmlKategoria}<br>`;
+      plainRaport += `${kategoria}:\n${textKategoria}\n`;
     }
   });
 
-
-  const raportElement = document.getElementById("raport");
-  raportElement.style.display = "block";
-
-  document.getElementById("raportContent").innerHTML = raport;
-
-  // Generowanie obrazka
-  html2canvas(document.getElementById("raport"), {
-    scale: 2,
-    width: 1000,
-  }).then(canvas => {
-    const link = document.createElement("a");
-    const formatted = dataStr.replace(/\./g, "_");
-    link.download = `lista_${lokal.toLowerCase()}_${formatted}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
-    raportElement.style.display = "none";
+  // Skopiuj tekst
+  navigator.clipboard.writeText(plainRaport).then(() => {
+    alert("Lista została skopiowana do schowka!");
+  }).catch(() => {
+    fallbackCopyToClipboard(plainRaport);
   });
 }

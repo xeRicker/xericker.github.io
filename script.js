@@ -1,7 +1,6 @@
-// Kategorie i składniki
-const kategorie = {
-  "Warzywa": { icon: "icons/warzywa.png", items: ["Sałata", "Pomidory", "Cebula", "Jalapeno", "Cytryna", "Ostre papryczki", "Ogórki kanapkowe", "Krążki cebulowe"] },
-  "Mięso": { icon: "icons/mieso.png", items: ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Tłuszcz wołowy", "Frytura", "Boczek"] },
+const categories = {
+  "Warzywa": { icon: "icons/warzywa.png", items: ["Sałata", "Pomidory", "Cebula", "Ogórki kanapkowe", "Jalapeno", "Cytryna", "Ostre papryczki", "Krążki cebulowe"] },
+  "Mięso": { icon: "icons/mieso.png", items: ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Boczek", "Tłuszcz wołowy", "Frytura"] },
   "Sosy": { icon: "icons/sosy.png", items: ["Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ", "Sos sweet chilli", "Ketchup saszetki", "Tabasco", "Pojemniki na sos", "Delikeli na sos"] },
   "Napoje": { icon: "icons/napoje.png", items: ["Pepsi", "Woda 5L"] },
   "Nabiał / Sery": { icon: "icons/nabial.png", items: ["Ser cheddar", "Ser halloumi"] },
@@ -13,68 +12,131 @@ const kategorie = {
 window.onload = () => {
   const container = document.getElementById("produkty");
 
-  // Tworzenie kategorii i produktów
-  Object.entries(kategorie).forEach(([kategoria, { icon, items }]) => {
+  Object.entries(categories).forEach(([category, { icon, items }]) => {
     const section = document.createElement("div");
     section.innerHTML = `
       <h3 class="kategoria-naglowek">
-        <img src="${icon}" alt="${kategoria}" class="kategoria-ikona">
-        ${kategoria}
+        <img src="${icon}" alt="${category}" class="kategoria-ikona">
+        ${category}
       </h3>
     `;
 
-    const grupa = document.createElement("div");
-    grupa.className = "produkty-grid";
+    const group = document.createElement("div");
+    group.className = "produkty-grid";
 
-    items.forEach(nazwa => {
+    items.forEach(name => {
       const el = document.createElement("div");
       el.className = "produkt";
-      el.setAttribute("data-nazwa", nazwa);
+      el.setAttribute("data-nazwa", name);
       el.innerHTML = `
-        <div class="produkt-name">${nazwa}</div>
+        <div class="produkt-name">${name}</div>
         <div class="counter">
-          <button onclick="zmienIlosc('${nazwa}', -1)">−</button>
-          <input type="number" id="input-${nazwa}" value="0" min="0" onchange="ustawIlosc('${nazwa}')">
-          <button onclick="zmienIlosc('${nazwa}', 1)">+</button>
+          <button style="touch-action: manipulation;" onclick="changeQuantity('${name}', -1)">−</button>
+          <input type="number" id="input-${name}" value="0" min="0" onchange="setQuantity('${name}')">
+          <button style="touch-action: manipulation;" onclick="changeQuantity('${name}', 1)">+</button>
         </div>
       `;
-      grupa.appendChild(el);
+      group.appendChild(el);
     });
 
-    section.appendChild(grupa);
+    section.appendChild(group);
     container.appendChild(section);
   });
 
-  // Ustaw dzisiejszą datę jako domyślną
+  const savedData = JSON.parse(localStorage.getItem("lista_produktow") || "{}");
+  const FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+  if (savedData && savedData.time && Date.now() - savedData.time < FIFTEEN_MINUTES) {
+    Object.entries(savedData.values || {}).forEach(([name, quantity]) => {
+      const input = document.getElementById(`input-${name}`);
+      if (input) {
+        input.value = quantity;
+        highlightProduct(name, parseInt(quantity));
+      }
+    });
+  } else {
+    localStorage.removeItem("lista_produktow");
+  }
+
   const today = new Date().toISOString().split("T")[0];
   document.getElementById("data").value = today;
+
+  updateResetButtonVisibility();
 };
 
+function updateResetButtonVisibility() {
+  const anySelected = Object.entries(categories).some(([_, group]) =>
+    group.items.some(name => {
+      const input = document.getElementById(`input-${name}`);
+      return input && parseInt(input.value) > 0;
+    })
+  );
 
-// Zmiana ilości
-function zmienIlosc(nazwa, delta) {
-  const input = document.getElementById(`input-${nazwa}`);
+  document.getElementById("resetContainer").style.display = anySelected ? "block" : "none";
+}
+
+function saveToLocalStorage() {
+  const data = { time: Date.now(), values: {} };
+  Object.entries(categories).forEach(([_, group]) => {
+    group.items.forEach(name => {
+      const input = document.getElementById(`input-${name}`);
+      if (input) data.values[name] = input.value;
+    });
+  });
+  localStorage.setItem("lista_produktow", JSON.stringify(data));
+}
+
+function changeQuantity(name, delta) {
+  const input = document.getElementById(`input-${name}`);
   let current = parseInt(input.value) || 0;
   current = Math.max(0, current + delta);
   input.value = current;
-  podswietlProdukt(nazwa, current);
+  highlightProduct(name, current);
+  saveToLocalStorage();
 }
 
-function ustawIlosc(nazwa) {
-  const input = document.getElementById(`input-${nazwa}`);
+function setQuantity(name) {
+  const input = document.getElementById(`input-${name}`);
   let value = parseInt(input.value) || 0;
   value = Math.max(0, value);
   input.value = value;
-  podswietlProdukt(nazwa, value);
+  highlightProduct(name, value);
+  saveToLocalStorage();
 }
 
-function podswietlProdukt(nazwa, ilosc) {
-  const box = document.querySelector(`[data-nazwa="${nazwa}"]`);
+function highlightProduct(name, quantity) {
+  const box = document.querySelector(`[data-nazwa="${name}"]`);
   box.classList.remove("highlight-1", "highlight-2", "highlight-3");
 
-  if (ilosc === 1) box.classList.add("highlight-1");
-  else if (ilosc === 2) box.classList.add("highlight-2");
-  else if (ilosc >= 3) box.classList.add("highlight-3");
+  if (quantity === 1) box.classList.add("highlight-1");
+  else if (quantity === 2) box.classList.add("highlight-2");
+  else if (quantity >= 3) box.classList.add("highlight-3");
+
+  updateResetButtonVisibility();
+}
+
+function resetAll() {
+  Object.entries(categories).forEach(([_, group]) => {
+    group.items.forEach(name => {
+      const input = document.getElementById(`input-${name}`);
+      if (input) {
+        input.value = 0;
+        highlightProduct(name, 0);
+      }
+    });
+  });
+
+  ["pawel", "radek", "sebastian", "dominik", "tomek"].forEach(id => {
+    const od = document.getElementById(`${id}_od`);
+    const do_ = document.getElementById(`${id}_do`);
+    if (od) od.value = "";
+    if (do_) do_.value = "";
+  });
+
+  localStorage.removeItem("lista_produktow");
+
+  updateResetButtonVisibility();
+  alert("Lista została zresetowana!");
 }
 
 function fallbackCopyToClipboard(text) {
@@ -92,14 +154,14 @@ function fallbackCopyToClipboard(text) {
 }
 
 function generujListe() {
-  const lokal = document.getElementById("lokal").value;
-  const data = document.getElementById("data").value;
-  const dataStr = new Date(data).toLocaleDateString("pl-PL");
+  const location = document.getElementById("lokal").value;
+  const date = document.getElementById("data").value;
+  const dateStr = new Date(date).toLocaleDateString("pl-PL");
 
-  let htmlRaport = `<p><strong>Lokalizacja:</strong> ${lokal}</p>`;
-  htmlRaport += `<p><strong>Data:</strong> ${dataStr}</p><br>`;
+  let htmlReport = `<p><strong>Lokalizacja:</strong> ${location}</p>`;
+  htmlReport += `<p><strong>Data:</strong> ${dateStr}</p><br>`;
 
-  const pracownicy = {
+  const workers = {
     "Paweł": "pawel",
     "Radek": "radek",
     "Sebastian": "sebastian",
@@ -107,41 +169,42 @@ function generujListe() {
     "Tomek": "tomek"
   };
 
-  htmlRaport += `<strong>Godziny pracy:</strong><br>`;
-  let plainRaport = `🧾 Lista Produktów\n${lokal} ${dataStr}\n\nGodziny pracy:\n`;
+  htmlReport += `<strong>Godziny pracy:</strong><br>`;
+  let plainReport = `🧾 Lista Produktów\n${location} ${dateStr}\n\nGodziny pracy:\n`;
 
-  Object.entries(pracownicy).forEach(([imie, id]) => {
-    const od = document.getElementById(`${id}_od`).value || "-";
-    const do_ = document.getElementById(`${id}_do`).value || "-";
-    htmlRaport += `${imie}: <strong>${od} – ${do_}</strong><br>`;
-    plainRaport += `  • ${imie}: ${od} – ${do_}\n`;
+  Object.entries(workers).forEach(([name, id]) => {
+    const from = document.getElementById(`${id}_od`).value || "-";
+    const to = document.getElementById(`${id}_do`).value || "-";
+    htmlReport += `${name}: <strong>${from} – ${to}</strong><br>`;
+    plainReport += `  • ${name}: ${from} – ${to}\n`;
   });
 
-  htmlRaport += `<br>`;
-  plainRaport += `\n`;
+  htmlReport += `<br>`;
+  plainReport += `\n`;
 
-  Object.entries(kategorie).forEach(([kategoria, produkty]) => {
-    let htmlKategoria = "";
-    let textKategoria = "";
+  Object.entries(categories).forEach(([category, group]) => {
+    let htmlSection = "";
+    let textSection = "";
 
-    produkty.items.forEach(nazwa => {
-      const ilosc = parseInt(document.getElementById(`input-${nazwa}`).value) || 0;
-      if (ilosc > 0) {
-        htmlKategoria += `  - ${nazwa}: <strong>${ilosc}</strong><br>`;
-        textKategoria += `  - ${nazwa}: ${ilosc}\n`;
+    group.items.forEach(name => {
+      const quantity = parseInt(document.getElementById(`input-${name}`).value) || 0;
+      if (quantity > 0) {
+        htmlSection += `  - ${name}: <strong>${quantity}</strong><br>`;
+        textSection += `  - ${name}: ${quantity}\n`;
       }
     });
 
-    if (htmlKategoria.length > 0) {
-      htmlRaport += `<strong>${kategoria}:</strong><br>${htmlKategoria}<br>`;
-      plainRaport += `${kategoria}:\n${textKategoria}\n`;
+    if (htmlSection.length > 0) {
+      htmlReport += `<strong>${category}:</strong><br>${htmlSection}<br>`;
+      plainReport += `${category}:\n${textSection}\n`;
     }
   });
 
-  // Skopiuj tekst
-  navigator.clipboard.writeText(plainRaport).then(() => {
+  navigator.clipboard.writeText(plainReport).then(() => {
     alert("Lista została skopiowana do schowka!");
   }).catch(() => {
-    fallbackCopyToClipboard(plainRaport);
+    fallbackCopyToClipboard(plainReport);
   });
+
+  localStorage.removeItem("lista_produktow");
 }

@@ -58,6 +58,24 @@ button:hover {
   background-color: #0056b3;
 }
 
+.reset-button {
+  background-color: #dc3545; /* Bootstrap-style czerwony */
+  color: white;
+  width: 100%;
+  padding: 28px;
+  font-size: 28px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.reset-button:hover {
+  background-color: #c82333;
+}
+
+
 .produkty-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));

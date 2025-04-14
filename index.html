@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Lista Produktów</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1>Lista Produktów</h1>
-
-    <label for="lokal">Wybierz lokalizację:</label>
-    <select id="lokal">
-      <option>Oświęcim</option>
-      <option>Osiek</option>
-    </select>
 
     <label for="data">Wybierz datę:</label>
     <input type="date" id="data">
@@ -28,12 +23,19 @@
       <div><label>Tomek: Od <input type="time" id="tomek_od"> Do <input type="time" id="tomek_do"></label></div>
     </div>
 
-    <h2>Składniki</h2>
+    <h2>Finanse</h2>
+    <div id="finanse">
+      <div><label>Utarg: <input type="number" id="finanse_utarg" min="0" step="0.01"> zł</label></div>
+      <div><label>Gotówka: <input type="number" id="finanse_gotowka" min="0" step="0.01"> zł</label></div>
+      <div><label>Karty: <input type="number" id="finanse_karty" min="0" step="0.01"> zł</label></div>
+    </div>
+
+
     <div id="resetContainer" style="display: none;">
       <button class="reset-button" onclick="resetAll()">Resetuj</button>
     </div>
     <div id="produkty" class="produkty-grid"></div>
-    <button onclick="generujListe()">Skopiuj Listę</button>
+    <button onclick="pokazLokalModal()">Skopiuj Listę</button>
 
     <div id="raport" class="raport" style="display: none;">
       <h3>Lista Produktów</h3>
@@ -41,7 +43,15 @@
     </div>
   </div>
 
+  <div id="lokalModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:white; padding:60px; border-radius:20px; text-align:center; font-size:28px;">
+    <p><strong>Jaki punkt wariacie?</strong></p>
+    <button onclick="zatwierdzLokal('Oświęcim')" style="margin: 10px;">Oświęcim</button>
+    <button onclick="zatwierdzLokal('Osiek')" style="margin: 10px;">Osiek</button>
+  </div>
+
   <script src="html2canvas.min.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>

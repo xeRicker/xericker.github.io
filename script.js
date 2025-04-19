@@ -56,12 +56,6 @@ window.onload = () => {
         highlightProduct(name, parseInt(quantity));
       }
     });
-
-    if (savedData.finanse) {
-      document.getElementById("finanse_utarg").value = savedData.finanse.utarg || "";
-      document.getElementById("finanse_gotowka").value = savedData.finanse.gotowka || "";
-      document.getElementById("finanse_karty").value = savedData.finanse.karty || "";
-    }
   } else {
     localStorage.removeItem("lista_produktow");
   }
@@ -92,12 +86,6 @@ function saveToLocalStorage() {
       if (input) data.values[name] = input.value;
     });
   });
-
-  data.finanse = {
-    utarg: document.getElementById("finanse_utarg").value,
-    gotowka: document.getElementById("finanse_gotowka").value,
-    karty: document.getElementById("finanse_karty").value
-  };
 
   localStorage.setItem("lista_produktow", JSON.stringify(data));
 }
@@ -148,10 +136,6 @@ function resetAll() {
     if (od) od.value = "";
     if (do_) do_.value = "";
   });
-
-  document.getElementById("finanse_utarg").value = "";
-  document.getElementById("finanse_gotowka").value = "";
-  document.getElementById("finanse_karty").value = "";
 
   localStorage.removeItem("lista_produktow");
 
@@ -216,21 +200,6 @@ function generujListe() {
 
   htmlReport += `<br>`;
   plainReport += `\n`;
-
-  htmlReport += `<strong>Finanse:</strong><br>`;
-  plainReport += `Finanse:\n`;
-
-  const utarg = document.getElementById("finanse_utarg").value || "-";
-  const gotowka = document.getElementById("finanse_gotowka").value || "-";
-  const karty = document.getElementById("finanse_karty").value || "-";
-
-  htmlReport += `Utarg: <strong>${utarg} zł</strong><br>`;
-  htmlReport += `Gotówka: <strong>${gotowka} zł</strong><br>`;
-  htmlReport += `Karty: <strong>${karty} zł</strong><br><br>`;
-
-  plainReport += `  • Utarg: ${utarg} zł\n`;
-  plainReport += `  • Gotówka: ${gotowka} zł\n`;
-  plainReport += `  • Karty: ${karty} zł\n\n`;
 
   Object.entries(categories).forEach(([category, group]) => {
     let htmlSection = "";

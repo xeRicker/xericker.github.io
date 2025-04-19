@@ -21,7 +21,7 @@ body {
 h1, h2 {
   color: #343a40;
   margin-bottom: 25px;
-  font-size: 2em;
+  font-size: 3em;
 }
 
 label {
@@ -94,7 +94,7 @@ button:hover {
 
 .produkt-name {
   flex: 1;
-  font-size: 32px;
+  font-size: 52px;
   font-weight: normal; 
 }
 
@@ -134,7 +134,7 @@ button:hover {
 }
 
 .kategoria-naglowek {
-  font-size: 2.2em;
+  font-size: 3.2em;
   margin-top: 40px;
   margin-bottom: 20px;
   display: flex;

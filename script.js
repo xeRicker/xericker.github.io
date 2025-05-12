@@ -39,7 +39,7 @@ const categories = {
     icon: "icons/opakowania.png",
     items: [
       "Torby małe", "Torby średnie", "Torby duże", "Opakowania na frytki",
-      "Pojemniki na sos", "Delikeli na sos", "Folia aluminiowa",
+      "Sos: Pojemniki", "Sos: Pokrywki", "Folia aluminiowa",
       "Serwetki", "Rękawiczki"
     ]
   },

@@ -1,12 +1,55 @@
 const categories = {
-  "Warzywa": { icon: "icons/warzywa.png", items: ["Sałata", "Pomidory", "Cebula", "Ogórki kanapkowe", "Jalapeno", "Cytryna", "Ostre papryczki", "Krążki cebulowe"] },
-  "Mięso": { icon: "icons/mieso.png", items: ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Boczek", "Tłuszcz wołowy", "Frytura"] },
-  "Sosy": { icon: "icons/sosy.png", items: ["Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ", "Sos sweet chilli", "Ketchup saszetki", "Tabasco", "Pojemniki na sos", "Delikeli na sos"] },
-  "Napoje": { icon: "icons/napoje.png", items: ["Pepsi", "Woda 5L"] },
-  "Nabiał / Sery": { icon: "icons/nabial.png", items: ["Ser cheddar", "Ser halloumi"] },
-  "Pieczywo": { icon: "icons/pieczywo.png", items: ["Bułki", "Placki Ziemniaczane"] },
-  "Opakowania": { icon: "icons/opakowania.png", items: ["Torby małe", "Torby średnie", "Torby duże", "Opakowania na frytki", "Folia aluminiowa", "Worki na śmieci"] },
-  "Inne": { icon: "icons/inne.png", items: ["Frytki", "Cebula prażona", "Dobry materiał", "Serwetki", "Czyścidło", "Rękawiczki", "Przyprawa do grilla", "Sól do frytek", "Majonez", "Płyn do mycia", "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"] }
+  "Warzywa i Owoce": {
+    icon: "icons/warzywa.png",
+    items: ["Sałata", "Pomidory", "Cebula", "Ogórki kanapkowe", "Jalapeno", "Cytryna", "Ostre papryczki"]
+  },
+  "Mięso i Drób": {
+    icon: "icons/mieso.png",
+    items: ["Mięso małe", "Mięso duże", "Stripsy", "Chorizo", "Boczek"]
+  },
+  "Nabiał i Sery": {
+    icon: "icons/nabial.png",
+    items: ["Ser cheddar", "Ser halloumi", "Majonez"]
+  },
+  "Dodatki Skrobiowe / Smażone": {
+    icon: "icons/frytki.png",
+    items: ["Frytki", "Placki Ziemniaczane", "Krążki cebulowe"]
+  },
+  "Pieczywo": {
+    icon: "icons/pieczywo.png",
+    items: ["Bułki"]
+  },
+  "Sosy i Przyprawy": {
+    icon: "icons/sosy.png",
+    items: [
+      "Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ",
+      "Sos sweet chilli", "Ketchup saszetki", "Tabasco",
+      "Cebula prażona", "Przyprawa do grilla", "Sól do frytek"
+    ]
+  },
+  "Tłuszcze i Oleje": {
+    icon: "icons/oleje.png",
+    items: ["Tłuszcz wołowy", "Frytura"]
+  },
+  "Napoje": {
+    icon: "icons/napoje.png",
+    items: ["Pepsi", "Dobry materiał", "Woda 5L"]
+  },
+  "Opakowania i Jednorazowe": {
+    icon: "icons/opakowania.png",
+    items: [
+      "Torby małe", "Torby średnie", "Torby duże", "Opakowania na frytki",
+      "Pojemniki na sos", "Delikeli na sos", "Folia aluminiowa",
+      "Serwetki", "Rękawiczki"
+    ]
+  },
+  "Chemia i Zaopatrzenie": {
+    icon: "icons/chemia.png",
+    items: [
+      "Czyścidło", "Płyn do mycia", "Worki na śmieci",
+      "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"
+    ]
+  }
 };
 
 let wybranyLokalModalnie = null;
@@ -60,8 +103,9 @@ window.onload = () => {
     localStorage.removeItem("lista_produktow");
   }
 
-  const today = new Date().toISOString().split("T")[0];
-  document.getElementById("data").value = today;
+  // Date input is removed, no need to set its value
+  // const today = new Date().toISOString().split("T")[0];
+  // document.getElementById("data").value = today;
 
   updateResetButtonVisibility();
 };
@@ -130,7 +174,8 @@ function resetAll() {
     });
   });
 
-  ["pawel", "radek", "sebastian", "dominik", "tomek"].forEach(id => {
+  // Added Natalia and Kacper to the list of employees to reset
+  ["pawel", "radek", "sebastian", "dominik", "tomek", "natalia", "kacper"].forEach(id => {
     const od = document.getElementById(`${id}_od`);
     const do_ = document.getElementById(`${id}_do`);
     if (od) od.value = "";
@@ -174,18 +219,22 @@ function generujListe() {
   }
 
   const location = wybranyLokalModalnie;
-  const date = document.getElementById("data").value;
-  const dateStr = new Date(date).toLocaleDateString("pl-PL");
+  // Get current date automatically instead of from input
+  const currentDate = new Date();
+  const dateStr = currentDate.toLocaleDateString("pl-PL"); // Format: DD.MM.YYYY
 
   let htmlReport = `<p><strong>Lokalizacja:</strong> ${location}</p>`;
   htmlReport += `<p><strong>Data:</strong> ${dateStr}</p><br>`;
 
+  // Added Natalia and Kacper
   const workers = {
     "Paweł": "pawel",
     "Radek": "radek",
     "Sebastian": "sebastian",
     "Dominik": "dominik",
-    "Tomek": "tomek"
+    "Tomek": "tomek",
+    "Natalia": "natalia",
+    "Kacper": "kacper"
   };
 
   htmlReport += `<strong>Godziny pracy:</strong><br>`;

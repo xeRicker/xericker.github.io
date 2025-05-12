@@ -29,10 +29,11 @@ label {
   margin: 20px 0;
 }
 
+/* Removed date input specific styles if any, kept general input styles */
 select,
 input[type="time"],
 input[type="number"],
-input[type="date"] {
+input[type="date"] { /* Kept date type selector for potential future use elsewhere */
   padding: 16px;
   font-size: 24px;
   border: 1px solid #ccc;
@@ -95,7 +96,7 @@ button:hover {
 .produkt-name {
   flex: 1;
   font-size: 52px;
-  font-weight: normal; 
+  font-weight: normal;
 }
 
 .counter {
@@ -114,7 +115,7 @@ button:hover {
   cursor: pointer;
   height: 64px;
   box-sizing: border-box;
-  transform: translateY(-25px);
+  transform: translateY(-25px); /* Kept this style - check if it still looks okay */
 }
 
 .counter button:hover {
@@ -153,6 +154,8 @@ button:hover {
 .produkt.highlight-2 { background-color: #a8e0b6; border-color: #91d1a3; }
 .produkt.highlight-3 { background-color: #7cd29c; border-color: #64c18a; }
 
+/* Styles for the report div removed as the div was removed from HTML */
+/*
 .raport {
   background: #e9ecef;
   padding: 0 40px 40px 40px;
@@ -175,6 +178,7 @@ button:hover {
   font-weight: bold;
   text-align: center;
 }
+*/
 
 @media (max-width: 700px) {
   .produkty-grid { grid-template-columns: 1fr; }
@@ -199,7 +203,7 @@ button:hover {
 
   select,
   input[type="time"],
-  input[type="date"] {
+  input[type="date"] { /* Kept date type selector */
     font-size: 26px;
     width: 100%;
   }

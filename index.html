@@ -9,18 +9,16 @@
 </head>
 <body>
   <div class="container">
-    <h1>Lista Produktów</h1>
-
-    <label for="data">Wybierz datę:</label>
-    <input type="date" id="data">
 
     <h2>Pracownicy</h2>
     <div id="pracownicy">
       <div><label>Paweł: Od <input type="time" id="pawel_od"> Do <input type="time" id="pawel_do"></label></div>
       <div><label>Radek: Od <input type="time" id="radek_od"> Do <input type="time" id="radek_do"></label></div>
       <div><label>Sebastian: Od <input type="time" id="sebastian_od"> Do <input type="time" id="sebastian_do"></label></div>
-      <div><label>Dominik: Od <input type="time" id="dominik_od"> Do <input type="time" id="dominik_do"></label></div>
       <div><label>Tomek: Od <input type="time" id="tomek_od"> Do <input type="time" id="tomek_do"></label></div>
+      <div><label>Natalia: Od <input type="time" id="natalia_od"> Do <input type="time" id="natalia_do"></label></div>
+      <div><label>Kacper: Od <input type="time" id="kacper_od"> Do <input type="time" id="kacper_do"></label></div>
+      <div><label>Dominik: Od <input type="time" id="dominik_od"> Do <input type="time" id="dominik_do"></label></div>
     </div>
 
     <div id="resetContainer" style="display: none;">
@@ -28,22 +26,16 @@
     </div>
     <div id="produkty" class="produkty-grid"></div>
     <button onclick="pokazLokalModal()">Skopiuj Listę</button>
-
-    <div id="raport" class="raport" style="display: none;">
-      <h3>Lista Produktów</h3>
-      <div id="raportContent"></div>
-    </div>
   </div>
 
   <div id="lokalModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:white; padding:60px; border-radius:20px; text-align:center; font-size:28px;">
-    <p><strong>Jaki punkt wariacie?</strong></p>
-    <button onclick="zatwierdzLokal('Oświęcim')" style="margin: 10px;">Oświęcim</button>
-    <button onclick="zatwierdzLokal('Osiek')" style="margin: 10px;">Osiek</button>
+    <div style="background:white; padding:60px; border-radius:20px; text-align:center; font-size:28px;">
+      <p><strong>Jaki punkt wariacie?</strong></p>
+      <button onclick="zatwierdzLokal('Oświęcim')" style="margin: 10px;">Oświęcim</button>
+      <button onclick="zatwierdzLokal('Osiek')" style="margin: 10px;">Osiek</button>
+    </div>
   </div>
-</div>
 
-<script src="html2canvas.min.js"></script>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

@@ -46,7 +46,7 @@ const categories = {
   "Chemia i Zaopatrzenie": {
     icon: "icons/chemia.png",
     items: [
-      "Czyścidło", "Płyn do mycia", "Worki na śmieci",
+      "Szmaty", "Zielony Papier", "Płyn do mycia", "Worki na śmieci",
       "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"
     ]
   }

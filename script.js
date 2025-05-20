@@ -33,7 +33,7 @@ const categories = {
   },
   "Napoje": {
     icon: "icons/napoje.png",
-    items: ["Pepsi", "Pepsi MAX", "Dobry materiał", "Woda 5L"]
+    items: ["Pepsi", "Pepsi Max", "Dobry materiał", "Woda 5L"]
   },
   "Opakowania i Jednorazowe": {
     icon: "icons/opakowania.png",

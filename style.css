@@ -29,11 +29,10 @@ label {
   margin: 20px 0;
 }
 
-/* Removed date input specific styles if any, kept general input styles */
 select,
 input[type="time"],
 input[type="number"],
-input[type="date"] { /* Kept date type selector for potential future use elsewhere */
+input[type="date"] {
   padding: 16px;
   font-size: 24px;
   border: 1px solid #ccc;
@@ -45,7 +44,7 @@ input[type="date"] { /* Kept date type selector for potential future use elsewhe
 button {
   margin-top: 50px;
   padding: 28px;
-  font-size: 28px;
+  font-size: 38px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -60,11 +59,11 @@ button:hover {
 }
 
 .reset-button {
-  background-color: #dc3545; /* Bootstrap-style czerwony */
+  background-color: #dc3545;
   color: white;
   width: 100%;
   padding: 28px;
-  font-size: 28px;
+  font-size: 38px;
   border: none;
   border-radius: 16px;
   cursor: pointer;
@@ -115,7 +114,7 @@ button:hover {
   cursor: pointer;
   height: 64px;
   box-sizing: border-box;
-  transform: translateY(-25px); /* Kept this style - check if it still looks okay */
+  transform: translateY(-25px);
 }
 
 .counter button:hover {
@@ -154,32 +153,6 @@ button:hover {
 .produkt.highlight-2 { background-color: #a8e0b6; border-color: #91d1a3; }
 .produkt.highlight-3 { background-color: #7cd29c; border-color: #64c18a; }
 
-/* Styles for the report div removed as the div was removed from HTML */
-/*
-.raport {
-  background: #e9ecef;
-  padding: 0 40px 40px 40px;
-  border-radius: 12px;
-  margin-top: 60px;
-  white-space: pre-wrap;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 38px;
-  line-height: 1.7;
-  width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-  border: 1px solid #ccc;
-}
-
-.raport h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 52px;
-  font-weight: bold;
-  text-align: center;
-}
-*/
-
 @media (max-width: 700px) {
   .produkty-grid { grid-template-columns: 1fr; }
 
@@ -203,7 +176,7 @@ button:hover {
 
   select,
   input[type="time"],
-  input[type="date"] { /* Kept date type selector */
+  input[type="date"] {
     font-size: 26px;
     width: 100%;
   }

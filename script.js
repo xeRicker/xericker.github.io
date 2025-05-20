@@ -24,7 +24,7 @@ const categories = {
     items: [
       "Ketchup", "Sriracha", "Sos carolina", "Sos czosnkowy", "Sos BBQ",
       "Sos sweet chilli", "Ketchup saszetki", "Tabasco",
-      "Cebula prażona", "Przyprawa do grilla", "Sól do frytek"
+      "Cebula prażona", "Przyprawa do grilla", "Sól do frytek", "Czosnek sypany"
     ]
   },
   "Tłuszcze i Oleje": {
@@ -33,7 +33,7 @@ const categories = {
   },
   "Napoje": {
     icon: "icons/napoje.png",
-    items: ["Pepsi", "Dobry materiał", "Woda 5L"]
+    items: ["Pepsi", "Pepsi MAX", "Dobry materiał", "Woda 5L"]
   },
   "Opakowania i Jednorazowe": {
     icon: "icons/opakowania.png",
@@ -46,7 +46,7 @@ const categories = {
   "Chemia i Zaopatrzenie": {
     icon: "icons/chemia.png",
     items: [
-      "Szmaty", "Zielony Papier", "Płyn do mycia", "Worki na śmieci",
+      "Szmaty", "Zielony Papier", "Odtłuszczacz", "Worki na śmieci",
       "Drobne 1,2,5", "Drobne 10,20", "Artykuły Biurowe"
     ]
   }

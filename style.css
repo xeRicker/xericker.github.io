@@ -25,8 +25,19 @@ h1, h2 {
 }
 
 label {
-  display: block;
+  display: flex; /* Zmienione na flex dla lepszego wyrównania */
+  align-items: center; /* Wyrównanie elementów w pionie */
+  flex-wrap: wrap; /* Zezwolenie na zawijanie na mniejszych ekranach */
   margin: 20px 0;
+}
+
+.employee-color-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 12px;
+  flex-shrink: 0;
 }
 
 select,
@@ -98,6 +109,14 @@ button:hover {
   font-weight: normal;
 }
 
+input[type="checkbox"] {
+  width: 32px;
+  height: 32px;
+  transform: scale(1.6);
+  accent-color: #007bff;
+  cursor: pointer;
+}
+
 .counter {
   display: flex;
   align-items: center;
@@ -143,10 +162,15 @@ button:hover {
 }
 
 .kategoria-ikona {
-  width: 88px;
-  height: 88px;
+  width: 158px;
+  height: 158px;
   object-fit: contain;
   border-radius: 8px;
+  margin-left: -30px;
+}
+
+.time-preset-select {
+  width: 200px;
 }
 
 .produkt.highlight-1 { background-color: #d4edda; border-color: #c3e6cb; }

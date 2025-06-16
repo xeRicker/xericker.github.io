@@ -34,8 +34,8 @@ const categories = {
       { name: "Mięso małe", type: '', options: { q: 1 } },
       { name: "Mięso duże", type: '', options: { q: 1 } },
       { name: "Stripsy", type: '', options: { q: 1 } },
-      { name: "Chorizo", type: '', options: { q: 1 } },
-      { name: "Boczek", type: '', options: { q: 2 } }
+      { name: "Boczek", type: '', options: { q: 1 } },
+      { name: "Chorizo", type: 's', options: { q: 2 } }
     ]
   },
   "🧀": {
@@ -50,7 +50,7 @@ const categories = {
     icon: "icons/frytki.png",
     items: [
       { name: "Frytki", type: '', options: { q: 1 } },
-      { name: "Placki Ziemniaczane", type: '', options: { q: 1 } },
+      { name: "Placki ziemniaczane", type: '', options: { q: 1 } },
       { name: "Krążki cebulowe", type: '', options: { q: 1 } }
     ]
   },
@@ -80,17 +80,17 @@ const categories = {
   "🌻": {
     icon: "icons/oleje.png",
     items: [
-      { name: "Tłuszcz wołowy", type: 's', options: { q: 1 } },
+      { name: "Tłuszcz", type: 's', options: { q: 1 } },
       { name: "Frytura", type: 's', options: { q: 1 } }
     ]
   },
   "🥤": {
     icon: "icons/napoje.png",
     items: [
-      { name: "Pepsi", type: '', options: { q: 1 } },
-      { name: "Pepsi Max", type: '', options: { q: 1 } },
-      { name: "Dobry materiał", type: '', options: { q: 1 } },
-      { name: "Woda 5L", type: '', options: { q: 1 } }
+      { name: "Pepsi", type: 's', options: { q: 1 } },
+      { name: "Pepsi Max", type: 's', options: { q: 1 } },
+      { name: "Dobry Materiał", type: 's', options: { q: 1 } },
+      { name: "Woda 5L", type: 's', options: { q: 1 } }
     ]
   },
   "🛍️": {
@@ -111,7 +111,7 @@ const categories = {
     icon: "icons/chemia.png",
     items: [
       { name: "Szmaty", type: 's', options: { q: 1 } },
-      { name: "Zielony Papier", type: 's', options: { q: 1 } },
+      { name: "Zielony papier", type: 's', options: { q: 1 } },
       { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
       { name: "Worki na śmieci", type: 's', options: { q: 1 } },
     ]

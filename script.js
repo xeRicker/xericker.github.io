@@ -21,7 +21,7 @@ const categories = {
     icon: "icons/warzywa.png",
     items: [
       { name: "Sałata", type: '', options: { q: 1 } },
-      { name: "Ogórki kanapkowe", type: '', options: { q: 1 } },
+      { name: "Ogórki", type: '', options: { q: 1 } },
       { name: "Pomidory", type: 's', options: { q: 1 } },
       { name: "Cebula", type: 's', options: { q: 1 } },
       { name: "Jalapeno", type: 's', options: { q: 1 } },
@@ -31,8 +31,8 @@ const categories = {
   "🥩": {
     icon: "icons/mieso.png",
     items: [
-      { name: "Mięso małe", type: '', options: { q: 1 } },
-      { name: "Mięso duże", type: '', options: { q: 1 } },
+      { name: "Mięso: Małe", type: '', options: { q: 1 } },
+      { name: "Mięso: Duże", type: '', options: { q: 1 } },
       { name: "Stripsy", type: '', options: { q: 1 } },
       { name: "Boczek", type: '', options: { q: 1 } },
       { name: "Chorizo", type: 's', options: { q: 2 } }
@@ -41,8 +41,8 @@ const categories = {
   "🧀": {
     icon: "icons/nabial.png",
     items: [
-      { name: "Ser cheddar", type: '', options: { q: 1 } },
-      { name: "Ser halloumi", type: '', options: { q: 1 } },
+      { name: "Cheddar", type: '', options: { q: 1 } },
+      { name: "Halloumi", type: '', options: { q: 1 } },
       { name: "Majonez", type: 's', options: { q: 1 } }
     ]
   },
@@ -50,8 +50,10 @@ const categories = {
     icon: "icons/frytki.png",
     items: [
       { name: "Frytki", type: '', options: { q: 1 } },
-      { name: "Placki ziemniaczane", type: '', options: { q: 1 } },
-      { name: "Krążki cebulowe", type: '', options: { q: 1 } }
+      { name: "Placki", type: '', options: { q: 1 } },
+      { name: "Krążki", type: '', options: { q: 1 } },
+       { name: "Tłuszcz", type: 's', options: { q: 1 } },
+      { name: "Frytura", type: 's', options: { q: 1 } }
     ]
   },
   "🍞": {
@@ -63,45 +65,39 @@ const categories = {
   "🧂": {
     icon: "icons/sosy.png",
     items: [
-      { name: "Ketchup", type: 's', options: { q: 1 } },
+      { name: "Cebula prażona", type: '', options: { q: 1 } },
+      { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
+      { name: "Sos: Carolina", type: 's', options: { q: 1 } },
+      { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
+      { name: "Sos: BBQ", type: 's', options: { q: 1 } },
+      { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
+      { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
+      { name: "Saszetki: Majonez", type: 's', options: { q: 1 } },
       { name: "Sriracha", type: 's', options: { q: 1 } },
-      { name: "Sos carolina", type: 's', options: { q: 1 } },
-      { name: "Sos czosnkowy", type: 's', options: { q: 1 } },
-      { name: "Sos BBQ", type: 's', options: { q: 1 } },
-      { name: "Sos sweet chilli", type: 's', options: { q: 1 } },
-      { name: "Ketchup saszetki", type: 's', options: { q: 1 } },
       { name: "Tabasco", type: 's', options: { q: 1 } },
-      { name: "Cebula prażona", type: 's', options: { q: 1 } },
       { name: "Przyprawa do grilla", type: 's', options: { q: 1 } },
       { name: "Sól do frytek", type: 's', options: { q: 1 } },
       { name: "Czosnek sypany", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🌻": {
-    icon: "icons/oleje.png",
-    items: [
-      { name: "Tłuszcz", type: 's', options: { q: 1 } },
-      { name: "Frytura", type: 's', options: { q: 1 } }
     ]
   },
   "🥤": {
     icon: "icons/napoje.png",
     items: [
       { name: "Pepsi", type: 's', options: { q: 1 } },
-      { name: "Pepsi Max", type: 's', options: { q: 1 } },
-      { name: "Dobry Materiał", type: 's', options: { q: 1 } },
+      { name: "Pepsi Max (Pracownicze)", type: 's', options: { q: 1 } },
+      { name: "Niedobry Materiał", type: 's', options: { q: 1 } },
       { name: "Woda 5L", type: 's', options: { q: 1 } }
     ]
   },
   "🛍️": {
     icon: "icons/opakowania.png",
     items: [
-      { name: "Torby małe", type: 's', options: { q: 1 } },
-      { name: "Torby średnie", type: 's', options: { q: 1 } },
-      { name: "Torby duże", type: 's', options: { q: 1 } },
-      { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
+      { name: "Torby: Małe", type: 's', options: { q: 1 } },
+      { name: "Torby: Średnie", type: 's', options: { q: 1 } },
+      { name: "Torby: Duże", type: 's', options: { q: 1 } },
       { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
       { name: "Sos: Pokrywki", type: 's', options: { q: 1 } },
+      { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
       { name: "Folia aluminiowa", type: 's', options: { q: 1 } },
       { name: "Serwetki", type: 's', options: { q: 1 } },
       { name: "Rękawiczki", type: 's', options: { q: 1 } }
@@ -119,10 +115,10 @@ const categories = {
   "📋": {
     icon: "icons/papierologia.png",
     items: [
-      { name: "Drobne 1,2,5", type: 's', options: { q: 1 } },
-      { name: "Drobne 10,20", type: 's', options: { q: 1 } },
+      { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
+      { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
       { name: "Długopis", type: 's', options: { q: 1 } },
-      { name: "Flamaster", type: 's', options: { q: 1 } },
+      { name: "Pisak", type: 's', options: { q: 1 } },
       { name: "Zeszyt", type: 's', options: { q: 1 } },
       { name: "Papier do kasy", type: 's', options: { q: 1 } }
     ]
@@ -134,7 +130,7 @@ const productMap = new Map();
 Object.values(categories).forEach(category => category.items.forEach(p => productMap.set(p.name, p)));
 
 function renderEmployeeControls() {
-  const container = document.getElementById("pracownicy");
+  const container = document.getElementById("employees");
   container.innerHTML = ''; 
 
   employees.forEach(name => {
@@ -175,23 +171,23 @@ function applyTimePreset(employeeId, selectElement) {
 
 window.onload = () => {
   renderEmployeeControls();
-  const container = document.getElementById("produkty");
+  const container = document.getElementById("products");
 
   Object.entries(categories).forEach(([category, { icon, items }]) => {
     const section = document.createElement("div");
-    section.innerHTML = `<h3 class="kategoria-naglowek"><img src="${icon}" alt="${category}" class="kategoria-ikona"></h3>`;
+    section.innerHTML = `<h3 class="category-header"><img src="${icon}" alt="${category}" class="category-icon"></h3>`;
     const group = document.createElement("div");
-    group.className = "produkty-grid";
+    group.className = "products-grid";
 
     items.forEach(product => {
       const el = document.createElement("div");
-      el.className = "produkt";
-      el.setAttribute("data-nazwa", product.name);
+      el.className = "product";
+      el.setAttribute("data-name", product.name);
 
       if (product.type === 's') {
-        el.innerHTML = `<div class="produkt-name">${product.name}</div><div class="counter"><label><input type="checkbox" id="checkbox-${product.name}" onchange="setCheckbox('${product.name}')"></label></div>`;
+        el.innerHTML = `<div class="product-name">${product.name}</div><div class="counter"><label><input type="checkbox" id="checkbox-${product.name}" onchange="setCheckbox('${product.name}')"></label></div>`;
       } else {
-        el.innerHTML = `<div class="produkt-name">${product.name}</div><div class="counter"><button onclick="changeQuantity('${product.name}', -1)">−</button><input type="number" id="input-${product.name}" value="0" min="0" onchange="setQuantity('${product.name}')"><button onclick="changeQuantity('${product.name}', 1)">+</button></div>`;
+        el.innerHTML = `<div class="product-name">${product.name}</div><div class="counter"><button onclick="changeQuantity('${product.name}', -1)">−</button><input type="number" id="input-${product.name}" value="0" min="0" onchange="setQuantity('${product.name}')"><button onclick="changeQuantity('${product.name}', 1)">+</button></div>`;
       }
       group.appendChild(el);
     });
@@ -237,7 +233,6 @@ function loadState() {
     if (presetSelect) presetSelect.value = times.preset;
   });
 }
-
 
 function saveToLocalStorage() {
   const data = { time: Date.now(), products: {}, employees: {} };
@@ -299,7 +294,7 @@ function updateResetButtonVisibility() {
 }
 
 function highlightProduct(name, quantity) {
-  const box = document.querySelector(`[data-nazwa="${name}"]`);
+  const box = document.querySelector(`[data-name="${name}"]`);
   if (!box) return;
   box.classList.remove("highlight-1", "highlight-2", "highlight-3");
   const numQuantity = Number(quantity);
@@ -322,7 +317,6 @@ function darkenColor(hex, percent) {
 }
 
 function resetAll() {
-  // Czyszczenie produktów
   productMap.forEach((product, name) => {
     if (product.type === 's') {
       const checkbox = document.getElementById(`checkbox-${name}`);
@@ -334,7 +328,6 @@ function resetAll() {
     highlightProduct(name, 0);
   });
 
-  // Czyszczenie pól pracowników
   employees.forEach(name => {
     const id = name.toLowerCase();
     const fromEl = document.getElementById(`${id}_od`);
@@ -364,11 +357,11 @@ function fallbackCopyToClipboard(text) {
 }
 
 function showLocationModal() {
-  document.getElementById("lokalModal").style.display = "flex";
+  document.getElementById("locationModal").style.display = "flex";
 }
 
 function closeLocationModal() {
-  document.getElementById("lokalModal").style.display = "none";
+  document.getElementById("locationModal").style.display = "none";
 }
 
 function confirmLocation(name) {

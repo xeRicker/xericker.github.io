@@ -1,3 +1,7 @@
+/* =================================
+   Global Styles & Typography
+   ================================= */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f8f9fa;
@@ -9,6 +13,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2 {
+  color: #343a40;
+  margin-bottom: 25px;
+  font-size: 3em;
+}
+
+
+/* =================================
+   Layout
+   ================================= */
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -18,26 +33,16 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
-  color: #343a40;
-  margin-bottom: 25px;
-  font-size: 3em;
-}
+
+/* =================================
+   Forms & Inputs
+   ================================= */
 
 label {
-  display: flex; /* Zmienione na flex dla lepszego wyrównania */
-  align-items: center; /* Wyrównanie elementów w pionie */
-  flex-wrap: wrap; /* Zezwolenie na zawijanie na mniejszych ekranach */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   margin: 20px 0;
-}
-
-.employee-color-dot {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 12px;
-  flex-shrink: 0;
 }
 
 select,
@@ -51,6 +56,32 @@ input[type="date"] {
   margin-left: 12px;
   max-width: 320px;
 }
+
+.employee-color-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.time-preset-select {
+  width: 200px;
+}
+
+input[type="checkbox"] {
+  width: 32px;
+  height: 32px;
+  transform: scale(1.6);
+  accent-color: #007bff;
+  cursor: pointer;
+}
+
+
+/* =================================
+   Buttons
+   ================================= */
 
 button {
   margin-top: 50px;
@@ -71,29 +102,26 @@ button:hover {
 
 .reset-button {
   background-color: #dc3545;
-  color: white;
-  width: 100%;
-  padding: 28px;
-  font-size: 38px;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
   margin-top: 20px;
-  transition: background-color 0.2s;
 }
 
 .reset-button:hover {
   background-color: #c82333;
 }
 
-.produkty-grid {
+
+/* =================================
+   Product List
+   ================================= */
+
+.products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
   gap: 30px;
   margin-bottom: 60px;
 }
 
-.produkt {
+.product {
   background-color: #f1f3f5;
   border: 1px solid #ced4da;
   border-radius: 14px;
@@ -103,19 +131,42 @@ button:hover {
   justify-content: space-between;
 }
 
-.produkt-name {
+.product-name {
   flex: 1;
   font-size: 52px;
   font-weight: normal;
 }
 
-input[type="checkbox"] {
-  width: 32px;
-  height: 32px;
-  transform: scale(1.6);
-  accent-color: #007bff;
-  cursor: pointer;
+.product.highlight-1 { background-color: #d4edda; border-color: #c3e6cb; }
+.product.highlight-2 { background-color: #a8e0b6; border-color: #91d1a3; }
+.product.highlight-3 { background-color: #7cd29c; border-color: #64c18a; }
+
+
+/* =================================
+   Category Headers
+   ================================= */
+   
+.category-header {
+  font-size: 3.2em;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
+
+.category-icon {
+  width: 158px;
+  height: 158px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-left: -30px;
+}
+
+
+/* =================================
+   Counter Component
+   ================================= */
 
 .counter {
   display: flex;
@@ -152,45 +203,22 @@ input[type="checkbox"] {
   box-sizing: border-box;
 }
 
-.kategoria-naglowek {
-  font-size: 3.2em;
-  margin-top: 40px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 
-.kategoria-ikona {
-  width: 158px;
-  height: 158px;
-  object-fit: contain;
-  border-radius: 8px;
-  margin-left: -30px;
-}
-
-.time-preset-select {
-  width: 200px;
-}
-
-.produkt.highlight-1 { background-color: #d4edda; border-color: #c3e6cb; }
-.produkt.highlight-2 { background-color: #a8e0b6; border-color: #91d1a3; }
-.produkt.highlight-3 { background-color: #7cd29c; border-color: #64c18a; }
+/* =================================
+   Responsive Design
+   ================================= */
 
 @media (max-width: 700px) {
-  .produkty-grid { grid-template-columns: 1fr; }
+  .products-grid { 
+    grid-template-columns: 1fr; 
+  }
 
   .counter button,
   .counter input[type="number"] {
     width: 80px;
     padding: 12px;
     font-size: 24px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    line-height: 1;
     height: 64px;
-    box-sizing: border-box;
   }
 
   button {

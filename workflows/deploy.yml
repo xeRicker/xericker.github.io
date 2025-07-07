@@ -31,7 +31,8 @@ jobs:
       - name: Inject GitHub Token
         run: |
           # Znajdź plik config.js i zastąp znacznik __GH_TOKEN__ wartością sekretu
-          sed -i "s|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g" js/config.js
+          # Używamy separatora | zamiast / dla większej niezawodności
+          sed -i 's|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g' js/config.js
 
       # Krok 3: Konfiguruje GitHub Pages
       - name: Setup Pages

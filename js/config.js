@@ -1,6 +1,6 @@
 export const GITHUB_CONFIG = {
   // Wklej tutaj swój Personal Access Token z GitHuba.
-  TOKEN: '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', // <--- WAŻNE: ZASTĄP TO SWOIM TOKENEM
+  TOKEN: '__GH_TOKEN__', // <--- WAŻNE: ZASTĄP TO SWOIM TOKENEM
 
   // Wpisz nazwę użytkownika lub organizacji, do której należy repozytorium.
   REPO_OWNER: 'xeRicker', // <--- np. 'jankowalski'

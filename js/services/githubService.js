@@ -6,7 +6,7 @@ import { GITHUB_CONFIG } from '../config.js';
  */
 export async function saveReportToGithub(data) {
   const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
-  if (!TOKEN || TOKEN === 'TWOJ_PERSONAL_ACCESS_TOKEN' || !REPO_OWNER || !REPO_NAME) {
+  if (!TOKEN || TOKEN === '__GH_TOKEN__' || !REPO_OWNER || !REPO_NAME) {
     console.error("Konfiguracja GitHub nie została uzupełniona w pliku js/config.js.");
     alert("Błąd: Konfiguracja do zapisu na GitHubie jest niekompletna. Sprawdź konsolę (F12).");
     return;

@@ -1,20 +1,16 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Uruchamia się przy każdym pushu do gałęzi 'main'
   push:
     branches:
       - main
-  # Pozwala na ręczne uruchomienie tego workflow ze strony Actions
   workflow_dispatch:
 
-# Określa uprawnienia dla tokenu GITHUB_TOKEN, który jest używany do wdrożenia
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Pozwala na jedno jednoczesne wdrożenie
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -23,38 +19,42 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Krok 1: Pobiera kod z twojego repozytorium
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Krok 2: Wstrzykuje sekret do pliku konfiguracyjnego
+      # --- KROK DIAGNOSTYCZNY 1: Pokaż, co jest w pliku PRZED zmianą ---
+      - name: Verify config.js content (before replacement)
+        run: |
+          echo "--- Content of js/config.js BEFORE replacement ---"
+          cat js/config.js
+          echo "----------------------------------------------------"
+
       - name: Inject GitHub Token
         run: |
-          # Znajdź plik config.js i zastąp znacznik __GH_TOKEN__ wartością sekretu
-          # Używamy separatora | zamiast / dla większej niezawodności
           sed -i 's|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g' js/config.js
 
-      # Krok 3: Konfiguruje GitHub Pages
+      # --- KROK DIAGNOSTYCZNY 2: Pokaż, co jest w pliku PO zmianie ---
+      - name: Verify config.js content (after replacement)
+        run: |
+          echo "--- Content of js/config.js AFTER replacement ---"
+          cat js/config.js
+          echo "---------------------------------------------------"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
-      # Krok 4: Buduje artefakt (paczkę z plikami strony)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Ścieżka do folderu, który ma być wdrożony
-          # '.' oznacza cały folder główny projektu
           path: '.'
 
   deploy:
-    # Uruchamia się po pomyślnym zakończeniu zadania 'build'
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Krok 5: Wdraża artefakt na GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

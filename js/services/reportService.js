@@ -145,11 +145,6 @@ function formatReportText(stats) {
             });
             report += `\n`;
         }
-
-        const sortedCategories = Object.entries(stats.categoryQuantities).sort((a, b) => b[1] - a[1]);
-        if (sortedCategories.length > 0) {
-            report += `📦 Najpopularniejsza kategoria: ${sortedCategories[0][0]}\n`;
-        }
     }
 
     return report.trim();

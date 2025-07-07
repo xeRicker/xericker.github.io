@@ -1,8 +1,10 @@
 {
   "location": "Oświęcim",
   "date": "08.07.2025",
-  "last_updated_at": "2025-07-07T23:52:07.424Z",
-  "employees": {},
+  "last_updated_at": "2025-07-07T23:52:41.570Z",
+  "employees": {
+    "Sebastian": "12:00 – 20:00"
+  },
   "products": {
     "Papier do kasy": 1
   }

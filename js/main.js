@@ -306,6 +306,6 @@ async function handleGenerateMonthlyReport() {
       alert("Nie udało się wygenerować raportu. Sprawdź konsolę.")
   } finally {
     button.disabled = false;
-    button.innerHTML = '<b>Wygeneruj raport miesięczny</b>';
+    button.innerHTML = '<b>Raport Miesięczny</b>';
   }
 }

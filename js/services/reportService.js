@@ -97,54 +97,51 @@ function formatReportText(stats) {
     const monthName = new Date().toLocaleString('pl-PL', { month: 'long' });
     let report = `📊 Raport miesięczny: ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}\n\n`;
 
-    report += `--- PODSUMOWANIE ---\n`;
     report += `• Całkowita liczba godzin: ${Math.round(stats.totalHours)}h\n`;
     report += `• Dni z zarejestrowaną pracą: ${stats.workDays.size}\n`;
     if (stats.workDays.size > 0) {
-        report += `• Średnia liczba godzin dziennie: ${(stats.totalHours / stats.workDays.size).toFixed(1)}h\n`;
+        report += `• Śr. liczba godzin dziennie: ${(stats.totalHours / stats.workDays.size).toFixed(1)}h\n`;
     }
     if (stats.totalShifts > 0) {
-        report += `• Średnia długość zmiany: ${(stats.totalHours / stats.totalShifts).toFixed(1)}h\n`;
+        report += `• Śr. długość zmiany: ${(stats.totalHours / stats.totalShifts).toFixed(1)}h\n`;
     }
     report += `\n`;
 
     const sortedTotal = Object.entries(stats.employeeHoursTotal).sort((a, b) => b[1] - a[1]);
     if (sortedTotal.length > 0) {
-        report += `--- ANALIZA PRACOWNIKÓW ---\n`;
-        report += `🏆 Ranking ogólny (suma godzin):\n`;
-        sortedTotal.forEach(([name, hours]) => {
+        report += `🏆 Ranking pracowników:\n`;
+        sortedTotal.forEach(([name, hours], index) => {
             const days = stats.employeeWorkDays[name] || 0;
-            report += `- ${name}: ${Math.round(hours)}h (${days} dni)\n`;
+            const prefix = index === 0 ? '👑 MVP' : `#${index + 1}`;
+            report += `${prefix} ${name}: ${Math.round(hours)}h (${days} dni)\n`;
         });
         report += `\n`;
     }
     
-    report += `--- ANALIZA LOKALIZACJI ---\n`;
     for (const [location, data] of Object.entries(stats.employeeHoursByLocation)) {
-        const percentage = ((data.totalHours / stats.totalHours) * 100).toFixed(0);
-        report += `\n📍 ${location.charAt(0).toUpperCase() + location.slice(1)}\n`;
-        report += `• Suma godzin: ${Math.round(data.totalHours)}h (${percentage}% całości)\n`;
+        const percentage = stats.totalHours > 0 ? ((data.totalHours / stats.totalHours) * 100).toFixed(0) : 0;
+        report += `📍 ${location.charAt(0).toUpperCase() + location.slice(1)}\n`;
+        report += `• Suma: ${Math.round(data.totalHours)}h (${percentage}% całości)\n`;
         report += `• Ranking lokalny:\n`;
         const sortedLocation = Object.entries(data.employees).sort((a, b) => b[1] - a[1]);
-        sortedLocation.forEach(([name, hours]) => {
-            report += `  - ${name}: ${Math.round(hours)}h\n`;
+        sortedLocation.forEach(([name, hours], index) => {
+            report += `  #${index + 1} ${name}: ${Math.round(hours)}h\n`;
         });
+        report += `\n`;
     }
-    report += `\n`;
 
     const sortedProducts = Object.entries(stats.productQuantities).sort((a, b) => b[1] - a[1]);
     if (sortedProducts.length > 0) {
-        report += `--- ANALIZA PRODUKTÓW ---\n`;
         report += `📈 Największe zapotrzebowanie:\n`;
         sortedProducts.slice(0, 3).forEach(([name, qty]) => {
-            report += `- ${name} (ilość: ${qty})\n`;
+            report += `• ${name} (${qty})\n`;
         });
         report += `\n`;
         
         if (sortedProducts.length > 3) {
             report += `📉 Najmniejsze zapotrzebowanie:\n`;
             sortedProducts.slice(-3).reverse().forEach(([name, qty]) => {
-                report += `- ${name} (ilość: ${qty})\n`;
+                report += `• ${name} (${qty})\n`;
             });
             report += `\n`;
         }

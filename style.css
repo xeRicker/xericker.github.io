@@ -109,6 +109,21 @@ button:hover {
   background-color: #c82333;
 }
 
+.secondary-button {
+  background-color: #6c757d;
+  margin-top: 15px; /* Mniejszy margines górny */
+}
+
+.secondary-button:hover {
+  background-color: #5a6268;
+}
+
+/* Styl dla przycisku w trakcie ładowania */
+button:disabled {
+  background-color: #a9aeb3;
+  cursor: not-allowed;
+}
+
 
 /* =================================
    Product List

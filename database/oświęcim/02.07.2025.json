@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "02.07.2025",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 3,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Bułki (ile jest?)": 22,
+    "Cebula prażona": 1,
+    "Sos": 1,
+    "Torby": 1
+  },
+  "last_updated_at": "2025-07-08T13:43:24.835956"
+}

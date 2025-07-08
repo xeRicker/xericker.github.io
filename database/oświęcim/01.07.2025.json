@@ -1,0 +1,15 @@
+{
+  "location": "Oświęcim",
+  "date": "01.07.2025",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Halloumi": 1,
+    "Bułki (ile jest?)": 8,
+    "Sos": 1
+  },
+  "last_updated_at": "2025-07-08T13:43:24.836528"
+}

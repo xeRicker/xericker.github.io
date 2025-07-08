@@ -9,24 +9,27 @@
 </head>
 <body>
   <div class="container">
+
+    <h2>Pracownicy</h2>
     <div id="employees"></div>
+
     <div id="resetContainer" style="display: none;">
       <button class="reset-button"><b>Reset</b></button>
     </div>
     <div id="products" class="products-grid"></div>
-    <button id="copyButton" class="btn btn-primary"><b>Kopiuj 📥</b></button>
-    <button id="generateMonthlyReportButton" class="btn btn-secondary"><b>Raport Miesięczny 📜</b></button>
-    <a href="dashboard.html" class="btn btn-secondary"><b>Panel Analityczny 📈</b></a>
+    <button id="copyButton"><b>Kopiuj 📥</b></button>
+    <button id="generateMonthlyReportButton" class="secondary-button"><b>Raport Miesięczny 📜</b></button>
   </div>
 
   <div id="locationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
     <div style="background:white; padding:60px; border-radius:20px; text-align:center; font-size:28px;">
       <p><strong style="font-size: 40px;">Jaki punkt wariacie?</strong></p>
-      <button onclick="confirmLocation('Oświęcim')" style="margin: 10px;"><b>Oświęcim</b></button>
-      <button onclick="confirmLocation('Osiek')" style="margin: 10px;"><b>Osiek</b></button>
+      <button class="location-button" data-location="Oświęcim" style="margin: 10px;"><b>Oświęcim</b></button>
+      <button class="location-button" data-location="Osiek" style="margin: 10px;"><b>Osiek</b></button>
     </div>
   </div>
 
+  <!-- WAŻNE: Wczytujemy tylko główny plik jako moduł -->
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

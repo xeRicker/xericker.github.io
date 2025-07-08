@@ -108,3 +108,50 @@ export async function fetchMonthlyData() {
     return []; // Zwróć pustą tablicę w razie błędu
   }
 }
+
+/**
+ * Pobiera WSZYSTKIE raporty JSON ze wszystkich lokalizacji.
+ * @returns {Promise<Array<object>>} Obietnica, która zwraca tablicę wszystkich obiektów raportów.
+ */
+export async function fetchAllData() {
+  const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
+  const API_BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
+  const headers = {
+    'Authorization': `token ${TOKEN}`,
+    'Accept': 'application/vnd.github.v3+json',
+  };
+
+  if (!TOKEN || TOKEN === '__GH_TOKEN__') {
+    console.warn("Brak tokenu GitHub. Operacja pobierania danych pominięta.");
+    return [];
+  }
+
+  try {
+    const locationsResponse = await fetch(`${API_BASE_URL}database`, { headers });
+    if (!locationsResponse.ok) throw new Error("Nie można pobrać listy lokalizacji.");
+    const locations = (await locationsResponse.json()).filter(item => item.type === 'dir');
+
+    const allFileContentPromises = locations.map(async (location) => {
+        const filesResponse = await fetch(location.url, { headers });
+        if (!filesResponse.ok) return [];
+        const files = await filesResponse.json();
+        
+        return Promise.all(
+            files
+            .filter(file => file.name.endsWith('.json'))
+            .map(async file => {
+                const contentResponse = await fetch(file.download_url);
+                return contentResponse.ok ? contentResponse.json() : null;
+            })
+        );
+    });
+
+    const reportsNested = await Promise.all(allFileContentPromises);
+    return reportsNested.flat().filter(Boolean); // Spłaszczanie tablicy i usuwanie nulli
+
+  } catch (error) {
+    console.error("Błąd podczas pobierania wszystkich danych:", error);
+    alert("Wystąpił błąd podczas pobierania danych z GitHub. Sprawdź konsolę.");
+    return [];
+  }
+}

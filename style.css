@@ -83,68 +83,32 @@ input[type="checkbox"] {
    Buttons
    ================================= */
 
-/* Bazowa klasa dla wszystkich przycisków i linków-przycisków */
-.btn {
-  /* Ustawienia wyglądu */
-  display: block; /* Zajmuje całą szerokość i pozwala na ustawienie marginesów */
-  width: 100%;
+button {
+  margin-top: 50px;
   padding: 28px;
   font-size: 38px;
-  font-family: inherit; /* Dziedziczy czcionkę z body dla spójności */
-  font-weight: bold;
+  background-color: #007bff;
   color: white;
-  text-align: center;
-  text-decoration: none; /* Usuwa podkreślenie z linków */
   border: none;
   border-radius: 16px;
-  margin-top: 15px; /* Wspólny margines dla wszystkich */
-  
-  /* Ustawienia zachowania */
   cursor: pointer;
   transition: background-color 0.2s;
-  box-sizing: border-box; /* Zapewnia, że padding nie psuje szerokości */
+  width: 100%;
 }
 
-/* Modyfikator dla przycisku głównego (niebieski) */
-.btn-primary {
-  background-color: #007bff;
-}
-.btn-primary:hover {
+button:hover {
   background-color: #0056b3;
 }
 
-/* Modyfikator dla przycisków drugorzędnych (szary/turkusowy) */
-.btn-secondary {
-  background-color: #5A6268; /* ciemniejszy szary */
-}
-.btn-secondary:hover {
-  background-color: #4A5056;
-}
-
-/* Specjalny styl dla przycisku analitycznego, jeśli chcesz go odróżnić */
-.btn-secondary[href="dashboard.html"] {
-  background-color: #17a2b8; /* turkusowy */
-}
-.btn-secondary[href="dashboard.html"]:hover {
-  background-color: #138496;
-}
-
-
-/* Styl dla przycisku Reset */
 .reset-button {
   background-color: #dc3545;
   margin-top: 20px;
 }
+
 .reset-button:hover {
   background-color: #c82333;
 }
 
-
-/* Styl dla przycisku w trakcie ładowania */
-.btn:disabled {
-  background-color: #a9aeb3;
-  cursor: not-allowed;
-}
 
 /* =================================
    Product List

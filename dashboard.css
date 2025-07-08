@@ -76,3 +76,6 @@ h1 {
     margin-top: 0;
     text-align: center;
 }
+.large-chart {
+    grid-column: 1 / -1;
+}

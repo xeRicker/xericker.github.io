@@ -1,23 +1,26 @@
 import { fetchAllData } from './services/githubService.js';
-import { generateMonthlyReport } from './services/reportService.js'; // Użyjemy jego logiki do przetwarzania danych
+
+// Kolory pracowników, aby były spójne z główną aplikacją
+const employeeColors = {
+  "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
+  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Śmieciński": "#1abc9c"
+};
 
 // Globalne referencje do wykresów, aby móc je aktualizować
 let charts = {};
 let allData = []; // Tutaj będziemy przechowywać wszystkie pobrane dane
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Pokaż loader lub jakiś wskaźnik ładowania
     document.body.style.cursor = 'wait';
-
     allData = await fetchAllData();
-    console.log("Pobrano wpisów:", allData.length);
-    
-    // Ukryj loader
     document.body.style.cursor = 'default';
-
-    // Inicjalizacja filtrów i pierwszego renderowania
-    setupFilters();
-    updateDashboard();
+    
+    if (allData.length > 0) {
+        setupFilters();
+        updateDashboard();
+    } else {
+        document.querySelector('.container').innerHTML += '<h2>Nie udało się załadować danych. Sprawdź konsolę (F12) i odśwież stronę.</h2>';
+    }
 });
 
 function setupFilters() {
@@ -25,7 +28,6 @@ function setupFilters() {
     const dateTo = document.getElementById('dateTo');
     const locationFilter = document.getElementById('locationFilter');
 
-    // Ustaw domyślny zakres na ostatnie 30 dni
     const today = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -33,7 +35,6 @@ function setupFilters() {
     dateTo.value = today.toISOString().split('T')[0];
     dateFrom.value = thirtyDaysAgo.toISOString().split('T')[0];
 
-    // Podpięcie event listenerów
     dateFrom.addEventListener('change', updateDashboard);
     dateTo.addEventListener('change', updateDashboard);
     locationFilter.addEventListener('change', updateDashboard);
@@ -47,7 +48,6 @@ function filterData() {
     const location = document.getElementById('locationFilter').value;
 
     return allData.filter(report => {
-        // Konwersja daty z raportu (DD.MM.RRRR) na obiekt Date
         const [day, month, year] = report.date.split('.').map(Number);
         const reportDate = new Date(year, month - 1, day);
         
@@ -59,8 +59,6 @@ function filterData() {
 }
 
 function processData(filteredData) {
-    // Funkcja z reportService.js jest prawie idealna, ale my chcemy ją zaadaptować.
-    // Zamiast importować całą logikę, możemy ją tutaj uprościć i dostosować.
     const stats = {
         employeeHoursTotal: {},
         productQuantities: {},
@@ -68,29 +66,38 @@ function processData(filteredData) {
         hoursByLocation: {},
         totalHours: 0,
         workDays: new Set(),
+        dailyEmployeeHours: {},
+        dailyProductUsage: {},
     };
 
     filteredData.forEach(report => {
         stats.workDays.add(report.date);
         stats.hoursByLocation[report.location] = (stats.hoursByLocation[report.location] || 0);
+        const dateKey = report.date.split('.').reverse().join('-');
 
         for (const [name, timeString] of Object.entries(report.employees)) {
             const hours = calculateHours(timeString);
             stats.employeeHoursTotal[name] = (stats.employeeHoursTotal[name] || 0) + hours;
             stats.hoursByLocation[report.location] += hours;
             stats.totalHours += hours;
-
-            const dateKey = report.date.split('.').reverse().join('-'); // YYYY-MM-DD
             stats.hoursByDay[dateKey] = (stats.hoursByDay[dateKey] || 0) + hours;
+
+            if (!stats.dailyEmployeeHours[dateKey]) stats.dailyEmployeeHours[dateKey] = {};
+            stats.dailyEmployeeHours[dateKey][name] = (stats.dailyEmployeeHours[dateKey][name] || 0) + hours;
         }
+
         for (const [name, quantity] of Object.entries(report.products)) {
+            if (name === "Bułki (ile jest?)") continue; // Wyklucz bułki z rankingów
+            
             stats.productQuantities[name] = (stats.productQuantities[name] || 0) + Number(quantity);
+
+            if (!stats.dailyProductUsage[dateKey]) stats.dailyProductUsage[dateKey] = {};
+            stats.dailyProductUsage[dateKey][name] = (stats.dailyProductUsage[dateKey][name] || 0) + Number(quantity);
         }
     });
     return stats;
 }
 
-// Prosta funkcja do liczenia godzin, aby uniknąć problemów z importem
 function calculateHours(timeString) {
   try {
     const [startStr, endStr] = timeString.split('–').map(s => s.trim());
@@ -98,9 +105,7 @@ function calculateHours(timeString) {
     const [endHours, endMinutes] = endStr.split(':').map(Number);
     const startDate = new Date(0, 0, 0, startHours, startMinutes);
     let endDate = new Date(0, 0, 0, endHours, endMinutes);
-
     if (endDate < startDate) endDate.setDate(endDate.getDate() + 1);
-    
     return (endDate - startDate) / (1000 * 60 * 60);
   } catch { return 0; }
 }
@@ -125,59 +130,69 @@ function updateKPIs(stats) {
 }
 
 function updateCharts(stats) {
-    // Wykres godzin w czasie
+    // Godziny pracy w czasie
     const sortedDays = Object.entries(stats.hoursByDay).sort((a, b) => a[0].localeCompare(b[0]));
     renderChart('hoursOverTimeChart', 'line', {
         labels: sortedDays.map(d => d[0]),
-        datasets: [{
-            label: 'Suma godzin',
-            data: sortedDays.map(d => d[1].toFixed(1)),
-            borderColor: '#007bff',
-            tension: 0.1
-        }]
+        datasets: [{ label: 'Suma godzin', data: sortedDays.map(d => d[1].toFixed(1)), borderColor: '#007bff', tension: 0.1 }]
     });
 
-    // Wykres rankingu pracowników
+    // Ranking pracowników
     const sortedEmployees = Object.entries(stats.employeeHoursTotal).sort((a, b) => b[1] - a[1]);
     renderChart('employeeRankingChart', 'bar', {
         labels: sortedEmployees.map(e => e[0]),
-        datasets: [{
-            label: 'Godziny',
-            data: sortedEmployees.map(e => e[1].toFixed(1)),
-            backgroundColor: '#28a745'
-        }]
+        datasets: [{ label: 'Godziny', data: sortedEmployees.map(e => e[1].toFixed(1)), backgroundColor: '#28a745' }]
     });
 
-    // Wykres podziału lokalizacji
+    // Podział godzin na lokalizacje
     renderChart('locationSplitChart', 'doughnut', {
         labels: Object.keys(stats.hoursByLocation),
-        datasets: [{
-            data: Object.values(stats.hoursByLocation),
-            backgroundColor: ['#ffc107', '#dc3545', '#17a2b8']
-        }]
+        datasets: [{ data: Object.values(stats.hoursByLocation), backgroundColor: ['#ffc107', '#dc3545', '#17a2b8'] }]
     });
 
-    // Wykres rankingu produktów
+    // Top 10 produktów
     const sortedProducts = Object.entries(stats.productQuantities).sort((a, b) => b[1] - a[1]).slice(0, 10);
     renderChart('productRankingChart', 'bar', {
-        indexAxis: 'y', // poziomy wykres słupkowy
+        indexAxis: 'y',
         labels: sortedProducts.map(p => p[0]),
-        datasets: [{
-            label: 'Ilość',
-            data: sortedProducts.map(p => p[1]),
-            backgroundColor: '#6c757d'
-        }]
+        datasets: [{ label: 'Ilość', data: sortedProducts.map(p => p[1]), backgroundColor: '#6c757d' }]
+    });
+
+    // Podział godzin w poszczególnych dniach
+    const sortedDailyData = Object.entries(stats.dailyEmployeeHours).sort((a, b) => a[0].localeCompare(b[0]));
+    const allEmployees = [...new Set(Object.values(stats.dailyEmployeeHours).flatMap(day => Object.keys(day)))];
+    const dailyDatasets = allEmployees.map(employee => ({
+        label: employee,
+        data: sortedDailyData.map(([, dailyStats]) => (dailyStats[employee] || 0).toFixed(1)),
+        backgroundColor: employeeColors[employee] || '#ccc'
+    }));
+    renderChart('dailyWorkDistributionChart', 'bar', {
+        labels: sortedDailyData.map(([date]) => date),
+        datasets: dailyDatasets
+    }, { scales: { x: { stacked: true }, y: { stacked: true } } });
+
+    // Zużycie produktów w czasie
+    const sortedProductDays = Object.entries(stats.dailyProductUsage).sort((a, b) => a[0].localeCompare(b[0]));
+    const top5Products = Object.entries(stats.productQuantities).sort((a,b) => b[1] - a[1]).slice(0, 5).map(p => p[0]);
+    const productDatasets = top5Products.map((productName, index) => {
+        const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'];
+        return {
+            label: productName,
+            data: sortedProductDays.map(([, dailyStats]) => dailyStats[productName] || 0),
+            borderColor: colors[index % colors.length],
+            fill: false,
+            tension: 0.1
+        };
+    });
+    renderChart('productUsageOverTimeChart', 'line', {
+        labels: sortedProductDays.map(([date]) => date),
+        datasets: productDatasets
     });
 }
 
 function renderChart(canvasId, type, data, options = {}) {
     const ctx = document.getElementById(canvasId);
     if (!ctx) return;
-
-    // Jeśli wykres już istnieje, zniszcz go przed narysowaniem nowego
-    if (charts[canvasId]) {
-        charts[canvasId].destroy();
-    }
-    
+    if (charts[canvasId]) charts[canvasId].destroy();
     charts[canvasId] = new Chart(ctx, { type, data, options });
 }

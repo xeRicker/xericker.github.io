@@ -256,7 +256,13 @@ async function generateAndProcessLists() {
       } else {
         quantity = parseInt(document.getElementById(`input-${name}`).value, 10) || 0;
       }
-      if (quantity > 0) {
+
+      // --- NOWA LOGIKA DLA BUŁEK ---
+      if (name === "Bułki (ile jest?)" && quantity === 0) {
+        reportData.products[name] = 0; // Zapisujemy 0, ale generujemy inny tekst
+        textSection += `  • 😱 Nie ma!\n`;
+      } else if (quantity > 0) {
+      // --- KONIEC NOWEJ LOGIKI ---
         reportData.products[name] = quantity;
         textSection += `  • ${name}${type === 's' ? "" : ": " + quantity}\n`;
       }

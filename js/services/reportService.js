@@ -97,7 +97,7 @@ function formatReportText(stats) {
     const monthName = new Date().toLocaleString('pl-PL', { month: 'long' });
     let report = `📊 Raport miesięczny: ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}\n\n`;
 
-    report += `• Całkowita liczba godzin: ${Math.round(stats.totalHours)}h\n`;
+    report += `• Całkowita liczba godzin: ${stats.totalHours.toFixed(1)}h\n`;
     report += `• Dni z zarejestrowaną pracą: ${stats.workDays.size}\n`;
     if (stats.workDays.size > 0) {
         report += `• Śr. liczba godzin dziennie: ${(stats.totalHours / stats.workDays.size).toFixed(1)}h\n`;
@@ -113,7 +113,7 @@ function formatReportText(stats) {
         sortedTotal.forEach(([name, hours], index) => {
             const days = stats.employeeWorkDays[name] || 0;
             const prefix = index === 0 ? '👑 MVP' : `#${index + 1}`;
-            report += `${prefix} ${name}: ${Math.round(hours)}h (${days} dni)\n`;
+            report += `${prefix} ${name}: ${hours.toFixed(1)}h (${days} dni)\n`;
         });
         report += `\n`;
     }
@@ -121,11 +121,11 @@ function formatReportText(stats) {
     for (const [location, data] of Object.entries(stats.employeeHoursByLocation)) {
         const percentage = stats.totalHours > 0 ? ((data.totalHours / stats.totalHours) * 100).toFixed(0) : 0;
         report += `📍 ${location.charAt(0).toUpperCase() + location.slice(1)}\n`;
-        report += `• Suma: ${Math.round(data.totalHours)}h (${percentage}% całości)\n`;
+        report += `• Suma: ${data.totalHours.toFixed(1)}h (${percentage}% całości)\n`;
         report += `• Ranking lokalny:\n`;
         const sortedLocation = Object.entries(data.employees).sort((a, b) => b[1] - a[1]);
         sortedLocation.forEach(([name, hours], index) => {
-            report += `  #${index + 1} ${name}: ${Math.round(hours)}h\n`;
+            report += `  #${index + 1} ${name}: ${hours.toFixed(1)}h\n`;
         });
         report += `\n`;
     }
@@ -144,6 +144,11 @@ function formatReportText(stats) {
                 report += `• ${name} (${qty})\n`;
             });
             report += `\n`;
+        }
+
+        const sortedCategories = Object.entries(stats.categoryQuantities).sort((a, b) => b[1] - a[1]);
+        if (sortedCategories.length > 0) {
+            report += `📦 Najpopularniejsza kategoria: ${sortedCategories[0][0]}\n`;
         }
     }
 

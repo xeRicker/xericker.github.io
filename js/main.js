@@ -260,7 +260,7 @@ async function generateAndProcessLists() {
       // --- NOWA LOGIKA DLA BUŁEK ---
       if (name === "Bułki (ile jest?)" && quantity === 0) {
         reportData.products[name] = 0; // Zapisujemy 0, ale generujemy inny tekst
-        textSection += `  • 😱 Nie ma!\n`;
+        textSection += `  • Bułki (ile jest?): ❌\n`;
       } else if (quantity > 0) {
       // --- KONIEC NOWEJ LOGIKI ---
         reportData.products[name] = quantity;

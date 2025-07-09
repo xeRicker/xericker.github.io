@@ -1,0 +1,24 @@
+{
+  "location": "Oświęcim",
+  "date": "09.07.2025",
+  "last_updated_at": "2025-07-09T19:31:50.184Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Tabasco": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

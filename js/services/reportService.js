@@ -1,4 +1,12 @@
 /**
+ * Definicja "pełnego etatu" w godzinach na miesiąc.
+ * Możesz dostosować tę wartość do swoich potrzeb.
+ * Standardowo przyjmuje się ok. 160-176h. 168h to popularna średnia.
+ */
+const FULL_TIME_HOURS_IN_MONTH = 168;
+
+
+/**
  * Tworzy mapę odwrotną { nazwaProduktu: emojiKategorii }
  * @param {object} categories - Główny obiekt kategorii
  * @returns {Map<string, string>} Mapa produktu do emoji.
@@ -25,9 +33,7 @@ function calculateHours(timeString) {
     const [endHours, endMinutes] = endStr.split(':').map(Number);
     const startDate = new Date(0, 0, 0, startHours, startMinutes);
     let endDate = new Date(0, 0, 0, endHours, endMinutes);
-
     if (endDate < startDate) endDate.setDate(endDate.getDate() + 1);
-    
     return (endDate - startDate) / (1000 * 60 * 60);
   } catch (e) {
     console.error(`Błąd parsowania czasu: "${timeString}"`, e);
@@ -113,7 +119,12 @@ function formatReportText(stats) {
         sortedTotal.forEach(([name, hours], index) => {
             const days = stats.employeeWorkDays[name] || 0;
             const prefix = index === 0 ? '👑 MVP' : `#${index + 1}`;
-            report += `${prefix} ${name}: ${hours.toFixed(1)}h (${days} dni)\n`;
+            
+            // --- NOWA LOGIKA ---
+            // Obliczanie procentu etatu
+            const ftePercentage = Math.round((hours / FULL_TIME_HOURS_IN_MONTH) * 100);
+            
+            report += `${prefix} ${name}: ${hours.toFixed(1)}h (${days} dni) (${ftePercentage}% Etat)\n`;
         });
         report += `\n`;
     }
@@ -122,7 +133,7 @@ function formatReportText(stats) {
         const percentage = stats.totalHours > 0 ? ((data.totalHours / stats.totalHours) * 100).toFixed(0) : 0;
         report += `📍 ${location.charAt(0).toUpperCase() + location.slice(1)}\n`;
         report += `• Suma: ${data.totalHours.toFixed(1)}h (${percentage}% całości)\n`;
-        report += `• Ranking:\n`;
+        report += `• Ranking lokalny:\n`;
         const sortedLocation = Object.entries(data.employees).sort((a, b) => b[1] - a[1]);
         sortedLocation.forEach(([name, hours], index) => {
             report += `  #${index + 1} ${name}: ${hours.toFixed(1)}h\n`;

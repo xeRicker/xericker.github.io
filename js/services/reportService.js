@@ -122,7 +122,7 @@ function formatReportText(stats) {
         const percentage = stats.totalHours > 0 ? ((data.totalHours / stats.totalHours) * 100).toFixed(0) : 0;
         report += `📍 ${location.charAt(0).toUpperCase() + location.slice(1)}\n`;
         report += `• Suma: ${data.totalHours.toFixed(1)}h (${percentage}% całości)\n`;
-        report += `• Ranking lokalny:\n`;
+        report += `• Ranking:\n`;
         const sortedLocation = Object.entries(data.employees).sort((a, b) => b[1] - a[1]);
         sortedLocation.forEach(([name, hours], index) => {
             report += `  #${index + 1} ${name}: ${hours.toFixed(1)}h\n`;
@@ -130,25 +130,23 @@ function formatReportText(stats) {
         report += `\n`;
     }
 
-    const sortedProducts = Object.entries(stats.productQuantities).sort((a, b) => b[1] - a[1]);
+    const sortedProducts = Object.entries(stats.productQuantities)
+        .filter(([name]) => !name.includes("Bułki"))
+        .sort((a, b) => b[1] - a[1]);
+
     if (sortedProducts.length > 0) {
         report += `📈 Największe zapotrzebowanie:\n`;
         sortedProducts.slice(0, 3).forEach(([name, qty]) => {
-            report += `• ${name} (${qty})\n`;
+            report += `- ${name} (${qty})\n`;
         });
         report += `\n`;
         
         if (sortedProducts.length > 3) {
             report += `📉 Najmniejsze zapotrzebowanie:\n`;
             sortedProducts.slice(-3).reverse().forEach(([name, qty]) => {
-                report += `• ${name} (${qty})\n`;
+                report += `- ${name} (${qty})\n`;
             });
             report += `\n`;
-        }
-
-        const sortedCategories = Object.entries(stats.categoryQuantities).sort((a, b) => b[1] - a[1]);
-        if (sortedCategories.length > 0) {
-            report += `📦 Najpopularniejsza kategoria: ${sortedCategories[0][0]}\n`;
         }
     }
 

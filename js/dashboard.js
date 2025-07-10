@@ -87,8 +87,8 @@ function processData(filteredData) {
         }
 
         for (const [name, quantity] of Object.entries(report.products)) {
-            if (name === "Bułki (ile jest?)") continue; // Wyklucz bułki z rankingów
-            
+            if (name.includes("Bułki")) continue;
+                        
             stats.productQuantities[name] = (stats.productQuantities[name] || 0) + Number(quantity);
 
             if (!stats.dailyProductUsage[dateKey]) stats.dailyProductUsage[dateKey] = {};

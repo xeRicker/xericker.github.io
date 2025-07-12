@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "12.07.2025",
+  "last_updated_at": "2025-07-12T19:54:01.960Z",
+  "employees": {
+    "Sebastian": "12:00 – 22:00",
+    "Kacper": "14:00 – 22:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cytryna": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 16,
+    "Cebula prażona": 2,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Tabasco": 1,
+    "Pepsi Max (Pracownicze)": 1,
+    "Niedobry Materiał": 1,
+    "Papier do kasy": 1
+  }
+}

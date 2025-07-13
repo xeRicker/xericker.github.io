@@ -1,0 +1,31 @@
+{
+  "location": "Osiek",
+  "date": "13.07.2025",
+  "last_updated_at": "2025-07-13T19:33:47.373Z",
+  "employees": {
+    "Sebastian": "12:00 – 22:00",
+    "Kacper": "12:00 – 22:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Krążki": 1,
+    "Tłuszcz/olej": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Tabasco": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

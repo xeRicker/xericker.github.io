@@ -84,7 +84,7 @@ const categories = {
   "🧽": {
     icon: "icons/chemia.png",
     items: [
-      { name: "Szmaty (Jarnot)", type: 's', options: { q: 1 } }, { name: "Zielony papier", type: 's', options: { q: 1 } },
+      { name: "Szmaty", type: 's', options: { q: 1 } }, { name: "Zielony papier", type: 's', options: { q: 1 } },
       { name: "Odtłuszczacz", type: 's', options: { q: 1 } }, { name: "Worki na śmieci", type: 's', options: { q: 1 } },
     ]
   },

@@ -1,15 +1,10 @@
 /**
  * Definicja "pełnego etatu" w godzinach na miesiąc.
- * Możesz dostosować tę wartość do swoich potrzeb.
- * Standardowo przyjmuje się ok. 160-176h. 168h to popularna średnia.
  */
 const FULL_TIME_HOURS_IN_MONTH = 168;
 
-
 /**
  * Tworzy mapę odwrotną { nazwaProduktu: emojiKategorii }
- * @param {object} categories - Główny obiekt kategorii
- * @returns {Map<string, string>} Mapa produktu do emoji.
  */
 function createProductToCategoryMap(categories) {
     const map = new Map();
@@ -23,8 +18,6 @@ function createProductToCategoryMap(categories) {
 
 /**
  * Pomocnicza funkcja do obliczania liczby godzin na podstawie stringa "HH:MM – HH:MM".
- * @param {string} timeString - np. "12:00 – 20:30"
- * @returns {number} Liczba godzin.
  */
 function calculateHours(timeString) {
   try {
@@ -43,9 +36,6 @@ function calculateHours(timeString) {
 
 /**
  * Przetwarza surowe dane z raportów i generuje zagregowane statystyki.
- * @param {Array<object>} reports - Tablica obiektów raportów z GitHuba.
- * @param {object} categories - Obiekt kategorii do mapowania produktów.
- * @returns {object} Obiekt z przetworzonymi statystykami.
  */
 function processReports(reports, categories) {
     const productToCategory = createProductToCategoryMap(categories);
@@ -58,10 +48,27 @@ function processReports(reports, categories) {
         totalHours: 0,
         totalShifts: 0,
         workDays: new Set(),
+        // --- NOWE POLA DLA CIEKAWOSTEK ---
+        pairCo-occurrence: {}, // Dla "Nierozłączny Duet"
+        productPresence: {}, // Dla "Specjalista od Produktu"
     };
 
     reports.forEach(report => {
         stats.workDays.add(report.date);
+        const dailyEmployees = Object.keys(report.employees);
+
+        // --- LOGIKA DLA "NIEROZŁĄCZNY DUET" ---
+        // Generujemy wszystkie możliwe pary pracowników z danego dnia
+        if (dailyEmployees.length > 1) {
+            for (let i = 0; i < dailyEmployees.length; i++) {
+                for (let j = i + 1; j < dailyEmployees.length; j++) {
+                    // Sortujemy alfabetycznie, aby para [A, B] była tym samym co [B, A]
+                    const pair = [dailyEmployees[i], dailyEmployees[j]].sort();
+                    const pairKey = pair.join(' & ');
+                    stats.pairCo_occurrence[pairKey] = (stats.pairCo_occurrence[pairKey] || 0) + 1;
+                }
+            }
+        }
         
         for (const [name, timeString] of Object.entries(report.employees)) {
             const hours = calculateHours(timeString);
@@ -78,13 +85,23 @@ function processReports(reports, categories) {
             stats.totalShifts += 1;
         }
         
-        for (const [name, quantity] of Object.entries(report.products)) {
+        for (const [productName, quantity] of Object.entries(report.products)) {
             const nQty = Number(quantity);
-            stats.productQuantities[name] = (stats.productQuantities[name] || 0) + nQty;
+            stats.productQuantities[productName] = (stats.productQuantities[productName] || 0) + nQty;
             
-            const categoryEmoji = productToCategory.get(name);
+            const categoryEmoji = productToCategory.get(productName);
             if (categoryEmoji) {
                 stats.categoryQuantities[categoryEmoji] = (stats.categoryQuantities[categoryEmoji] || 0) + nQty;
+            }
+
+            // --- LOGIKA DLA "SPECJALISTA OD PRODUKTU" ---
+            if (nQty > 0) {
+                if (!stats.productPresence[productName]) {
+                    stats.productPresence[productName] = {};
+                }
+                dailyEmployees.forEach(employee => {
+                    stats.productPresence[productName][employee] = (stats.productPresence[productName][employee] || 0) + 1;
+                });
             }
         }
     });
@@ -94,8 +111,6 @@ function processReports(reports, categories) {
 
 /**
  * Formatuje przetworzone statystyki w czytelny, profesjonalny raport tekstowy.
- * @param {object} stats - Obiekt statystyk zwrócony przez processReports.
- * @returns {string} Gotowy do skopiowania raport.
  */
 function formatReportText(stats) {
     if (stats.totalHours === 0) return "Brak danych do wygenerowania raportu.";
@@ -119,11 +134,7 @@ function formatReportText(stats) {
         sortedTotal.forEach(([name, hours], index) => {
             const days = stats.employeeWorkDays[name] || 0;
             const prefix = index === 0 ? '👑 MVP' : `#${index + 1}`;
-            
-            // --- NOWA LOGIKA ---
-            // Obliczanie procentu etatu
             const ftePercentage = Math.round((hours / FULL_TIME_HOURS_IN_MONTH) * 100);
-            
             report += `${prefix} ${name}: ${hours.toFixed(1)}h (${days} dni) (${ftePercentage}% Etat)\n`;
         });
         report += `\n`;
@@ -161,14 +172,50 @@ function formatReportText(stats) {
         }
     }
 
+    report += `\n---\n🔎 Ciekawostki\n---\n`;
+
+    // 1. Nierozłączny Duet
+    const sortedPairs = Object.entries(stats.pairCo_occurrence).sort((a, b) => b[1] - a[1]);
+    if (sortedPairs.length > 0) {
+        const topPair = sortedPairs[0];
+        report += `• Nierozłączny Duet: ${topPair[0]} (pracowali razem ${topPair[1]} razy).\n`;
+    }
+
+    // 2. Specjalista od Lokalizacji
+    report += `• Główne lokalizacje pracowników:\n`;
+    Object.entries(stats.employeeHoursTotal).forEach(([employeeName, totalHours]) => {
+        let maxHours = 0;
+        let favLocation = 'Brak danych';
+        for (const [locationName, locationData] of Object.entries(stats.employeeHoursByLocation)) {
+            const employeeHoursInLocation = locationData.employees[employeeName] || 0;
+            if (employeeHoursInLocation > maxHours) {
+                maxHours = employeeHoursInLocation;
+                favLocation = locationName;
+            }
+        }
+        if (totalHours > 0) {
+            const percentage = Math.round((maxHours / totalHours) * 100);
+            report += `  - ${employeeName}: ${favLocation} (${percentage}% czasu pracy).\n`;
+        }
+    });
+
+    // 3. Specjalista od Produktu (dla top 3 produktów)
+    if (sortedProducts.length > 0) {
+        report += `• Kto jest na zmianie, gdy potrzeba:\n`;
+        sortedProducts.slice(0, 3).forEach(([productName]) => {
+            const presences = stats.productPresence[productName];
+            if (presences) {
+                const topEmployeeForProduct = Object.entries(presences).sort((a, b) => b[1] - a[1])[0];
+                report += `  - "${productName}"? Najczęściej ${topEmployeeForProduct[0]}.\n`;
+            }
+        });
+    }
+
     return report.trim();
 }
 
 /**
  * Główna, publiczna funkcja, która orkiestruje całym procesem.
- * @param {Array<object>} reports - Surowe dane z GitHuba.
- * @param {object} categories - Obiekt kategorii do mapowania.
- * @returns {string} Sformatowany raport.
  */
 export function generateMonthlyReport(reports, categories) {
     const processedStats = processReports(reports, categories);

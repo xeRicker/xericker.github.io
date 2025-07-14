@@ -48,8 +48,7 @@ function processReports(reports, categories) {
         totalHours: 0,
         totalShifts: 0,
         workDays: new Set(),
-        // --- NOWE POLA DLA CIEKAWOSTEK ---
-        pairCo-occurrence: {}, // Dla "Nierozłączny Duet"
+        pairCooccurrence: {}, // Dla "Nierozłączny Duet"
         productPresence: {}, // Dla "Specjalista od Produktu"
     };
 

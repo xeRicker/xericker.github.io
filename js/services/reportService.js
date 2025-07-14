@@ -48,7 +48,7 @@ function processReports(reports, categories) {
         totalHours: 0,
         totalShifts: 0,
         workDays: new Set(),
-        pairCooccurrence: {}, // Dla "Nierozłączny Duet"
+        pairCo_occurrence: {}, // Dla "Nierozłączny Duet"
         productPresence: {}, // Dla "Specjalista od Produktu"
     };
 

@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "17.07.2025",
+  "last_updated_at": "2025-07-17T19:01:58.104Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Małe": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki (ile jest?)": 24,
+    "Sos: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

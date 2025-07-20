@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "20.07.2025",
+  "last_updated_at": "2025-07-20T19:08:26.767Z",
+  "employees": {
+    "Paweł": "14:00 – 21:00",
+    "Natalia": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cebula": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki (ile jest?)": 1,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Czosnek sypany": 1,
+    "Rękawiczki": 1
+  }
+}

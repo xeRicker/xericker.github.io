@@ -3,7 +3,7 @@ import { fetchAllData } from './services/githubService.js';
 // Kolory pracowników, aby były spójne z główną aplikacją
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
-  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Śmieciński": "#1abc9c"
+  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
 
 // Globalne referencje do wykresów, aby móc je aktualizować

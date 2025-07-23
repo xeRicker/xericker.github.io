@@ -5,10 +5,10 @@ import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 import { generateMonthlyReport } from './services/reportService.js';
 
 // --- DANE APLIKACJI ---
-const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Natalia", "Kacper", "Śmieciński"];
+const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Natalia", "Kacper", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
-  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Śmieciński": "#1abc9c"
+  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
 const timePresets = [
   { label: "Własne", value: "" }, { label: "12:00 - 20:00", value: "12:00-20:00" },

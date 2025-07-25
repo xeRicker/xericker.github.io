@@ -1,0 +1,31 @@
+{
+  "location": "Osiek",
+  "date": "25.07.2025",
+  "last_updated_at": "2025-07-25T18:51:46.553Z",
+  "employees": {
+    "Radek": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 5,
+    "Pomidory": 1,
+    "Cytryna": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 14,
+    "Cebula prażona": 1,
+    "Sos: Czosnek": 1,
+    "Przyprawa do grilla": 1,
+    "Pepsi": 1,
+    "Pepsi Max (Pracownicze)": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1
+  }
+}

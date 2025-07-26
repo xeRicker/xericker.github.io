@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "26.07.2025",
+  "last_updated_at": "2025-07-26T18:35:33.240Z",
+  "employees": {
+    "Radek": "12:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 3,
+    "Cebula prażona": 1,
+    "Serwetki": 1,
+    "Worki na śmieci": 1
+  }
+}

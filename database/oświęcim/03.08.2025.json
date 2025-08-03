@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "03.08.2025",
+  "last_updated_at": "2025-08-03T19:08:05.399Z",
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Natalia": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cytryna": 1,
+    "Mięso: Duże": 2,
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 6,
+    "Cebula prażona": 2,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Sól do frytek": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Długopis": 1
+  }
+}

@@ -1,33 +1,9 @@
 {
   "location": "Osiek",
   "date": "03.08.2025",
-  "last_updated_at": "2025-08-03T19:01:06.248Z",
-  "employees": {
-    "Paweł": "14:00 – 21:00",
-    "Natalia": "14:00 – 21:00"
-  },
+  "last_updated_at": "2025-08-04T05:00:39.333Z",
+  "employees": {},
   "products": {
-    "Sałata": 1,
-    "Ogórki": 6,
-    "Pomidory": 1,
-    "Mięso: Duże": 1,
-    "Boczek": 2,
-    "Chorizo": 1,
-    "Cheddar": 1,
-    "Halloumi": 1,
-    "Majonez": 1,
-    "Frytki": 3,
-    "Tłuszcz/olej": 1,
-    "Bułki (ile jest?)": 15,
-    "Cebula prażona": 1,
-    "Saszetki: Ketchup": 1,
-    "Przyprawa do grilla": 1,
-    "Sól do frytek": 1,
-    "Czosnek sypany": 1,
-    "Torby: Małe": 1,
-    "Torby: Średnie": 1,
-    "Worki na śmieci": 1,
-    "Drobne: 1,2,5": 1,
-    "Długopis": 1
+    "Bułki (ile jest?)": 0
   }
 }

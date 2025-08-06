@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "06.08.2025",
+  "last_updated_at": "2025-08-06T19:00:58.598Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 6,
+    "Cebula prażona": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci": 1
+  }
+}

@@ -21,9 +21,11 @@ const categories = {
   "🥗": {
     icon: "icons/warzywa.png",
     items: [
-      { name: "Sałata", type: '', options: { q: 1 } }, { name: "Ogórki", type: '', options: { q: 1 } },
-      { name: "Pomidory", type: 's', options: { q: 1 } }, { name: "Cebula", type: 's', options: { q: 1 } },
-      { name: "Jalapeno", type: 's', options: { q: 1 } }, { name: "Cytryna", type: 's', options: { q: 1 } }
+      { name: "Sałata", type: '', options: { q: 1 } },
+      { name: "Ogórki", type: '', options: { q: 1 } },
+      { name: "Pomidory", type: 's', options: { q: 1 } },
+      { name: "Cebula", type: 's', options: { q: 1 } },
+      { name: "Jalapeno", type: 's', options: { q: 1 } },
     ]
   },
   "🥩": {
@@ -44,8 +46,10 @@ const categories = {
   "🍟": {
     icon: "icons/frytki.png",
     items: [
-      { name: "Frytki", type: '', options: { q: 1 } }, { name: "Placki", type: '', options: { q: 1 } },
-      { name: "Krążki", type: '', options: { q: 1 } }, { name: "Tłuszcz/olej", type: 's', options: { q: 1 } },
+      { name: "Frytki", type: '', options: { q: 1 } },
+      { name: "Placki", type: '', options: { q: 1 } },
+      { name: "Krążki", type: '', options: { q: 1 } },
+      { name: "Frytura", type: 's', options: { q: 1 } }
     ]
   },
   "🍞": {
@@ -55,45 +59,70 @@ const categories = {
   "🧂": {
     icon: "icons/sosy.png",
     items: [
-      { name: "Cebula prażona", type: '', options: { q: 1 } }, { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
-      { name: "Sos: Carolina", type: 's', options: { q: 1 } }, { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
-      { name: "Sos: BBQ", type: 's', options: { q: 1 } }, { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
-      { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } }, { name: "Saszetki: Majonez", type: 's', options: { q: 1 } },
-      { name: "Sriracha", type: 's', options: { q: 1 } }, { name: "Tabasco", type: 's', options: { q: 1 } },
-      { name: "Przyprawa do grilla", type: 's', options: { q: 1 } }, { name: "Sól do frytek", type: 's', options: { q: 1 } },
-      { name: "Czosnek sypany", type: 's', options: { q: 1 } }
+      { name: "Cebula prażona", type: '', options: { q: 1 } }, 
+      { name: "Sriracha", type: 's', options: { q: 1 } }, 
+      { name: "Tabasco", type: 's', options: { q: 1 } },
+      { name: "Przyprawa do grilla", type: 's', options: { q: 1 } }, 
+      { name: "Sól do frytek", type: 's', options: { q: 1 } },
+      { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
+      { name: "Sos: Carolina", type: 's', options: { q: 1 } }, 
+      { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
+      { name: "Sos: BBQ", type: 's', options: { q: 1 } }, 
+      { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
+      { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
+      { name: "Saszetki: Majonez", type: 's', options: { q: 1 } },
+      { name: "Zbój: Czosnek", type: 's', options: { q: 1 } },
+      { name: "Zbój: Pieprz", type: 's', options: { q: 1 } },
+      { name: "Zbój: Cytryna", type: 's', options: { q: 1 } }
     ]
   },
   "🥤": {
     icon: "icons/napoje.png",
     items: [
-      { name: "Pepsi", type: 's', options: { q: 1 } }, { name: "Pepsi Max (Pracownicze)", type: 's', options: { q: 1 } },
-      { name: "Niedobry Materiał", type: 's', options: { q: 1 } }, { name: "Woda 5L", type: 's', options: { q: 1 } }
+      { name: "Pepsi", type: 's', options: { q: 1 } },
+      { name: "Pepsi Max", type: 's', options: { q: 1 } },
+      { name: "Mirinda", type: 's', options: { q: 1 } },
+      { name: "Lipton", type: 's', options: { q: 1 } },
+      { name: "Dobry Materiał", type: 's', options: { q: 1 } },
+      { name: "Piwo: Brackie", type: 's', options: { q: 1 } },
+      { name: "Piwo: Namysłów", type: 's', options: { q: 1 } },
+      { name: "Piwo: Żywiec", type: 's', options: { q: 1 } },
+      { name: "Piwo: Żywiec 0%", type: 's', options: { q: 1 } }
     ]
   },
   "🛍️": {
     icon: "icons/opakowania.png",
     items: [
-      { name: "Torby: Małe", type: 's', options: { q: 1 } }, { name: "Torby: Średnie", type: 's', options: { q: 1 } },
-      { name: "Torby: Duże", type: 's', options: { q: 1 } }, { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
-      { name: "Sos: Pokrywki", type: 's', options: { q: 1 } }, { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
-      { name: "Folia", type: 's', options: { q: 1 } }, { name: "Serwetki", type: 's', options: { q: 1 } },
+      { name: "Torby: Małe", type: 's', options: { q: 1 } },
+      { name: "Torby: Średnie", type: 's', options: { q: 1 } },
+      { name: "Torby: Duże", type: 's', options: { q: 1 } },
+      { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
+      { name: "Sos: Pokrywki", type: 's', options: { q: 1 } },
+      { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
+      { name: "Folia", type: 's', options: { q: 1 } },
+      { name: "Serwetki", type: 's', options: { q: 1 } },
       { name: "Rękawiczki", type: 's', options: { q: 1 } }
     ]
   },
   "🧽": {
     icon: "icons/chemia.png",
     items: [
-      { name: "Szmaty", type: 's', options: { q: 1 } }, { name: "Zielony papier", type: 's', options: { q: 1 } },
-      { name: "Odtłuszczacz", type: 's', options: { q: 1 } }, { name: "Worki na śmieci", type: 's', options: { q: 1 } },
+      { name: "Szmaty", type: 's', options: { q: 1 } },
+      { name: "Zielony papier", type: 's', options: { q: 1 } },
+      { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
+      { name: "Worki na śmieci", type: 's', options: { q: 1 } },
+      { name: "Woda 5L", type: 's', options: { q: 1 } }
     ]
   },
   "📋": {
     icon: "icons/papierologia.png",
     items: [
-      { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } }, { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
-      { name: "Długopis", type: 's', options: { q: 1 } }, { name: "Pisak", type: 's', options: { q: 1 } },
-      { name: "Zeszyt", type: 's', options: { q: 1 } }, { name: "Papier do kasy", type: 's', options: { q: 1 } }
+      { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
+      { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
+      { name: "Długopis", type: 's', options: { q: 1 } },
+      { name: "Pisak", type: 's', options: { q: 1 } },
+      { name: "Zeszyt", type: 's', options: { q: 1 } },
+      { name: "Papier do kasy", type: 's', options: { q: 1 } }
     ]
   }
 };

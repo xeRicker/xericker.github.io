@@ -1,14 +1,20 @@
 {
   "location": "Oświęcim",
   "date": "16.08.2025",
-  "last_updated_at": "2025-08-16T16:42:55.790Z",
+  "last_updated_at": "2025-08-16T19:13:28.431Z",
   "employees": {
-    "Sebastian": "12:00 – 20:00"
+    "Paweł": "12:00 – 21:30",
+    "Natalia": "14:00 – 21:30"
   },
   "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Stripsy": 3,
+    "Frytki": 3,
     "Bułki (ile jest?)": 0,
-    "Lipton": 1,
-    "Dobry Materiał": 1,
-    "Rękawiczki": 1
+    "Cebula prażona": 1,
+    "Pepsi": 1,
+    "Torby: Małe": 1
   }
 }

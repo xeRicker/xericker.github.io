@@ -1,0 +1,25 @@
+{
+  "location": "Osiek",
+  "date": "18.08.2025",
+  "last_updated_at": "2025-08-18T18:39:39.953Z",
+  "employees": {
+    "Paweł": "14:00 – 20:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Cheddar": 2,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Sos: Ketchup": 1
+  }
+}

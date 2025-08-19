@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "19.08.2025",
+  "last_updated_at": "2025-08-19T19:05:22.024Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki (ile jest?)": 11,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Przyprawa do grilla": 1,
+    "Sos: BBQ": 1,
+    "Sos: Sweet Chilli": 1,
+    "Serwetki": 1
+  }
+}

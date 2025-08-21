@@ -1,0 +1,24 @@
+{
+  "location": "Oświęcim",
+  "date": "21.08.2025",
+  "last_updated_at": "2025-08-21T04:34:50.706Z",
+  "employees": {
+    "Paweł": "12:00 – 20:00",
+    "Radek": "12:00 – 21:30",
+    "Sebastian": "12:00 – 22:00",
+    "Tomek": "12:00 – 21:30",
+    "Natalia": "14:00 – 20:00",
+    "Kacper": "14:00 – 22:00",
+    "Dominik": "12:00 – 20:00"
+  },
+  "products": {
+    "Sałata": 2,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 2,
+    "Halloumi": 5,
+    "Frytki": 1,
+    "Bułki (ile jest?)": 0
+  }
+}

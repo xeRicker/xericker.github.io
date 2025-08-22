@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "22.08.2025",
+  "last_updated_at": "2025-08-22T19:30:06.386Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Kacper": "16:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Mięso: Małe": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Bułki (ile jest?)": 33,
+    "Cebula prażona": 3,
+    "Przyprawa do grilla": 1,
+    "Sól do frytek": 1,
+    "Sos: Czosnek": 1,
+    "Zbój: Cytryna": 1,
+    "Zielony papier": 1,
+    "Drobne: 10,20": 1
+  }
+}

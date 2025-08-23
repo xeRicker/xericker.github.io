@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "23.08.2025",
+  "last_updated_at": "2025-08-23T19:00:05.592Z",
+  "employees": {
+    "Radek": "12:00 – 21:30",
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 3,
+    "Bułki (ile jest?)": 10,
+    "Cebula prażona": 2,
+    "Sriracha": 1,
+    "Pepsi Max": 1,
+    "Opakowania na frytki": 1,
+    "Lepy na muchy": 1
+  }
+}

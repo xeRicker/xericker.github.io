@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "25.08.2025",
+  "last_updated_at": "2025-08-25T18:45:39.203Z",
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 0,
+    "Folia": 1,
+    "Szmaty": 1,
+    "Drobne: 10,20": 1
+  }
+}

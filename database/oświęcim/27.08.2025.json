@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "27.08.2025",
+  "last_updated_at": "2025-08-27T19:05:15.658Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Cheddar": 2,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Bułki (ile jest?)": 8,
+    "Cebula prażona": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1
+  }
+}

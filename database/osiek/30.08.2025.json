@@ -1,0 +1,21 @@
+{
+  "location": "Osiek",
+  "date": "30.08.2025",
+  "last_updated_at": "2025-08-30T18:49:31.966Z",
+  "employees": {
+    "Radek": "12:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 2,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Opakowania na frytki": 1,
+    "Lepy na muchy": 1
+  }
+}

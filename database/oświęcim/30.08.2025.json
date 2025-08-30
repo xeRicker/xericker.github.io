@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "30.08.2025",
+  "last_updated_at": "2025-08-30T18:51:05.345Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 6,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Frytura": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Przyprawa do grilla": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci": 1,
+    "Drobne: 10,20": 1,
+    "Długopis": 1
+  }
+}

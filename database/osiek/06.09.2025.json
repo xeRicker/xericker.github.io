@@ -1,0 +1,30 @@
+{
+  "location": "Osiek",
+  "date": "06.09.2025",
+  "last_updated_at": "2025-09-06T19:11:05.993Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Kacper": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 5,
+    "Pomidory": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Szmaty": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "location": "Osiek",
+  "date": "13.09.2025",
+  "last_updated_at": "2025-09-13T18:47:28.490Z",
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1
+  }
+}

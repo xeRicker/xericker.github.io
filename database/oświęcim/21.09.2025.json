@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "21.09.2025",
+  "last_updated_at": "2025-09-21T19:13:55.399Z",
+  "employees": {
+    "Natalia": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki (ile jest?)": 0,
+    "Tabasco": 1,
+    "Sos: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1
+  }
+}

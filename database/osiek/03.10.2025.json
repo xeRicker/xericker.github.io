@@ -1,0 +1,25 @@
+{
+  "location": "Osiek",
+  "date": "03.10.2025",
+  "last_updated_at": "2025-10-03T18:22:00.434Z",
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki (ile jest?)": 7,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1
+  }
+}

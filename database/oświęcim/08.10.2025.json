@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "08.10.2025",
+  "last_updated_at": "2025-10-08T19:10:44.379Z",
+  "employees": {
+    "Radek": "12:00 – 17:30",
+    "Kacper": "17:30 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 1,
+    "Bułki (ile jest?)": 35,
+    "Cebula prażona": 2,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Lipton": 1,
+    "Opakowania na frytki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
+  }
+}

@@ -1,14 +1,25 @@
 {
   "location": "Oświęcim",
   "date": "09.10.2025",
-  "last_updated_at": "2025-10-09T04:52:25.993Z",
+  "last_updated_at": "2025-10-09T18:52:01.895Z",
   "employees": {
-    "Paweł": "12:00 – 20:00",
-    "Dominik": "14:00 – 20:30"
+    "Tomek": "12:30 – 21:30"
   },
   "products": {
-    "Sałata": 9,
-    "Cheddar": 4,
-    "Bułki (ile jest?)": 0
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Mięso: Małe": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Bułki (ile jest?)": 8,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci": 1
   }
 }

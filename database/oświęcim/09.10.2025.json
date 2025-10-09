@@ -1,0 +1,14 @@
+{
+  "location": "Oświęcim",
+  "date": "09.10.2025",
+  "last_updated_at": "2025-10-09T04:52:25.993Z",
+  "employees": {
+    "Paweł": "12:00 – 20:00",
+    "Dominik": "14:00 – 20:30"
+  },
+  "products": {
+    "Sałata": 9,
+    "Cheddar": 4,
+    "Bułki (ile jest?)": 0
+  }
+}

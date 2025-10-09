@@ -1,7 +1,7 @@
 {
   "location": "Oświęcim",
   "date": "09.10.2025",
-  "last_updated_at": "2025-10-09T18:52:01.895Z",
+  "last_updated_at": "2025-10-09T18:52:08.948Z",
   "employees": {
     "Tomek": "12:30 – 21:30"
   },
@@ -20,6 +20,7 @@
     "Torby: Małe": 1,
     "Serwetki": 1,
     "Zielony papier": 1,
-    "Worki na śmieci": 1
+    "Worki na śmieci": 1,
+    "Papier do kasy": 1
   }
 }

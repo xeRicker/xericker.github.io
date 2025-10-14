@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "14.10.2025",
+  "last_updated_at": "2025-10-14T18:25:05.018Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 2,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Papier do kasy": 1
+  }
+}

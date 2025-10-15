@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "15.10.2025",
+  "last_updated_at": "2025-10-15T18:29:31.543Z",
+  "employees": {
+    "Sebastian": "15:00 – 21:00",
+    "Kacper": "15:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki (ile jest?)": 0,
+    "Cebula prażona": 1,
+    "Sól do frytek": 1,
+    "Sos: Ketchup": 1,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

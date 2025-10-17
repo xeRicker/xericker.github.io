@@ -4,18 +4,28 @@ import { renderEmployeeControls, renderProductGrid, highlightProduct, updateRese
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 import { generateMonthlyReport } from './services/reportService.js';
 
-// --- DANE APLIKACJI ---
-const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Natalia", "Kacper", "Dominik"];
+const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
 const timePresets = [
-  { label: "Własne", value: "" }, { label: "12:00 - 20:00", value: "12:00-20:00" },
-  { label: "12:00 - 20:30", value: "12:00-20:30" }, { label: "12:00 - 21:30", value: "12:00-21:30" },
-  { label: "12:00 - 22:00", value: "12:00-22:00" }, { label: "14:00 - 20:00", value: "14:00-20:00" },
-  { label: "14:00 - 20:30", value: "14:00-20:30" }, { label: "14:00 - 21:30", value: "14:00-21:30" },
-  { label: "14:00 - 22:00", value: "14:00-22:00" }
+  { label: "Własne", value: "" },
+  { label: "12:00 - 19:30", value: "12:00-19:30" },
+  { label: "12:00 - 20:00", value: "12:00-20:00" },
+  { label: "12:00 - 20:30", value: "12:00-20:30" },
+  { label: "12:00 - 21:30", value: "12:00-21:30" },
+  { label: "12:00 - 22:00", value: "12:00-22:00" },
+  { label: "14:00 - 19:30", value: "14:00-19:30" },
+  { label: "14:00 - 20:00", value: "14:00-20:00" },
+  { label: "14:00 - 20:30", value: "14:00-20:30" },
+  { label: "14:00 - 21:30", value: "14:00-21:30" },
+  { label: "14:00 - 22:00", value: "14:00-22:00" },
+  { label: "16:00 - 19:30", value: "16:00-19:30" },
+  { label: "16:00 - 20:00", value: "16:00-20:00" },
+  { label: "16:00 - 20:30", value: "16:00-20:30" },
+  { label: "16:00 - 21:30", value: "16:00-21:30" },
+  { label: "16:00 - 22:00", value: "16:00-22:00" }
 ];
 const categories = {
   "🥗": {
@@ -31,15 +41,18 @@ const categories = {
   "🥩": {
     icon: "icons/mieso.png",
     items: [
-      { name: "Mięso: Małe", type: '', options: { q: 1 } }, { name: "Mięso: Duże", type: '', options: { q: 1 } },
-      { name: "Stripsy", type: '', options: { q: 1 } }, { name: "Boczek", type: '', options: { q: 1 } },
+      { name: "Mięso: Małe", type: '', options: { q: 1 } },
+      { name: "Mięso: Duże", type: '', options: { q: 1 } },
+      { name: "Stripsy", type: '', options: { q: 1 } },
+      { name: "Boczek", type: '', options: { q: 1 } },
       { name: "Chorizo", type: 's', options: { q: 2 } }
     ]
   },
   "🧀": {
     icon: "icons/nabial.png",
     items: [
-      { name: "Cheddar", type: '', options: { q: 1 } }, { name: "Halloumi", type: '', options: { q: 1 } },
+      { name: "Cheddar", type: '', options: { q: 1 } },
+      { name: "Halloumi", type: '', options: { q: 1 } },
       { name: "Majonez", type: 's', options: { q: 1 } }
     ]
   },
@@ -54,7 +67,7 @@ const categories = {
   },
   "🍞": {
     icon: "icons/pieczywo.png",
-    items: [ { name: "Bułki (ile jest?)", type: '', options: { q: 1 } } ]
+    items: [ { name: "Bułki", type: '', options: { q: 1 } } ]
   },
   "🧂": {
     icon: "icons/sosy.png",
@@ -101,7 +114,8 @@ const categories = {
       { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
       { name: "Folia", type: 's', options: { q: 1 } },
       { name: "Serwetki", type: 's', options: { q: 1 } },
-      { name: "Rękawiczki", type: 's', options: { q: 1 } }
+      { name: "Rękawiczki", type: 's', options: { q: 1 } },
+      { name: "Papier pod grilla", type: 's', options: { q: 1 } }
     ]
   },
   "🧽": {
@@ -130,7 +144,6 @@ const categories = {
 const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
-// --- INICJALIZACJA APLIKACJI ---
 document.addEventListener('DOMContentLoaded', () => {
   renderEmployeeControls(employees, employeeColors, timePresets);
   renderProductGrid(categories);
@@ -163,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 });
 
-// --- LOGIKA BIZNESOWA I OBSŁUGA ZDARZEŃ ---
 function setupEventListeners() {
     document.getElementById('products').addEventListener('change', handleProductChange);
     document.getElementById('products').addEventListener('click', handleProductButtonClick);
@@ -287,12 +299,10 @@ async function generateAndProcessLists() {
         quantity = parseInt(document.getElementById(`input-${name}`).value, 10) || 0;
       }
 
-      // --- NOWA LOGIKA DLA BUŁEK ---
       if (name.includes("Bułki") && quantity === 0) {
-        reportData.products[name] = 0; // Zapisujemy 0, ale generujemy inny tekst
-        textSection += `  • Bułki (ile jest?): ❌\n`;
+        reportData.products[name] = 0;
+        textSection += `  • Bułki: ❌\n`;
       } else if (quantity > 0) {
-      // --- KONIEC NOWEJ LOGIKI ---
         reportData.products[name] = quantity;
         textSection += `  • ${name}${type === 's' ? "" : ": " + quantity}\n`;
       }
@@ -326,8 +336,6 @@ async function handleGenerateMonthlyReport() {
       alert("Brak danych za bieżący miesiąc do wygenerowania raportu.");
       return;
     }
-
-    // Przekazujemy `reports` ORAZ `categories` do serwisu
     const reportText = generateMonthlyReport(reports, categories);
 
     navigator.clipboard.writeText(reportText).then(() => {

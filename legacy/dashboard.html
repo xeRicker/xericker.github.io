@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Analityczny</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Panel Analityczny</h1>
+            <a href="index.html" class="back-link">← Wróć do listy</a>
+        </header>
+
+        <div class="filters">
+            <label>Od: <input type="date" id="dateFrom"></label>
+            <label>Do: <input type="date" id="dateTo"></label>
+            <label>Lokalizacja: 
+                <select id="locationFilter">
+                    <option value="all">Wszystkie</option>
+                    <option value="Oświęcim">Oświęcim</option>
+                    <option value="Osiek">Osiek</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h2>Suma godzin</h2>
+                <p id="kpi-total-hours">---</p>
+            </div>
+            <div class="kpi-card">
+                <h2>Dni pracy</h2>
+                <p id="kpi-work-days">---</p>
+            </div>
+            <div class="kpi-card">
+                <h2>Najbardziej pracowity</h2>
+                <p id="kpi-top-employee">---</p>
+            </div>
+             <div class="kpi-card">
+                <h2>Top produkt</h2>
+                <p id="kpi-top-product">---</p>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3>Godziny pracy w czasie</h3>
+                <canvas id="hoursOverTimeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Ranking pracowników</h3>
+                <canvas id="employeeRankingChart"></canvas>
+            </div>
+             <div class="chart-container large-chart">
+                <h3>Podział godzin pracy w poszczególnych dniach</h3>
+                <canvas id="dailyWorkDistributionChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Podział pracy (Lokalizacje)</h3>
+                <canvas id="locationSplitChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Top 10 produktów (bez bułek)</h3>
+                <canvas id="productRankingChart"></canvas>
+            </div>
+             <div class="chart-container large-chart">
+                <h3>Zużycie produktów w czasie (Top 5)</h3>
+                <canvas id="productUsageOverTimeChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Biblioteka Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Nasz skrypt do obsługi dashboardu -->
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

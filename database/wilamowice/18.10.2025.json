@@ -1,0 +1,29 @@
+{
+  "location": "Wilamowice",
+  "date": "18.10.2025",
+  "last_updated_at": "2025-10-18T18:48:39.843Z",
+  "employees": {
+    "Radek": "12:00 – 21:30",
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 4,
+    "Frytki": 2,
+    "Bułki": 15,
+    "Cebula prażona": 2,
+    "Przyprawa do grilla": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Sweet Chilli": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1,
+    "Zeszyt": 1
+  }
+}

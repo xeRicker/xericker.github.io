@@ -1,0 +1,25 @@
+{
+  "location": "Wilamowice",
+  "date": "21.10.2025",
+  "last_updated_at": "2025-10-21T19:09:06.513Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

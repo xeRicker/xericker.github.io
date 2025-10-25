@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "25.10.2025",
+  "last_updated_at": "2025-10-25T18:37:12.125Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:00",
+    "Natalia": "14:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 1,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 21,
+    "Tabasco": 1,
+    "Sos: Carolina": 1,
+    "Saszetki: Majonez": 1,
+    "Pepsi Max": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1
+  }
+}

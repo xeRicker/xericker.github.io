@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "26.10.2025",
+  "last_updated_at": "2025-10-26T20:04:05.337Z",
+  "employees": {
+    "Paweł": "14:00 – 21:00",
+    "Natalia": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Jalapeno": 1,
+    "Boczek": 3,
+    "Cheddar": 3,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Sos: Carolina": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1
+  }
+}

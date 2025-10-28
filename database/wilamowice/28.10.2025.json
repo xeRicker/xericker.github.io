@@ -1,0 +1,20 @@
+{
+  "location": "Wilamowice",
+  "date": "28.10.2025",
+  "last_updated_at": "2025-10-28T19:56:20.198Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Placki": 1,
+    "Bułki": 23,
+    "Cebula prażona": 1,
+    "Sos: Sweet Chilli": 1,
+    "Pepsi Max": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

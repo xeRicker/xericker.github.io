@@ -1,0 +1,19 @@
+{
+  "location": "Oświęcim",
+  "date": "30.10.2025",
+  "last_updated_at": "2025-10-30T19:24:13.637Z",
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Krążki": 1,
+    "Bułki": 25,
+    "Sos: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1
+  }
+}

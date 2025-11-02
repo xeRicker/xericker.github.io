@@ -1,0 +1,29 @@
+{
+  "location": "Wilamowice",
+  "date": "02.11.2025",
+  "last_updated_at": "2025-11-02T20:13:40.157Z",
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Kacper": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 3,
+    "Przyprawa do grilla": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci": 1
+  }
+}

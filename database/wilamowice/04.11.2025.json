@@ -1,0 +1,17 @@
+{
+  "location": "Wilamowice",
+  "date": "04.11.2025",
+  "last_updated_at": "2025-11-04T19:53:42.938Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Bułki": 21,
+    "Worki na śmieci": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

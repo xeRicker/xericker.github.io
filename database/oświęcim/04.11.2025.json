@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "04.11.2025",
+  "last_updated_at": "2025-11-04T19:44:08.874Z",
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Bułki": 25,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Saszetki: Majonez": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

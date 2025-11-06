@@ -1,0 +1,19 @@
+{
+  "location": "Oświęcim",
+  "date": "06.11.2025",
+  "last_updated_at": "2025-11-06T19:54:47.164Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Boczek": 1,
+    "Frytki": 2,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pokrywki": 1
+  }
+}

@@ -1,7 +1,7 @@
 {
   "location": "Oświęcim",
   "date": "09.11.2025",
-  "last_updated_at": "2025-11-09T19:52:29.742Z",
+  "last_updated_at": "2025-11-09T19:54:24.936Z",
   "employees": {
     "Sebastian": "14:00 – 21:30",
     "Kacper": "14:00 – 21:30"
@@ -20,6 +20,7 @@
     "Saszetki: Majonez": 1,
     "Zbój: Pieprz": 1,
     "Torby: Małe": 1,
-    "Papier pod grilla": 1
+    "Papier pod grilla": 1,
+    "Worki na śmieci": 1
   }
 }

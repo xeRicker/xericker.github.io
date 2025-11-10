@@ -80,10 +80,9 @@ const categories = {
       { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
       { name: "Sos: Carolina", type: 's', options: { q: 1 } }, 
       { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
-      { name: "Sos: BBQ", type: 's', options: { q: 1 } }, 
+      { name: "Sos: Barbecue", type: 's', options: { q: 1 } }, 
       { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
       { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
-      { name: "Saszetki: Majonez", type: 's', options: { q: 1 } },
       { name: "Zbój: Czosnek", type: 's', options: { q: 1 } },
       { name: "Zbój: Pieprz", type: 's', options: { q: 1 } },
       { name: "Zbój: Cytryna", type: 's', options: { q: 1 } }
@@ -95,12 +94,7 @@ const categories = {
       { name: "Pepsi", type: 's', options: { q: 1 } },
       { name: "Pepsi Max", type: 's', options: { q: 1 } },
       { name: "Mirinda", type: 's', options: { q: 1 } },
-      { name: "Lipton", type: 's', options: { q: 1 } },
-      { name: "Dobry Materiał", type: 's', options: { q: 1 } },
-      { name: "Piwo: Brackie", type: 's', options: { q: 1 } },
-      { name: "Piwo: Namysłów", type: 's', options: { q: 1 } },
-      { name: "Piwo: Żywiec", type: 's', options: { q: 1 } },
-      { name: "Piwo: Żywiec 0%", type: 's', options: { q: 1 } }
+      { name: "Lipton", type: 's', options: { q: 1 } }
     ]
   },
   "🛍️": {

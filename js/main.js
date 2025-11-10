@@ -118,7 +118,7 @@ const categories = {
       { name: "Szmaty", type: 's', options: { q: 1 } },
       { name: "Zielony papier", type: 's', options: { q: 1 } },
       { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
-      { name: "Worki na śmieci", type: 's', options: { q: 1 } },
+      { name: "Worki na śmieci 120L", type: 's', options: { q: 1 } },
       { name: "Lepy na muchy", type: 's', options: { q: 1 } },
       { name: "Woda 5L", type: 's', options: { q: 1 } }
     ]

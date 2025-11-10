@@ -1,0 +1,19 @@
+{
+  "location": "Oświęcim",
+  "date": "10.11.2025",
+  "last_updated_at": "2025-11-10T19:59:25.374Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Bułki": 34,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Sos: Sweet Chilli": 1
+  }
+}

@@ -13,11 +13,19 @@
     <h2>Pracownicy</h2>
     <div id="employees"></div>
 
+    <div class="revenue-container">
+      <label for="revenueInput">
+        <span style="font-size: 2em; font-weight: bold; margin-right: 15px;">💰 Jaki utarg?</span>
+        <input type="number" id="revenueInput" placeholder="np. 1500.50" step="0.01">
+      </label>
+    </div>
+
     <div id="resetContainer" style="display: none;">
       <button class="reset-button"><b>Reset</b></button>
     </div>
     <div id="products" class="products-grid"></div>
     <button id="copyButton"><b>Kopiuj 📥</b></button>
+    <a href="admin.html" style="text-decoration: none;"><button id="adminButton" class="secondary-button"><b>Admin 🔑</b></button></a>
   </div>
 
   <div id="locationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">

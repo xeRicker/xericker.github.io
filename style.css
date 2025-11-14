@@ -33,6 +33,12 @@ h1, h2 {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+.revenue-container {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #e9ecef;
+  border-radius: 12px;
+}
 
 /* =================================
    Forms & Inputs
@@ -112,6 +118,8 @@ button:hover {
 .secondary-button {
   background-color: #6c757d;
   margin-top: 15px;
+  font-size: 30px;
+  padding: 20px;
 }
 
 .secondary-button:hover {

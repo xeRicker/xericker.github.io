@@ -10,6 +10,12 @@ const STORAGE_KEY = "productList";
 export function saveStateToLocalStorage(productMap, employees) {
   const data = { time: Date.now(), products: {}, employees: {} };
 
+  // Save revenue
+  const revenueInput = document.getElementById('revenueInput');
+  if (revenueInput) {
+      data.revenue = revenueInput.value;
+  }
+
   productMap.forEach((product, name) => {
     if (product.type === 's') {
       const checkbox = document.getElementById(`checkbox-${name}`);

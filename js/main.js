@@ -2,7 +2,6 @@ import { saveReportToGithub, fetchMonthlyData } from './services/githubService.j
 import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
-import { generateMonthlyReport } from './services/reportService.js';
 
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
@@ -164,6 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (toInput) toInput.value = times.to;
         if (presetSelect) presetSelect.value = times.preset;
     });
+    if (savedData.revenue) {
+        document.getElementById('revenueInput').value = savedData.revenue;
+    }
   }
   updateResetButtonVisibility();
 
@@ -174,10 +176,10 @@ function setupEventListeners() {
     document.getElementById('products').addEventListener('change', handleProductChange);
     document.getElementById('products').addEventListener('click', handleProductButtonClick);
     document.getElementById('employees').addEventListener('change', handleEmployeeChange);
+    document.getElementById('revenueInput').addEventListener('input', saveAndRefreshUI);
     document.querySelector('.reset-button').addEventListener('click', resetAll);
     document.getElementById('copyButton').addEventListener('click', showLocationModal);
     document.querySelectorAll('.location-button').forEach(btn => btn.addEventListener('click', handleLocationConfirm));
-    document.getElementById('generateMonthlyReportButton').addEventListener('click', handleGenerateMonthlyReport);
 }
 
 function handleProductChange(event) {
@@ -250,6 +252,8 @@ function resetAll() {
     document.getElementById(`${id}_do`).value = "";
     document.querySelector(`select[data-employee-id="${id}"]`).value = "";
   });
+  
+  document.getElementById('revenueInput').value = "";
 
   localStorage.removeItem("productList");
   updateResetButtonVisibility();
@@ -259,9 +263,12 @@ function resetAll() {
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
+  const revenueValue = parseFloat(document.getElementById('revenueInput').value) || 0;
+
   const reportData = {
     location,
     date: dateStr,
+    revenue: revenueValue,
     last_updated_at: new Date().toISOString(),
     employees: {},
     products: {}
@@ -312,38 +319,4 @@ async function generateAndProcessLists() {
   });
 
   await saveReportToGithub(reportData);
-}
-
-/**
- * Główna funkcja do obsługi generowania raportu miesięcznego.
- * Pobiera dane, przekazuje je do serwisu raportów i kopiuje wynik.
- */
-async function handleGenerateMonthlyReport() {
-  const button = document.getElementById('generateMonthlyReportButton');
-  button.disabled = true;
-  button.innerHTML = '<b>Ładowanie danych...</b>';
-
-  try {
-    const reports = await fetchMonthlyData();
-
-    if (reports.length === 0) {
-      alert("Brak danych za bieżący miesiąc do wygenerowania raportu.");
-      return;
-    }
-    const reportText = generateMonthlyReport(reports, categories);
-
-    navigator.clipboard.writeText(reportText).then(() => {
-      alert("Raport miesięczny skopiowany!");
-    }).catch(err => {
-      console.error("Błąd kopiowania do schowka:", err);
-      fallbackCopyToClipboard(reportText);
-    });
-
-  } catch (error) {
-      console.error("Wystąpił błąd w procesie generowania raportu:", error);
-      alert("Nie udało się wygenerować raportu. Sprawdź konsolę.")
-  } finally {
-    button.disabled = false;
-    button.innerHTML = '<b>Raport Miesięczny</b>';
-  }
 }

@@ -88,15 +88,15 @@ function renderSummary(reports) {
     
     summaryContainer.innerHTML = `
         <div class="summary-box">
-            <h3>Utarg Całkowity</h3>
+            <h3>Łącznie</h3>
             <p>${totalRevenue.toFixed(2)} PLN</p>
         </div>
         <div class="summary-box">
-            <h3>Utarg Oświęcim</h3>
+            <h3>Oświęcim</h3>
             <p>${oswiecimRevenue.toFixed(2)} PLN</p>
         </div>
         <div class="summary-box">
-            <h3>Utarg Wilamowice</h3>
+            <h3>Wilamowice</h3>
             <p>${wilamowiceRevenue.toFixed(2)} PLN</p>
         </div>
     `;
@@ -146,14 +146,14 @@ function renderChart(reports) {
       labels: labels,
       datasets: [
         {
-          label: 'Utarg Oświęcim',
+          label: 'Oświęcim',
           data: oswiecimData,
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
           spanGaps: true, // Łączy punkty mimo 'null'
         },
         {
-          label: 'Utarg Wilamowice',
+          label: 'Wilamowice',
           data: wilamowiceData,
           borderColor: 'rgb(54, 162, 235)',
           backgroundColor: 'rgba(54, 162, 235, 0.5)',

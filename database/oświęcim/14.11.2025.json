@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "14.11.2025",
+  "revenue": 1431,
+  "last_updated_at": "2025-11-14T19:46:31.476Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cebula": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Cheddar": 1,
+    "Halloumi": 2,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Sól do frytek": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Papier pod grilla": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

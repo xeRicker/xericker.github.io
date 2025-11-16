@@ -1,0 +1,29 @@
+{
+  "location": "Wilamowice",
+  "date": "16.11.2025",
+  "revenue": 2078,
+  "last_updated_at": "2025-11-16T19:57:12.785Z",
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Kacper": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Cheddar": 2,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Bułki": 4,
+    "Cebula prażona": 3,
+    "Sos: Carolina": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

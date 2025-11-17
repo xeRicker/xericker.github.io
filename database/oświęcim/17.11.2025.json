@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "17.11.2025",
+  "revenue": 920,
+  "last_updated_at": "2025-11-17T19:32:05.771Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Cheddar": 2,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 17,
+    "Sos: Ketchup": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

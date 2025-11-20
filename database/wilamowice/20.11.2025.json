@@ -1,0 +1,24 @@
+{
+  "location": "Wilamowice",
+  "date": "20.11.2025",
+  "revenue": 0,
+  "last_updated_at": "2025-11-20T19:59:31.811Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 8,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Torby: Duże": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

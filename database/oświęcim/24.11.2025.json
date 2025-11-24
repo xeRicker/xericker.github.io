@@ -1,0 +1,18 @@
+{
+  "location": "Oświęcim",
+  "date": "24.11.2025",
+  "revenue": 784,
+  "last_updated_at": "2025-11-24T19:53:57.972Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Stripsy": 3,
+    "Krążki": 1,
+    "Bułki": 16,
+    "Cebula prażona": 1
+  }
+}

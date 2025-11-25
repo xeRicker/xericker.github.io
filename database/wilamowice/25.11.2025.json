@@ -1,0 +1,17 @@
+{
+  "location": "Wilamowice",
+  "date": "25.11.2025",
+  "revenue": 1126,
+  "last_updated_at": "2025-11-25T19:25:18.867Z",
+  "employees": {
+    "Paweł": "12:00 – 20:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1
+  }
+}

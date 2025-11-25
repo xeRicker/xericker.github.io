@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "25.11.2025",
+  "revenue": 1081,
+  "last_updated_at": "2025-11-25T20:03:35.941Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Folia": 1
+  }
+}

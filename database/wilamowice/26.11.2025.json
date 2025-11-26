@@ -1,0 +1,17 @@
+{
+  "location": "Wilamowice",
+  "date": "26.11.2025",
+  "revenue": 505,
+  "last_updated_at": "2025-11-26T18:27:26.299Z",
+  "employees": {
+    "Tomek": "12:00 – 20:00"
+  },
+  "products": {
+    "Ogórki": 3,
+    "Boczek": 1,
+    "Bułki": 31,
+    "Cebula prażona": 1,
+    "Torby: Duże": 1,
+    "Folia": 1
+  }
+}

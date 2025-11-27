@@ -1,0 +1,16 @@
+{
+  "location": "Wilamowice",
+  "date": "27.11.2025",
+  "revenue": 393,
+  "last_updated_at": "2025-11-27T18:59:50.722Z",
+  "employees": {
+    "Radek": "12:00 – 20:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Bułki": 36,
+    "Zielony papier": 1
+  }
+}

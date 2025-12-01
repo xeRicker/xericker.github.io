@@ -1,0 +1,17 @@
+{
+  "location": "Wilamowice",
+  "date": "01.12.2025",
+  "revenue": 802,
+  "last_updated_at": "2025-12-01T20:07:51.415Z",
+  "employees": {
+    "Sebastian": "14:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 1,
+    "Boczek": 1,
+    "Bułki": 14,
+    "Torby: Małe": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1
+  }
+}

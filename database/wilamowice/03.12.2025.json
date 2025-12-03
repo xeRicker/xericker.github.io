@@ -1,0 +1,18 @@
+{
+  "location": "Wilamowice",
+  "date": "03.12.2025",
+  "revenue": 546,
+  "last_updated_at": "2025-12-03T19:52:00.220Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Bułki": 17,
+    "Torby: Duże": 1,
+    "Opakowania na frytki": 1
+  }
+}

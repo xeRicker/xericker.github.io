@@ -1,4 +1,4 @@
-import { saveReportToGithub, fetchMonthlyData } from './services/githubService.js';
+import { saveReportToGithub, fetchMonthlyData, checkFileExists } from './services/githubService.js';
 import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
@@ -263,12 +263,22 @@ function resetAll() {
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
-  const revenueValue = parseFloat(document.getElementById('revenueInput').value) || 0;
+  
+  // --- 1. SPRAWDZENIE UTARGU ---
+  const revenueInput = document.getElementById('revenueInput');
+  const revenueVal = parseFloat(revenueInput.value);
+  
+  if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
+      const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz wygenerować listę z zerowym utargiem?`);
+      if (!confirmRevenue) {
+          return; // Przerwij, jeśli użytkownik kliknął "Anuluj"
+      }
+  }
 
   const reportData = {
     location,
     date: dateStr,
-    revenue: revenueValue,
+    revenue: revenueVal || 0,
     last_updated_at: new Date().toISOString(),
     employees: {},
     products: {}
@@ -312,6 +322,26 @@ async function generateAndProcessLists() {
   });
   if (productsReport) plainReport += productsReport;
 
+  // --- 2. SPRAWDZENIE CZY LISTA NIE JEST PUSTA ---
+  const hasEmployees = Object.keys(reportData.employees).length > 0;
+  const hasProducts = Object.keys(reportData.products).length > 0;
+  // (Opcjonalnie można sprawdzać też 'Bułki: ❌', ale jest zapisywane w products)
+
+  if (!hasEmployees && !hasProducts) {
+      alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów. Uzupełnij dane przed wygenerowaniem.");
+      return;
+  }
+
+  // --- 3. SPRAWDZENIE CZY PLIK JUŻ ISTNIEJE NA GITHUB ---
+  const fileExists = await checkFileExists(location, dateStr);
+  if (fileExists) {
+      const confirmOverwrite = confirm(`⚠️ Ostrzeżenie!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje w bazie danych.\n\nCzy na pewno chcesz go nadpisać? (np. ktoś inny już wysłał listę).`);
+      if (!confirmOverwrite) {
+          return; // Przerwij, jeśli użytkownik nie chce nadpisywać
+      }
+  }
+
+  // Jeśli wszystko OK, kopiujemy i zapisujemy
   navigator.clipboard.writeText(plainReport.trim()).then(() => {
     alert("Lista skopiowana!");
   }).catch(() => {

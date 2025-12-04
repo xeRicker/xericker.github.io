@@ -1,6 +1,36 @@
 import { GITHUB_CONFIG } from '../config.js';
 
 /**
+ * Sprawdza, czy plik raportu już istnieje na GitHubie.
+ * @param {string} location - Lokalizacja (np. Oświęcim)
+ * @param {string} date - Data w formacie DD.MM.RRRR
+ * @returns {Promise<boolean>} True jeśli plik istnieje, False jeśli nie.
+ */
+export async function checkFileExists(location, date) {
+    const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
+    if (!TOKEN || !REPO_OWNER || !REPO_NAME) return false;
+
+    const filePath = `database/${location.toLowerCase()}/${date}.json`;
+    const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+
+    const headers = {
+        'Authorization': `token ${TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+    };
+
+    try {
+        // Używamy metody HEAD, żeby sprawdzić tylko czy plik istnieje, bez pobierania treści (szybciej)
+        // Uwaga: GitHub API czasem wymaga GET, jeśli HEAD nie działa poprawnie z tokenami w niektórych konfiguracjach,
+        // ale GET jest bezpieczny. Tutaj użyjemy GET i sprawdzimy status.
+        const response = await fetch(apiUrl, { method: 'GET', headers });
+        return response.status === 200;
+    } catch (error) {
+        console.error("Błąd podczas sprawdzania istnienia pliku:", error);
+        return false;
+    }
+}
+
+/**
  * Zapisuje dane w formacie JSON do repozytorium GitHub.
  * @param {object} data - Obiekt z danymi raportu do zapisania.
  */

@@ -1,11 +1,12 @@
 import { fetchAllData } from './services/githubService.js';
 
 // --- Konfiguracja i Zmienne ---
-const PASSWORD = "xdxdxd123"; // Pamiętaj, aby zmienić na produkcji
+const PASSWORD = "xdxdxd123";
 let allReports = [];
-let mergedData = []; // Dane zgrupowane po dniach (niezależnie od lokalizacji)
-let currentFilteredData = []; // Aktualnie wyświetlane dane (po filtrze miesiąca/tygodnia)
+let mergedData = [];
+let currentFilteredData = [];
 let revenueChart = null;
+let currentChartType = 'bar'; // Domyślny typ wykresu
 
 // --- Start ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,32 +28,40 @@ async function initializeApp() {
       return;
   }
 
-  // Przetworzenie danych na format "Jeden dzień = Jeden wiersz"
   processData();
-  
   populateMonthFilter();
+  
+  // Event Listenery
   document.getElementById('monthFilter').addEventListener('change', handleMonthChange);
   
-  // Ustawienie daty aktualizacji
+  // Obsługa zmiany typu wykresu
+  document.querySelectorAll('.chart-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+          // Zmiana klasy active
+          document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          
+          // Zmiana typu i przerysowanie
+          currentChartType = e.target.dataset.type;
+          renderChart(currentFilteredData);
+      });
+  });
+  
   document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
 
-  // Domyślny widok
+  // Inicjalizacja widoku
   handleMonthChange();
   
   document.getElementById('loading').style.display = 'none';
   document.getElementById('revenueTable').style.display = 'table';
 }
 
-/**
- * Agreguje dane. Zamiast listy raportów, tworzy listę dni z przypisanymi lokalizacjami.
- */
 function processData() {
     const dataMap = new Map();
 
     allReports.forEach(report => {
-        const dateKey = report.date; // "DD.MM.YYYY"
+        const dateKey = report.date;
         if (!dataMap.has(dateKey)) {
-            // Parsowanie daty do obiektu Date dla sortowania
             const [d, m, y] = dateKey.split('.');
             const dateObj = new Date(y, m - 1, d);
             
@@ -75,7 +84,6 @@ function processData() {
         entry.total += rev;
     });
 
-    // Konwersja mapy na tablicę i sortowanie od najnowszych
     mergedData = Array.from(dataMap.values()).sort((a, b) => b.timestamp - a.timestamp);
 }
 
@@ -89,13 +97,11 @@ function populateMonthFilter() {
         months.add(key);
     });
 
-    filter.innerHTML = ''; // Reset
+    filter.innerHTML = '';
     Array.from(months).sort().reverse().forEach(monthKey => {
         const [year, monthNum] = monthKey.split('-');
         const date = new Date(year, monthNum - 1);
         const label = date.toLocaleString('pl-PL', { month: 'long', year: 'numeric' });
-        
-        // Z dużej litery miesiąc
         const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
         
         const option = document.createElement('option');
@@ -105,34 +111,22 @@ function populateMonthFilter() {
     });
 }
 
-/**
- * Główna funkcja obsługująca zmianę miesiąca.
- * Generuje zakładki tygodniowe i resetuje widok do "Cały miesiąc".
- */
 function handleMonthChange() {
     const selectedMonthKey = document.getElementById('monthFilter').value;
     const [year, month] = selectedMonthKey.split('-');
     
-    // Filtrujemy dane tylko dla wybranego miesiąca
     const monthData = mergedData.filter(d => {
         return d.dateObj.getFullYear() == year && (d.dateObj.getMonth() + 1) == month;
     });
 
-    // Generuj zakładki tygodniowe
     renderWeekTabs(monthData, selectedMonthKey);
-    
-    // Pokaż wszystko z tego miesiąca domyślnie
     updateView(monthData);
 }
 
-/**
- * Generuje przyciski (zakładki) dla tygodni.
- */
 function renderWeekTabs(monthData, monthKey) {
     const container = document.getElementById('weekTabsContainer');
     container.innerHTML = '';
 
-    // Przycisk "Cały miesiąc"
     const allBtn = document.createElement('div');
     allBtn.className = 'week-tab active';
     allBtn.textContent = 'Cały miesiąc';
@@ -143,18 +137,11 @@ function renderWeekTabs(monthData, monthKey) {
     };
     container.appendChild(allBtn);
 
-    // Dzielimy miesiąc na tygodnie (uproszczone: zakresy dat)
-    // Sortujemy rosnąco, żeby znaleźć początek miesiąca
     const sortedAsc = [...monthData].sort((a, b) => a.timestamp - b.timestamp);
     if (sortedAsc.length === 0) return;
 
-    // Logika podziału na ISO tygodnie jest skomplikowana,
-    // tu zrobimy prościej dla biznesu: Tygodnie zaczynają się od poniedziałku.
-    
-    const weeksMap = new Map(); // klucz: numer tygodnia w roku lub data startu
-    
+    const weeksMap = new Map();
     sortedAsc.forEach(day => {
-        // Oblicz numer tygodnia w roku (prosta implementacja)
         const d = new Date(Date.UTC(day.dateObj.getFullYear(), day.dateObj.getMonth(), day.dateObj.getDate()));
         const dayNum = d.getUTCDay() || 7;
         d.setUTCDate(d.getUTCDate() + 4 - dayNum);
@@ -165,9 +152,8 @@ function renderWeekTabs(monthData, monthKey) {
         weeksMap.get(weekNo).push(day);
     });
 
-    // Renderowanie przycisków tygodni
     weeksMap.forEach((days, weekNo) => {
-        const startDay = days[0].dateStr.substring(0, 5); // "DD.MM"
+        const startDay = days[0].dateStr.substring(0, 5);
         const endDay = days[days.length-1].dateStr.substring(0, 5);
         
         const btn = document.createElement('div');
@@ -177,16 +163,14 @@ function renderWeekTabs(monthData, monthKey) {
         btn.onclick = () => {
             document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            updateView(days); // Pokaż tylko dni z tego tygodnia
+            updateView(days);
         };
         container.appendChild(btn);
     });
 }
 
-/**
- * Odświeża tabelę, wykres i kafelki na podstawie przekazanych danych.
- */
 function updateView(data) {
+    currentFilteredData = data; // Zapisz aktualne dane do użycia przy zmianie wykresu
     renderSummary(data);
     renderTable(data);
     renderChart(data);
@@ -201,21 +185,21 @@ function renderSummary(data) {
     const avg = data.length > 0 ? total / data.length : 0;
 
     summaryContainer.innerHTML = `
-        <div class="summary-box highlight">
+        <div class="summary-box">
             <h3>Łączny Utarg</h3>
-            <p>${formatMoney(total)}</p>
+            <p style="color: #6200ee;">${formatMoney(total)}</p>
         </div>
         <div class="summary-box">
             <h3>Oświęcim</h3>
-            <p>${formatMoney(osw)}</p>
+            <p style="color: #03dac6;">${formatMoney(osw)}</p>
         </div>
         <div class="summary-box">
             <h3>Wilamowice</h3>
-            <p>${formatMoney(wil)}</p>
+            <p style="color: #ff4081;">${formatMoney(wil)}</p>
         </div>
-        <div class="summary-box" style="background: #e3f2fd;">
+        <div class="summary-box">
             <h3>Średnia dniówka</h3>
-            <p style="font-size: 24px; line-height: 1.5;">${formatMoney(avg)}</p>
+            <p style="color: #ffab40;">${formatMoney(avg)}</p>
         </div>
     `;
 }
@@ -224,21 +208,19 @@ function renderTable(data) {
     const tbody = document.querySelector("#revenueTable tbody");
     tbody.innerHTML = '';
     
-    // Sortujemy od najnowszych
     const sorted = [...data].sort((a, b) => b.timestamp - a.timestamp);
 
     sorted.forEach(row => {
         const tr = document.createElement('tr');
         
-        // Wyróżnienie weekendów
         const isWeekend = row.dayOfWeek === 'piątek' || row.dayOfWeek === 'sobota' || row.dayOfWeek === 'niedziela';
         if (isWeekend) tr.classList.add('weekend-row');
 
         tr.innerHTML = `
             <td>${row.dateStr}</td>
             <td class="day-name">${capitalize(row.dayOfWeek)}</td>
-            <td class="val-cell" style="color: #007bff;">${row.oswiecim > 0 ? formatMoney(row.oswiecim) : '-'}</td>
-            <td class="val-cell" style="color: #6610f2;">${row.wilamowice > 0 ? formatMoney(row.wilamowice) : '-'}</td>
+            <td class="val-cell">${row.oswiecim > 0 ? formatMoney(row.oswiecim) : '-'}</td>
+            <td class="val-cell">${row.wilamowice > 0 ? formatMoney(row.wilamowice) : '-'}</td>
             <td class="val-cell total-cell">${formatMoney(row.total)}</td>
         `;
         tbody.appendChild(tr);
@@ -247,8 +229,6 @@ function renderTable(data) {
 
 function renderChart(data) {
     const ctx = document.getElementById('revenueChart').getContext('2d');
-    
-    // Sortujemy chronologicznie do wykresu
     const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
     
     const labels = sorted.map(d => `${d.dateStr.substring(0, 5)} (${d.dayOfWeek.substring(0, 3)})`);
@@ -257,22 +237,32 @@ function renderChart(data) {
 
     if (revenueChart) revenueChart.destroy();
 
+    const isLine = currentChartType === 'line';
+
     revenueChart = new Chart(ctx, {
-        type: 'bar', // Zmiana na słupkowy, lepiej widać porównanie dzienne
+        type: currentChartType,
         data: {
             labels: labels,
             datasets: [
                 {
                     label: 'Oświęcim',
                     data: oswData,
-                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                    backgroundColor: isLine ? 'rgba(3, 218, 198, 0.2)' : 'rgba(3, 218, 198, 0.8)',
+                    borderColor: '#03dac6',
+                    borderWidth: 2,
                     borderRadius: 4,
+                    tension: 0.3,
+                    fill: isLine
                 },
                 {
                     label: 'Wilamowice',
                     data: wilData,
-                    backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                    backgroundColor: isLine ? 'rgba(255, 64, 129, 0.2)' : 'rgba(255, 64, 129, 0.8)',
+                    borderColor: '#ff4081',
+                    borderWidth: 2,
                     borderRadius: 4,
+                    tension: 0.3,
+                    fill: isLine
                 }
             ]
         },
@@ -283,26 +273,30 @@ function renderChart(data) {
                 intersect: false,
             },
             plugins: {
-                title: { display: true, text: 'Porównanie utargów w czasie', font: { size: 16 } },
+                legend: {
+                    position: 'top',
+                    labels: { usePointStyle: true, font: { size: 14 } }
+                },
                 tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    padding: 12,
+                    cornerRadius: 8,
                     callbacks: {
                         footer: (tooltipItems) => {
                             let total = 0;
                             tooltipItems.forEach(t => total += t.raw);
-                            return 'Suma dnia: ' + total.toFixed(2) + ' PLN';
+                            return 'Suma: ' + total.toFixed(2) + ' PLN';
                         }
                     }
                 }
             },
             scales: {
-                x: { stacked: false }, // false = słupki obok siebie, true = jeden na drugim
-                y: { beginAtZero: true }
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: '#f0f0f0' } }
             }
         }
     });
 }
-
-// --- Helpery ---
 
 function formatMoney(amount) {
     return amount.toFixed(2) + ' zł';

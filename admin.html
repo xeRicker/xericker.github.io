@@ -2,171 +2,322 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Panel Admina - Analityka</title>
+  <title>Panel Admina - Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
-    body {
-      padding: 20px;
-      background-color: #f8f9fa;
-      font-family: 'Arial', sans-serif;
+    /* Material Design & Reset */
+    :root {
+        --primary-color: #6200ee;
+        --primary-dark: #3700b3;
+        --secondary-color: #03dac6;
+        --background-color: #f0f2f5;
+        --surface-color: #ffffff;
+        --text-primary: #1c1c1e;
+        --text-secondary: #606060;
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --radius-md: 12px;
+        --radius-lg: 20px;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
+
+    body {
+      padding: 0;
+      margin: 0;
+      background-color: var(--background-color);
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-primary);
+    }
+
+    /* Animacje */
+    @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-enter {
+        animation: slideUpFade 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        opacity: 0; /* Początkowo ukryte */
+    }
+
+    /* Opóźnienia animacji */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
     .admin-container {
       max-width: 1400px;
-      margin: 20px auto;
-      padding: 40px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin: 30px auto;
+      padding: 0 20px;
     }
-    
+
+    /* Header */
+    .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background: var(--surface-color);
+        padding: 20px 30px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .header-bar h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* Material Button (Back) */
+    .btn-back {
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: 500;
+        color: var(--primary-color);
+        background: rgba(98, 0, 238, 0.08);
+        transition: var(--transition);
+    }
+    .btn-back:hover {
+        background: rgba(98, 0, 238, 0.15);
+        transform: translateX(-3px);
+    }
+
     /* Filtry */
     .filters {
-      margin-bottom: 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #e9ecef;
-      padding: 20px;
-      border-radius: 12px;
+      background-color: var(--surface-color);
+      padding: 20px 30px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 25px;
     }
-    .filters label { margin: 0; font-size: 20px; }
-    .filters select { padding: 10px; font-size: 18px; border-radius: 8px; width: 300px; }
+    .filters label { margin: 0 10px 0 0; font-weight: 500; }
+    .filters select { 
+        padding: 10px 15px; 
+        font-size: 16px; 
+        border-radius: 8px; 
+        border: 1px solid #ddd;
+        background: #fafafa;
+        cursor: pointer;
+    }
+
+    /* Zakładki Tygodniowe (Chips) */
+    .week-tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scrollbar-width: thin;
+    }
+    .week-tab {
+        padding: 8px 18px;
+        background: var(--surface-color);
+        border: 1px solid #e0e0e0;
+        border-radius: 24px;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        white-space: nowrap;
+        color: var(--text-secondary);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .week-tab:hover {
+        background-color: #f5f5f5;
+        transform: translateY(-2px);
+    }
+    .week-tab.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(98, 0, 238, 0.3);
+    }
 
     /* Podsumowanie (Karty) */
     .summary {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin: 30px 0;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
     }
     .summary-box {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 25px;
-        border-radius: 15px;
+        background: var(--surface-color);
+        padding: 30px;
+        border-radius: var(--radius-lg);
         text-align: center;
-        border: 1px solid #dee2e6;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
     }
-    .summary-box:hover { transform: translateY(-5px); }
-    .summary-box h3 { margin: 0 0 10px 0; font-size: 18px; color: #6c757d; text-transform: uppercase; letter-spacing: 1px; }
-    .summary-box p { margin: 0; font-size: 32px; font-weight: bold; color: #212529; }
-    .summary-box.highlight p { color: #007bff; }
+    .summary-box::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 5px;
+        background: #e0e0e0;
+    }
+    .summary-box:nth-child(1)::before { background: var(--primary-color); }
+    .summary-box:nth-child(2)::before { background: #03dac6; }
+    .summary-box:nth-child(3)::before { background: #ff4081; }
+    .summary-box:nth-child(4)::before { background: #ffab40; }
 
-    /* Zakładki Tygodniowe */
-    .week-tabs {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        overflow-x: auto;
-        padding-bottom: 10px;
-    }
-    .week-tab {
-        padding: 12px 24px;
-        background: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 50px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s;
-        white-space: nowrap;
-    }
-    .week-tab:hover { background-color: #e2e6ea; }
-    .week-tab.active {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-        box-shadow: 0 4px 10px rgba(0,123,255,0.3);
-    }
+    .summary-box:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .summary-box h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+    .summary-box p { margin: 0; font-size: 36px; font-weight: 700; color: var(--text-primary); }
 
     /* Wykres */
     .chart-container {
-      margin: 40px 0;
-      padding: 20px;
-      background: white;
-      border: 1px solid #eee;
-      border-radius: 15px;
+      background: var(--surface-color);
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 40px;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .chart-header h3 { margin: 0; font-size: 20px; color: #444; }
+    
+    .chart-controls button {
+        background: none;
+        border: 1px solid #ddd;
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 5px;
+        transition: var(--transition);
+        color: #666;
+    }
+    .chart-controls button:hover { background: #f5f5f5; }
+    .chart-controls button.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
     }
 
     /* Tabela */
+    .table-card {
+        background: var(--surface-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 20px;
+        overflow-x: auto;
+    }
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      margin-top: 20px;
-      font-size: 18px;
-    }
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #dee2e6;
+      font-size: 16px;
     }
     th {
-      background-color: #343a40;
-      color: white;
+      background-color: #fafafa;
+      color: var(--text-secondary);
       font-weight: 600;
       text-transform: uppercase;
-      font-size: 14px;
-      letter-spacing: 1px;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      padding: 18px;
+      border-bottom: 2px solid #eee;
+      text-align: left;
     }
-    th:first-child { border-top-left-radius: 10px; }
-    th:last-child { border-top-right-radius: 10px; }
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid #eee;
+      color: var(--text-primary);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: #f8f9fa; }
     
-    /* Kolory w tabeli */
-    .day-name { font-weight: bold; color: #555; }
-    .weekend-row { background-color: #fdf2f2; } /* Lekki róż dla weekendów */
-    .today-row { background-color: #e3f2fd; border: 2px solid #007bff; }
+    .day-name { font-weight: 600; color: #555; }
+    .weekend-row td { background-color: #fff8f8; } /* Delikatny róż dla weekendu */
+    .weekend-row:hover td { background-color: #ffeef0; }
     
-    .val-cell { font-family: 'Roboto Mono', monospace; }
-    .total-cell { font-weight: bold; color: #28a745; background-color: rgba(40, 167, 69, 0.1); }
+    .val-cell { font-family: 'Roboto Mono', monospace; font-size: 15px; }
+    .total-cell { font-weight: 700; color: #2e7d32; }
     
-    #loading { font-size: 24px; text-align: center; padding: 50px; color: #666; }
+    #loading { font-size: 20px; text-align: center; padding: 60px; color: #888; }
   </style>
 </head>
 <body style="display: none;">
-  <div class="container admin-container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>📊 Dashboard Szefa</h1>
-        <a href="index.html" style="text-decoration: none; font-size: 18px; color: #007bff;">&larr; Wróć do listy</a>
+  <div class="admin-container">
+    
+    <!-- Header z animacją -->
+    <div class="header-bar animate-enter">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 32px;">📊</span>
+            <h1>Dashboard Szefa</h1>
+        </div>
+        <a href="index.html" class="btn-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Wróć do listy
+        </a>
     </div>
     
-    <div class="filters">
+    <!-- Filtry -->
+    <div class="filters animate-enter delay-1">
       <div>
           <label for="monthFilter">Wybierz okres:</label>
           <select id="monthFilter"></select>
       </div>
-      <div style="font-size: 14px; color: #666;">Ostatnia aktualizacja: <span id="lastUpdate">-</span></div>
+      <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 5px;">
+          <span>🕒 Ostatnia aktualizacja:</span>
+          <strong id="lastUpdate">-</strong>
+      </div>
     </div>
 
     <!-- Zakładki Tygodniowe -->
-    <div id="weekTabsContainer" class="week-tabs"></div>
+    <div id="weekTabsContainer" class="week-tabs animate-enter delay-1"></div>
 
     <!-- Podsumowanie -->
-    <div id="summarySection" class="summary"></div>
+    <div id="summarySection" class="summary animate-enter delay-2"></div>
 
     <!-- Wykres -->
-    <div id="chart-container" class="chart-container">
+    <div id="chart-container" class="chart-container animate-enter delay-3">
+      <div class="chart-header">
+        <h3>📈 Wizualizacja utargu</h3>
+        <div class="chart-controls">
+            <button class="chart-btn active" data-type="bar">Słupkowy</button>
+            <button class="chart-btn" data-type="line">Liniowy</button>
+        </div>
+      </div>
       <canvas id="revenueChart"></canvas>
     </div>
 
     <!-- Tabela -->
-    <h2>📅 Szczegółowy raport dzienny</h2>
-    <div id="loading">Ładowanie danych z bazy...</div>
-    <div class="table-responsive">
-        <table id="revenueTable" style="display:none;">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Dzień tyg.</th>
-              <th>Oświęcim</th>
-              <th>Wilamowice</th>
-              <th>SUMA DNIA</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <div class="table-card animate-enter delay-4">
+        <h3 style="margin: 0 0 20px 0; color: #444;">📅 Szczegółowy raport dzienny</h3>
+        <div id="loading">Ładowanie danych z bazy...</div>
+        <div class="table-responsive">
+            <table id="revenueTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Dzień tyg.</th>
+                  <th>Oświęcim</th>
+                  <th>Wilamowice</th>
+                  <th>SUMA DNIA</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
     </div>
   </div>
   

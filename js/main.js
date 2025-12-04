@@ -3,6 +3,7 @@ import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/s
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
+// ... (reszta kodu bez zmian: employees, categories, productMap, itp.) ...
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
@@ -137,6 +138,7 @@ const categories = {
 const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
+// ... (EventListener setup - bez zmian) ...
 document.addEventListener('DOMContentLoaded', () => {
   renderEmployeeControls(employees, employeeColors, timePresets);
   renderProductGrid(categories);
@@ -182,6 +184,7 @@ function setupEventListeners() {
     document.querySelectorAll('.location-button').forEach(btn => btn.addEventListener('click', handleLocationConfirm));
 }
 
+// ... (Funkcje obsługi zdarzeń UI - bez zmian) ...
 function handleProductChange(event) {
     if (event.target.matches('input[type="checkbox"], input[type="number"]')) {
         const name = event.target.dataset.productName;
@@ -269,12 +272,14 @@ async function generateAndProcessLists() {
   const revenueVal = parseFloat(revenueInput.value);
   
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
+      // Zmieniono na spójny format "⚠️ Uwaga"
       const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz wygenerować listę z zerowym utargiem?`);
       if (!confirmRevenue) {
-          return; // Przerwij, jeśli użytkownik kliknął "Anuluj"
+          return;
       }
   }
 
+  // ... (generowanie reportData bez zmian) ...
   const reportData = {
     location,
     date: dateStr,
@@ -322,26 +327,25 @@ async function generateAndProcessLists() {
   });
   if (productsReport) plainReport += productsReport;
 
-  // --- 2. SPRAWDZENIE CZY LISTA NIE JEST PUSTA ---
+  // --- 2. SPRAWDZENIE PUSTEJ LISTY ---
   const hasEmployees = Object.keys(reportData.employees).length > 0;
   const hasProducts = Object.keys(reportData.products).length > 0;
-  // (Opcjonalnie można sprawdzać też 'Bułki: ❌', ale jest zapisywane w products)
 
   if (!hasEmployees && !hasProducts) {
       alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów. Uzupełnij dane przed wygenerowaniem.");
       return;
   }
 
-  // --- 3. SPRAWDZENIE CZY PLIK JUŻ ISTNIEJE NA GITHUB ---
+  // --- 3. SPRAWDZENIE ISTNIENIA PLIKU ---
   const fileExists = await checkFileExists(location, dateStr);
   if (fileExists) {
-      const confirmOverwrite = confirm(`⚠️ Ostrzeżenie!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje w bazie danych.\n\nCzy na pewno chcesz go nadpisać? (np. ktoś inny już wysłał listę).`);
+      // Zmieniono na spójny format "⚠️ Uwaga" zamiast "Ostrzeżenie"
+      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje w bazie danych.\n\nCzy na pewno chcesz go nadpisać? (np. ktoś inny już wysłał listę).`);
       if (!confirmOverwrite) {
-          return; // Przerwij, jeśli użytkownik nie chce nadpisywać
+          return;
       }
   }
 
-  // Jeśli wszystko OK, kopiujemy i zapisujemy
   navigator.clipboard.writeText(plainReport.trim()).then(() => {
     alert("Lista skopiowana!");
   }).catch(() => {

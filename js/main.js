@@ -29,9 +29,9 @@ const timePresets = [
 const categories = {
   "⭐": {
     items: [
-      { name: "Drwal: Ser", type: 's', options: { q: 1 } },
+      { name: "Drwal: Ser Panierowany", type: 's', options: { q: 1 } },
       { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
-      { name: "Drwal: Jalapeño", type: 's', options: { q: 1 } },
+      { name: "Drwal: Sos Jalapeño", type: 's', options: { q: 1 } },
     ]
   },
   "🥗": {

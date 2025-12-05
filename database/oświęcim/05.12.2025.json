@@ -2,10 +2,12 @@
   "location": "Oświęcim",
   "date": "05.12.2025",
   "revenue": 0,
-  "last_updated_at": "2025-12-05T09:04:41.578Z",
+  "last_updated_at": "2025-12-05T09:05:18.275Z",
   "employees": {},
   "products": {
-    "Mięso: Małe": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cebula": 1,
     "Bułki": 0
   }
 }

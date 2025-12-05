@@ -26,40 +26,43 @@ export function darkenColor(hex, percent) {
 }
 
 /**
- * Zaawansowana metoda awaryjna kopiowania dla iOS/Safari.
- * Zwraca true/false zamiast wyświetlać alerty.
+ * Super-robust Fallback dla iOS.
+ * Tworzy element widoczny dla systemu (opacity 1) ale przezroczysty,
+ * żeby iOS pozwolił na zaznaczenie.
  */
 export function fallbackCopyToClipboard(text) {
   const textArea = document.createElement("textarea");
   textArea.value = text;
   
-  // Upewnij się, że element jest niewidoczny wizualnie, ale dostępny dla systemu
+  // iOS wymaga, aby element był edytowalny i "widoczny" (choć przezroczysty)
+  textArea.contentEditable = true;
+  textArea.readOnly = false;
   textArea.style.position = "fixed";
-  textArea.style.left = "-9999px";
-  textArea.style.top = "0";
-  textArea.setAttribute("readonly", "");
+  textArea.style.bottom = "0";
+  textArea.style.left = "0";
+  textArea.style.width = "2em";
+  textArea.style.height = "2em";
+  textArea.style.padding = "0";
+  textArea.style.border = "none";
+  textArea.style.outline = "none";
+  textArea.style.boxShadow = "none";
+  textArea.style.background = "transparent";
+  textArea.style.opacity = "0"; // Niewidoczny dla oka, widoczny dla DOM
+  
   document.body.appendChild(textArea);
 
-  // Specjalna obsługa iOS
-  const isIos = navigator.userAgent.match(/ipad|iphone/i);
-
-  if (isIos) {
-      const range = document.createRange();
-      range.selectNodeContents(textArea);
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      textArea.setSelectionRange(0, 999999);
-  } else {
-      textArea.select();
-  }
+  const range = document.createRange();
+  range.selectNodeContents(textArea);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  textArea.setSelectionRange(0, 999999);
 
   let success = false;
   try {
     success = document.execCommand('copy');
   } catch (err) {
     console.error('Fallback copy failed', err);
-    success = false;
   }
   
   document.body.removeChild(textArea);

@@ -3,13 +3,12 @@ import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/s
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
-// ... (Zmienne employees, employeeColors, timePresets, categories, productMap BEZ ZMIAN) ...
+// ... (Zmienne BEZ ZMIAN - wklej je tu jak zawsze) ...
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
-// ... (Wklej tutaj resztę zmiennych z poprzedniego pliku: timePresets, categories, productMap) ...
 const timePresets = [
   { label: "12:00 - 19:30", value: "12:00-19:30" },
   { label: "12:00 - 20:00", value: "12:00-20:00" },
@@ -129,7 +128,6 @@ const categories = {
 const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
-// ... (EventListener setup BEZ ZMIAN) ...
 document.addEventListener('DOMContentLoaded', () => {
   renderEmployeeControls(employees, employeeColors, timePresets);
   renderProductGrid(categories);
@@ -210,7 +208,6 @@ function handleProductChange(event) {
     if (event.target.matches('input[type="checkbox"], input[type="number"]')) {
         const name = event.target.dataset.productName;
         let value;
-
         if (event.target.type === 'checkbox') {
             value = event.target.checked ? 1 : 0;
         } else {
@@ -223,7 +220,6 @@ function handleProductChange(event) {
             }
             event.target.value = value;
         }
-
         highlightProduct(name, value);
         saveAndRefreshUI();
     }
@@ -288,7 +284,7 @@ function resetAll() {
     }, 150);
 }
 
-// --- POPRAWIONA FUNKCJA KOPIOWANIA ---
+// --- KLUCZOWA POPRAWKA LOGIKI KOPIOWANIA ---
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
@@ -296,11 +292,13 @@ async function generateAndProcessLists() {
   const revenueInput = document.getElementById('revenueInput');
   const revenueVal = parseFloat(revenueInput.value);
   
+  // Walidacja utargu
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
       const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
       if (!confirmRevenue) return;
   }
 
+  // Generowanie danych
   const reportData = {
     location,
     date: dateStr,
@@ -356,28 +354,39 @@ async function generateAndProcessLists() {
       return;
   }
 
+  // === PRÓBA KOPIOWANIA (NATYCHMIAST, PRZED ASYNC) ===
+  const textToCopy = plainReport.trim();
+  let copySuccessful = false;
+
+  try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+           // To jest Promise, ale wywoływany w kontekście zdarzenia kliknięcia
+           navigator.clipboard.writeText(textToCopy).then(() => { copySuccessful = true; }).catch(() => {});
+      } else {
+           // Fallback synchroniczny
+           copySuccessful = fallbackCopyToClipboard(textToCopy);
+      }
+  } catch (e) {
+      console.error("Copy error:", e);
+  }
+
+  // Zabezpieczenie: jeśli pierwsza metoda zawiodła, spróbuj fallback
+  if (!copySuccessful) copySuccessful = fallbackCopyToClipboard(textToCopy);
+
+  // === TERAZ SPRAWDZANIE GITHUB (ASYNC) ===
   const fileExists = await checkFileExists(location, dateStr);
   if (fileExists) {
       const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje.\n\nCzy nadpisać?`);
-      if (!confirmOverwrite) return;
-  }
-
-  // PRÓBA KOPIOWANIA
-  const textToCopy = plainReport.trim();
-  
-  try {
-      // 1. Próbuj standardowo
-      await navigator.clipboard.writeText(textToCopy);
-      showSuccessModal();
-  } catch (err) {
-      // 2. Jeśli błąd (np. Safari), użyj fallbacku
-      const fallbackSuccess = fallbackCopyToClipboard(textToCopy);
-      if (fallbackSuccess) {
-          showSuccessModal();
-      } else {
-          alert("Nie udało się automatycznie skopiować listy. Spróbuj ręcznie zaznaczyć tekst.");
+      if (!confirmOverwrite) {
+          // Jeśli użytkownik anuluje, nie zapisujemy na GH, ale lista jest już w schowku (o ile zadziałało)
+          // To mniejszy problem niż brak możliwości skopiowania na iOS
+          return; 
       }
   }
 
   await saveReportToGithub(reportData);
+
+  // === POKAZANIE SUKCESU / MANUALNEGO KOPIOWANIA ===
+  // Przekazujemy status kopiowania do funkcji modala
+  showSuccessModal(copySuccessful, textToCopy);
 }

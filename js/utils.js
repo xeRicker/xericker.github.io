@@ -9,9 +9,6 @@ export function getFormattedDate() {
     return `${day}.${month}.${year}`;
 }
 
-/**
- * Przyciemnia kolor w formacie HEX o podany procent.
- */
 export function darkenColor(hex, percent) {
   let num = parseInt(hex.slice(1), 16);
   let r = (num >> 16) - Math.round(255 * (percent / 100));
@@ -26,15 +23,13 @@ export function darkenColor(hex, percent) {
 }
 
 /**
- * Super-robust Fallback dla iOS.
- * Tworzy element widoczny dla systemu (opacity 1) ale przezroczysty,
- * żeby iOS pozwolił na zaznaczenie.
+ * ULTRA-ROBUST iOS CLIPBOARD FALLBACK
  */
 export function fallbackCopyToClipboard(text) {
   const textArea = document.createElement("textarea");
   textArea.value = text;
   
-  // iOS wymaga, aby element był edytowalny i "widoczny" (choć przezroczysty)
+  // Style, które oszukują iOS, że to normalne pole edycyjne
   textArea.contentEditable = true;
   textArea.readOnly = false;
   textArea.style.position = "fixed";
@@ -47,16 +42,20 @@ export function fallbackCopyToClipboard(text) {
   textArea.style.outline = "none";
   textArea.style.boxShadow = "none";
   textArea.style.background = "transparent";
-  textArea.style.opacity = "0"; // Niewidoczny dla oka, widoczny dla DOM
+  textArea.style.opacity = "0.01"; // Musi być minimalnie widoczne
   
   document.body.appendChild(textArea);
 
+  // Kluczowe dla iOS: najpierw focus, potem range
+  textArea.focus();
+  textArea.setSelectionRange(0, 999999); // Dla pewności
+
   const range = document.createRange();
   range.selectNodeContents(textArea);
+  
   const selection = window.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
-  textArea.setSelectionRange(0, 999999);
+  selection.removeAllRanges(); // Wyczyść stare zaznaczenia
+  selection.addRange(range);   // Dodaj nowe
 
   let success = false;
   try {
@@ -65,6 +64,8 @@ export function fallbackCopyToClipboard(text) {
     console.error('Fallback copy failed', err);
   }
   
+  // Sprzątanie
+  selection.removeAllRanges();
   document.body.removeChild(textArea);
   return success;
 }

@@ -284,7 +284,6 @@ function resetAll() {
     }, 150);
 }
 
-// --- KLUCZOWA POPRAWKA LOGIKI KOPIOWANIA ---
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
@@ -292,13 +291,11 @@ async function generateAndProcessLists() {
   const revenueInput = document.getElementById('revenueInput');
   const revenueVal = parseFloat(revenueInput.value);
   
-  // Walidacja utargu
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
       const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
       if (!confirmRevenue) return;
   }
 
-  // Generowanie danych
   const reportData = {
     location,
     date: dateStr,
@@ -354,39 +351,31 @@ async function generateAndProcessLists() {
       return;
   }
 
-  // === PRÓBA KOPIOWANIA (NATYCHMIAST, PRZED ASYNC) ===
   const textToCopy = plainReport.trim();
   let copySuccessful = false;
 
   try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-           // To jest Promise, ale wywoływany w kontekście zdarzenia kliknięcia
            navigator.clipboard.writeText(textToCopy).then(() => { copySuccessful = true; }).catch(() => {});
       } else {
-           // Fallback synchroniczny
            copySuccessful = fallbackCopyToClipboard(textToCopy);
       }
   } catch (e) {
       console.error("Copy error:", e);
   }
 
-  // Zabezpieczenie: jeśli pierwsza metoda zawiodła, spróbuj fallback
   if (!copySuccessful) copySuccessful = fallbackCopyToClipboard(textToCopy);
 
-  // === TERAZ SPRAWDZANIE GITHUB (ASYNC) ===
   const fileExists = await checkFileExists(location, dateStr);
   if (fileExists) {
-      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje.\n\nCzy nadpisać?`);
+      // ZMIANA: Zmieniony tekst komunikatu
+      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nLista dla "${location}" z dnia ${dateStr} już istnieje w bazie.\n\nCzy na pewno chcesz ją nadpisać?`);
       if (!confirmOverwrite) {
-          // Jeśli użytkownik anuluje, nie zapisujemy na GH, ale lista jest już w schowku (o ile zadziałało)
-          // To mniejszy problem niż brak możliwości skopiowania na iOS
           return; 
       }
   }
 
   await saveReportToGithub(reportData);
 
-  // === POKAZANIE SUKCESU / MANUALNEGO KOPIOWANIA ===
-  // Przekazujemy status kopiowania do funkcji modala
   showSuccessModal(copySuccessful, textToCopy);
 }

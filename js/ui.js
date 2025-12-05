@@ -1,7 +1,7 @@
-import { darkenColor, fallbackCopyToClipboard } from './utils.js'; // Dodano import fallback
+import { darkenColor, fallbackCopyToClipboard } from './utils.js';
 let fireworksInterval = null; 
 
-// ... (renderEmployeeControls i renderProductGrid BEZ ZMIAN - wklej je tu) ...
+// ... (funkcje renderujące BEZ ZMIAN) ...
 export function renderEmployeeControls(employees, employeeColors, timePresets) {
   const container = document.getElementById("employees");
   container.innerHTML = '';
@@ -121,7 +121,6 @@ export function showLocationModal() {
   sheet.classList.add("visible");
 }
 
-// --- NOWA FUNKCJA POKAZUJĄCA MODAL DO SKOPIOWANIA ---
 export function showSuccessModal(textToCopy) {
     const sheet = document.getElementById("successSheet");
     const overlay = document.getElementById("locationOverlay");
@@ -131,24 +130,17 @@ export function showSuccessModal(textToCopy) {
     overlay.classList.add("visible");
     sheet.classList.add("visible");
 
-    // Reset stanu przycisku
     copyBtn.innerText = "SKOPIUJ";
-    copyBtn.style.backgroundColor = ""; // Reset koloru
+    copyBtn.style.backgroundColor = ""; 
 
-    // Przypisanie akcji kopiowania na kliknięcie
     copyBtn.onclick = () => {
-        let success = false;
-        
-        // Próba standardowa
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(textToCopy)
                 .then(() => handleCopySuccess(copyBtn))
                 .catch(() => {
-                    // Fallback jeśli Promise zawiedzie
                     if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
                 });
         } else {
-            // Fallback dla starszych/innych przeglądarek
             if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
         }
     };
@@ -156,14 +148,14 @@ export function showSuccessModal(textToCopy) {
 
 function handleCopySuccess(btn) {
     btn.innerText = "SKOPIOWANO!";
-    btn.style.backgroundColor = "#27AE60"; // Zielony
+    btn.style.backgroundColor = "#27AE60";
     triggerConfetti();
     startFireworks();
     
-    // Zamknij automatycznie po 1.5s
+    // ZMIANA: Wydłużono czas do 5 sekund
     setTimeout(() => {
         closeLocationModal();
-    }, 1500);
+    }, 5000);
 }
 
 export function closeLocationModal() {

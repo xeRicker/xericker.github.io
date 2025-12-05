@@ -23,7 +23,8 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-body {
+/* ZMIANA: Blokada zoomowania przez podwójne kliknięcie */
+html, body {
   font-family: var(--font-body);
   background-color: var(--bg-color);
   color: var(--text-primary);
@@ -31,6 +32,7 @@ body {
   padding: 0;
   font-size: 16px;
   overflow-x: hidden;
+  touch-action: manipulation; /* TO BLOKUJE ZOOM */
 }
 
 h1, h2, h3 { font-family: var(--font-heading); margin: 0; letter-spacing: 0.5px; }
@@ -208,6 +210,7 @@ input:focus { outline: none; }
   border: 1px solid transparent;
   user-select: none;
   min-height: 72px;
+  touch-action: manipulation; /* Dodatkowe zabezpieczenie */
 }
 
 .product-card:active { transform: scale(0.98); background: var(--surface-active); }
@@ -269,6 +272,7 @@ input:focus { outline: none; }
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  touch-action: manipulation;
 }
 .btn-qty:active { background: var(--primary-color); color: white; }
 .btn-plus { color: var(--success-color); }
@@ -297,7 +301,6 @@ input:focus { outline: none; }
 .floating-bar {
   position: fixed;
   bottom: 0; left: 0; width: 100%;
-  /* ZMIANA: Zmniejszono padding, aby przyciąć tło */
   padding: 15px 20px 10px 20px;
   background: linear-gradient(to top, #121212 85%, transparent);
   display: flex;
@@ -322,6 +325,7 @@ input:focus { outline: none; }
   display: flex; align-items: center; gap: 10px;
   box-shadow: 0 4px 15px var(--primary-glow);
   cursor: pointer;
+  touch-action: manipulation;
 }
 .icon-button {
   background: var(--surface-color);
@@ -391,6 +395,7 @@ input:focus { outline: none; }
   letter-spacing: 0.5px;
   transition: background 0.2s;
   text-transform: uppercase;
+  touch-action: manipulation;
 }
 .sheet-btn:active { background: #333; }
 

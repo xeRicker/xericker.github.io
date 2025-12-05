@@ -1,12 +1,62 @@
 import { GITHUB_CONFIG } from '../config.js';
 
+export const isLocalhost = () => {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+};
+
 /**
- * Sprawdza, czy plik raportu już istnieje na GitHubie.
- * @param {string} location - Lokalizacja (np. Oświęcim)
- * @param {string} date - Data w formacie DD.MM.RRRR
- * @returns {Promise<boolean>} True jeśli plik istnieje, False jeśli nie.
+ * Generuje sztuczne dane do testów na localhost (Teraz z pracownikami!)
  */
+function getMockData() {
+    console.log("🔧 TRYB DEVELOPERSKI: Ładowanie danych testowych...");
+    const mockData = [];
+    const locations = ['Oświęcim', 'Wilamowice'];
+    const employeesList = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
+    
+    // Generuj dane dla ostatnich 60 dni
+    for (let i = 0; i < 60; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        const dayStr = String(date.getDate()).padStart(2, '0');
+        const monthStr = String(date.getMonth() + 1).padStart(2, '0');
+        const yearStr = date.getFullYear();
+        const dateString = `${dayStr}.${monthStr}.${yearStr}`;
+
+        locations.forEach(loc => {
+            if (Math.random() > 0.1) { // 90% szans na utarg
+                
+                // Generuj losowych pracowników dla tego dnia
+                const dailyEmployees = {};
+                // Od 1 do 3 pracowników na zmianie
+                const numWorkers = Math.floor(Math.random() * 3) + 1;
+                // Mieszamy tablicę i bierzemy pierwszych N
+                const shuffled = [...employeesList].sort(() => 0.5 - Math.random());
+                const selected = shuffled.slice(0, numWorkers);
+
+                selected.forEach(emp => {
+                    // Losowe godziny (np. 6h do 10h)
+                    const startHour = 12;
+                    const endHour = startHour + Math.floor(Math.random() * 5) + 5; 
+                    dailyEmployees[emp] = `${startHour}:00 - ${endHour}:00`;
+                });
+
+                mockData.push({
+                    location: loc,
+                    date: dateString,
+                    revenue: Math.floor(Math.random() * 2500) + 200 + (Math.random() * 99) / 100, // 200 - 2700 zł
+                    last_updated_at: new Date().toISOString(),
+                    employees: dailyEmployees // Dodano fake'owe godziny
+                });
+            }
+        });
+    }
+    return Promise.resolve(mockData);
+}
+
 export async function checkFileExists(location, date) {
+    if (isLocalhost()) return false;
+
     const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
     if (!TOKEN || !REPO_OWNER || !REPO_NAME) return false;
 
@@ -19,169 +69,99 @@ export async function checkFileExists(location, date) {
     };
 
     try {
-        // Używamy metody HEAD, żeby sprawdzić tylko czy plik istnieje, bez pobierania treści (szybciej)
-        // Uwaga: GitHub API czasem wymaga GET, jeśli HEAD nie działa poprawnie z tokenami w niektórych konfiguracjach,
-        // ale GET jest bezpieczny. Tutaj użyjemy GET i sprawdzimy status.
         const response = await fetch(apiUrl, { method: 'GET', headers });
         return response.status === 200;
     } catch (error) {
-        console.error("Błąd podczas sprawdzania istnienia pliku:", error);
         return false;
     }
 }
 
-/**
- * Zapisuje dane w formacie JSON do repozytorium GitHub.
- * @param {object} data - Obiekt z danymi raportu do zapisania.
- */
 export async function saveReportToGithub(data) {
-  const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
-  if (!TOKEN || TOKEN === '__GH_TOKEN__' || !REPO_OWNER || !REPO_NAME) {
-    console.error("Konfiguracja GitHub nie została uzupełniona w pliku js/config.js.");
-    alert("Błąd: Konfiguracja do zapisu na GitHubie jest niekompletna. Sprawdź konsolę (F12).");
-    return;
-  }
-
-  const filePath = `database/${data.location.toLowerCase()}/${data.date}.json`;
-  const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
-
-  const headers = {
-    'Authorization': `token ${TOKEN}`,
-    'Accept': 'application/vnd.github.v3+json',
-  };
-
-  try {
-    let sha;
-    const response = await fetch(apiUrl, { method: 'GET', headers });
-    if (response.ok) {
-      const fileData = await response.json();
-      sha = fileData.sha;
-    } else if (response.status !== 404) {
-      throw new Error(`Błąd podczas sprawdzania pliku: ${response.statusText}`);
+    if (isLocalhost()) {
+        console.log("🔧 TRYB DEVELOPERSKI: Zapis symulowany.", data);
+        alert("🔧 TRYB LOCALHOST: Dane wypisane w konsoli, nie wysłano do GitHuba.");
+        return;
     }
 
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-    const commitMessage = `Aktualizacja danych dla ${data.location} z dnia ${data.date}`;
-    const body = { message: commitMessage, content, sha };
-
-    const putResponse = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
-
-    if (putResponse.ok) {
-      console.log("Dane pomyślnie zapisane na GitHubie!");
-    } else {
-      const errorData = await putResponse.json();
-      throw new Error(`Błąd podczas zapisu na GitHub: ${putResponse.statusText} - ${errorData.message}`);
+    const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
+    if (!TOKEN || TOKEN === '__GH_TOKEN__' || !REPO_OWNER || !REPO_NAME) {
+        alert("Błąd konfiguracji GitHub.");
+        return;
     }
-  } catch (error) {
-    console.error("Wystąpił błąd podczas zapisu na GitHub:", error);
-    alert(`Nie udało się zapisać danych w bazie danych na GitHubie. Sprawdź konsolę (F12).`);
-  }
+
+    const filePath = `database/${data.location.toLowerCase()}/${data.date}.json`;
+    const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
+
+    const headers = {
+        'Authorization': `token ${TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+    };
+
+    try {
+        let sha;
+        const response = await fetch(apiUrl, { method: 'GET', headers });
+        if (response.ok) {
+            const fileData = await response.json();
+            sha = fileData.sha;
+        }
+
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        const commitMessage = `Aktualizacja danych dla ${data.location} z dnia ${data.date}`;
+        const body = { message: commitMessage, content, sha };
+
+        const putResponse = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
+
+        if (!putResponse.ok) {
+            const errorData = await putResponse.json();
+            throw new Error(errorData.message);
+        }
+    } catch (error) {
+        console.error("Błąd zapisu:", error);
+        alert("Błąd zapisu do bazy danych.");
+    }
 }
 
-/**
- * Pobiera i zwraca dane ze wszystkich raportów JSON z bieżącego miesiąca.
- * @returns {Promise<Array<object>>} Obietnica, która zwraca tablicę obiektów raportów.
- */
-export async function fetchMonthlyData() {
-  const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
-  const API_BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
-  const headers = {
-    'Authorization': `token ${TOKEN}`,
-    'Accept': 'application/vnd.github.v3+json',
-  };
-
-  const currentDate = new Date();
-  const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
-  const currentYear = currentDate.getFullYear();
-
-  try {
-    // 1. Pobierz listę lokalizacji (folderów 'osiek', 'oswiecim' itp.)
-    const locationsResponse = await fetch(`${API_BASE_URL}database`, { headers });
-    if (!locationsResponse.ok) throw new Error("Nie można pobrać listy lokalizacji.");
-    const locations = (await locationsResponse.json()).filter(item => item.type === 'dir');
-
-    // 2. Dla każdej lokalizacji, pobierz listę plików i odfiltruj te z bieżącego miesiąca
-    const allFilesPromises = locations.map(async (location) => {
-      const filesResponse = await fetch(location.url, { headers });
-      if (!filesResponse.ok) return [];
-      const files = await filesResponse.json();
-
-      return files
-        .filter(file => {
-          // Sprawdzamy, czy nazwa pliku pasuje do formatu DD.MM.RRRR.json
-          const match = file.name.match(/(\d{2})\.(\d{2})\.(\d{4})\.json/);
-          return match && match[2] === currentMonth && match[3] === String(currentYear);
-        })
-        .map(file => file.download_url); // Interesuje nas tylko URL do pobrania surowej zawartości
-    });
-
-    const monthlyFilesUrls = (await Promise.all(allFilesPromises)).flat();
-
-    if (monthlyFilesUrls.length === 0) {
-      return []; // Zwróć pustą tablicę, jeśli nie ma danych
-    }
-
-    // 3. Pobierz zawartość każdego pliku
-    const allFileContentPromises = monthlyFilesUrls.map(async (url) => {
-        const contentResponse = await fetch(url); // Nie trzeba tu nagłówków, bo to publiczny download_url
-        if (!contentResponse.ok) return null;
-        return contentResponse.json();
-    });
-
-    const reports = (await Promise.all(allFileContentPromises)).filter(Boolean); // odfiltruj ewentualne nulle
-
-    return reports;
-
-  } catch (error) {
-    console.error("Błąd podczas pobierania danych miesięcznych:", error);
-    alert("Wystąpił błąd podczas pobierania danych miesięcznych z GitHub. Sprawdź konsolę.");
-    return []; // Zwróć pustą tablicę w razie błędu
-  }
-}
-
-/**
- * Pobiera WSZYSTKIE raporty JSON ze wszystkich lokalizacji.
- * @returns {Promise<Array<object>>} Obietnica, która zwraca tablicę wszystkich obiektów raportów.
- */
 export async function fetchAllData() {
-  const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
-  const API_BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
-  const headers = {
-    'Authorization': `token ${TOKEN}`,
-    'Accept': 'application/vnd.github.v3+json',
-  };
+    if (isLocalhost()) {
+        return getMockData();
+    }
 
-  if (!TOKEN || TOKEN === '__GH_TOKEN__') {
-    console.warn("Brak tokenu GitHub. Operacja pobierania danych pominięta.");
-    return [];
-  }
+    const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
+    const API_BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
+    const headers = {
+        'Authorization': `token ${TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+    };
 
-  try {
-    const locationsResponse = await fetch(`${API_BASE_URL}database`, { headers });
-    if (!locationsResponse.ok) throw new Error("Nie można pobrać listy lokalizacji.");
-    const locations = (await locationsResponse.json()).filter(item => item.type === 'dir');
+    if (!TOKEN || TOKEN === '__GH_TOKEN__') return [];
 
-    const allFileContentPromises = locations.map(async (location) => {
-        const filesResponse = await fetch(location.url, { headers });
-        if (!filesResponse.ok) return [];
-        const files = await filesResponse.json();
-        
-        return Promise.all(
-            files
-            .filter(file => file.name.endsWith('.json'))
-            .map(async file => {
-                const contentResponse = await fetch(file.download_url);
-                return contentResponse.ok ? contentResponse.json() : null;
-            })
-        );
-    });
+    try {
+        const locationsResponse = await fetch(`${API_BASE_URL}database`, { headers });
+        if (!locationsResponse.ok) return [];
+        const locations = (await locationsResponse.json()).filter(item => item.type === 'dir');
 
-    const reportsNested = await Promise.all(allFileContentPromises);
-    return reportsNested.flat().filter(Boolean); // Spłaszczanie tablicy i usuwanie nulli
+        const allFileContentPromises = locations.map(async (location) => {
+            const filesResponse = await fetch(location.url, { headers });
+            if (!filesResponse.ok) return [];
+            const files = await filesResponse.json();
+            
+            return Promise.all(
+                files
+                .filter(file => file.name.endsWith('.json'))
+                .map(async file => {
+                    const contentResponse = await fetch(file.download_url);
+                    return contentResponse.ok ? contentResponse.json() : null;
+                })
+            );
+        });
 
-  } catch (error) {
-    console.error("Błąd podczas pobierania wszystkich danych:", error);
-    alert("Wystąpił błąd podczas pobierania danych z GitHub. Sprawdź konsolę.");
-    return [];
-  }
+        const reportsNested = await Promise.all(allFileContentPromises);
+        return reportsNested.flat().filter(Boolean);
+
+    } catch (error) {
+        console.error("Błąd pobierania:", error);
+        return [];
+    }
 }
+
+export async function fetchMonthlyData() { return []; }

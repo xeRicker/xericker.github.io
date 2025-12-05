@@ -1,22 +1,51 @@
-import { fetchAllData } from './services/githubService.js';
+import { fetchAllData, isLocalhost } from './services/githubService.js';
 
-// --- Konfiguracja i Zmienne ---
+// --- KOLORY PRACOWNIKÓW ---
+const employeeColors = {
+  "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
+  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
+};
+
 const PASSWORD = "xdxdxd123";
 let allReports = [];
 let mergedData = [];
 let currentFilteredData = [];
+let employeeStats = [];
 let revenueChart = null;
-let currentChartType = 'bar'; // Domyślny typ wykresu
+let employeeChart = null;
+let currentChartType = 'bar'; 
+let currentEmpMetric = 'hours'; // 'hours' or 'revenue'
 
-// --- Start ---
+// --- SORTOWANIE TABELI ---
+let sortDirection = 1;
+window.sortEmpTable = (colIndex) => {
+    sortDirection *= -1;
+    employeeStats.sort((a, b) => {
+        let valA, valB;
+        if (colIndex === 0) { valA = a.name; valB = b.name; }
+        else if (colIndex === 1 || colIndex === 3) { valA = a.hours; valB = b.hours; }
+        else { valA = Array.from(a.locations).join(', '); valB = Array.from(b.locations).join(', '); }
+        if (valA < valB) return -1 * sortDirection;
+        if (valA > valB) return 1 * sortDirection;
+        return 0;
+    });
+    renderDetailedEmployeeTable(employeeStats);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-  const enteredPassword = prompt("Podaj hasło administratora:");
-  if (enteredPassword === PASSWORD) {
-    document.body.style.display = 'block';
-    initializeApp();
+  if (isLocalhost()) {
+      console.log("🔧 TRYB LOCALHOST: Logowanie bez hasła.");
+      document.body.style.display = 'block';
+      initializeApp();
   } else {
-    alert("Błędne hasło.");
-    window.location.href = "index.html";
+      const enteredPassword = prompt("Podaj hasło administratora:");
+      if (enteredPassword === PASSWORD) {
+        document.body.style.display = 'block';
+        initializeApp();
+      } else {
+        alert("Błędne hasło.");
+        window.location.href = "index.html";
+      }
   }
 });
 
@@ -31,25 +60,29 @@ async function initializeApp() {
   processData();
   populateMonthFilter();
   
-  // Event Listenery
   document.getElementById('monthFilter').addEventListener('change', handleMonthChange);
   
-  // Obsługa zmiany typu wykresu
+  // Controls dla Wykresu Utargu
   document.querySelectorAll('.chart-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-          // Zmiana klasy active
           document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
           e.target.classList.add('active');
-          
-          // Zmiana typu i przerysowanie
           currentChartType = e.target.dataset.type;
           renderChart(currentFilteredData);
       });
   });
+
+  // Controls dla Wykresu Pracowników
+  document.querySelectorAll('.emp-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.emp-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          currentEmpMetric = e.target.dataset.type; // 'hours' or 'revenue'
+          renderEmployeeChart(employeeStats);
+      });
+  });
   
   document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
-
-  // Inicjalizacja widoku
   handleMonthChange();
   
   document.getElementById('loading').style.display = 'none';
@@ -72,7 +105,8 @@ function processData() {
                 dayOfWeek: dateObj.toLocaleDateString('pl-PL', { weekday: 'long' }),
                 oswiecim: 0,
                 wilamowice: 0,
-                total: 0
+                total: 0,
+                rawReports: [] 
             });
         }
         
@@ -82,6 +116,7 @@ function processData() {
         if (report.location === 'Oświęcim') entry.oswiecim += rev;
         if (report.location === 'Wilamowice') entry.wilamowice += rev;
         entry.total += rev;
+        entry.rawReports.push(report);
     });
 
     mergedData = Array.from(dataMap.values()).sort((a, b) => b.timestamp - a.timestamp);
@@ -170,15 +205,273 @@ function renderWeekTabs(monthData, monthKey) {
 }
 
 function updateView(data) {
-    currentFilteredData = data; // Zapisz aktualne dane do użycia przy zmianie wykresu
+    currentFilteredData = data; 
     renderSummary(data);
     renderTable(data);
     renderChart(data);
+    
+    employeeStats = processEmployeeData(data);
+    renderEmployeeChart(employeeStats);
+    renderDetailedEmployeeTable(employeeStats);
+    renderHeatmap(data);
 }
 
+// --- LOGIKA PRACOWNIKÓW ---
+function calculateHours(timeStr) {
+    if (!timeStr || !timeStr.includes('-')) return 0;
+    const [start, end] = timeStr.split('-').map(t => t.trim());
+    const [h1, m1] = start.split(':').map(Number);
+    const [h2, m2] = end.split(':').map(Number);
+    let hours = h2 - h1;
+    let minutes = m2 - m1;
+    if (minutes < 0) { hours--; minutes += 60; }
+    if (hours < 0) hours += 24;
+    return hours + (minutes / 60);
+}
+
+function processEmployeeData(data) {
+    const empMap = new Map();
+    
+    data.forEach(day => {
+        day.rawReports.forEach(report => {
+            if (report.employees) {
+                Object.entries(report.employees).forEach(([name, hoursStr]) => {
+                    const hours = calculateHours(hoursStr);
+                    if (!empMap.has(name)) {
+                        // Inicjalizacja struktury pracownika
+                        empMap.set(name, { 
+                            name: name, 
+                            hours: 0, 
+                            revenue: 0, // Łączny utarg
+                            locations: new Set(),
+                            locBreakdown: {} // Godziny per lokalizacja
+                        });
+                    }
+                    const emp = empMap.get(name);
+                    emp.hours += hours;
+                    emp.locations.add(report.location);
+                    
+                    // Sumowanie utargu (utarg zmiany przypisany do pracownika)
+                    const rev = report.revenue || 0;
+                    emp.revenue += rev;
+
+                    // Rozbicie godzin na lokalizacje
+                    if(!emp.locBreakdown[report.location]) emp.locBreakdown[report.location] = 0;
+                    emp.locBreakdown[report.location] += hours;
+                });
+            }
+        });
+    });
+    
+    return Array.from(empMap.values()).sort((a, b) => b.hours - a.hours);
+}
+
+// --- RENDERING WYKRESU PRACOWNIKÓW (CUSTOM TOOLTIP) ---
+function renderEmployeeChart(stats) {
+    const ctx = document.getElementById('employeeChart').getContext('2d');
+    
+    const sortedStats = [...stats].sort((a, b) => {
+        if(currentEmpMetric === 'hours') return b.hours - a.hours;
+        return b.revenue - a.revenue;
+    });
+
+    const labels = sortedStats.map(e => e.name);
+    const values = sortedStats.map(e => currentEmpMetric === 'hours' ? e.hours : e.revenue);
+    
+    const bgColors = labels.map(name => employeeColors[name] || 'rgba(211, 84, 0, 0.7)');
+    const borderColors = labels.map(name => employeeColors[name] ? '#fff' : '#D35400');
+
+    if (employeeChart) employeeChart.destroy();
+
+    employeeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: currentEmpMetric === 'hours' ? 'Godziny' : 'Utarg (PLN)',
+                data: values,
+                backgroundColor: bgColors,
+                borderColor: borderColors,
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                // ZMIANA: Wyłączamy domyślny tooltip i używamy zewnętrznego (External)
+                tooltip: {
+                    enabled: false,
+                    external: function(context) {
+                        // Element Tooltipa
+                        let tooltipEl = document.getElementById('customTooltip');
+
+                        // Ukryj jeśli nieaktywny
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
+                        }
+
+                        // Pobierz dane
+                        if (tooltipModel.body) {
+                            const dataIndex = tooltipModel.dataPoints[0].dataIndex;
+                            // Ponieważ wykres używa sortedStats, bierzemy dane z tej tablicy po indeksie
+                            const emp = sortedStats[dataIndex]; 
+
+                            if(emp) {
+                                // Budowanie HTML (styl taki sam jak Heatmapa)
+                                let html = `<div class="tooltip-title">${emp.name}</div>`;
+                                
+                                html += `<div class="tooltip-row"><span>Łącznie godzin:</span> <strong style="color:#fff">${emp.hours.toFixed(1)}h</strong></div>`;
+                                html += `<div class="tooltip-row"><span>Łączny utarg:</span> <strong style="color:var(--primary-color)">${formatMoney(emp.revenue)}</strong></div>`;
+                                
+                                html += `<div class="tooltip-sub">LOKALIZACJE:</div>`;
+                                
+                                // Rozbicie godzin na lokalizacje
+                                for(let [loc, h] of Object.entries(emp.locBreakdown)) {
+                                    html += `<div class="tooltip-row"><span>${loc}:</span> <strong>${h.toFixed(1)}h</strong></div>`;
+                                }
+
+                                tooltipEl.innerHTML = html;
+                            }
+                        }
+
+                        // Pozycjonowanie
+                        const position = context.chart.canvas.getBoundingClientRect();
+                        
+                        tooltipEl.style.display = 'block';
+                        // Ustawiamy obok kursora/paska
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 15 + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                    }
+                }
+            },
+            scales: {
+                x: { ticks: { color: '#888' }, grid: { color: '#333' } },
+                y: { ticks: { color: '#eee', font: { family: 'Roboto', weight: 'bold' } }, grid: { display: false } }
+            }
+        }
+    });
+}
+
+function renderDetailedEmployeeTable(stats) {
+    const tbody = document.querySelector("#employeeTable tbody");
+    tbody.innerHTML = '';
+    
+    stats.forEach(emp => {
+        const tr = document.createElement('tr');
+        const locs = Array.from(emp.locations).join(', ');
+        const percent = (emp.hours / 160) * 100;
+        
+        let percentColor = '#aaa';
+        if (percent > 100) percentColor = '#e74c3c'; 
+        else if (percent > 80) percentColor = '#27ae60'; 
+        
+        tr.innerHTML = `
+            <td style="font-weight:bold; color:#fff;">${emp.name}</td>
+            <td class="val-cell" style="color:var(--primary-color);">${emp.hours.toFixed(1)} h</td>
+            <td class="val-cell" style="color:${percentColor}; font-weight:bold;">${percent.toFixed(1)}%</td>
+            <td style="color:#aaa;">${locs}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// --- HEATMAPA Z TOOLTIPEM ---
+function renderHeatmap(data) {
+    const container = document.getElementById('heatmapContainer');
+    const tooltip = document.getElementById('customTooltip');
+    container.innerHTML = '';
+    
+    ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'heatmap-day-header';
+        h.innerText = d;
+        container.appendChild(h);
+    });
+
+    if (data.length === 0) return;
+
+    const [filterYear, filterMonth] = document.getElementById('monthFilter').value.split('-').map(Number);
+    const daysInMonth = new Date(filterYear, filterMonth, 0).getDate();
+    const firstDayOfWeek = new Date(filterYear, filterMonth - 1, 1).getDay() || 7; 
+
+    for (let i = 1; i < firstDayOfWeek; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'heatmap-cell heatmap-empty';
+        container.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayStr = `${String(day).padStart(2,'0')}.${String(filterMonth).padStart(2,'0')}.${filterYear}`;
+        const dayData = data.find(d => d.dateStr === dayStr);
+        
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        
+        if (dayData) {
+            const revenue = dayData.total;
+            let cssClass = '';
+            
+            if (revenue > 4000) cssClass = 'fire';
+            else if (revenue > 2000) cssClass = 'warm';
+            
+            const intensity = Math.min(revenue / 6000, 1);
+            cell.style.backgroundColor = `rgba(211, 84, 0, ${0.15 + (intensity * 0.85)})`;
+            if(cssClass) cell.classList.add(cssClass);
+            
+            cell.innerHTML = `
+                <span class="heatmap-date">${day}</span>
+                <span class="heatmap-val">${Math.round(revenue)}</span>
+            `;
+            
+            cell.addEventListener('mouseenter', () => {
+                let html = `<div class="tooltip-title">${dayStr} - ${dayData.dayOfWeek}</div>`;
+                html += `<div class="tooltip-row"><span>Suma:</span> <strong style="color:#fff">${formatMoney(revenue)}</strong></div>`;
+                html += `<div class="tooltip-row"><span>Oświęcim:</span> <strong>${formatMoney(dayData.oswiecim)}</strong></div>`;
+                html += `<div class="tooltip-row"><span>Wilamowice:</span> <strong>${formatMoney(dayData.wilamowice)}</strong></div>`;
+                
+                html += `<div class="tooltip-sub">ZMIANA:</div>`;
+                dayData.rawReports.forEach(r => {
+                    if(r.employees) {
+                        html += `<div style="color:var(--primary-color); font-size:11px; margin-top:2px;">${r.location}:</div>`;
+                        Object.entries(r.employees).forEach(([name, hours]) => {
+                            html += `<div class="tooltip-emp">• ${name} (${hours})</div>`;
+                        });
+                    }
+                });
+
+                tooltip.innerHTML = html;
+                tooltip.style.display = 'block';
+            });
+
+            cell.addEventListener('mousemove', (e) => {
+                let left = e.pageX + 15;
+                let top = e.pageY + 15;
+                if (left + 220 > window.innerWidth) left = e.pageX - 220;
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+            });
+
+            cell.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+            });
+
+        } else {
+            cell.style.backgroundColor = '#1a1a1a';
+            cell.innerHTML = `<span class="heatmap-date" style="opacity:0.3">${day}</span>`;
+        }
+        
+        container.appendChild(cell);
+    }
+}
+
+// --- RESZTA (Summary, Table, Main Chart) ---
 function renderSummary(data) {
     const summaryContainer = document.getElementById('summarySection');
-    
     const total = data.reduce((sum, d) => sum + d.total, 0);
     const osw = data.reduce((sum, d) => sum + d.oswiecim, 0);
     const wil = data.reduce((sum, d) => sum + d.wilamowice, 0);
@@ -187,19 +480,19 @@ function renderSummary(data) {
     summaryContainer.innerHTML = `
         <div class="summary-box">
             <h3>Łączny Utarg</h3>
-            <p style="color: #6200ee;">${formatMoney(total)}</p>
+            <p class="highlight">${formatMoney(total)}</p>
         </div>
         <div class="summary-box">
             <h3>Oświęcim</h3>
-            <p style="color: #03dac6;">${formatMoney(osw)}</p>
+            <p>${formatMoney(osw)}</p>
         </div>
         <div class="summary-box">
             <h3>Wilamowice</h3>
-            <p style="color: #ff4081;">${formatMoney(wil)}</p>
+            <p>${formatMoney(wil)}</p>
         </div>
         <div class="summary-box">
             <h3>Średnia dniówka</h3>
-            <p style="color: #ffab40;">${formatMoney(avg)}</p>
+            <p style="color: #aaa;">${formatMoney(avg)}</p>
         </div>
     `;
 }
@@ -207,18 +500,16 @@ function renderSummary(data) {
 function renderTable(data) {
     const tbody = document.querySelector("#revenueTable tbody");
     tbody.innerHTML = '';
-    
     const sorted = [...data].sort((a, b) => b.timestamp - a.timestamp);
 
     sorted.forEach(row => {
         const tr = document.createElement('tr');
-        
         const isWeekend = row.dayOfWeek === 'piątek' || row.dayOfWeek === 'sobota' || row.dayOfWeek === 'niedziela';
         if (isWeekend) tr.classList.add('weekend-row');
 
         tr.innerHTML = `
-            <td>${row.dateStr}</td>
-            <td class="day-name">${capitalize(row.dayOfWeek)}</td>
+            <td style="font-family: 'Oswald', sans-serif;">${row.dateStr}</td>
+            <td style="color: #aaa;">${capitalize(row.dayOfWeek)}</td>
             <td class="val-cell">${row.oswiecim > 0 ? formatMoney(row.oswiecim) : '-'}</td>
             <td class="val-cell">${row.wilamowice > 0 ? formatMoney(row.wilamowice) : '-'}</td>
             <td class="val-cell total-cell">${formatMoney(row.total)}</td>
@@ -238,6 +529,8 @@ function renderChart(data) {
     if (revenueChart) revenueChart.destroy();
 
     const isLine = currentChartType === 'line';
+    const colorOsw = '#D35400'; 
+    const colorWil = '#9E9E9E'; 
 
     revenueChart = new Chart(ctx, {
         type: currentChartType,
@@ -247,8 +540,8 @@ function renderChart(data) {
                 {
                     label: 'Oświęcim',
                     data: oswData,
-                    backgroundColor: isLine ? 'rgba(3, 218, 198, 0.2)' : 'rgba(3, 218, 198, 0.8)',
-                    borderColor: '#03dac6',
+                    backgroundColor: isLine ? 'rgba(211, 84, 0, 0.2)' : 'rgba(211, 84, 0, 0.8)',
+                    borderColor: colorOsw,
                     borderWidth: 2,
                     borderRadius: 4,
                     tension: 0.3,
@@ -257,8 +550,8 @@ function renderChart(data) {
                 {
                     label: 'Wilamowice',
                     data: wilData,
-                    backgroundColor: isLine ? 'rgba(255, 64, 129, 0.2)' : 'rgba(255, 64, 129, 0.8)',
-                    borderColor: '#ff4081',
+                    backgroundColor: isLine ? 'rgba(158, 158, 158, 0.2)' : 'rgba(158, 158, 158, 0.7)',
+                    borderColor: colorWil,
                     borderWidth: 2,
                     borderRadius: 4,
                     tension: 0.3,
@@ -268,19 +561,16 @@ function renderChart(data) {
         },
         options: {
             responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { usePointStyle: true, font: { size: 14 } }
-                },
+                legend: { labels: { color: '#eee', usePointStyle: true, font: { family: 'Roboto' } } },
                 tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    backgroundColor: '#333',
+                    titleColor: '#D35400',
+                    bodyColor: '#fff',
+                    borderColor: '#555',
+                    borderWidth: 1,
                     padding: 12,
-                    cornerRadius: 8,
                     callbacks: {
                         footer: (tooltipItems) => {
                             let total = 0;
@@ -291,8 +581,8 @@ function renderChart(data) {
                 }
             },
             scales: {
-                x: { grid: { display: false } },
-                y: { beginAtZero: true, grid: { color: '#f0f0f0' } }
+                x: { grid: { display: false }, ticks: { color: '#888' } },
+                y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#888' } }
             }
         }
     });

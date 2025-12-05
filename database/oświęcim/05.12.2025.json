@@ -2,9 +2,10 @@
   "location": "Oświęcim",
   "date": "05.12.2025",
   "revenue": 0,
-  "last_updated_at": "2025-12-05T00:58:03.771Z",
+  "last_updated_at": "2025-12-05T01:21:07.210Z",
   "employees": {},
   "products": {
+    "Ogórki": 1,
     "Bułki": 0
   }
 }

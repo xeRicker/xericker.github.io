@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Burbone Lista</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -69,23 +69,20 @@
     </div>
   </div>
 
+  <!-- Modal Sukcesu (Gotowe do skopiowania) -->
   <div id="successSheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
     <div class="success-icon-wrapper">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
     </div>
-    
-    <h3 id="successTitle">Lista skopiowana!</h3>
-    <p class="success-msg" id="successMsg">Wklej ją teraz na grupę na Messengerze.</p>
-
-    <!-- NOWOŚĆ: Pole do ręcznego kopiowania (domyślnie ukryte) -->
-    <textarea id="manualCopyArea" readonly></textarea>
-
+    <h3>LISTA GOTOWA!</h3>
+    <p class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
     <div class="sheet-actions">
-      <button class="sheet-btn success-close-btn" onclick="document.getElementById('locationOverlay').click()">ZAMKNIJ</button>
+      <!-- ZMIANA: Przycisk SKOPIUJ -->
+      <button id="finalCopyBtn" class="sheet-btn success-close-btn">SKOPIUJ</button>
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=3"></script>
+  <script type="module" src="js/main.js?v=4"></script>
 </body>
 </html>

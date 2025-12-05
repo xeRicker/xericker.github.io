@@ -1,7 +1,7 @@
-// ... (Importy i reszta funkcji UI bez zmian) ...
-import { darkenColor } from './utils.js';
+import { darkenColor, fallbackCopyToClipboard } from './utils.js'; // Dodano import fallback
 let fireworksInterval = null; 
 
+// ... (renderEmployeeControls i renderProductGrid BEZ ZMIAN - wklej je tu) ...
 export function renderEmployeeControls(employees, employeeColors, timePresets) {
   const container = document.getElementById("employees");
   container.innerHTML = '';
@@ -121,34 +121,49 @@ export function showLocationModal() {
   sheet.classList.add("visible");
 }
 
-// --- ZMIANA: Obsługa Manual Copy ---
-export function showSuccessModal(copySuccessful = true, textToCopy = "") {
+// --- NOWA FUNKCJA POKAZUJĄCA MODAL DO SKOPIOWANIA ---
+export function showSuccessModal(textToCopy) {
     const sheet = document.getElementById("successSheet");
     const overlay = document.getElementById("locationOverlay");
-    const manualArea = document.getElementById("manualCopyArea");
-    const title = document.getElementById("successTitle");
-    const msg = document.getElementById("successMsg");
+    const copyBtn = document.getElementById("finalCopyBtn");
 
     document.getElementById("locationSheet").classList.remove("visible");
     overlay.classList.add("visible");
     sheet.classList.add("visible");
 
-    if (copySuccessful) {
-        // Tryb Sukces
-        title.innerText = "Lista skopiowana!";
-        msg.innerText = "Wklej ją teraz na grupę na Messengerze.";
-        manualArea.style.display = "none";
-        // Fajerwerki tylko przy sukcesie
-        triggerConfetti();
-        startFireworks();
-    } else {
-        // Tryb Manualny (Awaria)
-        title.innerText = "Skopiuj ręcznie";
-        msg.innerText = "Automatyczne kopiowanie nie zadziałało. Kliknij poniżej:";
-        manualArea.style.display = "block";
-        manualArea.value = textToCopy;
-        manualArea.select(); // Zaznacz tekst dla wygody
-    }
+    // Reset stanu przycisku
+    copyBtn.innerText = "SKOPIUJ";
+    copyBtn.style.backgroundColor = ""; // Reset koloru
+
+    // Przypisanie akcji kopiowania na kliknięcie
+    copyBtn.onclick = () => {
+        let success = false;
+        
+        // Próba standardowa
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => handleCopySuccess(copyBtn))
+                .catch(() => {
+                    // Fallback jeśli Promise zawiedzie
+                    if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
+                });
+        } else {
+            // Fallback dla starszych/innych przeglądarek
+            if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
+        }
+    };
+}
+
+function handleCopySuccess(btn) {
+    btn.innerText = "SKOPIOWANO!";
+    btn.style.backgroundColor = "#27AE60"; // Zielony
+    triggerConfetti();
+    startFireworks();
+    
+    // Zamknij automatycznie po 1.5s
+    setTimeout(() => {
+        closeLocationModal();
+    }, 1500);
 }
 
 export function closeLocationModal() {
@@ -158,6 +173,7 @@ export function closeLocationModal() {
   stopFireworks();
 }
 
+// ... (Confetti i Fajerwerki BEZ ZMIAN) ...
 function triggerConfetti() {
     const container = document.getElementById('confetti-container');
     for(let i=0; i<40; i++) {

@@ -1,9 +1,9 @@
 import { saveReportToGithub, fetchMonthlyData, checkFileExists } from './services/githubService.js';
 import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
-import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
+import { getFormattedDate } from './utils.js'; // Usunięto fallbackCopyToClipboard stąd
 
-// ... (Zmienne BEZ ZMIAN) ...
+// ... (Zmienne BEZ ZMIAN - wklej je tu jak zawsze) ...
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
@@ -285,7 +285,7 @@ function resetAll() {
     }, 150);
 }
 
-// --- POPRAWIONA KOLEJNOŚĆ WYKONYWANIA (COPY FIRST) ---
+// --- NOWA LOGIKA: ZBUDUJ I POKAŻ DO SKOPIOWANIA ---
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
@@ -293,14 +293,9 @@ async function generateAndProcessLists() {
   const revenueInput = document.getElementById('revenueInput');
   const revenueVal = parseFloat(revenueInput.value);
   
-  // Zmienna flagująca przerwanie
-  let userWasInterrupted = false;
-
-  // Walidacja utargu (to przerywa flow na iPhone!)
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
       const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
       if (!confirmRevenue) return;
-      userWasInterrupted = true;
   }
 
   const reportData = {
@@ -358,44 +353,17 @@ async function generateAndProcessLists() {
       return;
   }
 
-  // === PRÓBA KOPIOWANIA (TERAZ! Zanim zrobimy await) ===
-  const textToCopy = plainReport.trim();
-  let copySuccessful = false;
-
-  // Kopiujemy tylko jeśli nie było przerwania (alertu), bo po alercie i tak nie zadziała automatycznie
-  if (!userWasInterrupted) {
-      try {
-          // Używamy fallbacku synchronicznego jako pierwszej opcji na iOS
-          copySuccessful = fallbackCopyToClipboard(textToCopy);
-          
-          // Jeśli fallback nie zadziałał (np. na PC), spróbuj Clipboard API
-          if (!copySuccessful && navigator.clipboard && navigator.clipboard.writeText) {
-               // To jest promise, więc nie możemy na niego czekać "blokująco", ale wywołujemy go
-               navigator.clipboard.writeText(textToCopy).then(() => {}).catch(() => {});
-               // Zakładamy sukces dla UI, API obsłuży resztę w tle
-               copySuccessful = true;
-          }
-      } catch (e) {
-          console.error("Copy error:", e);
-      }
-  } else {
-      // Jeśli było przerwanie, wymuszamy tryb ręczny
-      copySuccessful = false;
-  }
-
-  // === TERAZ DOPIERO SPRAWDZAMY GITHUB (ASYNC) ===
   const fileExists = await checkFileExists(location, dateStr);
   if (fileExists) {
       const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nLista dla "${location}" z dnia ${dateStr} już istnieje w bazie.\n\nCzy na pewno chcesz ją nadpisać?`);
       if (!confirmOverwrite) {
-          // Jeśli anulowano zapis, ale skopiowano do schowka, to w porządku. 
-          // Użytkownik ma to co chciał (tekst), po prostu nie nadpisał bazy.
           return; 
       }
   }
 
   await saveReportToGithub(reportData);
 
-  // Pokazujemy sukces (lub manualne kopiowanie jeśli copySuccessful == false)
-  showSuccessModal(copySuccessful, textToCopy);
+  // Zamiast kopiować, przekazujemy tekst do modala
+  // Dopiero kliknięcie w przycisk w modalu skopiuje tekst (co zadziała na 100% na iOS)
+  showSuccessModal(plainReport.trim());
 }

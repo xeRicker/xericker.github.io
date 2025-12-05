@@ -1,0 +1,19 @@
+{
+  "location": "Wilamowice",
+  "date": "05.12.2025",
+  "revenue": 879,
+  "last_updated_at": "2025-12-05T20:04:13.776Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Bułki": 16,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

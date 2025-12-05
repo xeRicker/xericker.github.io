@@ -2,37 +2,87 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Lista Produktów</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Burbone Lista</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
 
-    <h2>Pracownicy</h2>
-    <div id="employees"></div>
+  <!-- Kontener na fajerwerki -->
+  <div id="confetti-container"></div>
 
-    <div class="revenue-container">
-      <label for="revenueInput">
-        <span style="font-size: 2em; font-weight: bold; margin-right: 15px; margin-left: -35px;">💰 Jaki utarg?</span>
-        <input type="number" id="revenueInput" placeholder="np. 1500.50" step="0.01">
-      </label>
-    </div>
-
-    <div id="resetContainer" style="display: none;">
-      <button class="reset-button"><b>Reset</b></button>
-    </div>
-    <div id="products" class="products-grid"></div>
-    <button id="copyButton"><b>Kopiuj 📥</b></button>
-    <a href="admin.html" style="text-decoration: none;"><button id="adminButton" class="secondary-button"><b>Admin 🔑</b></button></a>
+  <div class="app-header">
+    <h1>BURBONE LISTA</h1>
+    <a href="admin.html" class="admin-link-icon" aria-label="Panel Admina">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+    </a>
   </div>
 
-  <div id="locationModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
-    <div style="background:white; padding:60px; border-radius:20px; text-align:center; font-size:28px;">
-      <p><strong style="font-size: 40px;">Jaki punkt wariacie?</strong></p>
-      <button class="location-button" data-location="Oświęcim" style="margin: 10px;"><b>Oświęcim</b></button>
-      <button class="location-button" data-location="Wilamowice" style="margin: 10px;"><b>Wilamowice</b></button>
+  <div class="container">
+    
+    <div class="section-card animate-stagger">
+      <h2>💰 Utarg</h2>
+      <div class="input-group">
+        <span class="currency-symbol">PLN</span>
+        <input type="number" id="revenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="section-card animate-stagger">
+      <h2>👨‍🍳 Ekipa</h2>
+      <div id="employees" class="employees-grid"></div>
+    </div>
+
+    <div id="products"></div>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <div class="floating-bar animate-slide-up">
+    <div id="resetContainer" style="display: none;">
+        <button class="icon-button reset-button" aria-label="Reset">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+    <button id="copyButton" class="primary-fab">
+      <span>SKOPIUJ LISTĘ</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+    </button>
+  </div>
+
+  <div id="locationOverlay" class="overlay"></div>
+
+  <!-- Modal Lokalizacji -->
+  <div id="locationSheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <h3>Wybierz punkt</h3>
+    <div class="sheet-actions">
+      <!-- Teksty wielkimi literami -->
+      <button class="sheet-btn location-button" data-location="Oświęcim">
+        <span class="loc-icon">🏰</span> OŚWIĘCIM
+      </button>
+      <button class="sheet-btn location-button" data-location="Wilamowice">
+        <span class="loc-icon">🏡</span> WILAMOWICE
+      </button>
+      <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
+    </div>
+  </div>
+
+  <!-- Modal Sukcesu -->
+  <div id="successSheet" class="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="success-icon-wrapper">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h3>Lista skopiowana!</h3>
+    <p class="success-msg">Wklej ją teraz na grupę na Messengerze.</p>
+    <div class="sheet-actions">
+      <!-- ZMIANA: ZAMKNIJ -->
+      <button class="sheet-btn success-close-btn" onclick="document.getElementById('locationOverlay').click()">ZAMKNIJ</button>
     </div>
   </div>
 

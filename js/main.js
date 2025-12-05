@@ -1,16 +1,15 @@
 import { saveReportToGithub, fetchMonthlyData, checkFileExists } from './services/githubService.js';
 import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
-import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal } from './ui.js';
+import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
-// ... (reszta kodu bez zmian: employees, categories, productMap, itp.) ...
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
+
 const timePresets = [
-  { label: "Własne", value: "" },
   { label: "12:00 - 19:30", value: "12:00-19:30" },
   { label: "12:00 - 20:00", value: "12:00-20:00" },
   { label: "12:00 - 20:30", value: "12:00-20:30" },
@@ -29,7 +28,6 @@ const timePresets = [
 ];
 const categories = {
   "🥗": {
-    icon: "icons/warzywa.png",
     items: [
       { name: "Sałata", type: '', options: { q: 1 } },
       { name: "Ogórki", type: '', options: { q: 1 } },
@@ -39,7 +37,6 @@ const categories = {
     ]
   },
   "🥩": {
-    icon: "icons/mieso.png",
     items: [
       { name: "Mięso: Małe", type: '', options: { q: 1 } },
       { name: "Mięso: Duże", type: '', options: { q: 1 } },
@@ -49,7 +46,6 @@ const categories = {
     ]
   },
   "🧀": {
-    icon: "icons/nabial.png",
     items: [
       { name: "Cheddar", type: '', options: { q: 1 } },
       { name: "Halloumi", type: '', options: { q: 1 } },
@@ -57,7 +53,6 @@ const categories = {
     ]
   },
   "🍟": {
-    icon: "icons/frytki.png",
     items: [
       { name: "Frytki", type: '', options: { q: 1 } },
       { name: "Placki", type: '', options: { q: 1 } },
@@ -66,11 +61,9 @@ const categories = {
     ]
   },
   "🍞": {
-    icon: "icons/pieczywo.png",
     items: [ { name: "Bułki", type: '', options: { q: 1 } } ]
   },
   "🧂": {
-    icon: "icons/sosy.png",
     items: [
       { name: "Cebula prażona", type: '', options: { q: 1 } }, 
       { name: "Sriracha", type: 's', options: { q: 1 } }, 
@@ -89,7 +82,6 @@ const categories = {
     ]
   },
   "🥤": {
-    icon: "icons/napoje.png",
     items: [
       { name: "Pepsi", type: 's', options: { q: 1 } },
       { name: "Pepsi Max", type: 's', options: { q: 1 } },
@@ -98,7 +90,6 @@ const categories = {
     ]
   },
   "🛍️": {
-    icon: "icons/opakowania.png",
     items: [
       { name: "Torby: Małe", type: 's', options: { q: 1 } },
       { name: "Torby: Średnie", type: 's', options: { q: 1 } },
@@ -113,7 +104,6 @@ const categories = {
     ]
   },
   "🧽": {
-    icon: "icons/chemia.png",
     items: [
       { name: "Szmaty", type: 's', options: { q: 1 } },
       { name: "Zielony papier", type: 's', options: { q: 1 } },
@@ -124,7 +114,6 @@ const categories = {
     ]
   },
   "📋": {
-    icon: "icons/papierologia.png",
     items: [
       { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
       { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
@@ -138,7 +127,6 @@ const categories = {
 const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
-// ... (EventListener setup - bez zmian) ...
 document.addEventListener('DOMContentLoaded', () => {
   renderEmployeeControls(employees, employeeColors, timePresets);
   renderProductGrid(categories);
@@ -160,10 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.entries(savedData.employees || {}).forEach(([id, times]) => {
         const fromInput = document.getElementById(`${id}_od`);
         const toInput = document.getElementById(`${id}_do`);
-        const presetSelect = document.querySelector(`select[data-employee-id="${id}"]`);
         if (fromInput) fromInput.value = times.from;
         if (toInput) toInput.value = times.to;
-        if (presetSelect) presetSelect.value = times.preset;
+        if(times.from && times.to) {
+             const row = fromInput.closest('.employee-row');
+             if(row) row.classList.add('active');
+        }
     });
     if (savedData.revenue) {
         document.getElementById('revenueInput').value = savedData.revenue;
@@ -177,19 +167,60 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     document.getElementById('products').addEventListener('change', handleProductChange);
     document.getElementById('products').addEventListener('click', handleProductButtonClick);
-    document.getElementById('employees').addEventListener('change', handleEmployeeChange);
+    
+    document.getElementById('employees').addEventListener('input', (event) => {
+        if(event.target.type === 'time') {
+            const row = event.target.closest('.employee-row');
+            if(row) row.classList.add('active');
+            saveAndRefreshUI();
+        }
+    });
+    
+    document.getElementById('employees').addEventListener('change', (event) => {
+        if (event.target.classList.contains('hidden-preset-select')) {
+            const value = event.target.value;
+            const id = event.target.dataset.employeeId;
+            const fromInput = document.getElementById(`${id}_od`);
+            const toInput = document.getElementById(`${id}_do`);
+            if (value) {
+                const [from, to] = value.split('-');
+                fromInput.value = from;
+                toInput.value = to;
+                
+                const row = event.target.closest('.employee-row');
+                if(row) row.classList.add('active');
+            }
+            saveAndRefreshUI();
+            event.target.value = "";
+        }
+    });
+
     document.getElementById('revenueInput').addEventListener('input', saveAndRefreshUI);
     document.querySelector('.reset-button').addEventListener('click', resetAll);
     document.getElementById('copyButton').addEventListener('click', showLocationModal);
+    
     document.querySelectorAll('.location-button').forEach(btn => btn.addEventListener('click', handleLocationConfirm));
+    document.getElementById('locationOverlay').addEventListener('click', closeLocationModal);
 }
 
-// ... (Funkcje obsługi zdarzeń UI - bez zmian) ...
 function handleProductChange(event) {
     if (event.target.matches('input[type="checkbox"], input[type="number"]')) {
         const name = event.target.dataset.productName;
-        const value = event.target.type === 'checkbox' ? (event.target.checked ? 1 : 0) : Math.max(0, parseInt(event.target.value, 10) || 0);
-        event.target.value = value;
+        let value;
+
+        if (event.target.type === 'checkbox') {
+            value = event.target.checked ? 1 : 0;
+        } else {
+            let rawVal = parseFloat(event.target.value);
+            if (isNaN(rawVal)) {
+                value = 0;
+            } else {
+                value = Math.ceil(rawVal);
+                value = Math.max(0, value);
+            }
+            event.target.value = value;
+        }
+
         highlightProduct(name, value);
         saveAndRefreshUI();
     }
@@ -208,26 +239,10 @@ function handleProductButtonClick(event) {
     }
 }
 
-function handleEmployeeChange(event) {
-    if (event.target.matches('select.time-preset-select')) {
-        const value = event.target.value;
-        const id = event.target.dataset.employeeId;
-        const fromInput = document.getElementById(`${id}_od`);
-        const toInput = document.getElementById(`${id}_do`);
-        if (value) {
-            const [from, to] = value.split('-');
-            fromInput.value = from;
-            toInput.value = to;
-        }
-    }
-    saveAndRefreshUI();
-}
-
 function handleLocationConfirm(event) {
     const button = event.target.closest('.location-button');
     if (button) {
         selectedLocation = button.dataset.location;
-        closeLocationModal();
         generateAndProcessLists();
     }
 }
@@ -238,48 +253,51 @@ function saveAndRefreshUI() {
 }
 
 function resetAll() {
-  productMap.forEach((product, name) => {
-    if (product.type === 's') {
-      const checkbox = document.getElementById(`checkbox-${name}`);
-      if (checkbox) checkbox.checked = false;
-    } else {
-      const input = document.getElementById(`input-${name}`);
-      if (input) input.value = 0;
-    }
-    highlightProduct(name, 0);
-  });
+    const btn = document.querySelector('.reset-button');
+    btn.style.transform = 'rotate(10deg)';
+    setTimeout(() => btn.style.transform = 'rotate(-10deg)', 50);
+    setTimeout(() => btn.style.transform = 'rotate(0)', 100);
 
-  employees.forEach(name => {
-    const id = name.toLowerCase();
-    document.getElementById(`${id}_od`).value = "";
-    document.getElementById(`${id}_do`).value = "";
-    document.querySelector(`select[data-employee-id="${id}"]`).value = "";
-  });
-  
-  document.getElementById('revenueInput').value = "";
+    setTimeout(() => {
+        productMap.forEach((product, name) => {
+            if (product.type === 's') {
+            const checkbox = document.getElementById(`checkbox-${name}`);
+            if (checkbox) checkbox.checked = false;
+            } else {
+            const input = document.getElementById(`input-${name}`);
+            if (input) input.value = 0;
+            }
+            highlightProduct(name, 0);
+        });
 
-  localStorage.removeItem("productList");
-  updateResetButtonVisibility();
-  alert("Lista zresetowana!");
+        employees.forEach(name => {
+            const id = name.toLowerCase();
+            document.getElementById(`${id}_od`).value = "";
+            document.getElementById(`${id}_do`).value = "";
+            const row = document.getElementById(`${id}_od`).closest('.employee-row');
+            if(row) row.classList.remove('active');
+        });
+        
+        document.getElementById('revenueInput').value = "";
+
+        localStorage.removeItem("productList");
+        updateResetButtonVisibility();
+    }, 150);
 }
 
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
   
-  // --- 1. SPRAWDZENIE UTARGU ---
   const revenueInput = document.getElementById('revenueInput');
   const revenueVal = parseFloat(revenueInput.value);
   
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
-      // Zmieniono na spójny format "⚠️ Uwaga"
-      const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz wygenerować listę z zerowym utargiem?`);
-      if (!confirmRevenue) {
-          return;
-      }
+      // ZMIANA: wygenerować -> skopiować
+      const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
+      if (!confirmRevenue) return;
   }
 
-  // ... (generowanie reportData bez zmian) ...
   const reportData = {
     location,
     date: dateStr,
@@ -327,29 +345,25 @@ async function generateAndProcessLists() {
   });
   if (productsReport) plainReport += productsReport;
 
-  // --- 2. SPRAWDZENIE PUSTEJ LISTY ---
   const hasEmployees = Object.keys(reportData.employees).length > 0;
   const hasProducts = Object.keys(reportData.products).length > 0;
 
   if (!hasEmployees && !hasProducts) {
-      alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów. Uzupełnij dane przed wygenerowaniem.");
+      alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów.");
       return;
   }
 
-  // --- 3. SPRAWDZENIE ISTNIENIA PLIKU ---
   const fileExists = await checkFileExists(location, dateStr);
   if (fileExists) {
-      // Zmieniono na spójny format "⚠️ Uwaga" zamiast "Ostrzeżenie"
-      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje w bazie danych.\n\nCzy na pewno chcesz go nadpisać? (np. ktoś inny już wysłał listę).`);
-      if (!confirmOverwrite) {
-          return;
-      }
+      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nRaport dla lokalizacji "${location}" z dnia ${dateStr} już istnieje.\n\nCzy nadpisać?`);
+      if (!confirmOverwrite) return;
   }
 
   navigator.clipboard.writeText(plainReport.trim()).then(() => {
-    alert("Lista skopiowana!");
+    showSuccessModal();
   }).catch(() => {
     fallbackCopyToClipboard(plainReport.trim());
+    showSuccessModal();
   });
 
   await saveReportToGithub(reportData);

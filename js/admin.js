@@ -213,19 +213,33 @@ function updateView(data) {
     employeeStats = processEmployeeData(data);
     renderEmployeeChart(employeeStats);
     renderDetailedEmployeeTable(employeeStats);
+    
     renderHeatmap(data);
 }
 
-// --- LOGIKA PRACOWNIKÓW ---
+// --- POPRAWIONA LOGIKA OBLICZANIA GODZIN ---
 function calculateHours(timeStr) {
-    if (!timeStr || !timeStr.includes('-')) return 0;
-    const [start, end] = timeStr.split('-').map(t => t.trim());
+    if (!timeStr) return 0;
+    
+    // ZMIANA: Zamiana półpauzy (–) na minus (-) aby split działał poprawnie
+    const normalizedTime = timeStr.replace('–', '-');
+    
+    if (!normalizedTime.includes('-')) return 0;
+    
+    const [start, end] = normalizedTime.split('-').map(t => t.trim());
     const [h1, m1] = start.split(':').map(Number);
     const [h2, m2] = end.split(':').map(Number);
+    
     let hours = h2 - h1;
     let minutes = m2 - m1;
-    if (minutes < 0) { hours--; minutes += 60; }
+    
+    if (minutes < 0) {
+        hours--;
+        minutes += 60;
+    }
+    
     if (hours < 0) hours += 24;
+    
     return hours + (minutes / 60);
 }
 
@@ -238,24 +252,21 @@ function processEmployeeData(data) {
                 Object.entries(report.employees).forEach(([name, hoursStr]) => {
                     const hours = calculateHours(hoursStr);
                     if (!empMap.has(name)) {
-                        // Inicjalizacja struktury pracownika
                         empMap.set(name, { 
                             name: name, 
                             hours: 0, 
-                            revenue: 0, // Łączny utarg
+                            revenue: 0, 
                             locations: new Set(),
-                            locBreakdown: {} // Godziny per lokalizacja
+                            locBreakdown: {} 
                         });
                     }
                     const emp = empMap.get(name);
                     emp.hours += hours;
                     emp.locations.add(report.location);
                     
-                    // Sumowanie utargu (utarg zmiany przypisany do pracownika)
                     const rev = report.revenue || 0;
                     emp.revenue += rev;
 
-                    // Rozbicie godzin na lokalizacje
                     if(!emp.locBreakdown[report.location]) emp.locBreakdown[report.location] = 0;
                     emp.locBreakdown[report.location] += hours;
                 });
@@ -266,7 +277,7 @@ function processEmployeeData(data) {
     return Array.from(empMap.values()).sort((a, b) => b.hours - a.hours);
 }
 
-// --- RENDERING WYKRESU PRACOWNIKÓW (CUSTOM TOOLTIP) ---
+// --- RENDERING WYKRESU PRACOWNIKÓW ---
 function renderEmployeeChart(stats) {
     const ctx = document.getElementById('employeeChart').getContext('2d');
     
@@ -301,49 +312,35 @@ function renderEmployeeChart(stats) {
             responsive: true,
             plugins: {
                 legend: { display: false },
-                // ZMIANA: Wyłączamy domyślny tooltip i używamy zewnętrznego (External)
                 tooltip: {
-                    enabled: false,
+                    enabled: false, // Wyłącz domyślny
                     external: function(context) {
-                        // Element Tooltipa
+                        // Custom Tooltip (ten sam co w Heatmapie)
                         let tooltipEl = document.getElementById('customTooltip');
-
-                        // Ukryj jeśli nieaktywny
                         const tooltipModel = context.tooltip;
                         if (tooltipModel.opacity === 0) {
                             tooltipEl.style.display = 'none';
                             return;
                         }
 
-                        // Pobierz dane
                         if (tooltipModel.body) {
                             const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-                            // Ponieważ wykres używa sortedStats, bierzemy dane z tej tablicy po indeksie
                             const emp = sortedStats[dataIndex]; 
 
                             if(emp) {
-                                // Budowanie HTML (styl taki sam jak Heatmapa)
                                 let html = `<div class="tooltip-title">${emp.name}</div>`;
-                                
                                 html += `<div class="tooltip-row"><span>Łącznie godzin:</span> <strong style="color:#fff">${emp.hours.toFixed(1)}h</strong></div>`;
                                 html += `<div class="tooltip-row"><span>Łączny utarg:</span> <strong style="color:var(--primary-color)">${formatMoney(emp.revenue)}</strong></div>`;
-                                
                                 html += `<div class="tooltip-sub">LOKALIZACJE:</div>`;
-                                
-                                // Rozbicie godzin na lokalizacje
                                 for(let [loc, h] of Object.entries(emp.locBreakdown)) {
                                     html += `<div class="tooltip-row"><span>${loc}:</span> <strong>${h.toFixed(1)}h</strong></div>`;
                                 }
-
                                 tooltipEl.innerHTML = html;
                             }
                         }
 
-                        // Pozycjonowanie
                         const position = context.chart.canvas.getBoundingClientRect();
-                        
                         tooltipEl.style.display = 'block';
-                        // Ustawiamy obok kursora/paska
                         tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 15 + 'px';
                         tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
                     }
@@ -380,7 +377,6 @@ function renderDetailedEmployeeTable(stats) {
     });
 }
 
-// --- HEATMAPA Z TOOLTIPEM ---
 function renderHeatmap(data) {
     const container = document.getElementById('heatmapContainer');
     const tooltip = document.getElementById('customTooltip');
@@ -469,7 +465,6 @@ function renderHeatmap(data) {
     }
 }
 
-// --- RESZTA (Summary, Table, Main Chart) ---
 function renderSummary(data) {
     const summaryContainer = document.getElementById('summarySection');
     const total = data.reduce((sum, d) => sum + d.total, 0);

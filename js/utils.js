@@ -1,6 +1,5 @@
 /**
  * Zwraca sformatowaną datę w formacie DD.MM.RRRR
- * @returns {string} Sformatowana data
  */
 export function getFormattedDate() {
     const date = new Date();
@@ -12,9 +11,6 @@ export function getFormattedDate() {
 
 /**
  * Przyciemnia kolor w formacie HEX o podany procent.
- * @param {string} hex - Kolor w formacie #RRGGBB
- * @param {number} percent - Procent przyciemnienia (0-100)
- * @returns {string} Nowy, przyciemniony kolor HEX.
  */
 export function darkenColor(hex, percent) {
   let num = parseInt(hex.slice(1), 16);
@@ -30,19 +26,42 @@ export function darkenColor(hex, percent) {
 }
 
 /**
- * Alternatywna metoda kopiowania do schowka dla starszych przeglądarek.
- * @param {string} text - Tekst do skopiowania.
+ * Zaawansowana metoda awaryjna kopiowania dla iOS/Safari.
+ * Zwraca true/false zamiast wyświetlać alerty.
  */
 export function fallbackCopyToClipboard(text) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  document.body.appendChild(textarea);
-  textarea.select();
-  try {
-    document.execCommand('copy');
-    alert("Lista skopiowana alternatywnie!");
-  } catch (err) {
-    alert("Kopiowanie nieudane.");
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // Upewnij się, że element jest niewidoczny wizualnie, ale dostępny dla systemu
+  textArea.style.position = "fixed";
+  textArea.style.left = "-9999px";
+  textArea.style.top = "0";
+  textArea.setAttribute("readonly", "");
+  document.body.appendChild(textArea);
+
+  // Specjalna obsługa iOS
+  const isIos = navigator.userAgent.match(/ipad|iphone/i);
+
+  if (isIos) {
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      textArea.setSelectionRange(0, 999999);
+  } else {
+      textArea.select();
   }
-  document.body.removeChild(textarea);
+
+  let success = false;
+  try {
+    success = document.execCommand('copy');
+  } catch (err) {
+    console.error('Fallback copy failed', err);
+    success = false;
+  }
+  
+  document.body.removeChild(textArea);
+  return success;
 }

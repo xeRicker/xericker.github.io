@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Burbone Lista</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- ZMIANA: Dodano ?v=2 aby wymusić odświeżenie stylów na telefonach -->
+  <link rel="stylesheet" href="style.css?v=2">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Kontener na fajerwerki -->
   <div id="confetti-container"></div>
 
   <div class="app-header">
@@ -56,12 +58,10 @@
 
   <div id="locationOverlay" class="overlay"></div>
 
-  <!-- Modal Lokalizacji -->
   <div id="locationSheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
     <h3>Wybierz punkt</h3>
     <div class="sheet-actions">
-      <!-- Teksty wielkimi literami -->
       <button class="sheet-btn location-button" data-location="Oświęcim">
         <span class="loc-icon">🏰</span> OŚWIĘCIM
       </button>
@@ -72,7 +72,6 @@
     </div>
   </div>
 
-  <!-- Modal Sukcesu -->
   <div id="successSheet" class="bottom-sheet">
     <div class="sheet-handle"></div>
     <div class="success-icon-wrapper">
@@ -81,11 +80,11 @@
     <h3>Lista skopiowana!</h3>
     <p class="success-msg">Wklej ją teraz na grupę na Messengerze.</p>
     <div class="sheet-actions">
-      <!-- ZMIANA: ZAMKNIJ -->
       <button class="sheet-btn success-close-btn" onclick="document.getElementById('locationOverlay').click()">ZAMKNIJ</button>
     </div>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- ZMIANA: Dodano ?v=2 również tutaj -->
+  <script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

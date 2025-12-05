@@ -3,12 +3,13 @@ import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/s
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
 import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
+// ... (Zmienne employees, employeeColors, timePresets, categories, productMap BEZ ZMIAN) ...
 const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const employeeColors = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
-
+// ... (Wklej tutaj resztę zmiennych z poprzedniego pliku: timePresets, categories, productMap) ...
 const timePresets = [
   { label: "12:00 - 19:30", value: "12:00-19:30" },
   { label: "12:00 - 20:00", value: "12:00-20:00" },
@@ -124,9 +125,11 @@ const categories = {
     ]
   }
 };
+
 const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
+// ... (EventListener setup BEZ ZMIAN) ...
 document.addEventListener('DOMContentLoaded', () => {
   renderEmployeeControls(employees, employeeColors, timePresets);
   renderProductGrid(categories);
@@ -285,6 +288,7 @@ function resetAll() {
     }, 150);
 }
 
+// --- POPRAWIONA FUNKCJA KOPIOWANIA ---
 async function generateAndProcessLists() {
   const location = selectedLocation;
   const dateStr = getFormattedDate();
@@ -293,7 +297,6 @@ async function generateAndProcessLists() {
   const revenueVal = parseFloat(revenueInput.value);
   
   if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
-      // ZMIANA: wygenerować -> skopiować
       const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
       if (!confirmRevenue) return;
   }
@@ -359,12 +362,22 @@ async function generateAndProcessLists() {
       if (!confirmOverwrite) return;
   }
 
-  navigator.clipboard.writeText(plainReport.trim()).then(() => {
-    showSuccessModal();
-  }).catch(() => {
-    fallbackCopyToClipboard(plainReport.trim());
-    showSuccessModal();
-  });
+  // PRÓBA KOPIOWANIA
+  const textToCopy = plainReport.trim();
+  
+  try {
+      // 1. Próbuj standardowo
+      await navigator.clipboard.writeText(textToCopy);
+      showSuccessModal();
+  } catch (err) {
+      // 2. Jeśli błąd (np. Safari), użyj fallbacku
+      const fallbackSuccess = fallbackCopyToClipboard(textToCopy);
+      if (fallbackSuccess) {
+          showSuccessModal();
+      } else {
+          alert("Nie udało się automatycznie skopiować listy. Spróbuj ręcznie zaznaczyć tekst.");
+      }
+  }
 
   await saveReportToGithub(reportData);
 }

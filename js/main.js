@@ -27,6 +27,13 @@ const timePresets = [
   { label: "16:00 - 22:00", value: "16:00-22:00" }
 ];
 const categories = {
+  "⭐": {
+    items: [
+      { name: "Drwal: Ser", type: 's', options: { q: 1 } },
+      { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
+      { name: "Drwal: Jalapeño", type: 's', options: { q: 1 } },
+    ]
+  },
   "🥗": {
     items: [
       { name: "Sałata", type: '', options: { q: 1 } },

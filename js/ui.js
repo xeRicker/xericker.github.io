@@ -1,7 +1,7 @@
 import { darkenColor, fallbackCopyToClipboard } from './utils.js';
 let fireworksInterval = null; 
 
-// ... (funkcje renderujące BEZ ZMIAN) ...
+// ... (renderEmployeeControls i renderProductGrid BEZ ZMIAN) ...
 export function renderEmployeeControls(employees, employeeColors, timePresets) {
   const container = document.getElementById("employees");
   container.innerHTML = '';
@@ -121,38 +121,45 @@ export function showLocationModal() {
   sheet.classList.add("visible");
 }
 
+// --- ZAKTUALIZOWANY MODAL SUKCESU ---
 export function showSuccessModal(textToCopy) {
     const sheet = document.getElementById("successSheet");
     const overlay = document.getElementById("locationOverlay");
     const copyBtn = document.getElementById("finalCopyBtn");
+    const iconWrapper = document.getElementById("successIcon");
 
     document.getElementById("locationSheet").classList.remove("visible");
     overlay.classList.add("visible");
     sheet.classList.add("visible");
 
+    // Stan początkowy: Ikona Schowka
+    iconWrapper.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D35400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>`;
     copyBtn.innerText = "SKOPIUJ";
     copyBtn.style.backgroundColor = ""; 
 
     copyBtn.onclick = () => {
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(textToCopy)
-                .then(() => handleCopySuccess(copyBtn))
+                .then(() => handleCopySuccess(copyBtn, iconWrapper))
                 .catch(() => {
-                    if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
+                    if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn, iconWrapper);
                 });
         } else {
-            if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn);
+            if(fallbackCopyToClipboard(textToCopy)) handleCopySuccess(copyBtn, iconWrapper);
         }
     };
 }
 
-function handleCopySuccess(btn) {
+function handleCopySuccess(btn, iconWrapper) {
     btn.innerText = "SKOPIOWANO!";
     btn.style.backgroundColor = "#27AE60";
+    
+    // Zmień ikonę na zielony ptaszek
+    iconWrapper.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    
     triggerConfetti();
     startFireworks();
     
-    // ZMIANA: Wydłużono czas do 5 sekund
     setTimeout(() => {
         closeLocationModal();
     }, 5000);
@@ -165,7 +172,6 @@ export function closeLocationModal() {
   stopFireworks();
 }
 
-// ... (Confetti i Fajerwerki BEZ ZMIAN) ...
 function triggerConfetti() {
     const container = document.getElementById('confetti-container');
     for(let i=0; i<40; i++) {

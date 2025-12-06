@@ -1,15 +1,15 @@
-import { saveReportToGithub, fetchMonthlyData, checkFileExists } from './services/githubService.js';
+import { saveReportToGithub, checkFileExists } from './services/githubService.js';
 import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
 import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
-import { getFormattedDate } from './utils.js'; // Usunięto fallbackCopyToClipboard stąd
+import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
-// ... (Zmienne BEZ ZMIAN - wklej je tu jak zawsze) ...
-const employees = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
-const employeeColors = {
+const EMPLOYEES = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
+const EMPLOYEE_COLORS = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
-const timePresets = [
+
+const TIME_PRESETS = [
   { label: "12:00 - 19:30", value: "12:00-19:30" },
   { label: "12:00 - 20:00", value: "12:00-20:00" },
   { label: "12:00 - 20:30", value: "12:00-20:30" },
@@ -26,14 +26,8 @@ const timePresets = [
   { label: "16:00 - 21:30", value: "16:00-21:30" },
   { label: "16:00 - 22:00", value: "16:00-22:00" }
 ];
-const categories = {
-  "⭐": {
-    items: [
-      { name: "Drwal: Ser Panierowany", type: 's', options: { q: 1 } },
-      { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
-      { name: "Drwal: Sos Jalapeño", type: 's', options: { q: 1 } },
-    ]
-  },
+
+const CATEGORIES = {
   "🥗": {
     items: [
       { name: "Sałata", type: '', options: { q: 1 } },
@@ -132,45 +126,43 @@ const categories = {
   }
 };
 
-const productMap = new Map(Object.values(categories).flatMap(cat => cat.items.map(p => [p.name, p])));
+const productMap = new Map(Object.values(CATEGORIES).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
-// ... (EventListener setup BEZ ZMIAN) ...
 document.addEventListener('DOMContentLoaded', () => {
-  renderEmployeeControls(employees, employeeColors, timePresets);
-  renderProductGrid(categories);
-  
-  const savedData = loadStateFromLocalStorage();
-  if (savedData) {
-    Object.entries(savedData.products || {}).forEach(([name, quantity]) => {
-        const product = productMap.get(name);
-        if (!product) return;
-        if (product.type === 's') {
-            const checkbox = document.getElementById(`checkbox-${name}`);
-            if (checkbox) checkbox.checked = !!quantity;
-        } else {
-            const input = document.getElementById(`input-${name}`);
-            if (input) input.value = quantity;
+    renderEmployeeControls(EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
+    renderProductGrid(CATEGORIES);
+    
+    const savedData = loadStateFromLocalStorage();
+    if (savedData) {
+        Object.entries(savedData.products || {}).forEach(([name, quantity]) => {
+            const product = productMap.get(name);
+            if (!product) return;
+            if (product.type === 's') {
+                const checkbox = document.getElementById(`checkbox-${name}`);
+                if (checkbox) checkbox.checked = !!quantity;
+            } else {
+                const input = document.getElementById(`input-${name}`);
+                if (input) input.value = quantity;
+            }
+            highlightProduct(name, quantity);
+        });
+        Object.entries(savedData.employees || {}).forEach(([id, times]) => {
+            const fromInput = document.getElementById(`${id}_od`);
+            const toInput = document.getElementById(`${id}_do`);
+            if (fromInput) fromInput.value = times.from;
+            if (toInput) toInput.value = times.to;
+            if(times.from && times.to) {
+                const row = fromInput.closest('.employee-row');
+                if(row) row.classList.add('active');
+            }
+        });
+        if (savedData.revenue) {
+            document.getElementById('revenueInput').value = savedData.revenue;
         }
-        highlightProduct(name, quantity);
-    });
-    Object.entries(savedData.employees || {}).forEach(([id, times]) => {
-        const fromInput = document.getElementById(`${id}_od`);
-        const toInput = document.getElementById(`${id}_do`);
-        if (fromInput) fromInput.value = times.from;
-        if (toInput) toInput.value = times.to;
-        if(times.from && times.to) {
-             const row = fromInput.closest('.employee-row');
-             if(row) row.classList.add('active');
-        }
-    });
-    if (savedData.revenue) {
-        document.getElementById('revenueInput').value = savedData.revenue;
     }
-  }
-  updateResetButtonVisibility();
-
-  setupEventListeners();
+    updateResetButtonVisibility();
+    setupEventListeners();
 });
 
 function setupEventListeners() {
@@ -250,12 +242,12 @@ function handleLocationConfirm(event) {
     const button = event.target.closest('.location-button');
     if (button) {
         selectedLocation = button.dataset.location;
-        generateAndProcessLists();
+        handleListGeneration();
     }
 }
 
 function saveAndRefreshUI() {
-    saveStateToLocalStorage(productMap, employees);
+    saveStateToLocalStorage(productMap, EMPLOYEES);
     updateResetButtonVisibility();
 }
 
@@ -268,16 +260,16 @@ function resetAll() {
     setTimeout(() => {
         productMap.forEach((product, name) => {
             if (product.type === 's') {
-            const checkbox = document.getElementById(`checkbox-${name}`);
-            if (checkbox) checkbox.checked = false;
+                const checkbox = document.getElementById(`checkbox-${name}`);
+                if (checkbox) checkbox.checked = false;
             } else {
-            const input = document.getElementById(`input-${name}`);
-            if (input) input.value = 0;
+                const input = document.getElementById(`input-${name}`);
+                if (input) input.value = 0;
             }
             highlightProduct(name, 0);
         });
 
-        employees.forEach(name => {
+        EMPLOYEES.forEach(name => {
             const id = name.toLowerCase();
             document.getElementById(`${id}_od`).value = "";
             document.getElementById(`${id}_do`).value = "";
@@ -292,85 +284,80 @@ function resetAll() {
     }, 150);
 }
 
-// --- NOWA LOGIKA: ZBUDUJ I POKAŻ DO SKOPIOWANIA ---
-async function generateAndProcessLists() {
-  const location = selectedLocation;
-  const dateStr = getFormattedDate();
-  
-  const revenueInput = document.getElementById('revenueInput');
-  const revenueVal = parseFloat(revenueInput.value);
-  
-  if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
-      const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
-      if (!confirmRevenue) return;
-  }
-
-  const reportData = {
-    location,
-    date: dateStr,
-    revenue: revenueVal || 0,
-    last_updated_at: new Date().toISOString(),
-    employees: {},
-    products: {}
-  };
-  let plainReport = `🧾 ${location} ${dateStr}\n`;
-
-  let workersReport = "";
-  employees.forEach(name => {
-    const id = name.toLowerCase();
-    const from = document.getElementById(`${id}_od`).value;
-    const to = document.getElementById(`${id}_do`).value;
-    if (from && to) {
-      const hours = `${from} – ${to}`;
-      reportData.employees[name] = hours;
-      workersReport += `• ${name}: ${hours}\n`;
+async function handleListGeneration() {
+    const location = selectedLocation;
+    const dateStr = getFormattedDate();
+    
+    const revenueInput = document.getElementById('revenueInput');
+    const revenueVal = parseFloat(revenueInput.value);
+    
+    if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
+        const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
+        if (!confirmRevenue) return;
     }
-  });
-  if (workersReport) plainReport += `\n${workersReport}`;
 
-  let productsReport = "";
-  Object.entries(categories).forEach(([category, group]) => {
-    let textSection = "";
-    group.items.forEach(product => {
-      const { name, type } = product;
-      let quantity = 0;
-      if (type === 's') {
-        quantity = document.getElementById(`checkbox-${name}`)?.checked ? 1 : 0;
-      } else {
-        quantity = parseInt(document.getElementById(`input-${name}`).value, 10) || 0;
-      }
+    const reportData = {
+        location,
+        date: dateStr,
+        revenue: revenueVal || 0,
+        last_updated_at: new Date().toISOString(),
+        employees: {},
+        products: {}
+    };
+    
+    let plainReport = `🧾 ${location} ${dateStr}\n`;
 
-      if (name.includes("Bułki") && quantity === 0) {
-        reportData.products[name] = 0;
-        textSection += `  • Bułki: ❌\n`;
-      } else if (quantity > 0) {
-        reportData.products[name] = quantity;
-        textSection += `  • ${name}${type === 's' ? "" : ": " + quantity}\n`;
-      }
+    let workersReport = "";
+    EMPLOYEES.forEach(name => {
+        const id = name.toLowerCase();
+        const from = document.getElementById(`${id}_od`).value;
+        const to = document.getElementById(`${id}_do`).value;
+        if (from && to) {
+            const hours = `${from} – ${to}`;
+            reportData.employees[name] = hours;
+            workersReport += `• ${name}: ${hours}\n`;
+        }
     });
-    if (textSection) productsReport += `\n${category}\n${textSection}`;
-  });
-  if (productsReport) plainReport += productsReport;
+    if (workersReport) plainReport += `\n${workersReport}`;
 
-  const hasEmployees = Object.keys(reportData.employees).length > 0;
-  const hasProducts = Object.keys(reportData.products).length > 0;
+    let productsReport = "";
+    Object.entries(CATEGORIES).forEach(([category, group]) => {
+        let textSection = "";
+        group.items.forEach(product => {
+            const { name, type } = product;
+            let quantity = 0;
+            if (type === 's') {
+                quantity = document.getElementById(`checkbox-${name}`)?.checked ? 1 : 0;
+            } else {
+                quantity = parseInt(document.getElementById(`input-${name}`).value, 10) || 0;
+            }
 
-  if (!hasEmployees && !hasProducts) {
-      alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów.");
-      return;
-  }
+            if (name.includes("Bułki") && quantity === 0) {
+                reportData.products[name] = 0;
+                textSection += `  • Bułki: ❌\n`;
+            } else if (quantity > 0) {
+                reportData.products[name] = quantity;
+                textSection += `  • ${name}${type === 's' ? "" : ": " + quantity}\n`;
+            }
+        });
+        if (textSection) productsReport += `\n${category}\n${textSection}`;
+    });
+    if (productsReport) plainReport += productsReport;
 
-  const fileExists = await checkFileExists(location, dateStr);
-  if (fileExists) {
-      const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nLista dla "${location}" z dnia ${dateStr} już istnieje w bazie.\n\nCzy na pewno chcesz ją nadpisać?`);
-      if (!confirmOverwrite) {
-          return; 
-      }
-  }
+    const hasEmployees = Object.keys(reportData.employees).length > 0;
+    const hasProducts = Object.keys(reportData.products).length > 0;
 
-  await saveReportToGithub(reportData);
+    if (!hasEmployees && !hasProducts) {
+        alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów.");
+        return;
+    }
 
-  // Zamiast kopiować, przekazujemy tekst do modala
-  // Dopiero kliknięcie w przycisk w modalu skopiuje tekst (co zadziała na 100% na iOS)
-  showSuccessModal(plainReport.trim());
+    const fileExists = await checkFileExists(location, dateStr);
+    if (fileExists) {
+        const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nLista dla "${location}" z dnia ${dateStr} już istnieje w bazie.\n\nCzy na pewno chcesz ją nadpisać?`);
+        if (!confirmOverwrite) return;
+    }
+
+    await saveReportToGithub(reportData);
+    showSuccessModal(plainReport.trim());
 }

@@ -1,7 +1,6 @@
 import { fetchAllData, isLocalhost } from './services/githubService.js';
 
-// --- KOLORY PRACOWNIKÓW ---
-const employeeColors = {
+const EMPLOYEE_COLORS = {
   "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
   "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
@@ -14,9 +13,8 @@ let employeeStats = [];
 let revenueChart = null;
 let employeeChart = null;
 let currentChartType = 'bar'; 
-let currentEmpMetric = 'hours'; // 'hours' or 'revenue'
+let currentEmpMetric = 'hours'; 
 
-// --- SORTOWANIE TABELI ---
 let sortDirection = 1;
 window.sortEmpTable = (colIndex) => {
     sortDirection *= -1;
@@ -33,60 +31,58 @@ window.sortEmpTable = (colIndex) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (isLocalhost()) {
-      console.log("🔧 TRYB LOCALHOST: Logowanie bez hasła.");
-      document.body.style.display = 'block';
-      initializeApp();
-  } else {
-      const enteredPassword = prompt("Podaj hasło administratora:");
-      if (enteredPassword === PASSWORD) {
+    if (isLocalhost()) {
+        console.log("LOCALHOST: Login bypassed");
         document.body.style.display = 'block';
         initializeApp();
-      } else {
-        alert("Błędne hasło.");
-        window.location.href = "index.html";
-      }
-  }
+    } else {
+        const enteredPassword = prompt("Podaj hasło administratora:");
+        if (enteredPassword === PASSWORD) {
+            document.body.style.display = 'block';
+            initializeApp();
+        } else {
+            alert("Błędne hasło.");
+            window.location.href = "index.html";
+        }
+    }
 });
 
 async function initializeApp() {
-  allReports = await fetchAllData();
-  
-  if (allReports.length === 0) {
-      document.getElementById('loading').innerText = "Brak danych w bazie.";
-      return;
-  }
+    allReports = await fetchAllData();
+    
+    if (allReports.length === 0) {
+        document.getElementById('loading').innerText = "Brak danych w bazie.";
+        return;
+    }
 
-  processData();
-  populateMonthFilter();
-  
-  document.getElementById('monthFilter').addEventListener('change', handleMonthChange);
-  
-  // Controls dla Wykresu Utargu
-  document.querySelectorAll('.chart-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-          document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          currentChartType = e.target.dataset.type;
-          renderChart(currentFilteredData);
-      });
-  });
+    processData();
+    populateMonthFilter();
+    
+    document.getElementById('monthFilter').addEventListener('change', handleMonthChange);
+    
+    document.querySelectorAll('.chart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentChartType = e.target.dataset.type;
+            renderChart(currentFilteredData);
+        });
+    });
 
-  // Controls dla Wykresu Pracowników
-  document.querySelectorAll('.emp-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-          document.querySelectorAll('.emp-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          currentEmpMetric = e.target.dataset.type; // 'hours' or 'revenue'
-          renderEmployeeChart(employeeStats);
-      });
-  });
-  
-  document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
-  handleMonthChange();
-  
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('revenueTable').style.display = 'table';
+    document.querySelectorAll('.emp-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.emp-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentEmpMetric = e.target.dataset.type; 
+            renderEmployeeChart(employeeStats);
+        });
+    });
+    
+    document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
+    handleMonthChange();
+    
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('revenueTable').style.display = 'table';
 }
 
 function processData() {
@@ -125,20 +121,17 @@ function processData() {
 function populateMonthFilter() {
     const filter = document.getElementById('monthFilter');
     const months = new Set();
-    
     mergedData.forEach(item => {
         const d = item.dateObj;
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
         months.add(key);
     });
-
     filter.innerHTML = '';
     Array.from(months).sort().reverse().forEach(monthKey => {
         const [year, monthNum] = monthKey.split('-');
         const date = new Date(year, monthNum - 1);
         const label = date.toLocaleString('pl-PL', { month: 'long', year: 'numeric' });
         const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
-        
         const option = document.createElement('option');
         option.value = monthKey;
         option.textContent = formattedLabel;
@@ -182,7 +175,6 @@ function renderWeekTabs(monthData, monthKey) {
         d.setUTCDate(d.getUTCDate() + 4 - dayNum);
         const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
         const weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-        
         if(!weeksMap.has(weekNo)) weeksMap.set(weekNo, []);
         weeksMap.get(weekNo).push(day);
     });
@@ -190,11 +182,9 @@ function renderWeekTabs(monthData, monthKey) {
     weeksMap.forEach((days, weekNo) => {
         const startDay = days[0].dateStr.substring(0, 5);
         const endDay = days[days.length-1].dateStr.substring(0, 5);
-        
         const btn = document.createElement('div');
         btn.className = 'week-tab';
         btn.textContent = `Tydzień ${weekNo} (${startDay} - ${endDay})`;
-        
         btn.onclick = () => {
             document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
@@ -209,75 +199,50 @@ function updateView(data) {
     renderSummary(data);
     renderTable(data);
     renderChart(data);
-    
     employeeStats = processEmployeeData(data);
     renderEmployeeChart(employeeStats);
     renderDetailedEmployeeTable(employeeStats);
-    
     renderHeatmap(data);
 }
 
-// --- POPRAWIONA LOGIKA OBLICZANIA GODZIN ---
 function calculateHours(timeStr) {
     if (!timeStr) return 0;
-    
-    // ZMIANA: Zamiana półpauzy (–) na minus (-) aby split działał poprawnie
     const normalizedTime = timeStr.replace('–', '-');
-    
     if (!normalizedTime.includes('-')) return 0;
-    
     const [start, end] = normalizedTime.split('-').map(t => t.trim());
     const [h1, m1] = start.split(':').map(Number);
     const [h2, m2] = end.split(':').map(Number);
-    
     let hours = h2 - h1;
     let minutes = m2 - m1;
-    
-    if (minutes < 0) {
-        hours--;
-        minutes += 60;
-    }
-    
+    if (minutes < 0) { hours--; minutes += 60; }
     if (hours < 0) hours += 24;
-    
     return hours + (minutes / 60);
 }
 
 function processEmployeeData(data) {
     const empMap = new Map();
-    
     data.forEach(day => {
         day.rawReports.forEach(report => {
             if (report.employees) {
                 Object.entries(report.employees).forEach(([name, hoursStr]) => {
                     const hours = calculateHours(hoursStr);
                     if (!empMap.has(name)) {
-                        empMap.set(name, { 
-                            name: name, 
-                            hours: 0, 
-                            revenue: 0, 
-                            locations: new Set(),
-                            locBreakdown: {} 
-                        });
+                        empMap.set(name, { name: name, hours: 0, revenue: 0, locations: new Set(), locBreakdown: {} });
                     }
                     const emp = empMap.get(name);
                     emp.hours += hours;
                     emp.locations.add(report.location);
-                    
                     const rev = report.revenue || 0;
                     emp.revenue += rev;
-
                     if(!emp.locBreakdown[report.location]) emp.locBreakdown[report.location] = 0;
                     emp.locBreakdown[report.location] += hours;
                 });
             }
         });
     });
-    
     return Array.from(empMap.values()).sort((a, b) => b.hours - a.hours);
 }
 
-// --- RENDERING WYKRESU PRACOWNIKÓW ---
 function renderEmployeeChart(stats) {
     const ctx = document.getElementById('employeeChart').getContext('2d');
     
@@ -289,8 +254,8 @@ function renderEmployeeChart(stats) {
     const labels = sortedStats.map(e => e.name);
     const values = sortedStats.map(e => currentEmpMetric === 'hours' ? e.hours : e.revenue);
     
-    const bgColors = labels.map(name => employeeColors[name] || 'rgba(211, 84, 0, 0.7)');
-    const borderColors = labels.map(name => employeeColors[name] ? '#fff' : '#D35400');
+    const bgColors = labels.map(name => EMPLOYEE_COLORS[name] || 'rgba(211, 84, 0, 0.7)');
+    const borderColors = labels.map(name => EMPLOYEE_COLORS[name] ? '#fff' : '#D35400');
 
     if (employeeChart) employeeChart.destroy();
 
@@ -313,9 +278,8 @@ function renderEmployeeChart(stats) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    enabled: false, // Wyłącz domyślny
+                    enabled: false,
                     external: function(context) {
-                        // Custom Tooltip (ten sam co w Heatmapie)
                         let tooltipEl = document.getElementById('customTooltip');
                         const tooltipModel = context.tooltip;
                         if (tooltipModel.opacity === 0) {
@@ -328,12 +292,12 @@ function renderEmployeeChart(stats) {
                             const emp = sortedStats[dataIndex]; 
 
                             if(emp) {
-                                let html = `<div class="tooltip-title">${emp.name}</div>`;
-                                html += `<div class="tooltip-row"><span>Łącznie godzin:</span> <strong style="color:#fff">${emp.hours.toFixed(1)}h</strong></div>`;
-                                html += `<div class="tooltip-row"><span>Łączny utarg:</span> <strong style="color:var(--primary-color)">${formatMoney(emp.revenue)}</strong></div>`;
-                                html += `<div class="tooltip-sub">LOKALIZACJE:</div>`;
+                                let html = `<div class="tt-header">${emp.name}</div>`;
+                                html += `<div class="tt-row"><span>Łącznie godzin:</span> <span class="tt-val">${emp.hours.toFixed(1)}h</span></div>`;
+                                html += `<div class="tt-row"><span>Łączny utarg:</span> <span class="tt-val highlight">${formatMoney(emp.revenue)}</span></div>`;
+                                html += `<div class="tt-sub">LOKALIZACJE:</div>`;
                                 for(let [loc, h] of Object.entries(emp.locBreakdown)) {
-                                    html += `<div class="tooltip-row"><span>${loc}:</span> <strong>${h.toFixed(1)}h</strong></div>`;
+                                    html += `<div class="tt-row"><span>${loc}:</span> <span class="tt-val">${h.toFixed(1)}h</span></div>`;
                                 }
                                 tooltipEl.innerHTML = html;
                             }
@@ -357,12 +321,10 @@ function renderEmployeeChart(stats) {
 function renderDetailedEmployeeTable(stats) {
     const tbody = document.querySelector("#employeeTable tbody");
     tbody.innerHTML = '';
-    
     stats.forEach(emp => {
         const tr = document.createElement('tr');
         const locs = Array.from(emp.locations).join(', ');
         const percent = (emp.hours / 160) * 100;
-        
         let percentColor = '#aaa';
         if (percent > 100) percentColor = '#e74c3c'; 
         else if (percent > 80) percentColor = '#27ae60'; 
@@ -404,17 +366,14 @@ function renderHeatmap(data) {
     for (let day = 1; day <= daysInMonth; day++) {
         const dayStr = `${String(day).padStart(2,'0')}.${String(filterMonth).padStart(2,'0')}.${filterYear}`;
         const dayData = data.find(d => d.dateStr === dayStr);
-        
         const cell = document.createElement('div');
         cell.className = 'heatmap-cell';
         
         if (dayData) {
             const revenue = dayData.total;
             let cssClass = '';
-            
             if (revenue > 4000) cssClass = 'fire';
             else if (revenue > 2000) cssClass = 'warm';
-            
             const intensity = Math.min(revenue / 6000, 1);
             cell.style.backgroundColor = `rgba(211, 84, 0, ${0.15 + (intensity * 0.85)})`;
             if(cssClass) cell.classList.add(cssClass);
@@ -425,21 +384,19 @@ function renderHeatmap(data) {
             `;
             
             cell.addEventListener('mouseenter', () => {
-                let html = `<div class="tooltip-title">${dayStr} - ${dayData.dayOfWeek}</div>`;
-                html += `<div class="tooltip-row"><span>Suma:</span> <strong style="color:#fff">${formatMoney(revenue)}</strong></div>`;
-                html += `<div class="tooltip-row"><span>Oświęcim:</span> <strong>${formatMoney(dayData.oswiecim)}</strong></div>`;
-                html += `<div class="tooltip-row"><span>Wilamowice:</span> <strong>${formatMoney(dayData.wilamowice)}</strong></div>`;
-                
-                html += `<div class="tooltip-sub">ZMIANA:</div>`;
+                let html = `<div class="tt-header">${dayStr} - ${dayData.dayOfWeek}</div>`;
+                html += `<div class="tt-row"><span>Suma:</span> <span class="tt-val highlight">${formatMoney(revenue)}</span></div>`;
+                html += `<div class="tt-row"><span>Oświęcim:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
+                html += `<div class="tt-row"><span>Wilamowice:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+                html += `<div class="tt-sub">ZMIANA:</div>`;
                 dayData.rawReports.forEach(r => {
                     if(r.employees) {
                         html += `<div style="color:var(--primary-color); font-size:11px; margin-top:2px;">${r.location}:</div>`;
                         Object.entries(r.employees).forEach(([name, hours]) => {
-                            html += `<div class="tooltip-emp">• ${name} (${hours})</div>`;
+                            html += `<div class="tt-emp"><span class="tt-emp-dot"></span>${name} (${hours})</div>`;
                         });
                     }
                 });
-
                 tooltip.innerHTML = html;
                 tooltip.style.display = 'block';
             });
@@ -460,9 +417,91 @@ function renderHeatmap(data) {
             cell.style.backgroundColor = '#1a1a1a';
             cell.innerHTML = `<span class="heatmap-date" style="opacity:0.3">${day}</span>`;
         }
-        
         container.appendChild(cell);
     }
+}
+
+function renderChart(data) {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
+    const labels = sorted.map(d => `${d.dateStr.substring(0, 5)} (${d.dayOfWeek.substring(0, 3)})`);
+    const oswData = sorted.map(d => d.oswiecim);
+    const wilData = sorted.map(d => d.wilamowice);
+
+    if (revenueChart) revenueChart.destroy();
+
+    const isLine = currentChartType === 'line';
+    const colorOsw = '#D35400'; 
+    const colorWil = '#9E9E9E'; 
+
+    revenueChart = new Chart(ctx, {
+        type: currentChartType,
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Oświęcim',
+                    data: oswData,
+                    backgroundColor: isLine ? 'rgba(211, 84, 0, 0.2)' : 'rgba(211, 84, 0, 0.8)',
+                    borderColor: colorOsw,
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    tension: 0.3,
+                    fill: isLine
+                },
+                {
+                    label: 'Wilamowice',
+                    data: wilData,
+                    backgroundColor: isLine ? 'rgba(158, 158, 158, 0.2)' : 'rgba(158, 158, 158, 0.7)',
+                    borderColor: colorWil,
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    tension: 0.3,
+                    fill: isLine
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { labels: { color: '#eee', usePointStyle: true, font: { family: 'Roboto' } } },
+                tooltip: {
+                    enabled: false,
+                    external: function(context) {
+                        let tooltipEl = document.getElementById('customTooltip');
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
+                        }
+
+                        if (tooltipModel.body) {
+                            const dataIndex = tooltipModel.dataPoints[0].dataIndex;
+                            const dayData = sorted[dataIndex]; 
+
+                            if(dayData) {
+                                let html = `<div class="tt-header">${dayData.dateStr}</div>`;
+                                html += `<div class="tt-row"><span>Suma dnia:</span> <span class="tt-val highlight">${formatMoney(dayData.total)}</span></div>`;
+                                html += `<div class="tt-row"><span>Oświęcim:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
+                                html += `<div class="tt-row"><span>Wilamowice:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+                                tooltipEl.innerHTML = html;
+                            }
+                        }
+
+                        const position = context.chart.canvas.getBoundingClientRect();
+                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 15 + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#888' } },
+                y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#888' } }
+            }
+        }
+    });
 }
 
 function renderSummary(data) {
@@ -510,76 +549,6 @@ function renderTable(data) {
             <td class="val-cell total-cell">${formatMoney(row.total)}</td>
         `;
         tbody.appendChild(tr);
-    });
-}
-
-function renderChart(data) {
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
-    
-    const labels = sorted.map(d => `${d.dateStr.substring(0, 5)} (${d.dayOfWeek.substring(0, 3)})`);
-    const oswData = sorted.map(d => d.oswiecim);
-    const wilData = sorted.map(d => d.wilamowice);
-
-    if (revenueChart) revenueChart.destroy();
-
-    const isLine = currentChartType === 'line';
-    const colorOsw = '#D35400'; 
-    const colorWil = '#9E9E9E'; 
-
-    revenueChart = new Chart(ctx, {
-        type: currentChartType,
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Oświęcim',
-                    data: oswData,
-                    backgroundColor: isLine ? 'rgba(211, 84, 0, 0.2)' : 'rgba(211, 84, 0, 0.8)',
-                    borderColor: colorOsw,
-                    borderWidth: 2,
-                    borderRadius: 4,
-                    tension: 0.3,
-                    fill: isLine
-                },
-                {
-                    label: 'Wilamowice',
-                    data: wilData,
-                    backgroundColor: isLine ? 'rgba(158, 158, 158, 0.2)' : 'rgba(158, 158, 158, 0.7)',
-                    borderColor: colorWil,
-                    borderWidth: 2,
-                    borderRadius: 4,
-                    tension: 0.3,
-                    fill: isLine
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { labels: { color: '#eee', usePointStyle: true, font: { family: 'Roboto' } } },
-                tooltip: {
-                    backgroundColor: '#333',
-                    titleColor: '#D35400',
-                    bodyColor: '#fff',
-                    borderColor: '#555',
-                    borderWidth: 1,
-                    padding: 12,
-                    callbacks: {
-                        footer: (tooltipItems) => {
-                            let total = 0;
-                            tooltipItems.forEach(t => total += t.raw);
-                            return 'Suma: ' + total.toFixed(2) + ' PLN';
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: { grid: { display: false }, ticks: { color: '#888' } },
-                y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#888' } }
-            }
-        }
     });
 }
 

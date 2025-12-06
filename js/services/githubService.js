@@ -4,16 +4,11 @@ export const isLocalhost = () => {
     return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 };
 
-/**
- * Generuje sztuczne dane do testów na localhost (Teraz z pracownikami!)
- */
 function getMockData() {
-    console.log("🔧 TRYB DEVELOPERSKI: Ładowanie danych testowych...");
     const mockData = [];
     const locations = ['Oświęcim', 'Wilamowice'];
     const employeesList = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
     
-    // Generuj dane dla ostatnich 60 dni
     for (let i = 0; i < 60; i++) {
         const date = new Date();
         date.setDate(date.getDate() - i);
@@ -24,18 +19,13 @@ function getMockData() {
         const dateString = `${dayStr}.${monthStr}.${yearStr}`;
 
         locations.forEach(loc => {
-            if (Math.random() > 0.1) { // 90% szans na utarg
-                
-                // Generuj losowych pracowników dla tego dnia
+            if (Math.random() > 0.1) {
                 const dailyEmployees = {};
-                // Od 1 do 3 pracowników na zmianie
                 const numWorkers = Math.floor(Math.random() * 3) + 1;
-                // Mieszamy tablicę i bierzemy pierwszych N
                 const shuffled = [...employeesList].sort(() => 0.5 - Math.random());
                 const selected = shuffled.slice(0, numWorkers);
 
                 selected.forEach(emp => {
-                    // Losowe godziny (np. 6h do 10h)
                     const startHour = 12;
                     const endHour = startHour + Math.floor(Math.random() * 5) + 5; 
                     dailyEmployees[emp] = `${startHour}:00 - ${endHour}:00`;
@@ -44,9 +34,9 @@ function getMockData() {
                 mockData.push({
                     location: loc,
                     date: dateString,
-                    revenue: Math.floor(Math.random() * 2500) + 200 + (Math.random() * 99) / 100, // 200 - 2700 zł
+                    revenue: Math.floor(Math.random() * 2500) + 200,
                     last_updated_at: new Date().toISOString(),
-                    employees: dailyEmployees // Dodano fake'owe godziny
+                    employees: dailyEmployees
                 });
             }
         });
@@ -78,16 +68,12 @@ export async function checkFileExists(location, date) {
 
 export async function saveReportToGithub(data) {
     if (isLocalhost()) {
-        console.log("🔧 TRYB DEVELOPERSKI: Zapis symulowany.", data);
-        alert("🔧 TRYB LOCALHOST: Dane wypisane w konsoli, nie wysłano do GitHuba.");
+        console.log("LOCALHOST: Mock save", data);
         return;
     }
 
     const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
-    if (!TOKEN || TOKEN === '__GH_TOKEN__' || !REPO_OWNER || !REPO_NAME) {
-        alert("Błąd konfiguracji GitHub.");
-        return;
-    }
+    if (!TOKEN || !REPO_OWNER || !REPO_NAME) return;
 
     const filePath = `database/${data.location.toLowerCase()}/${data.date}.json`;
     const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${filePath}`;
@@ -106,25 +92,20 @@ export async function saveReportToGithub(data) {
         }
 
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-        const commitMessage = `Aktualizacja danych dla ${data.location} z dnia ${data.date}`;
+        const commitMessage = `Update ${data.location} - ${data.date}`;
         const body = { message: commitMessage, content, sha };
 
         const putResponse = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
 
-        if (!putResponse.ok) {
-            const errorData = await putResponse.json();
-            throw new Error(errorData.message);
-        }
+        if (!putResponse.ok) throw new Error("Save failed");
     } catch (error) {
-        console.error("Błąd zapisu:", error);
-        alert("Błąd zapisu do bazy danych.");
+        console.error(error);
+        alert("Błąd zapisu do GitHub.");
     }
 }
 
 export async function fetchAllData() {
-    if (isLocalhost()) {
-        return getMockData();
-    }
+    if (isLocalhost()) return getMockData();
 
     const { TOKEN, REPO_OWNER, REPO_NAME } = GITHUB_CONFIG;
     const API_BASE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/`;
@@ -133,7 +114,7 @@ export async function fetchAllData() {
         'Accept': 'application/vnd.github.v3+json',
     };
 
-    if (!TOKEN || TOKEN === '__GH_TOKEN__') return [];
+    if (!TOKEN) return [];
 
     try {
         const locationsResponse = await fetch(`${API_BASE_URL}database`, { headers });
@@ -159,7 +140,7 @@ export async function fetchAllData() {
         return reportsNested.flat().filter(Boolean);
 
     } catch (error) {
-        console.error("Błąd pobierania:", error);
+        console.error(error);
         return [];
     }
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Panel Admina</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=11">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,12 +98,9 @@
 
     .chart-card { background: var(--surface-color); padding: 25px; border-radius: var(--radius-md); border: 1px solid #333; }
     .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    
-    .chart-controls { display: flex; gap: 5px; }
     .chart-controls button {
         background: transparent; border: 1px solid #444; color: var(--text-secondary);
         padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s;
-        font-size: 12px; font-weight: bold;
     }
     .chart-controls button.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
@@ -122,16 +119,45 @@
     .heatmap-val { font-size: 12px; opacity: 0.8; font-family: 'Roboto', monospace; }
     .heatmap-empty { background: transparent; border: 1px dashed #333; opacity: 0.2; }
 
-    #customTooltip {
-        position: absolute; background: rgba(0, 0, 0, 0.95); border: 1px solid #444;
-        color: #fff; padding: 15px; border-radius: 8px; font-size: 14px; z-index: 1000;
-        pointer-events: none; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        min-width: 200px; backdrop-filter: blur(5px);
+    /* LEGENDA HEATMAPY */
+    .heatmap-legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+        flex-wrap: wrap;
     }
-    .tooltip-title { font-family: 'Oswald', sans-serif; color: var(--primary-color); margin-bottom: 8px; border-bottom: 1px solid #444; padding-bottom: 5px; font-size: 16px; }
-    .tooltip-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .tooltip-sub { margin-top: 8px; font-size: 12px; color: #888; font-weight: bold; }
-    .tooltip-emp { margin-left: 10px; color: #bbb; font-size: 13px; }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #bbb;
+    }
+    .legend-box {
+        width: 16px; height: 16px;
+        border-radius: 4px;
+        background: #2a2a2a;
+    }
+    /* Kolory legendy (dopasowane do logiki JS) */
+    .legend-box.low { background-color: rgba(211, 84, 0, 0.2); }
+    .legend-box.warm { background-color: rgba(211, 84, 0, 0.6); border: 1px solid #f39c12; }
+    .legend-box.fire { background-color: rgba(211, 84, 0, 0.9); border: 1px solid #ff4500; animation: fire-glow 2s infinite ease-in-out; }
+
+    /* CUSTOM TOOLTIP */
+    #customTooltip {
+        position: absolute; background: rgba(15, 15, 15, 0.95); border: 1px solid #444;
+        color: #fff; padding: 16px; border-radius: 12px; font-size: 14px; z-index: 1000;
+        pointer-events: none; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        min-width: 220px; backdrop-filter: blur(8px); font-family: 'Roboto', sans-serif;
+    }
+    .tt-header { font-family: 'Oswald', sans-serif; color: var(--primary-color); margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 18px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tt-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 14px; color: #ccc; }
+    .tt-val { font-weight: 700; color: white; font-family: 'Roboto', sans-serif; }
+    .tt-val.highlight { color: var(--primary-color); }
+    .tt-sub { margin-top: 12px; font-size: 11px; color: #777; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-top: 1px dashed #333; padding-top: 8px; }
+    .tt-emp { margin-left: 0; color: #ddd; font-size: 13px; padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+    .tt-emp-dot { width: 6px; height: 6px; background: var(--primary-color); border-radius: 50%; display: inline-block; }
 
     .heatmap-cell.warm { border-color: #f39c12; box-shadow: 0 0 15px rgba(243, 156, 18, 0.4); }
     @keyframes fire-glow {
@@ -161,6 +187,7 @@
     tr:hover td { background-color: #2a2a2a; }
     .weekend-row td { background-color: rgba(211, 84, 0, 0.05); }
     .val-cell { font-family: 'Roboto', sans-serif; font-variant-numeric: tabular-nums; }
+    .total-cell { font-weight: 700; color: var(--success-color); }
     
     #loading { color: var(--text-muted); text-align: center; padding: 50px; font-size: 18px; }
     .animate-enter { animation: fadeInUp 0.5s forwards; opacity: 0; }
@@ -195,7 +222,6 @@
     <div id="summarySection" class="summary animate-enter delay-2"></div>
 
     <div class="dashboard-grid animate-enter delay-3">
-        <!-- Wykres Utargu -->
         <div class="chart-card">
             <div class="chart-header">
                 <h3 style="margin: 0; color: #eee;">Wizualizacja utargu</h3>
@@ -206,13 +232,9 @@
             </div>
             <canvas id="revenueChart"></canvas>
         </div>
-
-        <!-- Wykres Pracowników -->
         <div class="chart-card">
             <div class="chart-header">
-                <!-- ZMIANA NAGŁÓWKA -->
                 <h3 style="margin: 0; color: #eee;">GODZINY PRACOWNIKÓW</h3>
-                <!-- NOWE CONTROLSY DLA PRACOWNIKÓW -->
                 <div class="chart-controls">
                     <button class="emp-btn active" data-type="hours">Godziny</button>
                     <button class="emp-btn" data-type="revenue">Utarg</button>
@@ -226,12 +248,18 @@
     <div class="chart-card animate-enter delay-3" style="margin-bottom: 40px;">
         <h3 style="margin: 0 0 20px 0; color: #eee;">Mapa Cieplna Utargu (Kalendarz)</h3>
         <div id="heatmapContainer" class="heatmap-grid"></div>
+        
+        <!-- NOWA LEGENDA -->
+        <div class="heatmap-legend">
+            <div class="legend-item"><div class="legend-box low"></div> < 2000 zł</div>
+            <div class="legend-item"><div class="legend-box warm"></div> 2000 - 4000 zł</div>
+            <div class="legend-item"><div class="legend-box fire"></div> > 4000 zł</div>
+        </div>
     </div>
 
     <!-- RAPORT PRACOWNIKÓW -->
     <div class="table-card animate-enter delay-3" style="margin-bottom: 40px;">
         <div style="padding: 20px; border-bottom: 1px solid #333;">
-            <!-- ZMIANA NAGŁÓWKA -->
             <h3 style="margin: 0; color: #eee;">RAPORT GODZIN</h3>
         </div>
         <div class="table-responsive">
@@ -252,7 +280,6 @@
     <!-- RAPORT DZIENNY -->
     <div class="table-card animate-enter delay-3">
         <div style="padding: 20px; border-bottom: 1px solid #333;">
-            <!-- ZMIANA NAGŁÓWKA -->
             <h3 style="margin: 0; color: #eee;">RAPORT DZIENNY</h3>
         </div>
         <div id="loading">Ładowanie danych z bazy...</div>

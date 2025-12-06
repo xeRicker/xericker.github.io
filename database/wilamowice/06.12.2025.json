@@ -1,0 +1,29 @@
+{
+  "location": "Wilamowice",
+  "date": "06.12.2025",
+  "revenue": 1290,
+  "last_updated_at": "2025-12-06T19:52:58.887Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Cebula": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Frytura": 1,
+    "Bułki": 19,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Barbecue": 1,
+    "Zbój: Cytryna": 1,
+    "Pepsi": 1,
+    "Torby: Duże": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

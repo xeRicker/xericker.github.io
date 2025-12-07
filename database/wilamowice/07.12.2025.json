@@ -1,0 +1,12 @@
+{
+  "location": "Wilamowice",
+  "date": "07.12.2025",
+  "revenue": 338,
+  "last_updated_at": "2025-12-07T18:14:12.425Z",
+  "employees": {
+    "Paweł": "14:00 – 19:00"
+  },
+  "products": {
+    "Bułki": 0
+  }
+}

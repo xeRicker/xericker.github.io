@@ -28,6 +28,13 @@ const TIME_PRESETS = [
 ];
 
 const CATEGORIES = {
+  "⭐": {
+    items: [
+      { name: "Drwal: Kotlet Serowy", type: 's', options: { q: 1 } },
+      { name: "Drwal: Sos Jalapeno", type: 's', options: { q: 1 } },
+      { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
+    ]
+  },
   "🥗": {
     items: [
       { name: "Sałata", type: '', options: { q: 1 } },

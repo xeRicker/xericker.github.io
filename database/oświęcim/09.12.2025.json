@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "09.12.2025",
+  "revenue": 1082,
+  "last_updated_at": "2025-12-09T19:56:11.237Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 1,
+    "Bułki": 13,
+    "Serwetki": 1
+  }
+}

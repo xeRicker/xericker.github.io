@@ -1,0 +1,18 @@
+{
+  "location": "Wilamowice",
+  "date": "11.12.2025",
+  "revenue": 535,
+  "last_updated_at": "2025-12-11T19:36:10.991Z",
+  "employees": {
+    "Radek": "14:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 26,
+    "Torby: Małe": 1
+  }
+}

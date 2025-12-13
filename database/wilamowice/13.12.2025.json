@@ -1,0 +1,25 @@
+{
+  "location": "Wilamowice",
+  "date": "13.12.2025",
+  "revenue": 1542,
+  "last_updated_at": "2025-12-13T18:19:01.651Z",
+  "employees": {
+    "Tomek": "12:00 – 20:00"
+  },
+  "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

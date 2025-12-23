@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "23.12.2025",
+  "revenue": 1733,
+  "last_updated_at": "2025-12-23T20:01:40.458Z",
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 5,
+    "Cebula prażona": 2,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Folia": 1,
+    "Rękawiczki": 1
+  }
+}

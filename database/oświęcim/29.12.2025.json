@@ -1,0 +1,17 @@
+{
+  "location": "Oświęcim",
+  "date": "29.12.2025",
+  "revenue": 969,
+  "last_updated_at": "2025-12-29T20:04:23.191Z",
+  "employees": {
+    "Radek": "12:30 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Bułki": 20
+  }
+}

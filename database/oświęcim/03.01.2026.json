@@ -1,12 +1,34 @@
 {
   "location": "Oświęcim",
   "date": "03.01.2026",
-  "revenue": 0,
-  "last_updated_at": "2026-01-03T19:12:14.190Z",
-  "employees": {},
+  "revenue": 3011,
+  "last_updated_at": "2026-01-03T20:08:54.801Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Kacper": "14:30 – 21:30"
+  },
   "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 4,
+    "Boczek": 3,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 2,
+    "Frytura": 1,
     "Bułki": 0,
-    "Drobne: 1,2,5": 1,
-    "Drobne: 10,20": 1
+    "Cebula prażona": 4,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
   }
 }

@@ -1,0 +1,12 @@
+{
+  "location": "Wilamowice",
+  "date": "03.01.2026",
+  "revenue": 0,
+  "last_updated_at": "2026-01-03T19:12:15.686Z",
+  "employees": {},
+  "products": {
+    "Bułki": 0,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

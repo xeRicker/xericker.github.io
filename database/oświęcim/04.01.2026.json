@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "04.01.2026",
+  "revenue": 1385,
+  "last_updated_at": "2026-01-04T19:06:38.215Z",
+  "employees": {
+    "Sebastian": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 4,
+    "Boczek": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Folia": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1,
+    "Drobne: 10,20": 1
+  }
+}

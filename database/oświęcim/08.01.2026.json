@@ -1,15 +1,27 @@
 {
   "location": "Oświęcim",
   "date": "08.01.2026",
-  "revenue": 185,
-  "last_updated_at": "2026-01-08T18:44:53.631Z",
+  "revenue": 665,
+  "last_updated_at": "2026-01-08T19:51:22.165Z",
   "employees": {
-    "Tomek": "14:00 – 20:00"
+    "Sebastian": "12:00 – 21:30"
   },
   "products": {
-    "Bułki": 19,
+    "Drwal: Żurawina": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Jalapeno": 1,
+    "Frytki": 1,
+    "Bułki": 10,
+    "Przyprawa do grilla": 1,
     "Pepsi Max": 1,
     "Torby: Małe": 1,
-    "Folia": 1
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
   }
 }

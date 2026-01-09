@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "09.01.2026",
+  "revenue": 1310,
+  "last_updated_at": "2026-01-09T19:51:48.527Z",
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 3,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 10,
+    "Cebula prażona": 3,
+    "Pepsi Max": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

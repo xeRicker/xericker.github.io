@@ -1,0 +1,22 @@
+{
+  "location": "Wilamowice",
+  "date": "09.01.2026",
+  "revenue": 354,
+  "last_updated_at": "2026-01-09T20:01:52.777Z",
+  "employees": {
+    "Tomek": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Frytki": 1,
+    "Bułki": 24,
+    "Pepsi Max": 1,
+    "Rękawiczki": 1
+  }
+}

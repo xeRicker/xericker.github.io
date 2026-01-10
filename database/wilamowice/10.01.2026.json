@@ -1,0 +1,21 @@
+{
+  "location": "Wilamowice",
+  "date": "10.01.2026",
+  "revenue": 788,
+  "last_updated_at": "2026-01-10T20:02:57.433Z",
+  "employees": {
+    "Tomek": "14:00 – 21:30"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Stripsy": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 16,
+    "Sriracha": 1,
+    "Przyprawa do grilla": 1,
+    "Pepsi Max": 1,
+    "Serwetki": 1
+  }
+}

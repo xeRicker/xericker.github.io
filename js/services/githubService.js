@@ -8,17 +8,18 @@ function getMockData() {
     const mockData = [];
     const locations = ['Oświęcim', 'Wilamowice'];
     const employeesList = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
-    
-    for (let i = 0; i < 60; i++) {
+
+    for (let i = 0; i < 90; i++) { // Zwiększyłem zakres do 90 dni
         const date = new Date();
         date.setDate(date.getDate() - i);
-        
+
         const dayStr = String(date.getDate()).padStart(2, '0');
         const monthStr = String(date.getMonth() + 1).padStart(2, '0');
         const yearStr = date.getFullYear();
         const dateString = `${dayStr}.${monthStr}.${yearStr}`;
 
         locations.forEach(loc => {
+            // Symulacja: Czasami brak raportu
             if (Math.random() > 0.1) {
                 const dailyEmployees = {};
                 const numWorkers = Math.floor(Math.random() * 3) + 1;
@@ -27,14 +28,19 @@ function getMockData() {
 
                 selected.forEach(emp => {
                     const startHour = 12;
-                    const endHour = startHour + Math.floor(Math.random() * 5) + 5; 
+                    const endHour = startHour + Math.floor(Math.random() * 5) + 5;
                     dailyEmployees[emp] = `${startHour}:00 - ${endHour}:00`;
                 });
+
+                const totalRev = Math.floor(Math.random() * 2500) + 500;
+                // Symulacja kart: od 20% do 60% utargu to karty
+                const cardRev = Math.floor(totalRev * (0.2 + Math.random() * 0.4));
 
                 mockData.push({
                     location: loc,
                     date: dateString,
-                    revenue: Math.floor(Math.random() * 2500) + 200,
+                    revenue: totalRev,
+                    cardRevenue: cardRev, // Dodane dane kart
                     last_updated_at: new Date().toISOString(),
                     employees: dailyEmployees
                 });
@@ -125,14 +131,14 @@ export async function fetchAllData() {
             const filesResponse = await fetch(location.url, { headers });
             if (!filesResponse.ok) return [];
             const files = await filesResponse.json();
-            
+
             return Promise.all(
                 files
-                .filter(file => file.name.endsWith('.json'))
-                .map(async file => {
-                    const contentResponse = await fetch(file.download_url);
-                    return contentResponse.ok ? contentResponse.json() : null;
-                })
+                    .filter(file => file.name.endsWith('.json'))
+                    .map(async file => {
+                        const contentResponse = await fetch(file.download_url);
+                        return contentResponse.ok ? contentResponse.json() : null;
+                    })
             );
         });
 

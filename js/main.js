@@ -5,132 +5,132 @@ import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
 
 const EMPLOYEES = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
 const EMPLOYEE_COLORS = {
-  "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
-  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
+    "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
+    "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
 
 const TIME_PRESETS = [
-  { label: "12:00 - 19:30", value: "12:00-19:30" },
-  { label: "12:00 - 20:00", value: "12:00-20:00" },
-  { label: "12:00 - 20:30", value: "12:00-20:30" },
-  { label: "12:00 - 21:30", value: "12:00-21:30" },
-  { label: "12:00 - 22:00", value: "12:00-22:00" },
-  { label: "14:00 - 19:30", value: "14:00-19:30" },
-  { label: "14:00 - 20:00", value: "14:00-20:00" },
-  { label: "14:00 - 20:30", value: "14:00-20:30" },
-  { label: "14:00 - 21:30", value: "14:00-21:30" },
-  { label: "14:00 - 22:00", value: "14:00-22:00" },
-  { label: "16:00 - 19:30", value: "16:00-19:30" },
-  { label: "16:00 - 20:00", value: "16:00-20:00" },
-  { label: "16:00 - 20:30", value: "16:00-20:30" },
-  { label: "16:00 - 21:30", value: "16:00-21:30" },
-  { label: "16:00 - 22:00", value: "16:00-22:00" }
+    { label: "12:00 - 19:30", value: "12:00-19:30" },
+    { label: "12:00 - 20:00", value: "12:00-20:00" },
+    { label: "12:00 - 20:30", value: "12:00-20:30" },
+    { label: "12:00 - 21:30", value: "12:00-21:30" },
+    { label: "12:00 - 22:00", value: "12:00-22:00" },
+    { label: "14:00 - 19:30", value: "14:00-19:30" },
+    { label: "14:00 - 20:00", value: "14:00-20:00" },
+    { label: "14:00 - 20:30", value: "14:00-20:30" },
+    { label: "14:00 - 21:30", value: "14:00-21:30" },
+    { label: "14:00 - 22:00", value: "14:00-22:00" },
+    { label: "16:00 - 19:30", value: "16:00-19:30" },
+    { label: "16:00 - 20:00", value: "16:00-20:00" },
+    { label: "16:00 - 20:30", value: "16:00-20:30" },
+    { label: "16:00 - 21:30", value: "16:00-21:30" },
+    { label: "16:00 - 22:00", value: "16:00-22:00" }
 ];
 
 const CATEGORIES = {
-  "⭐": {
-    items: [
-      { name: "Drwal: Kotlet Serowy", type: 's', options: { q: 1 } },
-      { name: "Drwal: Sos Jalapeño", type: 's', options: { q: 1 } },
-      { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
-    ]
-  },
-  "🥗": {
-    items: [
-      { name: "Sałata", type: '', options: { q: 1 } },
-      { name: "Ogórki", type: '', options: { q: 1 } },
-      { name: "Pomidory", type: 's', options: { q: 1 } },
-      { name: "Cebula", type: 's', options: { q: 1 } },
-      { name: "Jalapeno", type: 's', options: { q: 1 } },
-    ]
-  },
-  "🥩": {
-    items: [
-      { name: "Mięso: Małe", type: '', options: { q: 1 } },
-      { name: "Mięso: Duże", type: '', options: { q: 1 } },
-      { name: "Stripsy", type: '', options: { q: 1 } },
-      { name: "Boczek", type: '', options: { q: 1 } },
-      { name: "Chorizo", type: 's', options: { q: 2 } }
-    ]
-  },
-  "🧀": {
-    items: [
-      { name: "Cheddar", type: '', options: { q: 1 } },
-      { name: "Halloumi", type: '', options: { q: 1 } },
-      { name: "Majonez", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🍟": {
-    items: [
-      { name: "Frytki", type: '', options: { q: 1 } },
-      { name: "Placki", type: '', options: { q: 1 } },
-      { name: "Krążki", type: '', options: { q: 1 } },
-      { name: "Frytura", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🍞": {
-    items: [ { name: "Bułki", type: '', options: { q: 1 } } ]
-  },
-  "🧂": {
-    items: [
-      { name: "Cebula prażona", type: '', options: { q: 1 } }, 
-      { name: "Sriracha", type: 's', options: { q: 1 } }, 
-      { name: "Tabasco", type: 's', options: { q: 1 } },
-      { name: "Przyprawa do grilla", type: 's', options: { q: 1 } }, 
-      { name: "Sól do frytek", type: 's', options: { q: 1 } },
-      { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
-      { name: "Sos: Carolina", type: 's', options: { q: 1 } }, 
-      { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
-      { name: "Sos: Barbecue", type: 's', options: { q: 1 } }, 
-      { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
-      { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
-      { name: "Zbój: Czosnek", type: 's', options: { q: 1 } },
-      { name: "Zbój: Pieprz", type: 's', options: { q: 1 } },
-      { name: "Zbój: Cytryna", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🥤": {
-    items: [
-      { name: "Pepsi", type: 's', options: { q: 1 } },
-      { name: "Pepsi Max", type: 's', options: { q: 1 } },
-      { name: "Mirinda", type: 's', options: { q: 1 } },
-      { name: "Lipton", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🛍️": {
-    items: [
-      { name: "Torby: Małe", type: 's', options: { q: 1 } },
-      { name: "Torby: Średnie", type: 's', options: { q: 1 } },
-      { name: "Torby: Duże", type: 's', options: { q: 1 } },
-      { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
-      { name: "Sos: Pokrywki", type: 's', options: { q: 1 } },
-      { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
-      { name: "Folia", type: 's', options: { q: 1 } },
-      { name: "Serwetki", type: 's', options: { q: 1 } },
-      { name: "Rękawiczki", type: 's', options: { q: 1 } },
-      { name: "Papier pod grilla", type: 's', options: { q: 1 } }
-    ]
-  },
-  "🧽": {
-    items: [
-      { name: "Szmaty", type: 's', options: { q: 1 } },
-      { name: "Zielony papier", type: 's', options: { q: 1 } },
-      { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
-      { name: "Worki na śmieci 120L", type: 's', options: { q: 1 } },
-      { name: "Lepy na muchy", type: 's', options: { q: 1 } },
-      { name: "Woda 5L", type: 's', options: { q: 1 } }
-    ]
-  },
-  "📋": {
-    items: [
-      { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
-      { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
-      { name: "Długopis", type: 's', options: { q: 1 } },
-      { name: "Pisak", type: 's', options: { q: 1 } },
-      { name: "Zeszyt", type: 's', options: { q: 1 } },
-      { name: "Papier do kasy", type: 's', options: { q: 1 } }
-    ]
-  }
+    "⭐": {
+        items: [
+            { name: "Drwal: Kotlet Serowy", type: 's', options: { q: 1 } },
+            { name: "Drwal: Sos Jalapeño", type: 's', options: { q: 1 } },
+            { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
+        ]
+    },
+    "🥗": {
+        items: [
+            { name: "Sałata", type: '', options: { q: 1 } },
+            { name: "Ogórki", type: '', options: { q: 1 } },
+            { name: "Pomidory", type: 's', options: { q: 1 } },
+            { name: "Cebula", type: 's', options: { q: 1 } },
+            { name: "Jalapeno", type: 's', options: { q: 1 } },
+        ]
+    },
+    "🥩": {
+        items: [
+            { name: "Mięso: Małe", type: '', options: { q: 1 } },
+            { name: "Mięso: Duże", type: '', options: { q: 1 } },
+            { name: "Stripsy", type: '', options: { q: 1 } },
+            { name: "Boczek", type: '', options: { q: 1 } },
+            { name: "Chorizo", type: 's', options: { q: 2 } }
+        ]
+    },
+    "🧀": {
+        items: [
+            { name: "Cheddar", type: '', options: { q: 1 } },
+            { name: "Halloumi", type: '', options: { q: 1 } },
+            { name: "Majonez", type: 's', options: { q: 1 } }
+        ]
+    },
+    "🍟": {
+        items: [
+            { name: "Frytki", type: '', options: { q: 1 } },
+            { name: "Placki", type: '', options: { q: 1 } },
+            { name: "Krążki", type: '', options: { q: 1 } },
+            { name: "Frytura", type: 's', options: { q: 1 } }
+        ]
+    },
+    "🍞": {
+        items: [ { name: "Bułki", type: '', options: { q: 1 } } ]
+    },
+    "🧂": {
+        items: [
+            { name: "Cebula prażona", type: '', options: { q: 1 } },
+            { name: "Sriracha", type: 's', options: { q: 1 } },
+            { name: "Tabasco", type: 's', options: { q: 1 } },
+            { name: "Przyprawa do grilla", type: 's', options: { q: 1 } },
+            { name: "Sól do frytek", type: 's', options: { q: 1 } },
+            { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
+            { name: "Sos: Carolina", type: 's', options: { q: 1 } },
+            { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
+            { name: "Sos: Barbecue", type: 's', options: { q: 1 } },
+            { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
+            { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
+            { name: "Zbój: Czosnek", type: 's', options: { q: 1 } },
+            { name: "Zbój: Pieprz", type: 's', options: { q: 1 } },
+            { name: "Zbój: Cytryna", type: 's', options: { q: 1 } }
+        ]
+    },
+    "🥤": {
+        items: [
+            { name: "Pepsi", type: 's', options: { q: 1 } },
+            { name: "Pepsi Max", type: 's', options: { q: 1 } },
+            { name: "Mirinda", type: 's', options: { q: 1 } },
+            { name: "Lipton", type: 's', options: { q: 1 } }
+        ]
+    },
+    "🛍️": {
+        items: [
+            { name: "Torby: Małe", type: 's', options: { q: 1 } },
+            { name: "Torby: Średnie", type: 's', options: { q: 1 } },
+            { name: "Torby: Duże", type: 's', options: { q: 1 } },
+            { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
+            { name: "Sos: Pokrywki", type: 's', options: { q: 1 } },
+            { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
+            { name: "Folia", type: 's', options: { q: 1 } },
+            { name: "Serwetki", type: 's', options: { q: 1 } },
+            { name: "Rękawiczki", type: 's', options: { q: 1 } },
+            { name: "Papier pod grilla", type: 's', options: { q: 1 } }
+        ]
+    },
+    "🧽": {
+        items: [
+            { name: "Szmaty", type: 's', options: { q: 1 } },
+            { name: "Zielony papier", type: 's', options: { q: 1 } },
+            { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
+            { name: "Worki na śmieci 120L", type: 's', options: { q: 1 } },
+            { name: "Lepy na muchy", type: 's', options: { q: 1 } },
+            { name: "Woda 5L", type: 's', options: { q: 1 } }
+        ]
+    },
+    "📋": {
+        items: [
+            { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
+            { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
+            { name: "Długopis", type: 's', options: { q: 1 } },
+            { name: "Pisak", type: 's', options: { q: 1 } },
+            { name: "Zeszyt", type: 's', options: { q: 1 } },
+            { name: "Papier do kasy", type: 's', options: { q: 1 } }
+        ]
+    }
 };
 
 const productMap = new Map(Object.values(CATEGORIES).flatMap(cat => cat.items.map(p => [p.name, p])));
@@ -139,7 +139,7 @@ let selectedLocation = null;
 document.addEventListener('DOMContentLoaded', () => {
     renderEmployeeControls(EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
     renderProductGrid(CATEGORIES);
-    
+
     const savedData = loadStateFromLocalStorage();
     if (savedData) {
         Object.entries(savedData.products || {}).forEach(([name, quantity]) => {
@@ -167,6 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedData.revenue) {
             document.getElementById('revenueInput').value = savedData.revenue;
         }
+        if (savedData.cardRevenue) {
+            document.getElementById('cardRevenueInput').value = savedData.cardRevenue;
+        }
     }
     updateResetButtonVisibility();
     setupEventListeners();
@@ -175,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
     document.getElementById('products').addEventListener('change', handleProductChange);
     document.getElementById('products').addEventListener('click', handleProductButtonClick);
-    
+
     document.getElementById('employees').addEventListener('input', (event) => {
         if(event.target.type === 'time') {
             const row = event.target.closest('.employee-row');
@@ -183,7 +186,7 @@ function setupEventListeners() {
             saveAndRefreshUI();
         }
     });
-    
+
     document.getElementById('employees').addEventListener('change', (event) => {
         if (event.target.classList.contains('hidden-preset-select')) {
             const value = event.target.value;
@@ -194,7 +197,7 @@ function setupEventListeners() {
                 const [from, to] = value.split('-');
                 fromInput.value = from;
                 toInput.value = to;
-                
+
                 const row = event.target.closest('.employee-row');
                 if(row) row.classList.add('active');
             }
@@ -204,9 +207,10 @@ function setupEventListeners() {
     });
 
     document.getElementById('revenueInput').addEventListener('input', saveAndRefreshUI);
+    document.getElementById('cardRevenueInput').addEventListener('input', saveAndRefreshUI);
     document.querySelector('.reset-button').addEventListener('click', resetAll);
     document.getElementById('copyButton').addEventListener('click', showLocationModal);
-    
+
     document.querySelectorAll('.location-button').forEach(btn => btn.addEventListener('click', handleLocationConfirm));
     document.getElementById('locationOverlay').addEventListener('click', closeLocationModal);
 }
@@ -283,8 +287,9 @@ function resetAll() {
             const row = document.getElementById(`${id}_od`).closest('.employee-row');
             if(row) row.classList.remove('active');
         });
-        
+
         document.getElementById('revenueInput').value = "";
+        document.getElementById('cardRevenueInput').value = "";
 
         localStorage.removeItem("productList");
         updateResetButtonVisibility();
@@ -294,10 +299,13 @@ function resetAll() {
 async function handleListGeneration() {
     const location = selectedLocation;
     const dateStr = getFormattedDate();
-    
+
     const revenueInput = document.getElementById('revenueInput');
+    const cardRevenueInput = document.getElementById('cardRevenueInput');
+
     const revenueVal = parseFloat(revenueInput.value);
-    
+    const cardRevenueVal = parseFloat(cardRevenueInput.value) || 0;
+
     if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
         const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
         if (!confirmRevenue) return;
@@ -307,11 +315,12 @@ async function handleListGeneration() {
         location,
         date: dateStr,
         revenue: revenueVal || 0,
+        cardRevenue: cardRevenueVal,
         last_updated_at: new Date().toISOString(),
         employees: {},
         products: {}
     };
-    
+
     let plainReport = `🧾 ${location} ${dateStr}\n`;
 
     let workersReport = "";

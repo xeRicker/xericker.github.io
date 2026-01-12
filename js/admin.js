@@ -1,8 +1,8 @@
 import { fetchAllData, isLocalhost } from './services/githubService.js';
 
 const EMPLOYEE_COLORS = {
-  "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
-  "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
+    "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
+    "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
 };
 
 const PASSWORD = "xdxdxd123";
@@ -11,9 +11,8 @@ let mergedData = [];
 let currentFilteredData = [];
 let employeeStats = [];
 let revenueChart = null;
-let employeeChart = null;
-let currentChartType = 'bar'; 
-let currentEmpMetric = 'hours'; 
+let currentChartType = 'bar';
+let currentDataType = 'total'; // 'total' lub 'cards' - wpływa tylko na wykres
 
 let sortDirection = 1;
 window.sortEmpTable = (colIndex) => {
@@ -22,7 +21,10 @@ window.sortEmpTable = (colIndex) => {
         let valA, valB;
         if (colIndex === 0) { valA = a.name; valB = b.name; }
         else if (colIndex === 1 || colIndex === 3) { valA = a.hours; valB = b.hours; }
-        else { valA = Array.from(a.locations).join(', '); valB = Array.from(b.locations).join(', '); }
+        else {
+            valA = Math.max(...Object.values(a.locBreakdown));
+            valB = Math.max(...Object.values(b.locBreakdown));
+        }
         if (valA < valB) return -1 * sortDirection;
         if (valA > valB) return 1 * sortDirection;
         return 0;
@@ -49,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initializeApp() {
     allReports = await fetchAllData();
-    
+
     if (allReports.length === 0) {
         document.getElementById('loading').innerText = "Brak danych w bazie.";
         return;
@@ -57,9 +59,11 @@ async function initializeApp() {
 
     processData();
     populateMonthFilter();
-    
+    initSalaryCalculator();
+
     document.getElementById('monthFilter').addEventListener('change', handleMonthChange);
-    
+
+    // Obsługa typu wykresu (Słupkowy / Liniowy)
     document.querySelectorAll('.chart-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
@@ -69,18 +73,21 @@ async function initializeApp() {
         });
     });
 
-    document.querySelectorAll('.emp-btn').forEach(btn => {
+    // Obsługa przełącznika widoku (Total vs Cards) - TYLKO WYKRES
+    document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.emp-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentEmpMetric = e.target.dataset.type; 
-            renderEmployeeChart(employeeStats);
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentDataType = e.currentTarget.dataset.view;
+
+            // Odświeżamy tylko wykres, mapa cieplna pozostaje bez zmian
+            renderChart(currentFilteredData);
         });
     });
-    
+
     document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
     handleMonthChange();
-    
+
     document.getElementById('loading').style.display = 'none';
     document.getElementById('revenueTable').style.display = 'table';
 }
@@ -93,7 +100,7 @@ function processData() {
         if (!dataMap.has(dateKey)) {
             const [d, m, y] = dateKey.split('.');
             const dateObj = new Date(y, m - 1, d);
-            
+
             dataMap.set(dateKey, {
                 dateStr: dateKey,
                 dateObj: dateObj,
@@ -102,16 +109,27 @@ function processData() {
                 oswiecim: 0,
                 wilamowice: 0,
                 total: 0,
-                rawReports: [] 
+                cardTotal: 0,
+                oswiecimCard: 0,
+                wilamowiceCard: 0,
+                rawReports: []
             });
         }
-        
+
         const entry = dataMap.get(dateKey);
         const rev = report.revenue || 0;
-        
-        if (report.location === 'Oświęcim') entry.oswiecim += rev;
-        if (report.location === 'Wilamowice') entry.wilamowice += rev;
+        const cardRev = report.cardRevenue || 0;
+
+        if (report.location === 'Oświęcim') {
+            entry.oswiecim += rev;
+            entry.oswiecimCard += cardRev;
+        }
+        if (report.location === 'Wilamowice') {
+            entry.wilamowice += rev;
+            entry.wilamowiceCard += cardRev;
+        }
         entry.total += rev;
+        entry.cardTotal += cardRev;
         entry.rawReports.push(report);
     });
 
@@ -142,10 +160,15 @@ function populateMonthFilter() {
 function handleMonthChange() {
     const selectedMonthKey = document.getElementById('monthFilter').value;
     const [year, month] = selectedMonthKey.split('-');
-    
+
     const monthData = mergedData.filter(d => {
         return d.dateObj.getFullYear() == year && (d.dateObj.getMonth() + 1) == month;
     });
+
+    const lastDay = new Date(year, month, 0).getDate();
+    document.getElementById('calcDateFrom').value = `${year}-${month}-01`;
+    document.getElementById('calcDateTo').value = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+    calculateSalary();
 
     renderWeekTabs(monthData, selectedMonthKey);
     updateView(monthData);
@@ -195,12 +218,11 @@ function renderWeekTabs(monthData, monthKey) {
 }
 
 function updateView(data) {
-    currentFilteredData = data; 
+    currentFilteredData = data;
     renderSummary(data);
     renderTable(data);
     renderChart(data);
     employeeStats = processEmployeeData(data);
-    renderEmployeeChart(employeeStats);
     renderDetailedEmployeeTable(employeeStats);
     renderHeatmap(data);
 }
@@ -243,79 +265,70 @@ function processEmployeeData(data) {
     return Array.from(empMap.values()).sort((a, b) => b.hours - a.hours);
 }
 
-function renderEmployeeChart(stats) {
-    const ctx = document.getElementById('employeeChart').getContext('2d');
-    
-    const sortedStats = [...stats].sort((a, b) => {
-        if(currentEmpMetric === 'hours') return b.hours - a.hours;
-        return b.revenue - a.revenue;
+function initSalaryCalculator() {
+    const empSelect = document.getElementById('calcEmployee');
+    const rateInput = document.getElementById('calcRate');
+    const dateFrom = document.getElementById('calcDateFrom');
+    const dateTo = document.getElementById('calcDateTo');
+
+    const uniqueEmployees = new Set();
+    allReports.forEach(r => {
+        if(r.employees) Object.keys(r.employees).forEach(n => uniqueEmployees.add(n));
+    });
+    Array.from(uniqueEmployees).sort().forEach(emp => {
+        const opt = document.createElement('option');
+        opt.value = emp;
+        opt.textContent = emp;
+        empSelect.appendChild(opt);
     });
 
-    const labels = sortedStats.map(e => e.name);
-    const values = sortedStats.map(e => currentEmpMetric === 'hours' ? e.hours : e.revenue);
-    
-    const bgColors = labels.map(name => EMPLOYEE_COLORS[name] || 'rgba(211, 84, 0, 0.7)');
-    const borderColors = labels.map(name => EMPLOYEE_COLORS[name] ? '#fff' : '#D35400');
+    [empSelect, rateInput, dateFrom, dateTo].forEach(el => {
+        el.addEventListener('change', calculateSalary);
+        el.addEventListener('input', calculateSalary);
+    });
+}
 
-    if (employeeChart) employeeChart.destroy();
+function calculateSalary() {
+    const name = document.getElementById('calcEmployee').value;
+    const rate = parseFloat(document.getElementById('calcRate').value) || 0;
+    const dFrom = new Date(document.getElementById('calcDateFrom').value);
+    const dTo = new Date(document.getElementById('calcDateTo').value);
 
-    employeeChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: currentEmpMetric === 'hours' ? 'Godziny' : 'Utarg (PLN)',
-                data: values,
-                backgroundColor: bgColors,
-                borderColor: borderColors,
-                borderWidth: 1,
-                borderRadius: 4
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    enabled: false,
-                    external: function(context) {
-                        let tooltipEl = document.getElementById('customTooltip');
-                        const tooltipModel = context.tooltip;
-                        if (tooltipModel.opacity === 0) {
-                            tooltipEl.style.display = 'none';
-                            return;
-                        }
+    dTo.setHours(23, 59, 59);
 
-                        if (tooltipModel.body) {
-                            const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-                            const emp = sortedStats[dataIndex]; 
+    if (!name || isNaN(dFrom.getTime()) || isNaN(dTo.getTime())) return;
 
-                            if(emp) {
-                                let html = `<div class="tt-header">${emp.name}</div>`;
-                                html += `<div class="tt-row"><span>Łącznie godzin:</span> <span class="tt-val">${emp.hours.toFixed(1)}h</span></div>`;
-                                html += `<div class="tt-row"><span>Łączny utarg:</span> <span class="tt-val highlight">${formatMoney(emp.revenue)}</span></div>`;
-                                html += `<div class="tt-sub">LOKALIZACJE:</div>`;
-                                for(let [loc, h] of Object.entries(emp.locBreakdown)) {
-                                    html += `<div class="tt-row"><span>${loc}:</span> <span class="tt-val">${h.toFixed(1)}h</span></div>`;
-                                }
-                                tooltipEl.innerHTML = html;
-                            }
-                        }
+    let totalHours = 0;
+    const locBreakdown = {};
 
-                        const position = context.chart.canvas.getBoundingClientRect();
-                        tooltipEl.style.display = 'block';
-                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 15 + 'px';
-                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
-                    }
-                }
-            },
-            scales: {
-                x: { ticks: { color: '#888' }, grid: { color: '#333' } },
-                y: { ticks: { color: '#eee', font: { family: 'Roboto', weight: 'bold' } }, grid: { display: false } }
+    allReports.forEach(report => {
+        const [d, m, y] = report.date.split('.');
+        const rDate = new Date(y, m - 1, d);
+
+        if (rDate >= dFrom && rDate <= dTo) {
+            if (report.employees && report.employees[name]) {
+                const h = calculateHours(report.employees[name]);
+                totalHours += h;
+                if (!locBreakdown[report.location]) locBreakdown[report.location] = 0;
+                locBreakdown[report.location] += h;
             }
         }
     });
+
+    const totalMoney = totalHours * rate;
+
+    document.getElementById('calcResult').style.display = 'flex';
+    document.getElementById('resHours').innerText = totalHours.toFixed(1) + ' h';
+    document.getElementById('resMoney').innerText = formatMoney(totalMoney);
+
+    const detailsDiv = document.getElementById('calcDetails');
+    detailsDiv.style.display = 'block';
+    let detailsHtml = '';
+    for (const [loc, h] of Object.entries(locBreakdown)) {
+        const money = h * rate;
+        detailsHtml += `<div>${loc}: <strong>${h.toFixed(1)} h</strong> (${formatMoney(money)})</div>`;
+    }
+    detailsDiv.innerHTML = detailsHtml;
 }
 
 function renderDetailedEmployeeTable(stats) {
@@ -323,17 +336,40 @@ function renderDetailedEmployeeTable(stats) {
     tbody.innerHTML = '';
     stats.forEach(emp => {
         const tr = document.createElement('tr');
-        const locs = Array.from(emp.locations).join(', ');
+
+        let locHtml = '';
+        let barHtml = '<div class="loc-bar-container">';
+
+        const locEntries = Object.entries(emp.locBreakdown).sort((a,b) => b[1] - a[1]);
+
+        let maxHours = -1;
+        locEntries.forEach(([l, h]) => { if(h > maxHours) maxHours = h; });
+        const topLocs = locEntries.filter(([l, h]) => h === maxHours).map(x => x[0]);
+        const dominantLoc = topLocs.includes('Oświęcim') ? 'Oświęcim' : topLocs[0];
+
+        const textParts = [];
+
+        locEntries.forEach(([loc, hours]) => {
+            const pct = (hours / emp.hours) * 100;
+            if (pct > 0) {
+                const color = (loc === dominantLoc) ? '#D35400' : '#9E9E9E';
+                textParts.push(`<span style="color:${color}">${loc} ${Math.round(pct)}%</span>`);
+                barHtml += `<div class="loc-bar-segment" style="width:${pct}%; background-color:${color};" title="${loc}: ${hours.toFixed(1)}h"></div>`;
+            }
+        });
+        barHtml += '</div>';
+        locHtml = `<span class="loc-text">${textParts.join(' • ')}</span>${barHtml}`;
+
         const percent = (emp.hours / 160) * 100;
         let percentColor = '#aaa';
-        if (percent > 100) percentColor = '#e74c3c'; 
-        else if (percent > 80) percentColor = '#27ae60'; 
-        
+        if (percent > 100) percentColor = '#e74c3c';
+        else if (percent > 80) percentColor = '#27ae60';
+
         tr.innerHTML = `
             <td style="font-weight:bold; color:#fff;">${emp.name}</td>
             <td class="val-cell" style="color:var(--primary-color);">${emp.hours.toFixed(1)} h</td>
             <td class="val-cell" style="color:${percentColor}; font-weight:bold;">${percent.toFixed(1)}%</td>
-            <td style="color:#aaa;">${locs}</td>
+            <td>${locHtml}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -343,7 +379,7 @@ function renderHeatmap(data) {
     const container = document.getElementById('heatmapContainer');
     const tooltip = document.getElementById('customTooltip');
     container.innerHTML = '';
-    
+
     ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'].forEach(d => {
         const h = document.createElement('div');
         h.className = 'heatmap-day-header';
@@ -355,7 +391,7 @@ function renderHeatmap(data) {
 
     const [filterYear, filterMonth] = document.getElementById('monthFilter').value.split('-').map(Number);
     const daysInMonth = new Date(filterYear, filterMonth, 0).getDate();
-    const firstDayOfWeek = new Date(filterYear, filterMonth - 1, 1).getDay() || 7; 
+    const firstDayOfWeek = new Date(filterYear, filterMonth - 1, 1).getDay() || 7;
 
     for (let i = 1; i < firstDayOfWeek; i++) {
         const empty = document.createElement('div');
@@ -363,31 +399,53 @@ function renderHeatmap(data) {
         container.appendChild(empty);
     }
 
+    // Mapa zawsze pokazuje całkowity utarg
+    const thresholdMid = 2000;
+    const thresholdHigh = 4000;
+    const maxVal = 6000;
+
     for (let day = 1; day <= daysInMonth; day++) {
         const dayStr = `${String(day).padStart(2,'0')}.${String(filterMonth).padStart(2,'0')}.${filterYear}`;
         const dayData = data.find(d => d.dateStr === dayStr);
         const cell = document.createElement('div');
         cell.className = 'heatmap-cell';
-        
+
         if (dayData) {
-            const revenue = dayData.total;
+            const value = dayData.total;
+
             let cssClass = '';
-            if (revenue > 4000) cssClass = 'fire';
-            else if (revenue > 2000) cssClass = 'warm';
-            const intensity = Math.min(revenue / 6000, 1);
+            if (value > thresholdHigh) cssClass = 'fire';
+            else if (value > thresholdMid) cssClass = 'warm';
+
+            const intensity = Math.min(value / maxVal, 1);
             cell.style.backgroundColor = `rgba(211, 84, 0, ${0.15 + (intensity * 0.85)})`;
             if(cssClass) cell.classList.add(cssClass);
-            
+
             cell.innerHTML = `
                 <span class="heatmap-date">${day}</span>
-                <span class="heatmap-val">${Math.round(revenue)}</span>
+                <span class="heatmap-val">${Math.round(value)}</span>
             `;
-            
+
             cell.addEventListener('mouseenter', () => {
                 let html = `<div class="tt-header">${dayStr} - ${dayData.dayOfWeek}</div>`;
-                html += `<div class="tt-row"><span>Suma:</span> <span class="tt-val highlight">${formatMoney(revenue)}</span></div>`;
-                html += `<div class="tt-row"><span>Oświęcim:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
-                html += `<div class="tt-row"><span>Wilamowice:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+
+                // Zawsze pokazujemy pełne dane
+                html += `<div class="tt-row"><span>Suma:</span> <span class="tt-val highlight">${formatMoney(dayData.total)}</span></div>`;
+                html += `<div class="tt-row"><span>Karty:</span> <span class="tt-val">${formatMoney(dayData.cardTotal)}</span></div>`;
+
+                html += `<div class="tt-sub">LOKALIZACJE</div>`;
+
+                // Oświęcim
+                html += `<div style="margin-top:4px; color: #D35400; font-weight:bold; font-size:13px;">Oświęcim:</div>`;
+                html += `<div class="tt-row" style="padding-left:10px; margin-bottom:2px;"><span>Suma:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
+                html += `<div class="tt-row" style="padding-left:10px;"><span>Karty:</span> <span class="tt-val" style="color:#aaa;">${formatMoney(dayData.oswiecimCard)}</span></div>`;
+
+                // Wilamowice
+                html += `<div style="margin-top:6px; color: #9E9E9E; font-weight:bold; font-size:13px;">Wilamowice:</div>`;
+                html += `<div class="tt-row" style="padding-left:10px; margin-bottom:2px;"><span>Suma:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+                html += `<div class="tt-row" style="padding-left:10px;"><span>Karty:</span> <span class="tt-val" style="color:#aaa;">${formatMoney(dayData.wilamowiceCard)}</span></div>`;
+
+                // Pracownicy
                 html += `<div class="tt-sub">ZMIANA:</div>`;
                 dayData.rawReports.forEach(r => {
                     if(r.employees) {
@@ -425,14 +483,16 @@ function renderChart(data) {
     const ctx = document.getElementById('revenueChart').getContext('2d');
     const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
     const labels = sorted.map(d => `${d.dateStr.substring(0, 5)} (${d.dayOfWeek.substring(0, 3)})`);
-    const oswData = sorted.map(d => d.oswiecim);
-    const wilData = sorted.map(d => d.wilamowice);
+
+    const oswData = sorted.map(d => currentDataType === 'cards' ? d.oswiecimCard : d.oswiecim);
+    const wilData = sorted.map(d => currentDataType === 'cards' ? d.wilamowiceCard : d.wilamowice);
 
     if (revenueChart) revenueChart.destroy();
 
     const isLine = currentChartType === 'line';
-    const colorOsw = '#D35400'; 
-    const colorWil = '#9E9E9E'; 
+    const colorOsw = '#D35400';
+    const colorWil = '#9E9E9E';
+    const labelSuffix = currentDataType === 'cards' ? ' (Karty)' : '';
 
     revenueChart = new Chart(ctx, {
         type: currentChartType,
@@ -440,7 +500,7 @@ function renderChart(data) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Oświęcim',
+                    label: 'Oświęcim' + labelSuffix,
                     data: oswData,
                     backgroundColor: isLine ? 'rgba(211, 84, 0, 0.2)' : 'rgba(211, 84, 0, 0.8)',
                     borderColor: colorOsw,
@@ -450,7 +510,7 @@ function renderChart(data) {
                     fill: isLine
                 },
                 {
-                    label: 'Wilamowice',
+                    label: 'Wilamowice' + labelSuffix,
                     data: wilData,
                     backgroundColor: isLine ? 'rgba(158, 158, 158, 0.2)' : 'rgba(158, 158, 158, 0.7)',
                     borderColor: colorWil,
@@ -478,13 +538,20 @@ function renderChart(data) {
 
                         if (tooltipModel.body) {
                             const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-                            const dayData = sorted[dataIndex]; 
+                            const dayData = sorted[dataIndex];
 
                             if(dayData) {
                                 let html = `<div class="tt-header">${dayData.dateStr}</div>`;
-                                html += `<div class="tt-row"><span>Suma dnia:</span> <span class="tt-val highlight">${formatMoney(dayData.total)}</span></div>`;
-                                html += `<div class="tt-row"><span>Oświęcim:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
-                                html += `<div class="tt-row"><span>Wilamowice:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+
+                                if (currentDataType === 'cards') {
+                                    html += `<div class="tt-row"><span>Suma Dnia (Karty):</span> <span class="tt-val highlight">${formatMoney(dayData.cardTotal)}</span></div>`;
+                                    html += `<div class="tt-row"><span>Oświęcim (Karty):</span> <span class="tt-val">${formatMoney(dayData.oswiecimCard)}</span></div>`;
+                                    html += `<div class="tt-row"><span>Wilamowice (Karty):</span> <span class="tt-val">${formatMoney(dayData.wilamowiceCard)}</span></div>`;
+                                } else {
+                                    html += `<div class="tt-row"><span>Suma Dnia:</span> <span class="tt-val highlight">${formatMoney(dayData.total)}</span></div>`;
+                                    html += `<div class="tt-row"><span>Oświęcim:</span> <span class="tt-val">${formatMoney(dayData.oswiecim)}</span></div>`;
+                                    html += `<div class="tt-row"><span>Wilamowice:</span> <span class="tt-val">${formatMoney(dayData.wilamowice)}</span></div>`;
+                                }
                                 tooltipEl.innerHTML = html;
                             }
                         }

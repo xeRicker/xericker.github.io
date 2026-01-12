@@ -6,9 +6,10 @@ export function saveStateToLocalStorage(productMap, employees) {
     const data = { time: Date.now(), products: {}, employees: {} };
 
     const revenueInput = document.getElementById('revenueInput');
-    if (revenueInput) {
-        data.revenue = revenueInput.value;
-    }
+    const cardRevenueInput = document.getElementById('cardRevenueInput');
+
+    if (revenueInput) data.revenue = revenueInput.value;
+    if (cardRevenueInput) data.cardRevenue = cardRevenueInput.value;
 
     productMap.forEach((product, name) => {
         if (product.type === 's') {
@@ -34,7 +35,7 @@ export function saveStateToLocalStorage(productMap, employees) {
 
 export function loadStateFromLocalStorage() {
     const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    
+
     if (!savedData.time || Date.now() - savedData.time > APP_CONFIG.LOCAL_STORAGE_EXPIRATION) {
         localStorage.removeItem(STORAGE_KEY);
         return null;

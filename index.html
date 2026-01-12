@@ -5,82 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Burbone Lista</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <div id="confetti-container"></div>
+<div id="confetti-container"></div>
 
-  <div class="container">
-    
-    <!-- NOWY NAGŁÓWEK (Styl Admina) -->
-    <div class="header-bar animate-stagger">
-        <h1>BURBONE LISTA</h1>
-        <a href="admin.html" class="btn-admin">
-            ADMIN
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
-        </a>
-    </div>
-    
-    <div class="section-card animate-stagger">
-      <h2>💰 Utarg</h2>
-      <div class="input-group">
-        <span class="currency-symbol">PLN</span>
-        <input type="number" id="revenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+<div class="container">
+
+  <div class="header-bar animate-stagger">
+    <h1>BURBONE LISTA</h1>
+    <a href="admin.html" class="btn-admin">
+      ADMIN
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px;"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+    </a>
+  </div>
+
+  <!-- ZMIANA: Dwa pola utargu obok siebie -->
+  <div class="section-card animate-stagger">
+    <h2>💰 Utarg</h2>
+    <div class="revenue-grid">
+      <div class="revenue-field">
+        <label>Gotówka + Karta (Suma)</label>
+        <div class="input-group">
+          <span class="currency-symbol">PLN</span>
+          <input type="number" id="revenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+      <div class="revenue-field">
+        <label>W tym Karta 💳</label>
+        <div class="input-group">
+          <span class="currency-symbol">PLN</span>
+          <input type="number" id="cardRevenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+        </div>
       </div>
     </div>
-
-    <div class="section-card animate-stagger">
-      <h2>👨‍🍳 Ekipa</h2>
-      <div id="employees" class="employees-grid"></div>
-    </div>
-
-    <div id="products"></div>
-
-    <div class="spacer-bottom"></div>
   </div>
 
-  <div class="floating-bar animate-slide-up">
-    <div id="resetContainer" style="display: none;">
-        <button class="icon-button reset-button" aria-label="Reset">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-    </div>
-    <button id="copyButton" class="primary-fab">
-      <span>SKOPIUJ LISTĘ</span>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+  <div class="section-card animate-stagger">
+    <h2>👨‍🍳 Ekipa</h2>
+    <div id="employees" class="employees-grid"></div>
+  </div>
+
+  <div id="products"></div>
+
+  <div class="spacer-bottom"></div>
+</div>
+
+<div class="floating-bar animate-slide-up">
+  <div id="resetContainer" style="display: none;">
+    <button class="icon-button reset-button" aria-label="Reset">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
+  <button id="copyButton" class="primary-fab">
+    <span>SKOPIUJ LISTĘ</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+  </button>
+</div>
 
-  <div id="locationOverlay" class="overlay"></div>
+<div id="locationOverlay" class="overlay"></div>
 
-  <div id="locationSheet" class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <h3>Wybierz punkt</h3>
-    <div class="sheet-actions">
-      <button class="sheet-btn location-button" data-location="Oświęcim">
-        <span class="loc-icon">🏰</span> OŚWIĘCIM
-      </button>
-      <button class="sheet-btn location-button" data-location="Wilamowice">
-        <span class="loc-icon">🏡</span> WILAMOWICE
-      </button>
-      <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
-    </div>
+<div id="locationSheet" class="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <h3>Wybierz punkt</h3>
+  <div class="sheet-actions">
+    <button class="sheet-btn location-button" data-location="Oświęcim">
+      <span class="loc-icon">🏰</span> OŚWIĘCIM
+    </button>
+    <button class="sheet-btn location-button" data-location="Wilamowice">
+      <span class="loc-icon">🏡</span> WILAMOWICE
+    </button>
+    <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
   </div>
+</div>
 
-  <div id="successSheet" class="bottom-sheet">
-    <div class="sheet-handle"></div>
-    <div class="success-icon-wrapper" id="successIcon"></div>
-    <h3>LISTA GOTOWA!</h3>
-    <p class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
-    <div class="sheet-actions">
-      <button id="finalCopyBtn" class="sheet-btn success-close-btn">SKOPIUJ</button>
-    </div>
+<div id="successSheet" class="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="success-icon-wrapper" id="successIcon"></div>
+  <h3>LISTA GOTOWA!</h3>
+  <p class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
+  <div class="sheet-actions">
+    <button id="finalCopyBtn" class="sheet-btn success-close-btn">SKOPIUJ</button>
   </div>
+</div>
 
-  <script type="module" src="js/main.js?v=6"></script>
+<script type="module" src="js/main.js?v=7"></script>
 </body>
 </html>

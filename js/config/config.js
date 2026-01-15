@@ -1,10 +1,9 @@
 export const GITHUB_CONFIG = {
-    TOKEN: 'TWOJ_TOKEN',
-    REPO_OWNER: 'TWOJ_LOGIN',
-    REPO_NAME: 'TWOJE_REPO'
+    TOKEN: '__GH_TOKEN__',
+    REPO_OWNER: 'xeRicker',
+    REPO_NAME: 'xericker.github.io'
 };
 
 export const APP_CONFIG = {
     LOCAL_STORAGE_EXPIRATION: 15 * 60 * 1000,
-    ANIMATION_SPEED: 300
 };

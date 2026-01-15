@@ -24,7 +24,7 @@ jobs:
 
       - name: Inject GitHub Token
         run: |
-          sed -i 's|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g' js/config.js
+          sed -i 's|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g' js/config/config.js
       
       - name: Verify config.js content
         run: cat js/config.js

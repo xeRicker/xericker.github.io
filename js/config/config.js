@@ -1,0 +1,10 @@
+export const GITHUB_CONFIG = {
+    TOKEN: 'TWOJ_TOKEN',
+    REPO_OWNER: 'TWOJ_LOGIN',
+    REPO_NAME: 'TWOJE_REPO'
+};
+
+export const APP_CONFIG = {
+    LOCAL_STORAGE_EXPIRATION: 15 * 60 * 1000,
+    ANIMATION_SPEED: 300
+};

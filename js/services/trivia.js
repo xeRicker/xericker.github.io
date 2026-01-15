@@ -19,7 +19,7 @@ export class TriviaService {
         ];
     }
 
-    generate(data, limit = 3) {
+    generate(data, limit = 10) {
         if (!data || data.length === 0) return [];
 
         const available = this.generators
@@ -248,7 +248,6 @@ export class TriviaService {
         const weekends = {};
         data.forEach(d => {
             if (['sobota', 'niedziela'].includes(d.dayOfWeek)) {
-                // Uproszczone grupowanie po numerze tygodnia w roku
                 const date = new Date(d.dateObj);
                 const onejan = new Date(date.getFullYear(), 0, 1);
                 const week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);

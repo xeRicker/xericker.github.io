@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Panel Admina</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=19">
+    <link rel="stylesheet" href="style.css?v=20">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
@@ -49,14 +49,28 @@
         .summary-box p { font-size: 32px; font-weight: 700; color: white; margin: 0; font-family: 'Roboto', sans-serif; }
         .summary-box p.highlight { color: var(--primary-color); }
 
-        /* TRIVIA SECTION */
-        .trivia-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .trivia-card { background: var(--surface-color); border: 1px solid #333; border-radius: var(--radius-md); padding: 20px; display: flex; align-items: flex-start; gap: 15px; transition: transform 0.2s; }
-        .trivia-card:hover { transform: translateY(-3px); border-color: var(--primary-color); }
-        .trivia-icon { font-size: 32px; background: rgba(211, 84, 0, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .trivia-content h4 { margin: 0 0 5px 0; color: var(--primary-color); font-size: 16px; }
-        .trivia-content p { margin: 0; font-size: 14px; color: #ccc; line-height: 1.4; }
-        .trivia-content strong { color: white; }
+        .trivia-container { margin-bottom: 40px; perspective: 1000px; }
+        .trivia-card-animated {
+            background: linear-gradient(135deg, rgba(211,84,0,0.1) 0%, rgba(30,30,30,1) 100%);
+            border: 1px solid #333; border-left: 4px solid var(--primary-color);
+            border-radius: var(--radius-md); padding: 25px;
+            display: flex; align-items: center; gap: 20px;
+            min-height: 120px; position: relative; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .trivia-icon { font-size: 42px; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 50%; flex-shrink: 0; }
+        .trivia-content { flex: 1; }
+        .trivia-content h4 { margin: 0 0 8px 0; color: var(--primary-color); font-size: 18px; letter-spacing: 0.5px; }
+        .trivia-content p { margin: 0; font-size: 15px; color: #ddd; line-height: 1.5; }
+        .trivia-content strong { color: white; font-weight: 700; }
+
+        .trivia-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--primary-color); width: 0%; transition: width 0.1s linear; }
+
+        .anim-fade-in { animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .anim-fade-out { animation: slideOut 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
 
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px; }
         @media (max-width: 1000px) { .dashboard-grid { grid-template-columns: 1fr; } }
@@ -103,12 +117,11 @@
         .loc-bar-segment { height: 100%; }
         .loc-text { font-size: 12px; color: #aaa; margin-bottom: 3px; display: block; }
 
-        /* ZMIANA: Tooltip fixed position */
         #customTooltip {
-            position: fixed; /* Fixed aby nie uciekał przy scrollu */
-            background: rgba(15, 15, 15, 0.95); border: 1px solid #444; color: #fff;
-            padding: 16px; border-radius: 12px; font-size: 14px; z-index: 9999; display: none;
-            pointer-events: none; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed;
+            background: rgba(15, 15, 15, 0.98); border: 1px solid #555; color: #fff;
+            padding: 16px; border-radius: 12px; font-size: 14px; z-index: 10000; display: none;
+            pointer-events: none; backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
         .tt-header { color: var(--primary-color); margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; font-weight: 500; text-transform: uppercase; font-family: 'Oswald', sans-serif; }
         .tt-row { display: flex; justify-content: space-between; margin-bottom: 6px; color: #ccc; }
@@ -144,8 +157,7 @@
     <div id="weekTabsContainer" class="week-tabs animate-enter delay-1"></div>
     <div id="summarySection" class="summary animate-enter delay-2"></div>
 
-    <!-- ZMIANA: Sekcja Ciekawostek -->
-    <div id="triviaSection" class="trivia-grid animate-enter delay-2"></div>
+    <div id="triviaSection" class="trivia-container animate-enter delay-2"></div>
 
     <div class="view-toggle animate-enter delay-2">
         <button class="view-btn active" data-view="total">

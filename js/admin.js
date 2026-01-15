@@ -72,9 +72,9 @@ function updateView(data) {
 
     adminRender.renderSummary(document.getElementById('summarySection'), data);
 
-    // ZMIANA: Renderowanie ciekawostek
+    // ZMIANA: Wywołanie karuzeli
     const trivia = triviaService.generate(data);
-    adminRender.renderTrivia(document.getElementById('triviaSection'), trivia);
+    adminRender.renderTriviaCarousel(document.getElementById('triviaSection'), trivia);
 
     adminRender.renderChart(ctx, data, chartType, viewMode);
     adminRender.renderHeatmap(document.getElementById('heatmapContainer'), data, y, m);

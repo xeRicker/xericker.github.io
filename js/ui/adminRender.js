@@ -48,9 +48,9 @@ export const adminRender = {
                 el.style.backgroundColor = `rgba(211,84,0,${alpha})`;
                 el.innerHTML = content;
 
-                el.onmouseenter = () => this.showTooltip(entry);
-                el.onmousemove = (e) => this.moveTooltip(e);
-                el.onmouseleave = () => this.hideTooltip();
+                el.addEventListener('mouseenter', () => this.showTooltip(entry));
+                el.addEventListener('mousemove', (e) => this.moveTooltip(e));
+                el.addEventListener('mouseleave', () => this.hideTooltip());
 
                 container.appendChild(el);
             } else {
@@ -76,15 +76,14 @@ export const adminRender = {
         const tt = document.getElementById('customTooltip');
         if(!tt) return;
 
-        const x = e.clientX + 15;
-        const y = e.clientY + 15;
+        let x = e.clientX + 15;
+        let y = e.clientY + 15;
 
-        // Zabezpieczenie przed wyjściem poza ekran
-        const xPos = (x + 220 > window.innerWidth) ? e.clientX - 230 : x;
-        const yPos = (y + 150 > window.innerHeight) ? e.clientY - 160 : y;
+        if (x + 230 > window.innerWidth) x = e.clientX - 240;
+        if (y + 160 > window.innerHeight) y = e.clientY - 170;
 
-        tt.style.left = xPos + 'px';
-        tt.style.top = yPos + 'px';
+        tt.style.left = x + 'px';
+        tt.style.top = y + 'px';
     },
 
     hideTooltip() {
@@ -137,20 +136,48 @@ export const adminRender = {
         }).join('');
     },
 
-    renderTrivia(container, items) {
+    triviaInterval: null,
+    renderTriviaCarousel(container, items) {
+        if (this.triviaInterval) clearInterval(this.triviaInterval);
         if (!items || items.length === 0) {
             container.style.display = 'none';
             return;
         }
-        container.style.display = 'grid';
-        container.innerHTML = items.map(item => `
-            <div class="trivia-card">
-                <div class="trivia-icon">${item.icon}</div>
-                <div class="trivia-content">
-                    <h4>${item.title}</h4>
-                    <p>${item.text}</p>
+        container.style.display = 'block';
+
+        let index = 0;
+        const duration = 7000;
+
+        const showItem = (idx) => {
+            const item = items[idx % items.length];
+            container.innerHTML = `
+                <div class="trivia-card-animated anim-fade-in">
+                    <div class="trivia-icon">${item.icon}</div>
+                    <div class="trivia-content">
+                        <h4>${item.title}</h4>
+                        <p>${item.text}</p>
+                    </div>
+                    <div class="trivia-progress"></div>
                 </div>
-            </div>
-        `).join('');
+            `;
+
+            const bar = container.querySelector('.trivia-progress');
+            setTimeout(() => { if(bar) bar.style.width = '100%'; }, 50);
+            bar.style.transitionDuration = `${duration}ms`;
+        };
+
+        showItem(index);
+
+        this.triviaInterval = setInterval(() => {
+            const card = container.querySelector('.trivia-card-animated');
+            if (card) {
+                card.classList.remove('anim-fade-in');
+                card.classList.add('anim-fade-out');
+            }
+            setTimeout(() => {
+                index++;
+                showItem(index);
+            }, 500);
+        }, duration);
     }
 };

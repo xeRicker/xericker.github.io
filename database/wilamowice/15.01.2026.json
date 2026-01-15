@@ -1,0 +1,18 @@
+{
+  "location": "Wilamowice",
+  "date": "15.01.2026",
+  "revenue": 794,
+  "cardRevenue": 519,
+  "employees": {
+    "Radek": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 6
+  }
+}

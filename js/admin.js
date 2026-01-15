@@ -72,7 +72,6 @@ function updateView(data) {
 
     adminRender.renderSummary(document.getElementById('summarySection'), data);
 
-    // ZMIANA: Wywołanie karuzeli
     const trivia = triviaService.generate(data);
     adminRender.renderTriviaCarousel(document.getElementById('triviaSection'), trivia);
 

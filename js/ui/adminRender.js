@@ -1,6 +1,11 @@
 import { formatMoney } from '../utils.js';
 
-export const adminRender = {
+class AdminRender {
+    constructor() {
+        this.chart = null;
+        this.triviaInterval = null;
+    }
+
     renderChart(ctx, data, type, viewMode) {
         const sorted = [...data].sort((a,b) => a.timestamp - b.timestamp);
         const labels = sorted.map(d => `${d.dateStr.slice(0,5)} (${d.dayOfWeek.slice(0,3)})`);
@@ -8,9 +13,9 @@ export const adminRender = {
         const dOsw = sorted.map(d => isCard ? d.oswiecimCard : d.oswiecim);
         const dWil = sorted.map(d => isCard ? d.wilamowiceCard : d.wilamowice);
 
-        if(window.myChart) window.myChart.destroy();
+        if(this.chart) this.chart.destroy();
 
-        window.myChart = new Chart(ctx, {
+        this.chart = new Chart(ctx, {
             type: type,
             data: {
                 labels,
@@ -21,7 +26,7 @@ export const adminRender = {
             },
             options: { responsive: true, scales: { y: { beginAtZero: true, grid: { color: '#333' } }, x: { grid: { display: false } } } }
         });
-    },
+    }
 
     renderHeatmap(container, data, year, month) {
         container.innerHTML = ['Pn','Wt','Śr','Cz','Pt','So','Nd'].map(d => `<div class="heatmap-day-header">${d}</div>`).join('');
@@ -57,7 +62,7 @@ export const adminRender = {
                 container.innerHTML += `<div class="${cls}" style="background:#1a1a1a">${content}</div>`;
             }
         }
-    },
+    }
 
     showTooltip(data) {
         const tt = document.getElementById('customTooltip');
@@ -70,7 +75,7 @@ export const adminRender = {
             <div class="tt-sub">Oświęcim: ${formatMoney(data.oswiecim)}</div>
             <div class="tt-sub">Wilamowice: ${formatMoney(data.wilamowice)}</div>
         `;
-    },
+    }
 
     moveTooltip(e) {
         const tt = document.getElementById('customTooltip');
@@ -84,12 +89,12 @@ export const adminRender = {
 
         tt.style.left = x + 'px';
         tt.style.top = y + 'px';
-    },
+    }
 
     hideTooltip() {
         const tt = document.getElementById('customTooltip');
         if(tt) tt.style.display = 'none';
-    },
+    }
 
     renderTable(tbody, data) {
         tbody.innerHTML = data.map(r => `
@@ -101,7 +106,7 @@ export const adminRender = {
                 <td class="val-cell total-cell">${formatMoney(r.total)}</td>
             </tr>
         `).join('');
-    },
+    }
 
     renderSummary(container, data) {
         const total = data.reduce((s, d) => s + d.total, 0);
@@ -112,7 +117,7 @@ export const adminRender = {
             <div class="summary-box"><h3>OŚWIĘCIM</h3><p>${formatMoney(osw)}</p></div>
             <div class="summary-box"><h3>WILAMOWICE</h3><p>${formatMoney(wil)}</p></div>
         `;
-    },
+    }
 
     renderEmployeeTable(tbody, stats) {
         tbody.innerHTML = stats.map(s => {
@@ -134,9 +139,8 @@ export const adminRender = {
                 <td><div class="loc-text">${locs}</div></td>
             </tr>`;
         }).join('');
-    },
+    }
 
-    triviaInterval: null,
     renderTriviaCarousel(container, items) {
         if (this.triviaInterval) clearInterval(this.triviaInterval);
         if (!items || items.length === 0) {
@@ -180,4 +184,6 @@ export const adminRender = {
             }, 500);
         }, duration);
     }
-};
+}
+
+export const adminRender = new AdminRender();

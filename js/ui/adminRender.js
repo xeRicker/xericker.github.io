@@ -71,13 +71,71 @@ class AdminRender {
     showTooltip(data) {
         const tt = document.getElementById('customTooltip');
         if(!tt) return;
+
+        let shiftsHtml = '';
+        const shifts = [];
+
+        if (data.rawReports && data.rawReports.length > 0) {
+            data.rawReports.forEach(report => {
+                if (report.employees) {
+                    Object.entries(report.employees).forEach(([name, time]) => {
+                        shifts.push({ name, time, loc: report.location });
+                    });
+                }
+            });
+        }
+
+        if (shifts.length > 0) {
+            shiftsHtml = `<div class="tt-divider"></div>
+                          <div class="tt-label" style="margin-bottom:6px;">ZMIANY</div>
+                          <div class="tt-shifts-list">
+                            ${shifts.map(s => `
+                                <div class="tt-shift-item">
+                                    <span class="tt-shift-name"><span class="tt-shift-dot"></span>${s.name} <span style="color:#666; font-size:10px; margin-left:4px;">(${s.loc.slice(0,3)})</span></span>
+                                    <span class="tt-shift-time">${s.time}</span>
+                                </div>
+                            `).join('')}
+                          </div>`;
+        } else {
+            shiftsHtml = `<div class="tt-divider"></div><div style="font-size:11px; color:#666; font-style:italic;">Brak danych o zmianach</div>`;
+        }
+
         tt.style.display = 'block';
         tt.innerHTML = `
-            <div class="tt-header">${data.dateStr}</div>
-            <div class="tt-row"><span>Suma:</span> <span class="tt-val highlight">${formatMoney(data.total)}</span></div>
-            <div class="tt-row"><span>Karty:</span> <span class="tt-val">${formatMoney(data.cardTotal)}</span></div>
-            <div class="tt-sub">Oświęcim: ${formatMoney(data.oswiecim)}</div>
-            <div class="tt-sub">Wilamowice: ${formatMoney(data.wilamowice)}</div>
+            <div class="tt-inner">
+                <div class="tt-header">
+                    <span>${data.dateStr}</span>
+                    <span class="tt-day">${data.dayOfWeek}</span>
+                </div>
+
+                <div class="tt-main-stats">
+                    <div class="tt-big-row">
+                        <span class="tt-label">CAŁKOWITY UTARG</span>
+                        <span class="tt-value-main">${formatMoney(data.total)}</span>
+                    </div>
+                    <div class="tt-big-row">
+                        <span class="tt-label">W TYM KARTY</span>
+                        <span class="tt-value-sub">${formatMoney(data.cardTotal)}</span>
+                    </div>
+                </div>
+
+                <div class="tt-divider"></div>
+
+                <div class="tt-locations-grid">
+                    <div class="tt-loc-col">
+                        <h5>OŚWIĘCIM</h5>
+                        <div class="tt-loc-row"><span>Suma:</span> <span>${formatMoney(data.oswiecim)}</span></div>
+                        <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(data.oswiecimCard)}</span></div>
+                    </div>
+                    <div class="tt-loc-col" style="border-left:1px solid #333; padding-left:15px;">
+                        <h5>WILAMOWICE</h5>
+                        <div class="tt-loc-row"><span>Suma:</span> <span>${formatMoney(data.wilamowice)}</span></div>
+                        <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(data.wilamowiceCard)}</span></div>
+                    </div>
+                </div>
+
+                ${shiftsHtml}
+            </div>
         `;
     }
 

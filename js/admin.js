@@ -35,6 +35,12 @@ function initUI(data) {
     }
 
     document.getElementById('loading').style.display = 'none';
+    const loader = document.getElementById('globalLoader');
+    if(loader) {
+        loader.classList.add('hidden');
+        setTimeout(() => loader.style.display = 'none', 500);
+    }
+
     document.getElementById('revenueTable').style.display = 'table';
     document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
     initCalculator();

@@ -594,3 +594,89 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+/* =================================
+   LOADER & ANIMATIONS
+   ================================= */
+#globalLoader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-color); z-index: 99999;
+    display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.5s ease-out, visibility 0.5s;
+}
+#globalLoader.hidden { opacity: 0; visibility: hidden; }
+
+.loader-content { text-align: center; }
+
+.burger-icon {
+    width: 60px; height: 50px; position: relative; margin: 0 auto 20px auto;
+    display: flex; flex-direction: column; justify-content: space-between;
+}
+.burger-icon span {
+    display: block; height: 8px; width: 100%; background: var(--primary-color);
+    border-radius: 4px; animation: burger-bounce 1s infinite alternate ease-in-out;
+}
+/* Bułka górna */
+.burger-icon span:nth-child(1) { width: 100%; border-top-left-radius: 20px; border-top-right-radius: 20px; animation-delay: 0s; }
+/* Sałata/Ser/Mięso */
+.burger-icon span:nth-child(2) { width: 90%; margin: 0 auto; background: #27AE60; animation-delay: 0.1s; }
+.burger-icon span:nth-child(3) { width: 90%; margin: 0 auto; background: #C0392B; animation-delay: 0.2s; }
+/* Bułka dolna */
+.burger-icon span:nth-child(4) { width: 100%; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; animation-delay: 0.3s; }
+
+.loader-text {
+    font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--text-secondary);
+    letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite;
+}
+
+@keyframes burger-bounce {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+
+/* =================================
+   NEW TOOLTIP STYLES
+   ================================= */
+
+#customTooltip {
+    background: rgba(18, 18, 18, 0.98);
+    border: 1px solid #333;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    padding: 0;
+    min-width: 280px;
+}
+
+.tt-inner { padding: 16px; }
+
+.tt-header {
+    font-size: 16px; color: #fff; margin-bottom: 12px;
+    border-bottom: 1px solid #333; padding-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.tt-day { font-size: 12px; color: #888; font-weight: normal; background: #222; padding: 2px 6px; border-radius: 4px; }
+
+.tt-main-stats { margin-bottom: 15px; }
+.tt-big-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.tt-label { font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; }
+.tt-value-main { font-size: 20px; font-weight: 700; color: var(--primary-color); font-family: 'Roboto', sans-serif; }
+.tt-value-sub { font-size: 14px; color: #ccc; font-family: 'Roboto', sans-serif; }
+
+.tt-divider { height: 1px; background: #333; margin: 10px 0; }
+
+.tt-locations-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.tt-loc-col h5 { margin: 0 0 6px 0; font-size: 11px; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px; }
+.tt-loc-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; color: #bbb; }
+.tt-loc-row span:last-child { color: white; font-weight: 500; }
+
+.tt-shifts-list { margin-top: 5px; }
+.tt-shift-item {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #333;
+}
+.tt-shift-item:last-child { border-bottom: none; }
+.tt-shift-name { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.tt-shift-dot { width: 6px; height: 6px; background: var(--primary-color); border-radius: 50%; display: inline-block; }
+.tt-shift-time { color: #888; font-family: 'Roboto', sans-serif; }

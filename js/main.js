@@ -1,379 +1,162 @@
-import { saveReportToGithub, checkFileExists } from './services/githubService.js';
-import { saveStateToLocalStorage, loadStateFromLocalStorage } from './services/stateService.js';
-import { renderEmployeeControls, renderProductGrid, highlightProduct, updateResetButtonVisibility, showLocationModal, closeLocationModal, showSuccessModal } from './ui.js';
-import { getFormattedDate, fallbackCopyToClipboard } from './utils.js';
+import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS, CATEGORIES } from './config/data.js';
+import { mainRender } from './ui/mainRender.js';
+import { uiShared } from './ui/shared.js';
+import { storageService } from './services/storage.js';
+import { apiService } from './services/api.js';
+import { getFormattedDate } from './utils.js';
 
-const EMPLOYEES = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
-const EMPLOYEE_COLORS = {
-    "Paweł": "#3498db", "Radek": "#2ecc71", "Sebastian": "#e74c3c",
-    "Tomek": "#f1c40f", "Natalia": "#9b59b6", "Kacper": "#e67e22", "Dominik": "#1abc9c"
-};
-
-const TIME_PRESETS = [
-    { label: "12:00 - 19:30", value: "12:00-19:30" },
-    { label: "12:00 - 20:00", value: "12:00-20:00" },
-    { label: "12:00 - 20:30", value: "12:00-20:30" },
-    { label: "12:00 - 21:30", value: "12:00-21:30" },
-    { label: "12:00 - 22:00", value: "12:00-22:00" },
-    { label: "14:00 - 19:30", value: "14:00-19:30" },
-    { label: "14:00 - 20:00", value: "14:00-20:00" },
-    { label: "14:00 - 20:30", value: "14:00-20:30" },
-    { label: "14:00 - 21:30", value: "14:00-21:30" },
-    { label: "14:00 - 22:00", value: "14:00-22:00" },
-    { label: "16:00 - 19:30", value: "16:00-19:30" },
-    { label: "16:00 - 20:00", value: "16:00-20:00" },
-    { label: "16:00 - 20:30", value: "16:00-20:30" },
-    { label: "16:00 - 21:30", value: "16:00-21:30" },
-    { label: "16:00 - 22:00", value: "16:00-22:00" }
-];
-
-const CATEGORIES = {
-    "⭐": {
-        items: [
-            { name: "Drwal: Kotlet Serowy", type: 's', options: { q: 1 } },
-            { name: "Drwal: Sos Jalapeño", type: 's', options: { q: 1 } },
-            { name: "Drwal: Żurawina", type: 's', options: { q: 1 } },
-        ]
-    },
-    "🥗": {
-        items: [
-            { name: "Sałata", type: '', options: { q: 1 } },
-            { name: "Ogórki", type: '', options: { q: 1 } },
-            { name: "Pomidory", type: 's', options: { q: 1 } },
-            { name: "Cebula", type: 's', options: { q: 1 } },
-            { name: "Jalapeno", type: 's', options: { q: 1 } },
-        ]
-    },
-    "🥩": {
-        items: [
-            { name: "Mięso: Małe", type: '', options: { q: 1 } },
-            { name: "Mięso: Duże", type: '', options: { q: 1 } },
-            { name: "Stripsy", type: '', options: { q: 1 } },
-            { name: "Boczek", type: '', options: { q: 1 } },
-            { name: "Chorizo", type: 's', options: { q: 2 } }
-        ]
-    },
-    "🧀": {
-        items: [
-            { name: "Cheddar", type: '', options: { q: 1 } },
-            { name: "Halloumi", type: '', options: { q: 1 } },
-            { name: "Majonez", type: 's', options: { q: 1 } }
-        ]
-    },
-    "🍟": {
-        items: [
-            { name: "Frytki", type: '', options: { q: 1 } },
-            { name: "Placki", type: '', options: { q: 1 } },
-            { name: "Krążki", type: '', options: { q: 1 } },
-            { name: "Frytura", type: 's', options: { q: 1 } }
-        ]
-    },
-    "🍞": {
-        items: [ { name: "Bułki", type: '', options: { q: 1 } } ]
-    },
-    "🧂": {
-        items: [
-            { name: "Cebula prażona", type: '', options: { q: 1 } },
-            { name: "Sriracha", type: 's', options: { q: 1 } },
-            { name: "Tabasco", type: 's', options: { q: 1 } },
-            { name: "Przyprawa do grilla", type: 's', options: { q: 1 } },
-            { name: "Sól do frytek", type: 's', options: { q: 1 } },
-            { name: "Sos: Ketchup", type: 's', options: { q: 1 } },
-            { name: "Sos: Carolina", type: 's', options: { q: 1 } },
-            { name: "Sos: Czosnek", type: 's', options: { q: 1 } },
-            { name: "Sos: Barbecue", type: 's', options: { q: 1 } },
-            { name: "Sos: Sweet Chilli", type: 's', options: { q: 1 } },
-            { name: "Saszetki: Ketchup", type: 's', options: { q: 1 } },
-            { name: "Zbój: Czosnek", type: 's', options: { q: 1 } },
-            { name: "Zbój: Pieprz", type: 's', options: { q: 1 } },
-            { name: "Zbój: Cytryna", type: 's', options: { q: 1 } }
-        ]
-    },
-    "🥤": {
-        items: [
-            { name: "Pepsi", type: 's', options: { q: 1 } },
-            { name: "Pepsi Max", type: 's', options: { q: 1 } },
-            { name: "Mirinda", type: 's', options: { q: 1 } },
-            { name: "Lipton", type: 's', options: { q: 1 } }
-        ]
-    },
-    "🛍️": {
-        items: [
-            { name: "Torby: Małe", type: 's', options: { q: 1 } },
-            { name: "Torby: Średnie", type: 's', options: { q: 1 } },
-            { name: "Torby: Duże", type: 's', options: { q: 1 } },
-            { name: "Sos: Pojemniki", type: 's', options: { q: 1 } },
-            { name: "Sos: Pokrywki", type: 's', options: { q: 1 } },
-            { name: "Opakowania na frytki", type: 's', options: { q: 1 } },
-            { name: "Folia", type: 's', options: { q: 1 } },
-            { name: "Serwetki", type: 's', options: { q: 1 } },
-            { name: "Rękawiczki", type: 's', options: { q: 1 } },
-            { name: "Papier pod grilla", type: 's', options: { q: 1 } }
-        ]
-    },
-    "🧽": {
-        items: [
-            { name: "Szmaty", type: 's', options: { q: 1 } },
-            { name: "Zielony papier", type: 's', options: { q: 1 } },
-            { name: "Odtłuszczacz", type: 's', options: { q: 1 } },
-            { name: "Worki na śmieci 120L", type: 's', options: { q: 1 } },
-            { name: "Lepy na muchy", type: 's', options: { q: 1 } },
-            { name: "Woda 5L", type: 's', options: { q: 1 } }
-        ]
-    },
-    "📋": {
-        items: [
-            { name: "Drobne: 1,2,5", type: 's', options: { q: 1 } },
-            { name: "Drobne: 10,20", type: 's', options: { q: 1 } },
-            { name: "Długopis", type: 's', options: { q: 1 } },
-            { name: "Pisak", type: 's', options: { q: 1 } },
-            { name: "Zeszyt", type: 's', options: { q: 1 } },
-            { name: "Papier do kasy", type: 's', options: { q: 1 } }
-        ]
-    }
-};
-
-const productMap = new Map(Object.values(CATEGORIES).flatMap(cat => cat.items.map(p => [p.name, p])));
 let selectedLocation = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderEmployeeControls(EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
-    renderProductGrid(CATEGORIES);
-
-    const savedData = loadStateFromLocalStorage();
-    if (savedData) {
-        Object.entries(savedData.products || {}).forEach(([name, quantity]) => {
-            const product = productMap.get(name);
-            if (!product) return;
-            if (product.type === 's') {
-                const checkbox = document.getElementById(`checkbox-${name}`);
-                if (checkbox) checkbox.checked = !!quantity;
-            } else {
-                const input = document.getElementById(`input-${name}`);
-                if (input) input.value = quantity;
-            }
-            highlightProduct(name, quantity);
-        });
-        Object.entries(savedData.employees || {}).forEach(([id, times]) => {
-            const fromInput = document.getElementById(`${id}_od`);
-            const toInput = document.getElementById(`${id}_do`);
-            if (fromInput) fromInput.value = times.from;
-            if (toInput) toInput.value = times.to;
-            if(times.from && times.to) {
-                const row = fromInput.closest('.employee-row');
-                if(row) row.classList.add('active');
-            }
-        });
-        if (savedData.revenue) {
-            document.getElementById('revenueInput').value = savedData.revenue;
-        }
-        if (savedData.cardRevenue) {
-            document.getElementById('cardRevenueInput').value = savedData.cardRevenue;
-        }
-    }
-    updateResetButtonVisibility();
-    setupEventListeners();
+    mainRender.renderEmployees(document.getElementById('employees'), EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
+    mainRender.renderProducts(document.getElementById('products'), CATEGORIES);
+    restoreState();
+    setupEvents();
 });
 
-function setupEventListeners() {
+function setupEvents() {
+    document.getElementById('products').addEventListener('click', handleProductClick);
     document.getElementById('products').addEventListener('change', handleProductChange);
-    document.getElementById('products').addEventListener('click', handleProductButtonClick);
+    document.getElementById('employees').addEventListener('change', handleEmployeePreset);
+    document.getElementById('employees').addEventListener('input', saveState);
+    document.getElementById('revenueInput').addEventListener('input', saveState);
+    document.getElementById('cardRevenueInput').addEventListener('input', saveState);
 
-    document.getElementById('employees').addEventListener('input', (event) => {
-        if(event.target.type === 'time') {
-            const row = event.target.closest('.employee-row');
-            if(row) row.classList.add('active');
-            saveAndRefreshUI();
-        }
-    });
-
-    document.getElementById('employees').addEventListener('change', (event) => {
-        if (event.target.classList.contains('hidden-preset-select')) {
-            const value = event.target.value;
-            const id = event.target.dataset.employeeId;
-            const fromInput = document.getElementById(`${id}_od`);
-            const toInput = document.getElementById(`${id}_do`);
-            if (value) {
-                const [from, to] = value.split('-');
-                fromInput.value = from;
-                toInput.value = to;
-
-                const row = event.target.closest('.employee-row');
-                if(row) row.classList.add('active');
-            }
-            saveAndRefreshUI();
-            event.target.value = "";
-        }
-    });
-
-    document.getElementById('revenueInput').addEventListener('input', saveAndRefreshUI);
-    document.getElementById('cardRevenueInput').addEventListener('input', saveAndRefreshUI);
     document.querySelector('.reset-button').addEventListener('click', resetAll);
-    document.getElementById('copyButton').addEventListener('click', showLocationModal);
-
-    document.querySelectorAll('.location-button').forEach(btn => btn.addEventListener('click', handleLocationConfirm));
-    document.getElementById('locationOverlay').addEventListener('click', closeLocationModal);
+    document.getElementById('copyButton').addEventListener('click', () => uiShared.showModal('locationSheet'));
+    document.querySelectorAll('.location-button').forEach(b => b.addEventListener('click', e => {
+        selectedLocation = e.currentTarget.dataset.location;
+        generateReport();
+    }));
+    document.getElementById('locationOverlay').addEventListener('click', uiShared.closeModals);
 }
 
-function handleProductChange(event) {
-    if (event.target.matches('input[type="checkbox"], input[type="number"]')) {
-        const name = event.target.dataset.productName;
-        let value;
-        if (event.target.type === 'checkbox') {
-            value = event.target.checked ? 1 : 0;
-        } else {
-            let rawVal = parseFloat(event.target.value);
-            if (isNaN(rawVal)) {
-                value = 0;
-            } else {
-                value = Math.ceil(rawVal);
-                value = Math.max(0, value);
-            }
-            event.target.value = value;
-        }
-        highlightProduct(name, value);
-        saveAndRefreshUI();
+function handleProductClick(e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const name = btn.dataset.name;
+    const input = document.getElementById(`input-${name}`);
+    let val = parseInt(input.value) || 0;
+    val = Math.max(0, val + (btn.dataset.act === 'inc' ? 1 : -1));
+    input.value = val;
+    mainRender.toggleHighlight(name, val > 0);
+    saveState();
+}
+
+function handleProductChange(e) {
+    if(e.target.type === 'checkbox') {
+        const name = e.target.dataset.name;
+        mainRender.toggleHighlight(name, e.target.checked);
+        e.target.closest('.product-card').classList.toggle('active', e.target.checked);
     }
+    saveState();
 }
 
-function handleProductButtonClick(event) {
-    if (event.target.matches('button[data-action]')) {
-        const name = event.target.dataset.productName;
-        const action = event.target.dataset.action;
-        const input = document.getElementById(`input-${name}`);
-        let value = parseInt(input.value, 10) || 0;
-        value = Math.max(0, value + (action === 'increment' ? 1 : -1));
-        input.value = value;
-        highlightProduct(name, value);
-        saveAndRefreshUI();
-    }
+function handleEmployeePreset(e) {
+    if(!e.target.classList.contains('hidden-preset-select')) return;
+    const id = e.target.dataset.id;
+    const [start, end] = e.target.value.split('-');
+    document.getElementById(`${id}_od`).value = start;
+    document.getElementById(`${id}_do`).value = end;
+    e.target.closest('.employee-row').classList.add('active');
+    e.target.value = '';
+    saveState();
 }
 
-function handleLocationConfirm(event) {
-    const button = event.target.closest('.location-button');
-    if (button) {
-        selectedLocation = button.dataset.location;
-        handleListGeneration();
-    }
+function saveState() {
+    const state = { products: {}, employees: {}, revenue: document.getElementById('revenueInput').value, cardRevenue: document.getElementById('cardRevenueInput').value };
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        const name = card.dataset.name;
+        const cb = document.getElementById(`checkbox-${name}`);
+        const inp = document.getElementById(`input-${name}`);
+        if(cb && cb.checked) state.products[name] = 1;
+        if(inp && inp.value > 0) state.products[name] = inp.value;
+    });
+
+    EMPLOYEES.forEach(name => {
+        const id = name.toLowerCase();
+        const f = document.getElementById(`${id}_od`).value;
+        const t = document.getElementById(`${id}_do`).value;
+        if(f || t) state.employees[id] = { f, t };
+    });
+
+    storageService.save(state);
+    mainRender.updateResetBtn();
 }
 
-function saveAndRefreshUI() {
-    saveStateToLocalStorage(productMap, EMPLOYEES);
-    updateResetButtonVisibility();
+function restoreState() {
+    const state = storageService.load();
+    if(!state) return;
+
+    if(state.revenue) document.getElementById('revenueInput').value = state.revenue;
+    if(state.cardRevenue) document.getElementById('cardRevenueInput').value = state.cardRevenue;
+
+    Object.entries(state.products || {}).forEach(([name, val]) => {
+        const cb = document.getElementById(`checkbox-${name}`);
+        const inp = document.getElementById(`input-${name}`);
+        if(cb) { cb.checked = true; cb.dispatchEvent(new Event('change', {bubbles:true})); }
+        if(inp) { inp.value = val; mainRender.toggleHighlight(name, true); }
+    });
+
+    Object.entries(state.employees || {}).forEach(([id, times]) => {
+        const r = document.getElementById(`${id}_od`).closest('.employee-row');
+        document.getElementById(`${id}_od`).value = times.f;
+        document.getElementById(`${id}_do`).value = times.t;
+        if(times.f && times.t) r.classList.add('active');
+    });
+    mainRender.updateResetBtn();
 }
 
 function resetAll() {
-    const btn = document.querySelector('.reset-button');
-    btn.style.transform = 'rotate(10deg)';
-    setTimeout(() => btn.style.transform = 'rotate(-10deg)', 50);
-    setTimeout(() => btn.style.transform = 'rotate(0)', 100);
-
-    setTimeout(() => {
-        productMap.forEach((product, name) => {
-            if (product.type === 's') {
-                const checkbox = document.getElementById(`checkbox-${name}`);
-                if (checkbox) checkbox.checked = false;
-            } else {
-                const input = document.getElementById(`input-${name}`);
-                if (input) input.value = 0;
-            }
-            highlightProduct(name, 0);
-        });
-
-        EMPLOYEES.forEach(name => {
-            const id = name.toLowerCase();
-            document.getElementById(`${id}_od`).value = "";
-            document.getElementById(`${id}_do`).value = "";
-            const row = document.getElementById(`${id}_od`).closest('.employee-row');
-            if(row) row.classList.remove('active');
-        });
-
-        document.getElementById('revenueInput').value = "";
-        document.getElementById('cardRevenueInput').value = "";
-
-        localStorage.removeItem("productList");
-        updateResetButtonVisibility();
-    }, 150);
+    storageService.clear();
+    location.reload();
 }
 
-async function handleListGeneration() {
-    const location = selectedLocation;
-    const dateStr = getFormattedDate();
+async function generateReport() {
+    const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
+    const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
+    const date = getFormattedDate();
 
-    const revenueInput = document.getElementById('revenueInput');
-    const cardRevenueInput = document.getElementById('cardRevenueInput');
+    if(rev === 0 && !confirm("Utarg wynosi 0. Kontynuować?")) return;
 
-    const revenueVal = parseFloat(revenueInput.value);
-    const cardRevenueVal = parseFloat(cardRevenueInput.value) || 0;
+    const data = { location: selectedLocation, date, revenue: rev, cardRevenue: card, employees: {}, products: {} };
+    let text = `🧾 ${selectedLocation} ${date}\n`;
 
-    if (!revenueInput.value || isNaN(revenueVal) || revenueVal === 0) {
-        const confirmRevenue = confirm(`⚠️ Uwaga!\n\nUtarg wynosi 0 zł (lub pole jest puste).\n\nCzy na pewno chcesz skopiować listę z zerowym utargiem?`);
-        if (!confirmRevenue) return;
-    }
-
-    const reportData = {
-        location,
-        date: dateStr,
-        revenue: revenueVal || 0,
-        cardRevenue: cardRevenueVal,
-        last_updated_at: new Date().toISOString(),
-        employees: {},
-        products: {}
-    };
-
-    let plainReport = `🧾 ${location} ${dateStr}\n`;
-
-    let workersReport = "";
     EMPLOYEES.forEach(name => {
         const id = name.toLowerCase();
-        const from = document.getElementById(`${id}_od`).value;
-        const to = document.getElementById(`${id}_do`).value;
-        if (from && to) {
-            const hours = `${from} – ${to}`;
-            reportData.employees[name] = hours;
-            workersReport += `• ${name}: ${hours}\n`;
+        const f = document.getElementById(`${id}_od`).value;
+        const t = document.getElementById(`${id}_do`).value;
+        if(f && t) {
+            data.employees[name] = `${f} – ${t}`;
+            text += `• ${name}: ${f} – ${t}\n`;
         }
     });
-    if (workersReport) plainReport += `\n${workersReport}`;
 
-    let productsReport = "";
-    Object.entries(CATEGORIES).forEach(([category, group]) => {
-        let textSection = "";
-        group.items.forEach(product => {
-            const { name, type } = product;
-            let quantity = 0;
-            if (type === 's') {
-                quantity = document.getElementById(`checkbox-${name}`)?.checked ? 1 : 0;
-            } else {
-                quantity = parseInt(document.getElementById(`input-${name}`).value, 10) || 0;
-            }
+    let prodText = "";
+    Object.entries(CATEGORIES).forEach(([cat, {items}]) => {
+        let catTxt = "";
+        items.forEach(p => {
+            const cb = document.getElementById(`checkbox-${p.name}`);
+            const inp = document.getElementById(`input-${p.name}`);
+            const qty = cb ? (cb.checked?1:0) : (parseInt(inp.value)||0);
 
-            if (name.includes("Bułki") && quantity === 0) {
-                reportData.products[name] = 0;
-                textSection += `  • Bułki: ❌\n`;
-            } else if (quantity > 0) {
-                reportData.products[name] = quantity;
-                textSection += `  • ${name}${type === 's' ? "" : ": " + quantity}\n`;
+            if(p.name.includes("Bułki") && qty === 0) {
+                data.products[p.name] = 0; catTxt += `  • Bułki: ❌\n`;
+            } else if(qty > 0) {
+                data.products[p.name] = qty;
+                catTxt += `  • ${p.name}${p.type==='s'?'':': '+qty}\n`;
             }
         });
-        if (textSection) productsReport += `\n${category}\n${textSection}`;
+        if(catTxt) prodText += `\n${cat}\n${catTxt}`;
     });
-    if (productsReport) plainReport += productsReport;
 
-    const hasEmployees = Object.keys(reportData.employees).length > 0;
-    const hasProducts = Object.keys(reportData.products).length > 0;
+    text += prodText;
 
-    if (!hasEmployees && !hasProducts) {
-        alert("🚫 Błąd: Lista jest pusta!\n\nNie wybrano żadnych pracowników ani produktów.");
-        return;
+    if(await apiService.checkFileExists(selectedLocation, date)) {
+        if(!confirm("Raport z tego dnia już istnieje. Nadpisać?")) return;
     }
 
-    const fileExists = await checkFileExists(location, dateStr);
-    if (fileExists) {
-        const confirmOverwrite = confirm(`⚠️ Uwaga!\n\nLista dla "${location}" z dnia ${dateStr} już istnieje w bazie.\n\nCzy na pewno chcesz ją nadpisać?`);
-        if (!confirmOverwrite) return;
-    }
-
-    await saveReportToGithub(reportData);
-    showSuccessModal(plainReport.trim());
+    await apiService.saveReport(data);
+    uiShared.showSuccess(text.trim());
 }

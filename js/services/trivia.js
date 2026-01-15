@@ -250,4 +250,26 @@ export class TriviaService {
             if (['sobota', 'niedziela'].includes(d.dayOfWeek)) {
                 // Uproszczone grupowanie po numerze tygodnia w roku
                 const date = new Date(d.dateObj);
-                const onejan = new Date(date.getFullY
+                const onejan = new Date(date.getFullYear(), 0, 1);
+                const week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+                const key = `${date.getFullYear()}-W${week}`;
+
+                if (!weekends[key]) weekends[key] = { sum: 0, dates: [] };
+                weekends[key].sum += d.total;
+                weekends[key].dates.push(d.dateStr);
+            }
+        });
+
+        const entries = Object.values(weekends);
+        if (entries.length === 0) return null;
+        const best = entries.reduce((a, b) => a.sum > b.sum ? a : b);
+
+        return {
+            icon: '🚀',
+            title: 'Weekend Marzeń',
+            text: `Najlepszy weekend to <strong>${best.dates[0]}</strong>. Łączny utarg wyniósł wtedy <strong>${formatMoney(best.sum)}</strong>.`
+        };
+    }
+}
+
+export const triviaService = new TriviaService();

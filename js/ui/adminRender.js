@@ -59,7 +59,11 @@ class AdminRender {
 
                 container.appendChild(el);
             } else {
-                container.innerHTML += `<div class="${cls}" style="background:#1a1a1a">${content}</div>`;
+                const el = document.createElement('div');
+                el.className = cls;
+                el.style.background = '#1a1a1a';
+                el.innerHTML = content;
+                container.appendChild(el);
             }
         }
     }

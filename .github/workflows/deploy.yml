@@ -27,7 +27,7 @@ jobs:
           sed -i 's|__GH_TOKEN__|${{ secrets.GH_TOKEN }}|g' js/config/config.js
       
       - name: Verify config.js content
-        run: cat js/config.js
+        run: cat js/config/config.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

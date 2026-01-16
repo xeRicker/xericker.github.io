@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "16.01.2026",
+  "revenue": 1046,
+  "cardRevenue": 388,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Drwal: Żurawina": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Majonez": 1,
+    "Frytki": 4,
+    "Bułki": 25,
+    "Cebula prażona": 4,
+    "Sos: Czosnek": 1,
+    "Pepsi Max": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

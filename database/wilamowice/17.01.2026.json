@@ -1,0 +1,23 @@
+{
+  "location": "Wilamowice",
+  "date": "17.01.2026",
+  "revenue": 1034,
+  "cardRevenue": 838,
+  "employees": {
+    "Tomek": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 16,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

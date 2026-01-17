@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "17.01.2026",
+  "revenue": 1864,
+  "cardRevenue": 1486,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Drwal: Żurawina": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Cebula": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 5,
+    "Chorizo": 1,
+    "Cheddar": 1,
+    "Bułki": 10,
+    "Cebula prażona": 3,
+    "Przyprawa do grilla": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Cytryna": 1,
+    "Pepsi Max": 1,
+    "Torby: Średnie": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1,
+    "Zeszyt": 1
+  }
+}

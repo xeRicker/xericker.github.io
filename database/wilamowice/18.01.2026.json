@@ -1,0 +1,15 @@
+{
+  "location": "Wilamowice",
+  "date": "18.01.2026",
+  "revenue": 811,
+  "cardRevenue": 482,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Bułki": 13,
+    "Sos: Ketchup": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

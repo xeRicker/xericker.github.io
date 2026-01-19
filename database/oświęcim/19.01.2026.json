@@ -1,0 +1,24 @@
+{
+  "location": "Oświęcim",
+  "date": "19.01.2026",
+  "revenue": 1216,
+  "cardRevenue": 903,
+  "employees": {
+    "Kacper": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 9,
+    "Cebula prażona": 2,
+    "Sos: Czosnek": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
+  }
+}

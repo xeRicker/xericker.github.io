@@ -1,15 +1,21 @@
 {
   "location": "Oświęcim",
   "date": "21.01.2026",
-  "revenue": 70,
-  "cardRevenue": 38,
+  "revenue": 1062,
+  "cardRevenue": 560,
   "employees": {
-    "Tomek": "14:00 – 20:00"
+    "Kacper": "12:00 – 21:00"
   },
   "products": {
     "Sałata": 1,
-    "Bułki": 26,
-    "Cebula prażona": 1,
-    "Zielony papier": 1
+    "Ogórki": 2,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki": 10,
+    "Saszetki: Ketchup": 1,
+    "Zielony papier": 1,
+    "Drobne: 10,20": 1
   }
 }

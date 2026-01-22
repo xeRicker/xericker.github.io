@@ -1,0 +1,21 @@
+{
+  "location": "Wilamowice",
+  "date": "22.01.2026",
+  "revenue": 423,
+  "cardRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Bułki": 15,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Pepsi Max": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

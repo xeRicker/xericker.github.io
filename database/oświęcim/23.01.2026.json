@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "23.01.2026",
+  "revenue": 1291,
+  "cardRevenue": 382,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 15,
+    "Pepsi Max": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "location": "Wilamowice",
+  "date": "23.01.2026",
+  "revenue": 1282,
+  "cardRevenue": 866,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Drwal: Żurawina": 1,
+    "Sałata": 1,
+    "Boczek": 2,
+    "Cheddar": 2,
+    "Krążki": 1,
+    "Bułki": 14
+  }
+}

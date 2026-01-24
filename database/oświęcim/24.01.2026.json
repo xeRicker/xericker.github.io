@@ -1,0 +1,34 @@
+{
+  "location": "Oświęcim",
+  "date": "24.01.2026",
+  "revenue": 1666,
+  "cardRevenue": 955,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 3,
+    "Bułki": 14,
+    "Cebula prażona": 2,
+    "Sriracha": 1,
+    "Sos: Ketchup": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

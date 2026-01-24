@@ -1,0 +1,18 @@
+{
+  "location": "Wilamowice",
+  "date": "24.01.2026",
+  "revenue": 457,
+  "cardRevenue": 169,
+  "employees": {
+    "Radek": "14:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 3,
+    "Mięso: Duże": 1,
+    "Bułki": 28,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Lipton": 1,
+    "Zielony papier": 1
+  }
+}

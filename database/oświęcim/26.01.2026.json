@@ -1,0 +1,16 @@
+{
+  "location": "Oświęcim",
+  "date": "26.01.2026",
+  "revenue": 153,
+  "cardRevenue": 103,
+  "employees": {
+    "Kacper": "12:00 – 20:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Bułki": 28,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Zielony papier": 1
+  }
+}

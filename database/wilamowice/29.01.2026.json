@@ -1,0 +1,22 @@
+{
+  "location": "Wilamowice",
+  "date": "29.01.2026",
+  "revenue": 300,
+  "cardRevenue": 64,
+  "employees": {
+    "Sebastian": "14:30 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Małe": 1,
+    "Halloumi": 1,
+    "Bułki": 15,
+    "Cebula prażona": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

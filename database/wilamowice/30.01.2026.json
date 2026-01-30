@@ -1,0 +1,12 @@
+{
+  "location": "Wilamowice",
+  "date": "30.01.2026",
+  "revenue": 107,
+  "cardRevenue": 75,
+  "employees": {
+    "Sebastian": "14:00 – 18:30"
+  },
+  "products": {
+    "Bułki": 0
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "location": "Wilamowice",
+  "date": "31.01.2026",
+  "revenue": 202,
+  "cardRevenue": 202,
+  "employees": {
+    "Tomek": "14:00 – 18:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Bułki": 0,
+    "Serwetki": 1
+  }
+}

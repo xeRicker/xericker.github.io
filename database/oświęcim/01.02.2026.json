@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "01.02.2026",
+  "revenue": 671,
+  "cardRevenue": 355,
+  "employees": {
+    "Sebastian": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Frytki": 1,
+    "Krążki": 2,
+    "Bułki": 20,
+    "Przyprawa do grilla": 1,
+    "Sos: Carolina": 1,
+    "Sos: Sweet Chilli": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

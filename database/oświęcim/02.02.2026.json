@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "02.02.2026",
+  "revenue": 565,
+  "cardRevenue": 232,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Bułki": 27,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "04.02.2026",
+  "revenue": 1099,
+  "cardRevenue": 771,
+  "employees": {
+    "Sebastian": "13:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 3,
+    "Przyprawa do grilla": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

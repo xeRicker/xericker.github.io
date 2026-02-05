@@ -1,0 +1,21 @@
+{
+  "location": "Wilamowice",
+  "date": "05.02.2026",
+  "revenue": 349,
+  "cardRevenue": 250,
+  "employees": {
+    "Radek": "14:00 – 20:00"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Bułki": 27,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

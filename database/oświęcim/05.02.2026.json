@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "05.02.2026",
+  "revenue": 1034,
+  "cardRevenue": 670,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Cebula": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Bułki": 9,
+    "Cebula prażona": 2,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

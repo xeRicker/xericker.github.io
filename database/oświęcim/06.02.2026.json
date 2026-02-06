@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "06.02.2026",
+  "revenue": 632,
+  "cardRevenue": 178,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Stripsy": 1,
+    "Frytki": 2,
+    "Bułki": 13,
+    "Cebula prażona": 2,
+    "Przyprawa do grilla": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

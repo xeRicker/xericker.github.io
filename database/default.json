@@ -1,0 +1,54 @@
+{
+  "user": {
+    "weight": 82,
+    "height": 180,
+    "age": 25,
+    "sex": "male",
+    "activity": 1.6,
+    "targetCal": 2500,
+    "targetP": 180,
+    "targetC": 250,
+    "targetF": 70,
+    "proteinMode": "medium"
+  },
+  "products": [
+    {
+      "color": "#2596be",
+      "icon": "egg",
+      "favorite": false,
+      "defaultMeal": "global",
+      "id": "1",
+      "name": "Jajko",
+      "p": 12.6,
+      "c": 1.1,
+      "f": 10.6,
+      "cal": 143
+    },
+    {
+      "color": "#6b8cff",
+      "icon": "chicken",
+      "favorite": false,
+      "defaultMeal": "global",
+      "id": "2",
+      "name": "Pierś z kurczaka",
+      "p": 31,
+      "c": 0,
+      "f": 3.6,
+      "cal": 165
+    },
+    {
+      "color": "#7ac4de",
+      "icon": "grain",
+      "favorite": false,
+      "defaultMeal": "global",
+      "id": "3",
+      "name": "Płatki owsiane",
+      "p": 13,
+      "c": 68,
+      "f": 6.5,
+      "cal": 379
+    }
+  ],
+  "logs": {},
+  "currentDate": "2026-02-08"
+}

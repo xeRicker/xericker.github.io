@@ -49,6 +49,22 @@
       "cal": 379
     }
   ],
-  "logs": {},
+  "logs": {
+    "2026-02-08": [
+      {
+        "id": "1770538835463",
+        "productId": "1",
+        "name": "Jajko",
+        "grams": 100,
+        "meal": "breakfast",
+        "color": "#2596be",
+        "icon": "egg",
+        "p": 12.6,
+        "c": 1.1,
+        "f": 10.6,
+        "cal": 143
+      }
+    ]
+  },
   "currentDate": "2026-02-08"
 }

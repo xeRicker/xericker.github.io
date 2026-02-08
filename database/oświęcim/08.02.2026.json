@@ -1,0 +1,42 @@
+{
+  "location": "Oświęcim",
+  "date": "08.02.2026",
+  "revenue": 1287,
+  "cardRevenue": 783,
+  "employees": {
+    "Sebastian": "14:00 – 21:30"
+  },
+  "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Drwal: Żurawina": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Frytura": 1,
+    "Bułki": 10,
+    "Cebula prażona": 2,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Zbój: Czosnek": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

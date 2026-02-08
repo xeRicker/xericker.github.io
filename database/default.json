@@ -6,9 +6,9 @@
     "sex": "male",
     "activity": 1.6,
     "targetCal": 2500,
-    "targetP": 180,
-    "targetC": 250,
-    "targetF": 70,
+    "targetP": 164,
+    "targetC": 292,
+    "targetF": 75,
     "proteinMode": "medium"
   },
   "products": [

@@ -63,6 +63,19 @@
         "c": 1.1,
         "f": 10.6,
         "cal": 143
+      },
+      {
+        "id": "1770633781667",
+        "productId": "2",
+        "name": "Pierś z kurczaka",
+        "grams": 1000,
+        "meal": "breakfast",
+        "color": "#6b8cff",
+        "icon": "chicken",
+        "p": 310,
+        "c": 0,
+        "f": 36,
+        "cal": 1650
       }
     ]
   },

@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "10.02.2026",
+  "revenue": 1202,
+  "cardRevenue": 1233,
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cebula": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Zbój: Czosnek": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

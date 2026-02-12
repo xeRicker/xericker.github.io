@@ -1,0 +1,19 @@
+{
+  "location": "Wilamowice",
+  "date": "12.02.2026",
+  "revenue": 677,
+  "cardRevenue": 468,
+  "employees": {
+    "Radek": "14:00 – 21:00"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 8,
+    "Sos: Carolina": 1,
+    "Zielony papier": 1
+  }
+}

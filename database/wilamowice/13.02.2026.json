@@ -1,0 +1,20 @@
+{
+  "location": "Wilamowice",
+  "date": "13.02.2026",
+  "revenue": 943,
+  "cardRevenue": 768,
+  "employees": {
+    "Tomek": "14:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 12,
+    "Torby: Małe": 1,
+    "Zielony papier": 1
+  }
+}

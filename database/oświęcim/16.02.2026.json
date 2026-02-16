@@ -1,0 +1,18 @@
+{
+  "location": "Oświęcim",
+  "date": "16.02.2026",
+  "revenue": 1430,
+  "cardRevenue": 1042,
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Mięso: Duże": 1,
+    "Frytki": 3,
+    "Bułki": 4,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

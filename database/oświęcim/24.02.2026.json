@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "24.02.2026",
+  "revenue": 670,
+  "cardRevenue": 403,
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 1,
+    "Frytki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

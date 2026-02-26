@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "26.02.2026",
+  "revenue": 979,
+  "cardRevenue": 633,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Sos: Barbecue": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

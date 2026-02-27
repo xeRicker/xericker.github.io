@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "27.02.2026",
+  "revenue": 1456,
+  "cardRevenue": 938,
+  "employees": {
+    "Tomek": "12:00 – 20:00"
+  },
+  "products": {
+    "Drwal: Kotlet Serowy": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Zbój: Czosnek": 1,
+    "Serwetki": 1
+  }
+}

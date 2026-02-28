@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "28.02.2026",
+  "revenue": 2282,
+  "cardRevenue": 1486,
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Natalia": "16:00 – 21:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1
+  }
+}

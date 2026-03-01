@@ -1,0 +1,34 @@
+{
+  "location": "Oświęcim",
+  "date": "01.03.2026",
+  "revenue": 1283,
+  "cardRevenue": 788,
+  "employees": {
+    "Sebastian": "14:00 – 19:30",
+    "Natalia": "16:00 – 19:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Jalapeno": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 4,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Sriracha": 1,
+    "Przyprawa do grilla": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

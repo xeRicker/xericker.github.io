@@ -26,11 +26,13 @@ export const TIME_PRESETS = [
 ];
 
 export const CATEGORIES = {
-    "⭐": {
+    "🥩": {
         items: [
-            { name: "Drwal: Kotlet Serowy", type: 's' },
-            { name: "Drwal: Sos Jalapeño", type: 's' },
-            { name: "Drwal: Żurawina", type: 's' },
+            { name: "Mięso: Małe", type: '' },
+            { name: "Mięso: Duże", type: '' },
+            { name: "Stripsy", type: '' },
+            { name: "Boczek", type: '' },
+            { name: "Chorizo", type: 's' }
         ]
     },
     "🥗": {
@@ -40,15 +42,6 @@ export const CATEGORIES = {
             { name: "Pomidory", type: 's' },
             { name: "Cebula", type: 's' },
             { name: "Jalapeno", type: 's' },
-        ]
-    },
-    "🥩": {
-        items: [
-            { name: "Mięso: Małe", type: '' },
-            { name: "Mięso: Duże", type: '' },
-            { name: "Stripsy", type: '' },
-            { name: "Boczek", type: '' },
-            { name: "Chorizo", type: 's' }
         ]
     },
     "🧀": {
@@ -75,13 +68,21 @@ export const CATEGORIES = {
             { name: "Sriracha", type: 's' },
             { name: "Tabasco", type: 's' },
             { name: "Przyprawa do grilla", type: 's' },
-            { name: "Sól do frytek", type: 's' },
+            { name: "Sól do frytek", type: 's' }
+        ]
+    },
+    "🥫": {
+        items: [
             { name: "Sos: Ketchup", type: 's' },
             { name: "Sos: Carolina", type: 's' },
             { name: "Sos: Czosnek", type: 's' },
             { name: "Sos: Barbecue", type: 's' },
             { name: "Sos: Sweet Chilli", type: 's' },
-            { name: "Saszetki: Ketchup", type: 's' },
+            { name: "Saszetki: Ketchup", type: 's' }
+        ]
+    },
+    "🪓": {
+        items: [
             { name: "Zbój: Czosnek", type: 's' },
             { name: "Zbój: Pieprz", type: 's' },
             { name: "Zbój: Cytryna", type: 's' }
@@ -114,9 +115,7 @@ export const CATEGORIES = {
             { name: "Szmaty", type: 's' },
             { name: "Zielony papier", type: 's' },
             { name: "Odtłuszczacz", type: 's' },
-            { name: "Worki na śmieci 120L", type: 's' },
-            { name: "Lepy na muchy", type: 's' },
-            { name: "Woda 5L", type: 's' }
+            { name: "Worki na śmieci 120L", type: 's' }
         ]
     },
     "📋": {

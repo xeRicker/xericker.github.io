@@ -1,7 +1,7 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js';
-import { triviaService } from './services/trivia.js';
+ 
 import { calculateHours, formatMoney, isLocalhost } from './utils.js';
 
 const PASSWORD = "xdxdxd123";
@@ -112,19 +112,11 @@ function handleMonthChange(fullData) {
 
 function updateView(data) {
     const ctx = document.getElementById('revenueChart').getContext('2d');
-    const reqCtx = document.getElementById('productRequestsChart').getContext('2d');
-    const countCtx = document.getElementById('productCountsChart').getContext('2d');
     const [y, m] = document.getElementById('monthFilter').value.split('-');
 
     adminRender.renderSummary(document.getElementById('summarySection'), data);
 
-    const trivia = triviaService.generate(data);
-    adminRender.renderTriviaCarousel(document.getElementById('triviaSection'), trivia);
-
     adminRender.renderChart(ctx, data, chartType, viewMode);
-
-    const productStats = analytics.calculateProductStats(data);
-    adminRender.renderProductStats(reqCtx, countCtx, productStats);
 
     adminRender.renderHeatmap(document.getElementById('heatmapContainer'), data, y, m);
     adminRender.renderTable(document.querySelector('#revenueTable tbody'), data);

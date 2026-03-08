@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "06.03.2026",
+  "revenue": 3364,
+  "cardRevenue": 2123,
+  "employees": {
+    "Paweł": "14:00 – 21:00",
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Sałata": 1,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 4,
+    "Halloumi": 2,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1
+  }
+}

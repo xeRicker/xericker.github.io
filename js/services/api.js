@@ -73,7 +73,7 @@ class ApiService {
 
     getMockData() {
         const data = [];
-        const locs = ['Oświęcim', 'Wilamowice'];
+        const locs = ['Oświęcim', 'Osiek'];
         const emps = ["Paweł", "Radek", "Sebastian", "Tomek"];
 
         // Lista symulowanych produktów

@@ -3,9 +3,6 @@ import { formatMoney } from '../utils.js';
 class AdminRender {
     constructor() {
         this.chart = null;
-        this.reqChart = null;
-        this.countChart = null;
-        this.triviaInterval = null;
     }
 
     renderChart(ctx, data, type, viewMode) {
@@ -13,7 +10,7 @@ class AdminRender {
         const labels = sorted.map(d => `${d.dateStr.slice(0,5)} (${d.dayOfWeek.slice(0,3)})`);
         const isCard = viewMode === 'cards';
         const dOsw = sorted.map(d => isCard ? d.oswiecimCard : d.oswiecim);
-        const dWil = sorted.map(d => isCard ? d.wilamowiceCard : d.wilamowice);
+        const dWil = sorted.map(d => isCard ? d.osiekCard : d.osiek);
 
         if(this.chart) this.chart.destroy();
 
@@ -26,7 +23,7 @@ class AdminRender {
                 labels,
                 datasets: [
                     { label: `OŚWIĘCIM${isCard?' (K)':''}`, data: dOsw, backgroundColor: '#D35400', borderColor: '#D35400', borderWidth: 1 },
-                    { label: `WILAMOWICE${isCard?' (K)':''}`, data: dWil, backgroundColor: '#9E9E9E', borderColor: '#9E9E9E', borderWidth: 1 }
+                    { label: `OSIEK${isCard?' (K)':''}`, data: dWil, backgroundColor: '#9E9E9E', borderColor: '#9E9E9E', borderWidth: 1 }
                 ]
             },
             options: {
@@ -43,48 +40,6 @@ class AdminRender {
                     x: { grid: { display: false } }
                 }
             }
-        });
-    }
-
-    renderProductStats(reqCtx, countCtx, stats) {
-        if(this.reqChart) this.reqChart.destroy();
-        if(this.countChart) this.countChart.destroy();
-
-        const commonOptions = {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { grid: { color: '#333' }, ticks: { color: '#888' } },
-                y: { grid: { display: false }, ticks: { color: '#eee', font: { family: "'Roboto', sans-serif" } } }
-            }
-        };
-
-        this.reqChart = new Chart(reqCtx, {
-            type: 'bar',
-            data: {
-                labels: stats.requests.map(i => i.name),
-                datasets: [{
-                    data: stats.requests.map(i => i.val),
-                    backgroundColor: '#D35400',
-                    borderRadius: 4
-                }]
-            },
-            options: commonOptions
-        });
-
-        this.countChart = new Chart(countCtx, {
-            type: 'bar',
-            data: {
-                labels: stats.counts.map(i => i.name),
-                datasets: [{
-                    data: stats.counts.map(i => i.val),
-                    backgroundColor: '#27AE60',
-                    borderRadius: 4
-                }]
-            },
-            options: commonOptions
         });
     }
 
@@ -188,9 +143,9 @@ class AdminRender {
                         <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(data.oswiecimCard)}</span></div>
                     </div>
                     <div class="tt-loc-col" style="border-left:1px solid #333; padding-left:15px;">
-                        <h5>WILAMOWICE</h5>
-                        <div class="tt-loc-row"><span>Suma:</span> <span>${formatMoney(data.wilamowice)}</span></div>
-                        <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(data.wilamowiceCard)}</span></div>
+                        <h5>OSIEK</h5>
+                        <div class="tt-loc-row"><span>Suma:</span> <span>${formatMoney(data.osiek)}</span></div>
+                        <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(data.osiekCard)}</span></div>
                     </div>
                 </div>
 
@@ -224,7 +179,7 @@ class AdminRender {
                 <td>${r.dateStr}</td>
                 <td>${r.dayOfWeek}</td>
                 <td class="val-cell">${r.oswiecim?formatMoney(r.oswiecim):'-'}</td>
-                <td class="val-cell">${r.wilamowice?formatMoney(r.wilamowice):'-'}</td>
+                <td class="val-cell">${r.osiek?formatMoney(r.osiek):'-'}</td>
                 <td class="val-cell total-cell">${formatMoney(r.total)}</td>
             </tr>
         `).join('');
@@ -233,11 +188,11 @@ class AdminRender {
     renderSummary(container, data) {
         const total = data.reduce((s, d) => s + d.total, 0);
         const osw = data.reduce((s, d) => s + d.oswiecim, 0);
-        const wil = data.reduce((s, d) => s + d.wilamowice, 0);
+        const wil = data.reduce((s, d) => s + d.osiek, 0);
         container.innerHTML = `
             <div class="summary-box"><h3>SUMA</h3><p class="highlight">${formatMoney(total)}</p></div>
             <div class="summary-box"><h3>OŚWIĘCIM</h3><p>${formatMoney(osw)}</p></div>
-            <div class="summary-box"><h3>WILAMOWICE</h3><p>${formatMoney(wil)}</p></div>
+            <div class="summary-box"><h3>OSIEK</h3><p>${formatMoney(wil)}</p></div>
         `;
     }
 
@@ -263,49 +218,7 @@ class AdminRender {
         }).join('');
     }
 
-    renderTriviaCarousel(container, items) {
-        if (this.triviaInterval) clearInterval(this.triviaInterval);
-        if (!items || items.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-        container.style.display = 'block';
 
-        let index = 0;
-        const duration = 7000;
-
-        const showItem = (idx) => {
-            const item = items[idx % items.length];
-            container.innerHTML = `
-                <div class="trivia-card-animated anim-fade-in">
-                    <div class="trivia-icon">${item.icon}</div>
-                    <div class="trivia-content">
-                        <h4>${item.title}</h4>
-                        <p>${item.text}</p>
-                    </div>
-                    <div class="trivia-progress"></div>
-                </div>
-            `;
-
-            const bar = container.querySelector('.trivia-progress');
-            setTimeout(() => { if(bar) bar.style.width = '100%'; }, 50);
-            bar.style.transitionDuration = `${duration}ms`;
-        };
-
-        showItem(index);
-
-        this.triviaInterval = setInterval(() => {
-            const card = container.querySelector('.trivia-card-animated');
-            if (card) {
-                card.classList.remove('anim-fade-in');
-                card.classList.add('anim-fade-out');
-            }
-            setTimeout(() => {
-                index++;
-                showItem(index);
-            }, 500);
-        }, duration);
-    }
 }
 
 export const adminRender = new AdminRender();

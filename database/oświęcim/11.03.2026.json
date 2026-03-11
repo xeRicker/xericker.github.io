@@ -1,0 +1,18 @@
+{
+  "location": "Oświęcim",
+  "date": "11.03.2026",
+  "revenue": 1004,
+  "cardRevenue": 568,
+  "employees": {
+    "Paweł": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 12,
+    "Worki na śmieci 120L": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "location": "Oświęcim",
+  "date": "12.03.2026",
+  "revenue": 1613,
+  "cardRevenue": 757,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Halloumi": 2,
+    "Majonez": 1,
+    "Frytki": 4,
+    "Placki": 1,
+    "Bułki": 18,
+    "Cebula prażona": 4,
+    "Sriracha": 1,
+    "Sól do frytek": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1,
+    "Papier do kasy": 1
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "location": "Oświęcim",
+  "date": "14.03.2026",
+  "revenue": 2633,
+  "cardRevenue": 1915,
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Natalia": "15:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 4,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 2,
+    "Halloumi": 2,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 17,
+    "Cebula prażona": 2,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

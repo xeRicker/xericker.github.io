@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "15.03.2026",
+  "revenue": 1372,
+  "cardRevenue": 787,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Frytki": 2,
+    "Bułki": 26,
+    "Cebula prażona": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1
+  }
+}

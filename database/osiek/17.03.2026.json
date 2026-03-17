@@ -1,0 +1,19 @@
+{
+  "location": "Osiek",
+  "date": "17.03.2026",
+  "revenue": 961,
+  "cardRevenue": 236,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Bułki": 26,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1
+  }
+}

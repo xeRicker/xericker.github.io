@@ -1,0 +1,21 @@
+{
+  "location": "Osiek",
+  "date": "18.03.2026",
+  "revenue": 622,
+  "cardRevenue": 298,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Bułki": 37,
+    "Pepsi Max": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

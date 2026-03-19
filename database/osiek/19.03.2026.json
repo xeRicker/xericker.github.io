@@ -1,0 +1,22 @@
+{
+  "location": "Osiek",
+  "date": "19.03.2026",
+  "revenue": 810,
+  "cardRevenue": 696,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Frytki": 2,
+    "Bułki": 16,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

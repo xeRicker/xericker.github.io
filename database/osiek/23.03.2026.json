@@ -1,0 +1,15 @@
+{
+  "location": "Osiek",
+  "date": "23.03.2026",
+  "revenue": 1029,
+  "cardRevenue": 660,
+  "employees": {
+    "Paweł": "14:00 – 20:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Frytki": 1,
+    "Bułki": 28,
+    "Folia": 1
+  }
+}

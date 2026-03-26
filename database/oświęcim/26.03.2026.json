@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "26.03.2026",
+  "revenue": 624,
+  "cardRevenue": 390,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 15,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Średnie": 1,
+    "Szmaty": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

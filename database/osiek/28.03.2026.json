@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "28.03.2026",
+  "revenue": 2024,
+  "cardRevenue": 1119,
+  "employees": {
+    "Radek": "12:30 – 21:00",
+    "Tomek": "12:30 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 24,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

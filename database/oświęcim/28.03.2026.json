@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "28.03.2026",
+  "revenue": 1921,
+  "cardRevenue": 1150,
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Kacper": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 13,
+    "Cebula prażona": 2,
+    "Zbój: Czosnek": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Papier pod grilla": 1,
+    "Szmaty": 1,
+    "Drobne: 10,20": 1
+  }
+}

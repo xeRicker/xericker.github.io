@@ -1,0 +1,19 @@
+{
+  "location": "Oświęcim",
+  "date": "29.03.2026",
+  "revenue": 2246,
+  "cardRevenue": 1656,
+  "employees": {
+    "Paweł": "14:00 – 21:30"
+  },
+  "products": {
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 2,
+    "Frytki": 3,
+    "Bułki": 0,
+    "Rękawiczki": 1
+  }
+}

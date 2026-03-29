@@ -1,0 +1,27 @@
+{
+  "location": "Osiek",
+  "date": "29.03.2026",
+  "revenue": 2232,
+  "cardRevenue": 961,
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Natalia": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 2,
+    "Frytki": 3,
+    "Placki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 3,
+    "Folia": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "location": "Osiek",
+  "date": "30.03.2026",
+  "revenue": 386,
+  "cardRevenue": 239,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Ogórki": 2,
+    "Bułki": 25,
+    "Torby: Małe": 1
+  }
+}

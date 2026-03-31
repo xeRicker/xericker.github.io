@@ -1,0 +1,19 @@
+{
+  "location": "Osiek",
+  "date": "31.03.2026",
+  "revenue": 976,
+  "cardRevenue": 622,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Ogórki": 2,
+    "Majonez": 1,
+    "Bułki": 4,
+    "Cebula prażona": 1,
+    "Torby: Małe": 1
+  }
+}

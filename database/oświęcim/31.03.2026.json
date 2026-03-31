@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "31.03.2026",
+  "revenue": 1421,
+  "cardRevenue": 554,
+  "employees": {
+    "Radek": "12:00 – 20:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Serwetki": 1
+  }
+}

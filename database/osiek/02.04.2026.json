@@ -1,0 +1,31 @@
+{
+  "location": "Osiek",
+  "date": "02.04.2026",
+  "revenue": 1189,
+  "cardRevenue": 771,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 15,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1
+  }
+}

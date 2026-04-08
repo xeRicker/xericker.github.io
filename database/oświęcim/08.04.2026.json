@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "08.04.2026",
+  "revenue": 1093,
+  "cardRevenue": 763,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Jalapeno": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 18,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Drobne: 10,20": 1
+  }
+}

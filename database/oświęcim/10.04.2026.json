@@ -1,0 +1,34 @@
+{
+  "location": "Oświęcim",
+  "date": "10.04.2026",
+  "revenue": 1528,
+  "cardRevenue": 1176,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 3,
+    "Sałata": 2,
+    "Ogórki": 4,
+    "Frytki": 3,
+    "Frytura": 1,
+    "Bułki": 15,
+    "Cebula prażona": 3,
+    "Tabasco": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Sos: Sweet Chilli": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

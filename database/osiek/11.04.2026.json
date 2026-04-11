@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "11.04.2026",
+  "revenue": 2081,
+  "cardRevenue": 1173,
+  "employees": {
+    "Paweł": "14:00 – 21:00",
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Halloumi": 2,
+    "Frytki": 3,
+    "Bułki": 6,
+    "Przyprawa do grilla": 1,
+    "Sos: Ketchup": 1,
+    "Folia": 1
+  }
+}

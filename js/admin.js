@@ -2,7 +2,7 @@ import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js';
  
-import { calculateHours, formatMoney, isLocalhost } from './utils.js';
+import { calculateHours, formatMoney, isLocalhost, parseLocalDateInput } from './utils.js';
 
 const PASSWORD = "xdxdxd123";
 let allData = [];
@@ -168,8 +168,16 @@ function initCalculator() {
         }
 
         const rate = parseFloat(document.getElementById('calcRate').value) || 0;
-        const d1 = new Date(document.getElementById('calcDateFrom').value);
-        const d2 = new Date(document.getElementById('calcDateTo').value); d2.setHours(23,59,59);
+        const d1 = parseLocalDateInput(document.getElementById('calcDateFrom').value);
+        const d2 = parseLocalDateInput(document.getElementById('calcDateTo').value);
+
+        if (!d1 || !d2) {
+            resultBox.style.display = 'none';
+            detailsBox.style.display = 'none';
+            return;
+        }
+
+        d2.setHours(23,59,59,999);
 
         let h = 0;
         const locs = {};

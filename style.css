@@ -559,6 +559,22 @@ td { padding: 18px 20px; border-bottom: 1px solid #2a2a2a; color: var(--text-pri
 .calc-res-item p { margin: 0; font-size: 24px; font-weight: bold; color: white; }
 .calc-res-item p.money { color: var(--success-color); }
 .calc-icon { color: var(--primary-color); width: 16px; height: 16px; }
+.calc-breakdown-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 18px; }
+.calc-breakdown-card { background: #121212; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; }
+.calc-breakdown-card strong { display: block; margin-top: 6px; font-size: 18px; color: #fff; }
+.calc-breakdown-label { display: block; color: #888; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0.5px; }
+.calc-breakdown-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.calc-breakdown-pill { display: inline-flex; align-items: center; gap: 8px; background: #121212; border: 1px solid #333; border-radius: 999px; padding: 8px 12px; color: #aaa; font-size: 13px; }
+.calc-breakdown-pill strong { color: #fff; }
+.calc-breakdown-pill.is-main { border-color: rgba(211, 84, 0, 0.5); color: var(--primary-color); }
+.calc-breakdown-report { margin-top: 14px; border: 1px solid #333; border-radius: 10px; overflow: hidden; background: #121212; }
+.calc-breakdown-report summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font-heading); color: #f2f2f2; letter-spacing: 0.4px; background: linear-gradient(180deg, rgba(211, 84, 0, 0.08), rgba(211, 84, 0, 0.02)); }
+.calc-breakdown-report summary::-webkit-details-marker { display: none; }
+.calc-breakdown-report summary span { font-family: var(--font-body); font-size: 13px; color: #aaa; font-weight: 500; }
+.calc-breakdown-table-wrap { overflow-x: auto; }
+.calc-breakdown-table th { padding: 14px 16px; font-size: 12px; }
+.calc-breakdown-table td { padding: 14px 16px; font-size: 14px; }
+.calc-breakdown-table tbody tr:hover td { background: rgba(211, 84, 0, 0.05); }
 
 .loc-bar-container { display: flex; height: 6px; width: 100%; background: #333; border-radius: 3px; overflow: hidden; margin-top: 6px; }
 .loc-bar-segment { height: 100%; }

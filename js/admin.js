@@ -156,6 +156,11 @@ function initCalculator() {
     opts += Array.from(emps).sort().map(e => `<option value="${e}">${e}</option>`).join('');
     sel.innerHTML = opts;
 
+    const formatCalcDate = (date) => {
+        const [day, month, year] = date.split('.');
+        return `${day}.${month}`;
+    };
+
     const recalc = () => {
         const name = sel.value;
         const resultBox = document.getElementById('calcResult');
@@ -181,6 +186,7 @@ function initCalculator() {
 
         let h = 0;
         const locs = {};
+        const breakdown = [];
 
         allData.forEach(r => {
             const [d,m,y] = r.date.split('.');
@@ -189,21 +195,85 @@ function initCalculator() {
                 const hours = calculateHours(r.employees[name]);
                 h += hours;
                 locs[r.location] = (locs[r.location]||0) + hours;
+                breakdown.push({
+                    date: r.date,
+                    dateObj: rd,
+                    location: r.location,
+                    shift: r.employees[name],
+                    hours,
+                    amount: hours * rate
+                });
             }
         });
+
+        breakdown.sort((a, b) => a.dateObj - b.dateObj);
 
         resultBox.style.display = 'flex';
         document.getElementById('resHours').innerText = h.toFixed(1) + ' h';
         document.getElementById('resMoney').innerText = formatMoney(h * rate);
 
         detailsBox.style.display = 'block';
-
-        const maxH = Math.max(...Object.values(locs));
-
-        detailsBox.innerHTML = Object.entries(locs).map(([l, v]) => {
-            const color = (v === maxH && v > 0) ? '#D35400' : '#888';
-            return `<div style="color:${color}; margin-bottom:4px;">${l}: <strong>${v.toFixed(1)}h</strong></div>`;
+        const locEntries = Object.entries(locs).sort((a, b) => b[1] - a[1]);
+        const maxH = locEntries.length ? locEntries[0][1] : 0;
+        const summaryHtml = locEntries.map(([location, hours]) => {
+            const isMain = hours === maxH && hours > 0;
+            return `
+                <div class="calc-breakdown-pill ${isMain ? 'is-main' : ''}">
+                    <span>${location}</span>
+                    <strong>${hours.toFixed(1)} h</strong>
+                </div>
+            `;
         }).join('');
+
+        const rowsHtml = breakdown.map(day => `
+            <tr>
+                <td>${formatCalcDate(day.date)}</td>
+                <td>${day.location}</td>
+                <td>${day.shift}</td>
+                <td class="val-cell">${day.hours.toFixed(1)} h</td>
+                <td class="val-cell">${formatMoney(day.amount)}</td>
+            </tr>
+        `).join('');
+
+        detailsBox.innerHTML = `
+            <div class="calc-breakdown-summary">
+                <div class="calc-breakdown-card">
+                    <span class="calc-breakdown-label">Liczba zmian</span>
+                    <strong>${breakdown.length}</strong>
+                </div>
+                <div class="calc-breakdown-card">
+                    <span class="calc-breakdown-label">Średnio na zmianę</span>
+                    <strong>${breakdown.length ? (h / breakdown.length).toFixed(1) : '0.0'} h</strong>
+                </div>
+                <div class="calc-breakdown-card">
+                    <span class="calc-breakdown-label">Stawka</span>
+                    <strong>${rate.toFixed(2)} PLN</strong>
+                </div>
+            </div>
+
+            <div class="calc-breakdown-pills">${summaryHtml}</div>
+
+            <details class="calc-breakdown-report" open>
+                <summary>
+                    Mini-raport wypłaty
+                    <span>${breakdown.length} dni / ${h.toFixed(1)} h / ${formatMoney(h * rate)}</span>
+                </summary>
+                <div class="calc-breakdown-table-wrap">
+                    <table class="calc-breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Lokal</th>
+                                <th>Zmiana</th>
+                                <th>Godziny</th>
+                                <th>Kwota</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            </details>
+        `;
     };
 
     ['change','input'].forEach(ev => {

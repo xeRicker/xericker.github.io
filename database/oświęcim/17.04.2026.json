@@ -1,0 +1,34 @@
+{
+  "location": "Oświęcim",
+  "date": "17.04.2026",
+  "revenue": 1333,
+  "cardRevenue": 954,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Bułki": 12,
+    "Cebula prażona": 3,
+    "Tabasco": 1,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Szmaty": 1
+  }
+}

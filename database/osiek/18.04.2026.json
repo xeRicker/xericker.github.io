@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "18.04.2026",
+  "revenue": 2697,
+  "cardRevenue": 1757,
+  "employees": {
+    "Radek": "12:30 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Sałata": 1,
+    "Ogórki": 5,
+    "Pomidory": 1,
+    "Cheddar": 2,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Zielony papier": 1
+  }
+}

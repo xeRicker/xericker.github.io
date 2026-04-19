@@ -1,0 +1,42 @@
+{
+  "location": "Osiek",
+  "date": "19.04.2026",
+  "revenue": 2374,
+  "cardRevenue": 1483,
+  "employees": {
+    "Sebastian": "14:00 – 21:00",
+    "Kacper": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Cheddar": 2,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Bułki": 0,
+    "Cebula prażona": 4,
+    "Sos: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1,
+    "Zeszyt": 1
+  }
+}

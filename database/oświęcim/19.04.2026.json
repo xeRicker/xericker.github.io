@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "19.04.2026",
+  "revenue": 1785,
+  "cardRevenue": 1276,
+  "employees": {
+    "Paweł": "14:00 – 21:00",
+    "Natalia": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki": 7,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1
+  }
+}

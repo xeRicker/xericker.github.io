@@ -1,0 +1,16 @@
+{
+  "location": "Oświęcim",
+  "date": "20.04.2026",
+  "revenue": 269,
+  "cardRevenue": 124,
+  "employees": {
+    "Sebastian": "12:00 – 20:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Pomidory": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Opakowania na frytki": 1
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "21.04.2026",
+  "revenue": 1176,
+  "cardRevenue": 923,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 2,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Tabasco": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1
+  }
+}

@@ -3,7 +3,7 @@ import { mainRender } from './ui/mainRender.js';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
-import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './services/revenue.js';
+import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 
 let selectedLocation = null;

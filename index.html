@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Generator Listy</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=18">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -25,27 +26,38 @@
   </div>
 
   <div class="section-card animate-stagger">
-    <h2>💰 UTARG</h2>
+    <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">payments</span> UTARG</h2>
     <div class="revenue-grid">
       <div class="revenue-field">
-        <label>SUMA</label>
+        <label><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> UTARG LOKALU</label>
         <div class="input-group">
           <span class="currency-symbol">PLN</span>
           <input type="number" id="revenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
         </div>
       </div>
       <div class="revenue-field">
-        <label>KARTY</label>
+        <label><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> KARTY</label>
         <div class="input-group">
           <span class="currency-symbol">PLN</span>
           <input type="number" id="cardRevenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
         </div>
       </div>
+      <div class="revenue-field">
+        <label><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> GLOVO</label>
+        <div class="input-group input-group--glovo">
+          <span class="currency-symbol">PLN</span>
+          <input type="number" id="glovoRevenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+    </div>
+    <div class="revenue-insights">
+      <div id="revenueValidation" class="revenue-note"></div>
+      <div id="glovoNetInfo" class="revenue-note revenue-note--accent"></div>
     </div>
   </div>
 
   <div class="section-card animate-stagger">
-    <h2>👨‍🍳 EKIPA</h2>
+    <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">groups</span> EKIPA</h2>
     <div id="employees" class="employees-grid"></div>
   </div>
 
@@ -73,10 +85,10 @@
   <h3>Wybierz punkt</h3>
   <div class="sheet-actions">
     <button class="sheet-btn location-button" data-location="Oświęcim">
-      <span class="loc-icon">🏰</span> OŚWIĘCIM
+      <span class="loc-icon material-symbols-rounded" aria-hidden="true">location_city</span> OŚWIĘCIM
     </button>
     <button class="sheet-btn location-button" data-location="Osiek">
-      <span class="loc-icon">🏡</span> OSIEK
+      <span class="loc-icon material-symbols-rounded" aria-hidden="true">cottage</span> OSIEK
     </button>
     <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
   </div>
@@ -92,6 +104,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=7"></script>
+<script type="module" src="js/main.js?v=9"></script>
 </body>
 </html>

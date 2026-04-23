@@ -1,3 +1,18 @@
+const CATEGORY_SYMBOLS = {
+    "🥩": "restaurant",
+    "🥗": "eco",
+    "🧀": "kitchen",
+    "🍟": "lunch_dining",
+    "🍞": "bakery_dining",
+    "🧂": "science",
+    "🥫": "inventory_2",
+    "🪓": "construction",
+    "🥤": "local_drink",
+    "🛍️": "shopping_bag",
+    "🧽": "cleaning_services",
+    "📋": "receipt_long"
+};
+
 export const mainRender = {
     renderEmployees(container, list, colors, presets) {
         container.innerHTML = list.map((name, i) => {
@@ -25,7 +40,7 @@ export const mainRender = {
     renderProducts(container, categories) {
         let idx = 0;
         container.innerHTML = Object.entries(categories).map(([cat, {items}]) => `
-            <div class="category-header animate-stagger" style="animation-delay:${idx++*0.05}s">${cat}</div>
+            <div class="category-header animate-stagger" style="animation-delay:${idx++*0.05}s"><span class="category-icon material-symbols-rounded" aria-hidden="true">${CATEGORY_SYMBOLS[cat] || 'inventory_2'}</span></div>
             <div class="products-grid">
                 ${items.map(p => {
             const delay = idx++ * 0.02;

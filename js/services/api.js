@@ -119,6 +119,7 @@ class ApiService {
                         date: dateStr,
                         revenue: rev,
                         cardRevenue: Math.floor(rev * 0.4),
+                        glovoRevenue: Math.floor(rev * 0.15),
                         employees: { [emps[Math.floor(Math.random()*emps.length)]]: "12:00-20:00" },
                         products: products
                     });

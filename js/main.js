@@ -3,6 +3,7 @@ import { mainRender } from './ui/mainRender.js';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
+import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 
 let selectedLocation = null;
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainRender.renderProducts(document.getElementById('products'), CATEGORIES);
     restoreState();
     setupEvents();
+    updateRevenueInsights();
 });
 
 function setupEvents() {
@@ -21,6 +23,7 @@ function setupEvents() {
     document.getElementById('employees').addEventListener('input', saveState);
     document.getElementById('revenueInput').addEventListener('input', saveState);
     document.getElementById('cardRevenueInput').addEventListener('input', saveState);
+    document.getElementById('glovoRevenueInput').addEventListener('input', saveState);
 
     document.querySelector('.reset-button').addEventListener('click', resetAll);
     document.getElementById('copyButton').addEventListener('click', () => uiShared.showModal('locationSheet'));
@@ -81,7 +84,13 @@ function handleEmployeePreset(e) {
 }
 
 function saveState() {
-    const state = { products: {}, employees: {}, revenue: document.getElementById('revenueInput').value, cardRevenue: document.getElementById('cardRevenueInput').value };
+    const state = {
+        products: {},
+        employees: {},
+        revenue: document.getElementById('revenueInput').value,
+        cardRevenue: document.getElementById('cardRevenueInput').value,
+        glovoRevenue: document.getElementById('glovoRevenueInput').value
+    };
 
     document.querySelectorAll('.product-card').forEach(card => {
         const name = card.dataset.name;
@@ -100,6 +109,7 @@ function saveState() {
 
     storageService.save(state);
     mainRender.updateResetBtn();
+    updateRevenueInsights();
 }
 
 function restoreState() {
@@ -108,6 +118,7 @@ function restoreState() {
 
     if(state.revenue) document.getElementById('revenueInput').value = state.revenue;
     if(state.cardRevenue) document.getElementById('cardRevenueInput').value = state.cardRevenue;
+    if(state.glovoRevenue) document.getElementById('glovoRevenueInput').value = state.glovoRevenue;
 
     Object.entries(state.products || {}).forEach(([name, val]) => {
         const cb = document.getElementById(`checkbox-${name}`);
@@ -123,6 +134,7 @@ function restoreState() {
         if(times.f && times.t) r.classList.add('active');
     });
     mainRender.updateResetBtn();
+    updateRevenueInsights();
 }
 
 function resetAll() {
@@ -133,12 +145,35 @@ function resetAll() {
 async function generateReport() {
     const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
     const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
+    const glovo = parseFloat(document.getElementById('glovoRevenueInput').value) || 0;
+    const glovoNet = calculateGlovoNet(glovo);
+    const effectiveRevenue = calculateEffectiveRevenue(rev, glovo);
+    const cash = calculateCashDesk(rev, card, glovo);
     const date = getFormattedDate();
 
     if(rev === 0 && !confirm("Utarg wynosi 0. Kontynuować?")) return;
+    if (cash < 0) {
+        alert("Błąd danych: karty i Glovo nie mogą być większe niż utarg lokalu.");
+        return;
+    }
 
-    const data = { location: selectedLocation, date, revenue: rev, cardRevenue: card, employees: {}, products: {} };
+    const data = {
+        location: selectedLocation,
+        date,
+        revenue: effectiveRevenue,
+        revenueGross: rev,
+        cardRevenue: card,
+        cashRevenue: cash,
+        glovoRevenue: glovo,
+        glovoNetRevenue: glovoNet,
+        employees: {},
+        products: {}
+    };
     let text = `🧾 ${selectedLocation} ${date}\n`;
+    text += `• Utarg lokalu: ${effectiveRevenue.toFixed(2)} PLN\n`;
+    text += `• Karty: ${card.toFixed(2)} PLN\n`;
+    text += `• Gotówka: ${cash.toFixed(2)} PLN\n`;
+    if (glovo > 0) text += `• Glovo: ${glovoNet.toFixed(2)} PLN\n`;
 
     EMPLOYEES.forEach(name => {
         const id = name.toLowerCase();
@@ -176,4 +211,34 @@ async function generateReport() {
 
     await apiService.saveReport(data);
     uiShared.showSuccess(text.trim());
+}
+
+function updateRevenueInsights() {
+    const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
+    const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
+    const glovo = parseFloat(document.getElementById('glovoRevenueInput').value) || 0;
+    const cash = calculateCashDesk(rev, card, glovo);
+    const glovoNet = calculateGlovoNet(glovo);
+
+    const validation = document.getElementById('revenueValidation');
+    const glovoInfo = document.getElementById('glovoNetInfo');
+
+    glovoInfo.textContent = glovo > 0
+        ? `Glovo netto po prowizji 30%: ${glovoNet.toFixed(2)} PLN`
+        : 'Glovo netto po prowizji 30%: 0.00 PLN';
+
+    if (rev === 0 && card === 0) {
+        validation.textContent = 'Weryfikacja: wpisz utarg i karty, policzę gotówkę.';
+        validation.className = 'revenue-note';
+        return;
+    }
+
+    if (cash < 0) {
+        validation.textContent = `Błąd: karty i Glovo przekraczają utarg lokalu o ${Math.abs(cash).toFixed(2)} PLN.`;
+        validation.className = 'revenue-note revenue-note--danger';
+        return;
+    }
+
+    validation.textContent = `Gotówka: ${cash.toFixed(2)} PLN`;
+    validation.className = 'revenue-note revenue-note--success';
 }

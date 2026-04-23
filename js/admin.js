@@ -280,7 +280,6 @@ function applyFilters(data) {
             : 0;
 
         filtered = filtered.filter(day => {
-            if (scenario === 'cash-risk') return isCashRiskDay(day);
             if (scenario === 'glovo-heavy') return day.total > 0 && (getGlovoDisplayValue(day) / day.total) >= 0.25;
             if (scenario === 'top-turnover') return day.total >= averageTurnover;
             return true;
@@ -341,10 +340,6 @@ function compareRevenueRows(a, b, sort) {
     if (sort.key === 'glovoDisplay') {
         return (getGlovoDisplayValue(a) - getGlovoDisplayValue(b)) * multiplier;
     }
-    if (sort.key === 'riskLevel') {
-        return (getRiskLevel(a) - getRiskLevel(b)) * multiplier;
-    }
-
     return ((a[sort.key] || 0) - (b[sort.key] || 0)) * multiplier;
 }
 
@@ -358,19 +353,6 @@ function getGlovoDisplayValue(entry) {
     return entry.glovoNetTotal;
 }
 
-function getRiskLevel(entry) {
-    if (entry.total <= 0) return 0;
-    const cashShare = entry.cashDeskTotal / entry.total;
-    if (entry.cashDeskTotal <= 0) return 3;
-    if (cashShare < 0.12) return 2;
-    if ((getGlovoDisplayValue(entry) / entry.total) >= 0.3) return 1;
-    return 0;
-}
-
-function isCashRiskDay(entry) {
-    return getRiskLevel(entry) >= 2;
-}
-
 function getActiveFilterLabels() {
     const labels = [];
     const location = document.getElementById('locationFilter').value;
@@ -382,7 +364,6 @@ function getActiveFilterLabels() {
     labels.push('Glovo netto');
     if (location !== 'all') labels.push(location);
     if (weekday !== 'all') labels.push(weekday);
-    if (scenario === 'cash-risk') labels.push('Niski stan gotówki');
     if (scenario === 'glovo-heavy') labels.push('Wysoki udział Glovo');
     if (scenario === 'top-turnover') labels.push('Ponad średnią');
     if (from && to) labels.push(`${from} -> ${to}`);

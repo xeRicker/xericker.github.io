@@ -162,7 +162,6 @@ class AdminRender {
         }
 
         const strongestDay = [...data].sort((left, right) => right.total - left.total)[0];
-        const weakestCash = [...data].sort((left, right) => left.cashDeskTotal - right.cashDeskTotal)[0];
         const glovoHeavy = [...data].sort((left, right) => {
             const rightRatio = right.total ? this.getGlovoDisplayValue(right) / right.total : 0;
             const leftRatio = left.total ? this.getGlovoDisplayValue(left) / left.total : 0;
@@ -175,11 +174,6 @@ class AdminRender {
                 <span class="insight-label">${this.buildSymbolIcon('local_fire_department')} Najmocniejszy dzień</span>
                 <strong>${strongestDay.dateStr}</strong>
                 <p>${formatMoney(strongestDay.total)} / ${strongestDay.dayOfWeek}</p>
-            </div>
-            <div class="insight-card insight-card--warning">
-                <span class="insight-label">${this.buildSymbolIcon('warning')} Ryzyko gotówki</span>
-                <strong>${weakestCash.dateStr}</strong>
-                <p>${formatMoney(weakestCash.cashDeskTotal)} na lokalu</p>
             </div>
             <div class="insight-card insight-card--glovo">
                 <span class="insight-label">${this.buildSymbolIcon('delivery_dining', 'summary-icon-badge--glovo')} Największy udział Glovo</span>
@@ -465,14 +459,6 @@ class AdminRender {
 
     getGlovoDisplayValue(entry) {
         return entry.glovoNetTotal ?? entry.glovoNet ?? 0;
-    }
-
-    getRisk(entry) {
-        if (entry.total <= 0) return { label: 'Brak danych', tone: 'muted' };
-        if (entry.cashDeskTotal <= 0) return { label: 'Brak gotówki', tone: 'danger' };
-        if ((entry.cashDeskTotal / entry.total) < 0.12) return { label: 'Niski stan', tone: 'warning' };
-        if ((this.getGlovoDisplayValue(entry) / entry.total) >= 0.3) return { label: 'Duży udział Glovo', tone: 'accent' };
-        return { label: 'Poziom OK', tone: 'success' };
     }
 
     buildDatasetLabel(location, options) {

@@ -160,12 +160,9 @@ async function generateReport() {
     const data = {
         location: selectedLocation,
         date,
-        revenue: effectiveRevenue,
-        revenueGross: rev,
+        revenue: rev,
         cardRevenue: card,
-        cashRevenue: cash,
         glovoRevenue: glovo,
-        glovoNetRevenue: glovoNet,
         employees: {},
         products: {}
     };

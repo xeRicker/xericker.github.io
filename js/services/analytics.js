@@ -29,11 +29,11 @@ export class AnalyticsService {
                 });
             }
             const entry = map.get(r.date);
-            const revGross = r.revenueGross ?? r.revenue ?? 0;
+            const revGross = r.revenue ?? r.revenueGross ?? 0;
             const card = r.cardRevenue || 0;
             const glovo = r.glovoRevenue || 0;
-            const glovoNet = r.glovoNetRevenue ?? calculateGlovoNet(glovo);
-            const rev = r.revenue ?? calculateEffectiveRevenue(revGross, glovo);
+            const glovoNet = calculateGlovoNet(glovo);
+            const rev = calculateEffectiveRevenue(revGross, glovo);
             const cashDesk = Math.max(0, calculateCashDesk(revGross, card, glovo));
             const cash = cashDesk;
             const locationKey = this.getLocationKey(r.location);

@@ -146,8 +146,6 @@ async function generateReport() {
     const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
     const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
     const glovo = parseFloat(document.getElementById('glovoRevenueInput').value) || 0;
-    const glovoNet = calculateGlovoNet(glovo);
-    const effectiveRevenue = calculateEffectiveRevenue(rev, glovo);
     const cash = calculateCashDesk(rev, card, glovo);
     const date = getFormattedDate();
 
@@ -166,11 +164,7 @@ async function generateReport() {
         employees: {},
         products: {}
     };
-    let text = `🧾 ${selectedLocation} ${date}\n`;
-    text += `• Utarg lokalu: ${effectiveRevenue.toFixed(2)} PLN\n`;
-    text += `• Karty: ${card.toFixed(2)} PLN\n`;
-    text += `• Gotówka: ${cash.toFixed(2)} PLN\n`;
-    if (glovo > 0) text += `• Glovo: ${glovoNet.toFixed(2)} PLN\n`;
+    let text = `🧾 ${date}\n`;
 
     EMPLOYEES.forEach(name => {
         const id = name.toLowerCase();

@@ -245,7 +245,7 @@ class AdminRender {
                         <div class="cell-secondary">po prowizji</div>
                     </td>
                     <td class="val-cell total-cell">${formatMoney(day.cashDeskTotal)}</td>
-                    <td>${day.weather ? this.buildWeatherCell(day.weather) : '<span class="weather-card--muted">Brak danych</span>'}</td>
+                    <td>${day.weather ? this.buildWeatherCard(day.weather, false) : '<span class="weather-card-empty">Brak danych</span>'}</td>
                 </tr>
             `;
         }).join('');
@@ -254,11 +254,15 @@ class AdminRender {
     renderEmployeeTable(tbody, stats) {
         tbody.innerHTML = stats.map(employee => {
             const percent = (employee.hours / 160) * 100;
-            const tone = percent > 100 ? 'danger' : percent > 80 ? 'success' : 'muted';
             const topLocation = Object.entries(employee.locBreakdown).sort((left, right) => right[1] - left[1])[0];
             const locationBadges = Object.entries(employee.locBreakdown)
                 .sort((left, right) => right[1] - left[1])
-                .map(([location, hours]) => `<span class="employee-loc-pill">${location} ${Math.round((hours / employee.hours) * 100)}%</span>`)
+                .map(([location, hours]) => `
+                    <span class="point-pill">
+                        <span>${location}</span>
+                        <strong>${Math.round((hours / employee.hours) * 100)}%</strong>
+                    </span>
+                `)
                 .join('');
 
             return `
@@ -267,9 +271,12 @@ class AdminRender {
                         <div class="cell-primary">${employee.name}</div>
                         <div class="cell-secondary">${topLocation ? `Głównie: ${topLocation[0]}` : 'Brak lokalizacji'}</div>
                     </td>
-                    <td class="val-cell">${employee.hours.toFixed(1)} h</td>
-                    <td class="val-cell"><span class="alert-badge alert-badge--${tone}">${percent.toFixed(1)}%</span></td>
-                    <td><div class="employee-loc-list">${locationBadges}</div></td>
+                    <td class="val-cell">
+                        <div class="cell-primary">${employee.hours.toFixed(1)} h</div>
+                        <div class="cell-secondary">Łącznie w okresie</div>
+                    </td>
+                    <td class="val-cell"><span class="point-pill point-pill--accent"><strong>${percent.toFixed(1)}%</strong></span></td>
+                    <td><div class="point-pill-list">${locationBadges}</div></td>
                 </tr>
             `;
         }).join('');
@@ -482,10 +489,6 @@ class AdminRender {
 
     buildEmptyState(label) {
         return `<div class="summary-box summary-box--empty"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
-    }
-
-    buildWeatherCell(weather) {
-        return this.buildWeatherCard(weather, false);
     }
 
     buildWeatherCard(weather, compact = false) {

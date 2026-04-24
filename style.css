@@ -73,6 +73,7 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 18px;
     background: var(--surface-color);
     padding: 20px 24px;
     border-radius: var(--radius-md);
@@ -85,6 +86,27 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     font-size: 22px;
     color: var(--primary-color);
     margin: 0;
+}
+
+.brand-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.brand-block--admin h1 {
+    font-size: 24px;
+}
+
+.brand-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+    background: #181818;
 }
 
 .header-copy p {
@@ -966,21 +988,32 @@ tbody tr:hover td { background: rgba(211, 84, 0, 0.04); }
 }
 
 .point-pill,
-.employee-loc-pill {
+.employee-loc-pill,
+.calc-breakdown-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 10px;
+    justify-content: space-between;
+    padding: 8px 12px;
     border-radius: 999px;
     border: 1px solid #353535;
     background: #141414;
     color: #c8c8c8;
     white-space: nowrap;
+    font-family: var(--font-body);
 }
 
 .point-pill strong,
+.employee-loc-pill strong,
+.calc-breakdown-pill strong,
 .employee-loc-pill {
     font-size: 12px;
+}
+
+.point-pill--accent {
+    border-color: rgba(211, 84, 0, 0.42);
+    background: rgba(211, 84, 0, 0.08);
+    color: #f2c083;
 }
 
 .alert-badge {
@@ -1120,13 +1153,13 @@ tbody tr:hover td { background: rgba(211, 84, 0, 0.04); }
 .calc-res-item p.money { color: var(--success-color); }
 .calc-icon { color: var(--primary-color); width: 16px; height: 16px; }
 .calc-breakdown-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 18px; }
-.calc-breakdown-card { background: #121212; border: 1px solid #333; border-radius: 8px; padding: 12px 14px; }
+.calc-breakdown-card { background: linear-gradient(180deg, rgba(26,26,26,0.96), rgba(18,18,18,0.96)); border: 1px solid #333; border-radius: 14px; padding: 14px 16px; }
 .calc-breakdown-card strong { display: block; margin-top: 6px; font-size: 18px; color: #fff; }
 .calc-breakdown-label { display: block; color: #888; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0.5px; }
 .calc-breakdown-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.calc-breakdown-pill { display: inline-flex; align-items: center; gap: 8px; background: #121212; border: 1px solid #333; border-radius: 999px; padding: 8px 12px; color: #aaa; font-size: 13px; }
+.calc-breakdown-pill { color: #aaa; font-size: 13px; }
 .calc-breakdown-pill strong { color: #fff; }
-.calc-breakdown-pill.is-main { border-color: rgba(211, 84, 0, 0.5); color: var(--primary-color); }
+.calc-breakdown-pill.is-main { border-color: rgba(211, 84, 0, 0.5); color: var(--primary-color); background: rgba(211, 84, 0, 0.08); }
 .calc-breakdown-report { margin-top: 14px; border: 1px solid #333; border-radius: 10px; overflow: hidden; background: #121212; }
 .calc-breakdown-report summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font-heading); color: #f2f2f2; letter-spacing: 0.4px; background: linear-gradient(180deg, rgba(211, 84, 0, 0.08), rgba(211, 84, 0, 0.02)); }
 .calc-breakdown-report summary::-webkit-details-marker { display: none; }
@@ -1211,6 +1244,10 @@ tbody tr:hover td { background: rgba(211, 84, 0, 0.04); }
 
     .toolbar-meta {
         align-items: flex-start;
+    }
+
+    .brand-block {
+        justify-content: center;
     }
 }
 
@@ -1337,6 +1374,27 @@ input[type=number] {
     border: 1px solid rgba(255,255,255,0.08);
     background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 24px rgba(0,0,0,0.22);
+}
+
+.weather-card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.weather-card-list--compact {
+    gap: 8px;
+}
+
+.weather-card-empty {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #121212;
+    color: #666;
+    font-size: 12px;
 }
 
 .weather-card::before {

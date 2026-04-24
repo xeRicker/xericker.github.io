@@ -2,8 +2,8 @@ import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { weatherService } from './services/weather.js';
 import { adminRender } from './ui/adminRender.js';
-
-import { calculateHours, formatMoney, isLocalhost, parseLocalDateInput } from './utils.js';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js';
+import { isLocalhost, parseLocalDateInput } from './utils.js';
 
 const PASSWORD = "xdxdxd123";
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
@@ -17,6 +17,7 @@ let viewMode = 'total';
 let currentViewData = [];
 let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
+let payrollCalculator = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isLocalhost()) {
@@ -107,8 +108,10 @@ function handleMonthChange(fullData) {
     updateView();
 
     const lastDay = new Date(year, month, 0).getDate();
-    document.getElementById('calcDateFrom').value = `${year}-${month}-01`;
-    document.getElementById('calcDateTo').value = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+    payrollCalculator?.setDateRange(
+        `${year}-${month}-01`,
+        `${year}-${month}-${String(lastDay).padStart(2, '0')}`
+    );
 }
 
 function syncDateFiltersToMonth(year, month) {
@@ -302,6 +305,7 @@ function projectDayToLocation(day, location) {
         glovoNetTotal: locationStats.glovoNet,
         cashDeskTotal: locationStats.cashDesk,
         rawReports: locationStats.reports,
+        weather: day.weather || null,
         locations: {
             [location]: { ...locationStats }
         },
@@ -374,137 +378,18 @@ function getActiveFilterLabels() {
 window.sortEmpTable = () => {};
 
 function initCalculator() {
-    const select = document.getElementById('calcEmployee');
-    const employees = new Set();
-    allData.forEach(report => report.employees && Object.keys(report.employees).forEach(name => employees.add(name)));
-
-    select.innerHTML = [
-        '<option value="" disabled selected>Wybierz Pracownika</option>',
-        ...Array.from(employees).sort().map(name => `<option value="${name}">${name}</option>`)
-    ].join('');
-
-    const formatCalcDate = date => {
-        const [day, month] = date.split('.');
-        return `${day}.${month}`;
-    };
-
-    const recalc = () => {
-        const name = select.value;
-        const resultBox = document.getElementById('calcResult');
-        const detailsBox = document.getElementById('calcDetails');
-
-        if (!name) {
-            resultBox.style.display = 'none';
-            detailsBox.style.display = 'none';
-            return;
-        }
-
-        const rate = parseFloat(document.getElementById('calcRate').value) || 0;
-        const dateFrom = parseLocalDateInput(document.getElementById('calcDateFrom').value);
-        const dateTo = parseLocalDateInput(document.getElementById('calcDateTo').value);
-
-        if (!dateFrom || !dateTo) {
-            resultBox.style.display = 'none';
-            detailsBox.style.display = 'none';
-            return;
-        }
-
-        dateTo.setHours(23, 59, 59, 999);
-
-        let totalHours = 0;
-        const locationHours = {};
-        const breakdown = [];
-
-        allData.forEach(report => {
-            const [day, month, year] = report.date.split('.');
-            const reportDate = new Date(year, month - 1, day);
-            const shift = report.employees?.[name];
-            if (!shift || reportDate < dateFrom || reportDate > dateTo) return;
-
-            const hours = calculateHours(shift);
-            totalHours += hours;
-            locationHours[report.location] = (locationHours[report.location] || 0) + hours;
-            breakdown.push({
-                date: report.date,
-                dateObj: reportDate,
-                location: report.location,
-                shift,
-                hours,
-                amount: hours * rate
-            });
-        });
-
-        breakdown.sort((left, right) => left.dateObj - right.dateObj);
-
-        resultBox.style.display = 'flex';
-        document.getElementById('resHours').innerText = `${totalHours.toFixed(1)} h`;
-        document.getElementById('resMoney').innerText = formatMoney(totalHours * rate);
-
-        detailsBox.style.display = 'block';
-        const locationEntries = Object.entries(locationHours).sort((left, right) => right[1] - left[1]);
-        const maxHours = locationEntries.length ? locationEntries[0][1] : 0;
-        const summaryHtml = locationEntries.map(([location, hours]) => `
-            <div class="calc-breakdown-pill ${hours === maxHours && hours > 0 ? 'is-main' : ''}">
-                <span>${location}</span>
-                <strong>${hours.toFixed(1)} h</strong>
-            </div>
-        `).join('');
-
-        const rowsHtml = breakdown.map(day => `
-            <tr>
-                <td>${formatCalcDate(day.date)}</td>
-                <td>${day.location}</td>
-                <td>${day.shift}</td>
-                <td class="val-cell">${day.hours.toFixed(1)} h</td>
-                <td class="val-cell">${formatMoney(day.amount)}</td>
-            </tr>
-        `).join('');
-
-        detailsBox.innerHTML = `
-            <div class="calc-breakdown-summary">
-                <div class="calc-breakdown-card">
-                    <span class="calc-breakdown-label">Liczba zmian</span>
-                    <strong>${breakdown.length}</strong>
-                </div>
-                <div class="calc-breakdown-card">
-                    <span class="calc-breakdown-label">Średnio na zmianę</span>
-                    <strong>${breakdown.length ? (totalHours / breakdown.length).toFixed(1) : '0.0'} h</strong>
-                </div>
-                <div class="calc-breakdown-card">
-                    <span class="calc-breakdown-label">Stawka</span>
-                    <strong>${rate.toFixed(2)} PLN</strong>
-                </div>
-            </div>
-
-            <div class="calc-breakdown-pills">${summaryHtml}</div>
-
-            <details class="calc-breakdown-report" open>
-                <summary>
-                    Mini-raport wypłaty
-                    <span>${breakdown.length} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</span>
-                </summary>
-                <div class="calc-breakdown-table-wrap">
-                    <table class="calc-breakdown-table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Lokal</th>
-                                <th>Zmiana</th>
-                                <th>Godziny</th>
-                                <th>Kwota</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rowsHtml}</tbody>
-                    </table>
-                </div>
-            </details>
-        `;
-    };
-
-    ['change', 'input'].forEach(eventName => {
-        select.addEventListener(eventName, recalc);
-        document.getElementById('calcRate').addEventListener(eventName, recalc);
-        document.getElementById('calcDateFrom').addEventListener(eventName, recalc);
-        document.getElementById('calcDateTo').addEventListener(eventName, recalc);
+    payrollCalculator = setupPayrollCalculator({
+        getReports: () => allData,
+        employeeSelectId: 'calcEmployee',
+        rateInputId: 'calcRate',
+        dateFromId: 'calcDateFrom',
+        dateToId: 'calcDateTo',
+        resultBoxId: 'calcResult',
+        resHoursId: 'resHours',
+        resMoneyId: 'resMoney',
+        detailsBoxId: 'calcDetails',
+        defaultRate: 30.5
     });
+
+    payrollCalculator.refresh();
 }

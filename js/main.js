@@ -4,11 +4,13 @@ import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
 import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
-import { calculateHours, formatMoney, getFormattedDate, parseLocalDateInput } from './utils.js';
+import { getFormattedDate } from './utils.js';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 
 let selectedLocation = null;
 let workerReports = [];
 let workerCalculatorReady = false;
+let workerCalculator = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     mainRender.renderEmployees(document.getElementById('employees'), EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
@@ -249,11 +251,11 @@ function updateRevenueInsights() {
     const glovoInfo = document.getElementById('glovoNetInfo');
 
     glovoInfo.textContent = glovo > 0
-        ? `Glovo netto po prowizji 30%: ${glovoNet.toFixed(2)} PLN`
-        : 'Glovo netto po prowizji 30%: 0.00 PLN';
+        ? `Glovo Netto (-30%): ${glovoNet.toFixed(2)} PLN`
+        : 'Glovo Netto (-30%): 0.00 PLN';
 
     if (rev === 0 && card === 0) {
-        validation.textContent = 'Weryfikacja: wpisz utarg i karty, policzę gotówkę.';
+        validation.textContent = 'Wpisz utarg, karty i ewentualnie Glovo, a policzę gotówkę do odłożenia do koperty na koniec dnia.';
         validation.className = 'revenue-note';
         return;
     }
@@ -264,7 +266,7 @@ function updateRevenueInsights() {
         return;
     }
 
-    validation.textContent = `Gotówka: ${cash.toFixed(2)} PLN`;
+    validation.textContent = `Do koperty na koniec dnia: ${cash.toFixed(2)} PLN`;
     validation.className = 'revenue-note revenue-note--success';
 }
 
@@ -272,154 +274,28 @@ async function initWorkerCalculator() {
     if (workerCalculatorReady) return;
 
     workerReports = await apiService.fetchAllData();
-    const select = document.getElementById('workerCalcEmployee');
-    const employees = new Set();
-
-    workerReports.forEach(report => {
-        if (!report.employees) return;
-        Object.keys(report.employees).forEach(name => employees.add(name));
+    workerCalculator = setupPayrollCalculator({
+        getReports: () => workerReports,
+        employeeSelectId: 'workerCalcEmployee',
+        rateInputId: 'workerCalcRate',
+        dateFromId: 'workerCalcDateFrom',
+        dateToId: 'workerCalcDateTo',
+        resultBoxId: 'workerCalcResult',
+        resHoursId: 'workerResHours',
+        resMoneyId: 'workerResMoney',
+        detailsBoxId: 'workerCalcDetails',
+        defaultRate: 30.5
     });
-
-    select.innerHTML = [
-        '<option value="" disabled selected>Wybierz Pracownika</option>',
-        ...Array.from(employees).sort((left, right) => left.localeCompare(right, 'pl')).map(name => `<option value="${name}">${name}</option>`)
-    ].join('');
 
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const lastDay = new Date(year, Number(month), 0).getDate();
-    document.getElementById('workerCalcDateFrom').value = `${year}-${month}-01`;
-    document.getElementById('workerCalcDateTo').value = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
-
-    const recalc = () => {
-        const name = select.value;
-        const resultBox = document.getElementById('workerCalcResult');
-        const detailsBox = document.getElementById('workerCalcDetails');
-
-        if (!name) {
-            resultBox.style.display = 'none';
-            detailsBox.style.display = 'none';
-            return;
-        }
-
-        const rate = parseFloat(document.getElementById('workerCalcRate').value) || 0;
-        const dateFrom = parseLocalDateInput(document.getElementById('workerCalcDateFrom').value);
-        const dateTo = parseLocalDateInput(document.getElementById('workerCalcDateTo').value);
-
-        if (!dateFrom || !dateTo) {
-            resultBox.style.display = 'none';
-            detailsBox.style.display = 'none';
-            return;
-        }
-
-        dateTo.setHours(23, 59, 59, 999);
-
-        let totalHours = 0;
-        const locationHours = {};
-        const breakdown = [];
-
-        workerReports.forEach(report => {
-            const [day, monthValue, yearValue] = report.date.split('.');
-            const reportDate = new Date(yearValue, monthValue - 1, day);
-            const shift = report.employees?.[name];
-            if (!shift || reportDate < dateFrom || reportDate > dateTo) return;
-
-            const hours = calculateHours(shift);
-            totalHours += hours;
-            locationHours[report.location] = (locationHours[report.location] || 0) + hours;
-            breakdown.push({
-                date: report.date,
-                dateObj: reportDate,
-                location: report.location,
-                shift,
-                hours,
-                amount: hours * rate
-            });
-        });
-
-        breakdown.sort((left, right) => left.dateObj - right.dateObj);
-
-        resultBox.style.display = 'flex';
-        document.getElementById('workerResHours').innerText = `${totalHours.toFixed(1)} h`;
-        document.getElementById('workerResMoney').innerText = formatMoney(totalHours * rate);
-
-        detailsBox.style.display = 'block';
-        detailsBox.innerHTML = buildWorkerCalcDetails(breakdown, locationHours, totalHours, rate);
-    };
-
-    ['change', 'input'].forEach(eventName => {
-        select.addEventListener(eventName, recalc);
-        document.getElementById('workerCalcRate').addEventListener(eventName, recalc);
-        document.getElementById('workerCalcDateFrom').addEventListener(eventName, recalc);
-        document.getElementById('workerCalcDateTo').addEventListener(eventName, recalc);
-    });
+    workerCalculator.refresh();
+    workerCalculator.setDateRange(
+        `${year}-${month}-01`,
+        `${year}-${month}-${String(lastDay).padStart(2, '0')}`
+    );
 
     workerCalculatorReady = true;
-}
-
-function buildWorkerCalcDetails(breakdown, locationHours, totalHours, rate) {
-    const locationEntries = Object.entries(locationHours).sort((left, right) => right[1] - left[1]);
-    const maxHours = locationEntries.length ? locationEntries[0][1] : 0;
-    const summaryHtml = locationEntries.map(([location, hours]) => `
-        <div class="calc-breakdown-pill ${hours === maxHours && hours > 0 ? 'is-main' : ''}">
-            <span>${location}</span>
-            <strong>${hours.toFixed(1)} h</strong>
-        </div>
-    `).join('');
-
-    const rowsHtml = breakdown.map(day => `
-        <tr>
-            <td>${formatWorkerCalcDate(day.date)}</td>
-            <td>${day.location}</td>
-            <td>${day.shift}</td>
-            <td class="val-cell">${day.hours.toFixed(1)} h</td>
-            <td class="val-cell">${formatMoney(day.amount)}</td>
-        </tr>
-    `).join('');
-
-    return `
-        <div class="calc-breakdown-summary">
-            <div class="calc-breakdown-card">
-                <span class="calc-breakdown-label">Liczba zmian</span>
-                <strong>${breakdown.length}</strong>
-            </div>
-            <div class="calc-breakdown-card">
-                <span class="calc-breakdown-label">Średnio na zmianę</span>
-                <strong>${breakdown.length ? (totalHours / breakdown.length).toFixed(1) : '0.0'} h</strong>
-            </div>
-            <div class="calc-breakdown-card">
-                <span class="calc-breakdown-label">Stawka</span>
-                <strong>${rate.toFixed(2)} PLN</strong>
-            </div>
-        </div>
-
-        <div class="calc-breakdown-pills">${summaryHtml}</div>
-
-        <details class="calc-breakdown-report" open>
-            <summary>
-                Mini-raport wypłaty
-                <span>${breakdown.length} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</span>
-            </summary>
-            <div class="calc-breakdown-table-wrap">
-                <table class="calc-breakdown-table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Lokal</th>
-                            <th>Zmiana</th>
-                            <th>Godziny</th>
-                            <th>Kwota</th>
-                        </tr>
-                    </thead>
-                    <tbody>${rowsHtml}</tbody>
-                </table>
-            </div>
-        </details>
-    `;
-}
-
-function formatWorkerCalcDate(date) {
-    const [day, month] = date.split('.');
-    return `${day}.${month}`;
 }

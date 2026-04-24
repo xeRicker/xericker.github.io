@@ -1,6 +1,6 @@
 const OSWIECIM_COORDS = {
-    latitude: 50.0344,
-    longitude: 19.2104
+    latitude: 50.03437,
+    longitude: 19.21037
 };
 
 const WEATHER_CODE_LABELS = {
@@ -104,6 +104,7 @@ class WeatherService {
         if (!day || !month || !year) return null;
         return `${year}-${month}-${day}`;
     }
+
 }
 
 export const weatherService = new WeatherService();

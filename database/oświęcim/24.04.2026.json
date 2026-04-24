@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "24.04.2026",
+  "revenue": 858,
+  "cardRevenue": 596,
+  "glovoRevenue": 58,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Halloumi": 1,
+    "Frytki": 3,
+    "Frytura": 1,
+    "Bułki": 32,
+    "Cebula prażona": 3,
+    "Tabasco": 1,
+    "Sos: Carolina": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Szmaty": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

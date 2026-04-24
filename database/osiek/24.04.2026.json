@@ -1,0 +1,31 @@
+{
+  "location": "Osiek",
+  "date": "24.04.2026",
+  "revenue": 1345,
+  "cardRevenue": 1039,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 14,
+    "Cebula prażona": 1,
+    "Przyprawa do grilla": 1,
+    "Sos: Sweet Chilli": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Opakowania na frytki": 1,
+    "Zielony papier": 1,
+    "Drobne: 10,20": 1
+  }
+}

@@ -110,6 +110,18 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     letter-spacing: 1px;
     text-transform: uppercase;
 }
+
+.btn-admin svg,
+.btn-back svg,
+.primary-fab svg,
+.icon-button svg,
+.sheet-btn svg,
+.view-btn svg,
+.calc-icon {
+    display: block;
+    flex: 0 0 auto;
+}
+
 .btn-admin:hover, .btn-back:hover {
     background: var(--primary-color);
     border-color: var(--primary-color);
@@ -133,6 +145,62 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
 }
 
 .section-card h2 { font-size: 18px; margin-bottom: 16px; color: var(--text-secondary); }
+.section-card h2,
+.calc-res-item h4 {
+    display: flex;
+    align-items: center;
+}
+
+.generator-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.generator-tab {
+    border: 1px solid #333;
+    background: var(--surface-color);
+    color: #9d9d9d;
+    border-radius: var(--radius-pill);
+    padding: 14px 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.generator-tab:hover {
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.generator-tab.is-active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.is-active {
+    display: block;
+}
+
+.floating-bar.is-hidden {
+    display: none;
+}
+
+.worker-card {
+    margin-bottom: 24px;
+}
+
 .title-icon,
 .field-icon,
 .loc-icon,
@@ -144,7 +212,8 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     height: 1.1em;
     margin-right: 8px;
     flex: 0 0 auto;
-    vertical-align: -0.14em;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 .title-icon,
@@ -174,11 +243,17 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     .revenue-grid { grid-template-columns: 1fr; }
 }
 .revenue-field label {
-    display: block;
+    display: inline-flex;
+    align-items: center;
     margin-bottom: 8px;
     font-size: 12px;
     color: var(--text-secondary);
     font-weight: bold;
+}
+
+.filter-label {
+    display: inline-flex;
+    align-items: center;
 }
 
 .revenue-insights {
@@ -759,6 +834,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border: 1px solid rgba(211, 84, 0, 0.3);
     vertical-align: middle;
     line-height: 1;
+    flex: 0 0 auto;
 }
 
 .summary-icon-badge--glovo {
@@ -1039,7 +1115,7 @@ tbody tr:hover td { background: rgba(211, 84, 0, 0.04); }
 .rate-input-wrapper span { color: var(--primary-color); font-weight: bold; font-size: 14px; margin-left: 8px; font-family: var(--font-heading); }
 
 .calc-result-box { background: #121212; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-.calc-res-item h4 { margin: 0 0 5px 0; color: #888; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+.calc-res-item h4 { margin: 0 0 5px 0; color: #888; font-size: 12px; gap: 5px; }
 .calc-res-item p { margin: 0; font-size: 24px; font-weight: bold; color: white; }
 .calc-res-item p.money { color: var(--success-color); }
 .calc-icon { color: var(--primary-color); width: 16px; height: 16px; }
@@ -1144,6 +1220,7 @@ tbody tr:hover td { background: rgba(211, 84, 0, 0.04); }
     .heatmap-grid { gap: 8px; }
     .heatmap-date { font-size: 18px; }
     th, td { padding: 14px 12px; }
+    .generator-tabs { grid-template-columns: 1fr; }
 }
 
 input[type=number]::-webkit-outer-spin-button,

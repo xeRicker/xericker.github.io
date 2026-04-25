@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "25.04.2026",
+  "revenue": 1749,
+  "cardRevenue": 1345,
+  "glovoRevenue": 102,
+  "employees": {
+    "Sebastian": "12:00 – 21:30",
+    "Kacper": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 2,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 2,
+    "Tabasco": 1,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Drobne: 10,20": 1
+  }
+}

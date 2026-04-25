@@ -1,0 +1,30 @@
+{
+  "location": "Osiek",
+  "date": "25.04.2026",
+  "revenue": 2055,
+  "cardRevenue": 1572,
+  "glovoRevenue": 0,
+  "employees": {
+    "Radek": "12:00 – 21:30",
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 6,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Bułki": 2,
+    "Cebula prażona": 2,
+    "Sos: Sweet Chilli": 1,
+    "Torby: Małe": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Drobne: 10,20": 1
+  }
+}

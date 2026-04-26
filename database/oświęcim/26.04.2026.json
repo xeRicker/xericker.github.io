@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "26.04.2026",
+  "revenue": 1557,
+  "cardRevenue": 937,
+  "glovoRevenue": 218,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 21,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Szmaty": 1
+  }
+}

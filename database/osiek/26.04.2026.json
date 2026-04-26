@@ -1,0 +1,33 @@
+{
+  "location": "Osiek",
+  "date": "26.04.2026",
+  "revenue": 1870,
+  "cardRevenue": 1870,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Natalia": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 2,
+    "Cebula prażona": 3,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

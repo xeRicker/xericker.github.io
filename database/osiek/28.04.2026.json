@@ -1,0 +1,20 @@
+{
+  "location": "Osiek",
+  "date": "28.04.2026",
+  "revenue": 649,
+  "cardRevenue": 598,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Bułki": 18,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Folia": 1
+  }
+}

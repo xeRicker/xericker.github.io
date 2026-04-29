@@ -1,0 +1,29 @@
+{
+  "location": "Osiek",
+  "date": "29.04.2026",
+  "revenue": 954,
+  "cardRevenue": 434,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Frytura": 1,
+    "Bułki": 15,
+    "Cebula prażona": 2,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1
+  }
+}

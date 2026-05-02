@@ -200,7 +200,7 @@ async function generateReport() {
         employees: {},
         products: {}
     };
-    let text = `🧾 ${date}\n`;
+    let text = `📋 ${selectedLocation} ${date}\n`;
 
     EMPLOYEES.forEach(name => {
         const id = name.toLowerCase();

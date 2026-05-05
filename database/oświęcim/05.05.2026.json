@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "05.05.2026",
+  "revenue": 909,
+  "cardRevenue": 511,
+  "glovoRevenue": 50,
+  "employees": {
+    "Radek": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Frytki": 1,
+    "Bułki": 19,
+    "Cebula prażona": 1
+  }
+}

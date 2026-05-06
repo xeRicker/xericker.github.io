@@ -1,0 +1,18 @@
+{
+  "location": "Oświęcim",
+  "date": "06.05.2026",
+  "revenue": 615,
+  "cardRevenue": 161,
+  "glovoRevenue": 295,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Bułki": 40,
+    "Cebula prażona": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

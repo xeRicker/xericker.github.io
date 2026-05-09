@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "09.05.2026",
+  "revenue": 1938,
+  "cardRevenue": 0,
+  "glovoRevenue": 119,
+  "employees": {
+    "Kacper": "12:00 – 18:00",
+    "Natalia": "14:00 – 22:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 2,
+    "Majonez": 1,
+    "Frytki": 3,
+    "Krążki": 2,
+    "Bułki": 2,
+    "Cebula prażona": 3,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Rękawiczki": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

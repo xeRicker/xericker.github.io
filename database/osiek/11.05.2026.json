@@ -1,0 +1,18 @@
+{
+  "location": "Osiek",
+  "date": "11.05.2026",
+  "revenue": 1007,
+  "cardRevenue": 679,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 20:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Frytki": 1,
+    "Bułki": 9,
+    "Odtłuszczacz": 1
+  }
+}

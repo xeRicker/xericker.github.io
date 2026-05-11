@@ -1,0 +1,36 @@
+{
+  "location": "Oświęcim",
+  "date": "11.05.2026",
+  "revenue": 981,
+  "cardRevenue": 612,
+  "glovoRevenue": 103,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 3,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1,
+    "Papier do kasy": 1
+  }
+}

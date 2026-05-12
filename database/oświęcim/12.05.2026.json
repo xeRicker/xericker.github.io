@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "12.05.2026",
+  "revenue": 293,
+  "cardRevenue": 230,
+  "glovoRevenue": 0,
+  "employees": {
+    "Kacper": "12:00 – 19:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Bułki": 30,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "16.05.2026",
+  "revenue": 1649,
+  "cardRevenue": 1136,
+  "glovoRevenue": 0,
+  "employees": {
+    "Radek": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 5,
+    "Cebula prażona": 2,
+    "Papier do kasy": 1
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "17.05.2026",
+  "revenue": 1146,
+  "cardRevenue": 333,
+  "glovoRevenue": 403,
+  "employees": {
+    "Natalia": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 3,
+    "Cebula prażona": 2,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "location": "Osiek",
+  "date": "17.05.2026",
+  "revenue": 1436,
+  "cardRevenue": 612,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:00",
+    "Kacper": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 17,
+    "Cebula prażona": 2,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Papier pod grilla": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

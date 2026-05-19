@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "19.05.2026",
+  "revenue": 940,
+  "cardRevenue": 680,
+  "glovoRevenue": 120,
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Frytki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 2,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

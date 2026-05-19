@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "19.05.2026",
+  "revenue": 982,
+  "cardRevenue": 765,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 20:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Frytki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Rękawiczki": 1
+  }
+}

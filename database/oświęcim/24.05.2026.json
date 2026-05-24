@@ -1,0 +1,16 @@
+{
+  "location": "Oświęcim",
+  "date": "24.05.2026",
+  "revenue": 583,
+  "cardRevenue": 474,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 20:00"
+  },
+  "products": {
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 24,
+    "Odtłuszczacz": 1
+  }
+}

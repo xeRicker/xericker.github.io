@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "25.05.2026",
+  "revenue": 968,
+  "cardRevenue": 650,
+  "glovoRevenue": 0,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Placki": 1,
+    "Bułki": 15,
+    "Cebula prażona": 3,
+    "Zbój: Czosnek": 1,
+    "Zbój: Cytryna": 1,
+    "Folia": 1,
+    "Szmaty": 1
+  }
+}

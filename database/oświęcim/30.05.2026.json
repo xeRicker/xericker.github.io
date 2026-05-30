@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "30.05.2026",
+  "revenue": 949,
+  "cardRevenue": 489,
+  "glovoRevenue": 170,
+  "employees": {
+    "Natalia": "12:00 – 20:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 2,
+    "Bułki": 11,
+    "Cebula prażona": 2,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Torby: Małe": 1,
+    "Folia": 1,
+    "Szmaty": 1
+  }
+}

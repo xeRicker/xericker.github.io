@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "31.05.2026",
+  "revenue": 1274,
+  "cardRevenue": 675,
+  "glovoRevenue": 153,
+  "employees": {
+    "Natalia": "14:00 – 20:30"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1,
+    "Papier do kasy": 1
+  }
+}

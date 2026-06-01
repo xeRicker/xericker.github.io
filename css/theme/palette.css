@@ -1,0 +1,61 @@
+/*
+   Burbone product palette
+   Main menu/brand color: #D4521A
+*/
+:root {
+    --brand-primary: #D4521A;
+    --brand-primary-hover: #E76A32;
+    --brand-primary-pressed: #B74112;
+    --brand-primary-subtle: #3A2118;
+    --brand-primary-subtler: #2A1A15;
+
+    --app-bg: #151312;
+    --app-surface: #1F1B19;
+    --app-surface-raised: #28221F;
+    --app-surface-overlay: #302824;
+    --app-border: rgba(255, 244, 238, 0.14);
+    --app-border-strong: rgba(255, 244, 238, 0.24);
+
+    --app-text: #F2ECE8;
+    --app-text-subtle: #C8BAB3;
+    --app-text-muted: #94847C;
+    --app-text-inverse: #21110A;
+
+    --app-success: #7DCE82;
+    --app-success-bg: #1D2D1F;
+    --app-danger: #FF8F82;
+    --app-danger-bg: #3A1D18;
+    --app-warning: #F6C85F;
+    --app-warning-bg: #332714;
+    --app-info: #7AB8FF;
+    --app-info-bg: #1B2838;
+
+    --app-chart-1: #D4521A;
+    --app-chart-2: #7DCE82;
+    --app-chart-3: #7AB8FF;
+    --app-chart-4: #F6C85F;
+    --app-chart-5: #C58CFF;
+
+    --bg-color: var(--app-bg);
+    --surface-color: var(--app-surface);
+    --surface-raised: var(--app-surface-raised);
+    --surface-overlay: var(--app-surface-overlay);
+    --surface-active: rgba(212, 82, 26, 0.14);
+    --primary-color: var(--brand-primary);
+    --primary-hover: var(--brand-primary-hover);
+    --primary-pressed: var(--brand-primary-pressed);
+    --primary-soft: var(--brand-primary-subtle);
+    --primary-glow: rgba(212, 82, 26, 0.32);
+    --glovo-color: var(--app-warning);
+    --glovo-dark: var(--app-warning-bg);
+    --glovo-soft: rgba(246, 200, 95, 0.12);
+    --text-primary: var(--app-text);
+    --text-secondary: var(--app-text-subtle);
+    --text-muted: var(--app-text-muted);
+    --success-color: var(--app-success);
+    --danger-color: var(--app-danger);
+    --border-color: var(--app-border);
+    --border-focused: var(--brand-primary-hover);
+    --shadow-raised: 0 1px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 244, 238, 0.04);
+    --shadow-overlay: 0 12px 28px rgba(0, 0, 0, 0.46), 0 0 0 1px var(--app-border);
+}

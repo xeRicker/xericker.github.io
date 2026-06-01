@@ -60,7 +60,7 @@ export const mainRender = {
                             <div class="controls">
                                 <div class="counter-wrapper">
                                     <button class="btn-qty btn-minus" data-act="dec" data-name="${p.name}">−</button>
-                                    <input type="number" id="input-${p.name}" class="qty-display" value="0" data-name="${p.name}">
+                                    <input type="text" inputmode="numeric" id="input-${p.name}" class="qty-display" value="0" data-name="${p.name}">
                                     <button class="btn-qty btn-plus" data-act="inc" data-name="${p.name}">+</button>
                                 </div>
                             </div>

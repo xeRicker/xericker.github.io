@@ -74,56 +74,47 @@ class ApiService {
     getMockData() {
         const data = [];
         const locs = ['Oświęcim', 'Osiek'];
-        const emps = ["Paweł", "Radek", "Sebastian", "Tomek"];
+        const emps = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
+        const mockCatalog = ["Bułki", "Mięso: Duże", "Frytki", "Pepsi", "Folia", "Serwetki", "Torby: Duże", "Sos: Czosnek"];
 
-        // Lista symulowanych produktów
-        // Typ: inventory (stan magazynowy - np. Bułki) vs order (zamówienie)
-        const mockCatalog = [
-            { name: "Bułki", type: "inventory", max: 50 },
-            { name: "Mięso: Duże", type: "order", max: 30 },
-            { name: "Frytki", type: "order", max: 10 },
-            { name: "Pepsi", type: "order", max: 12 },
-            { name: "Folia", type: "order", max: 2 },
-            { name: "Drwal: Sos Jalapeño", type: "order", max: 5 },
-            { name: "Serwetki", type: "order", max: 3 },
-            { name: "Torby: Duże", type: "order", max: 5 },
-            { name: "Sos: Czosnek", type: "order", max: 8 }
-        ];
+        const today = new Date();
+        const startDate = new Date(today.getFullYear(), today.getMonth() - 5, 1);
+        const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-        for (let i = 0; i < 60; i++) {
-            const d = new Date(); d.setDate(d.getDate() - i);
-            const dateStr = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+        for (let d = new Date(startDate), i = 0; d <= endDate; d.setDate(d.getDate() + 1), i++) {
+            const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+            const weekday = d.getDay();
 
-            locs.forEach(l => {
-                if (Math.random() > 0.1) { // 90% szans na raport
-                    const rev = Math.floor(Math.random() * 3000) + 500;
+            locs.forEach((location, locationIndex) => {
+                const seed = i + (locationIndex * 7);
+                const revenue = 1250 + ((seed * 173) % 2800) + (weekday === 0 || weekday === 6 ? 650 : 0);
+                const employees = {};
+                const firstEmployee = emps[seed % emps.length];
+                const secondEmployee = emps[(seed + 3) % emps.length];
+                const firstStart = weekday === 0 ? '13:00' : '12:00';
+                const firstEnd = weekday === 5 || weekday === 6 ? '21:30' : '20:00';
+                const secondStart = weekday === 0 ? '14:00' : '16:00';
+                const secondEnd = weekday === 5 || weekday === 6 ? '22:00' : '20:30';
 
-                    const products = {};
-                    mockCatalog.forEach(p => {
-                        // 30% szans, że produkt pojawi się w raporcie
-                        if (Math.random() > 0.7) {
-                            if (p.type === 'inventory') {
-                                // Bułki: losowa liczba 10-50 (jako stan)
-                                products[p.name] = Math.floor(Math.random() * (p.max - 10)) + 10;
-                            } else {
-                                // Zamówienia: mniejsze liczby, np. 1-5 sztuk
-                                // Chyba że to mięso, wtedy trochę więcej
-                                const qty = Math.floor(Math.random() * (p.max / 2)) + 1;
-                                products[p.name] = qty;
-                            }
-                        }
-                    });
+                employees[firstEmployee] = `${firstStart}-${firstEnd}`;
+                employees[secondEmployee] = `${secondStart}-${secondEnd}`;
 
-                    data.push({
-                        location: l,
-                        date: dateStr,
-                        revenue: rev,
-                        cardRevenue: Math.floor(rev * 0.4),
-                        glovoRevenue: Math.floor(rev * 0.15),
-                        employees: { [emps[Math.floor(Math.random()*emps.length)]]: "12:00-20:00" },
-                        products: products
-                    });
-                }
+                const products = mockCatalog.reduce((acc, name, productIndex) => {
+                    acc[name] = name === 'Bułki'
+                        ? 18 + ((seed + productIndex) % 34)
+                        : 1 + ((seed + productIndex) % 8);
+                    return acc;
+                }, {});
+
+                data.push({
+                    location,
+                    date: dateStr,
+                    revenue,
+                    cardRevenue: Math.round(revenue * (0.34 + ((seed % 8) / 100))),
+                    glovoRevenue: Math.round(revenue * (0.09 + ((seed % 6) / 100))),
+                    employees,
+                    products
+                });
             });
         }
         return Promise.resolve(data);

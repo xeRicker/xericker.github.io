@@ -6,6 +6,7 @@ import { apiService } from './services/api.js';
 import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -15,6 +16,7 @@ let workerCalculator = null;
 document.addEventListener('DOMContentLoaded', () => {
     mainRender.renderEmployees(document.getElementById('employees'), EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
     mainRender.renderProducts(document.getElementById('products'), CATEGORIES);
+    enhanceCustomControls();
     restoreState();
     setupEvents();
     setupTabs();
@@ -116,6 +118,7 @@ function handleEmployeePreset(e) {
     document.getElementById(`${id}_do`).value = end;
     e.target.closest('.employee-row').classList.add('active');
     e.target.value = '';
+    refreshCustomControls(e.target.closest('.employee-row'));
     saveState();
 }
 
@@ -171,6 +174,7 @@ function restoreState() {
     });
     mainRender.updateResetBtn();
     updateRevenueInsights();
+    refreshCustomControls();
 }
 
 function resetAll() {
@@ -185,9 +189,9 @@ async function generateReport() {
     const cash = calculateCashDesk(rev, card, glovo);
     const date = getFormattedDate();
 
-    if(rev === 0 && !confirm("Utarg wynosi 0. Kontynuować?")) return;
+    if(rev === 0 && !(await dialogService.confirm("Utarg wynosi 0. Kontynuować?", "Pusty utarg"))) return;
     if (cash < 0) {
-        alert("Błąd danych: karty i Glovo nie mogą być większe niż utarg lokalu.");
+        await dialogService.alert("Karty i Glovo nie mogą być większe niż utarg lokalu.", "Błąd danych");
         return;
     }
 
@@ -233,7 +237,7 @@ async function generateReport() {
     text += prodText;
 
     if(await apiService.checkFileExists(selectedLocation, date)) {
-        if(!confirm("Raport z tego dnia już istnieje. Nadpisać?")) return;
+        if(!(await dialogService.confirm("Raport z tego dnia już istnieje. Nadpisać?", "Nadpisać raport?"))) return;
     }
 
     await apiService.saveReport(data);

@@ -1,6 +1,17 @@
 import { formatMoney } from '../utils.js';
 
-const LOCATION_COLORS = ['#D35400', '#E67E22', '#F39C12', '#9E9E9E', '#27AE60'];
+const LOCATION_COLOR_TOKENS = [
+    '--app-chart-1',
+    '--app-chart-2',
+    '--app-chart-3',
+    '--app-chart-4',
+    '--app-chart-5'
+];
+
+const getDesignToken = (name, fallback) => {
+    const styles = getComputedStyle(document.documentElement);
+    return styles.getPropertyValue(name).trim() || fallback;
+};
 
 class AdminRender {
     constructor() {
@@ -19,8 +30,12 @@ class AdminRender {
 
         if (this.chart) this.chart.destroy();
 
-        Chart.defaults.font.family = "'Roboto', sans-serif";
-        Chart.defaults.color = "#888";
+        const locationColors = LOCATION_COLOR_TOKENS.map((token, index) =>
+            getDesignToken(token, ['#D4521A', '#7DCE82', '#7AB8FF', '#F6C85F', '#C58CFF'][index])
+        );
+
+        Chart.defaults.font.family = getDesignToken('--ds-font-family-body', 'ui-sans-serif, system-ui, sans-serif');
+        Chart.defaults.color = getDesignToken('--ds-text-subtle', '#A9ABAF');
 
         this.chart = new Chart(ctx, {
             type,
@@ -29,8 +44,8 @@ class AdminRender {
                 datasets: locations.map((location, index) => ({
                     label: this.buildDatasetLabel(location, options),
                     data: sorted.map(day => this.getMetricValue(day.locations?.[location], options.viewMode)),
-                    backgroundColor: LOCATION_COLORS[index % LOCATION_COLORS.length],
-                    borderColor: LOCATION_COLORS[index % LOCATION_COLORS.length],
+                    backgroundColor: locationColors[index % locationColors.length],
+                    borderColor: locationColors[index % locationColors.length],
                     borderWidth: 2,
                     tension: 0.32,
                     fill: false,
@@ -44,7 +59,7 @@ class AdminRender {
                 plugins: {
                     legend: {
                         labels: {
-                            font: { family: "'Oswald', sans-serif", size: 14 }
+                            font: { family: getDesignToken('--ds-font-family-heading', 'ui-sans-serif, system-ui, sans-serif'), size: 14 }
                         }
                     },
                     tooltip: {
@@ -55,7 +70,7 @@ class AdminRender {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#333' },
+                        grid: { color: getDesignToken('--ds-border', '#E3E4F21F') },
                         ticks: {
                             callback: value => `${Math.round(value)} zł`
                         }
@@ -225,7 +240,7 @@ class AdminRender {
                 .sort((left, right) => right.total - left.total)
                 .map(location => `
                     <div class="point-pill">
-                        <span>${location.name}</span>
+                        <span class="point-pill__name">${location.name}</span>
                         <strong>${formatMoney(location.total)}</strong>
                     </div>
                 `)
@@ -234,18 +249,14 @@ class AdminRender {
             return `
                 <tr>
                     <td>
-                        <div class="cell-primary">${day.dateStr}</div>
-                        <div class="cell-secondary">Utarg dnia: ${formatMoney(day.total)}</div>
+                        <div class="cell-primary">${this.capitalize(day.dayOfWeek)}</div>
+                        <div class="cell-secondary">${day.dateStr}</div>
                     </td>
-                    <td>${day.dayOfWeek}</td>
-                    <td><div class="point-pill-list">${locationRows}</div></td>
+                    <td><div class="point-pill-list point-pill-list--stack">${locationRows}</div></td>
                     <td class="val-cell">${formatMoney(day.cardTotal)}</td>
-                    <td class="val-cell">
-                        <div class="cell-primary">${formatMoney(this.getGlovoDisplayValue(day))}</div>
-                        <div class="cell-secondary">po prowizji</div>
-                    </td>
-                    <td class="val-cell total-cell">${formatMoney(day.cashDeskTotal)}</td>
-                    <td>${day.weather ? this.buildWeatherCard(day.weather, false) : '<span class="weather-card-empty">Brak danych</span>'}</td>
+                    <td class="val-cell">${formatMoney(this.getGlovoDisplayValue(day))}</td>
+                    <td class="val-cell cash-cell">${formatMoney(day.cashDeskTotal)}</td>
+                    <td class="val-cell total-cell">${formatMoney(day.total)}</td>
                 </tr>
             `;
         }).join('');
@@ -283,7 +294,12 @@ class AdminRender {
     }
 
     renderActiveFilters(container, labels) {
-        container.innerHTML = labels.map(label => `<span class="filter-chip">${label}</span>`).join('');
+        container.innerHTML = labels.map(label => `
+            <span class="filter-chip filter-chip--status">
+                <span class="filter-chip__icon material-symbols-rounded" aria-hidden="true">check_circle</span>
+                <span>${label}</span>
+            </span>
+        `).join('');
     }
 
     buildTooltipHtml(data, options) {
@@ -346,7 +362,7 @@ class AdminRender {
 
                 <div class="tt-locations-grid">
                     ${locations.map((location, index) => `
-                        <div class="tt-loc-col" ${index > 0 ? 'style="border-left:1px solid #333; padding-left:15px;"' : ''}>
+                        <div class="tt-loc-col" ${index > 0 ? 'style="border-left:1px solid var(--border-color); padding-left:15px;"' : ''}>
                             <h5>${location.name}</h5>
                             <div class="tt-loc-row"><span>Suma:</span> <span>${formatMoney(location.total)}</span></div>
                             <div class="tt-loc-row"><span>Karty:</span> <span>${formatMoney(location.card)}</span></div>
@@ -355,11 +371,6 @@ class AdminRender {
                         </div>
                     `).join('')}
                 </div>
-
-                ${data.weather ? `
-                    <div class="tt-divider"></div>
-                    ${this.buildWeatherCard(data.weather, true)}
-                ` : ''}
 
                 ${shiftsHtml}
             </div>
@@ -487,88 +498,14 @@ class AdminRender {
         return `${((value / total) * 100).toFixed(1)}%`;
     }
 
+    capitalize(value = '') {
+        return value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
     buildEmptyState(label) {
         return `<div class="summary-box summary-box--empty"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
     }
 
-    buildWeatherCard(weather, compact = false) {
-        const visual = this.getWeatherVisual(weather);
-        const tempMin = weather.tempMin?.toFixed(0) ?? '-';
-        const tempMax = weather.tempMax?.toFixed(0) ?? '-';
-        const precipitation = weather.precipitationSum?.toFixed(1) ?? '0.0';
-        const precipitationHours = weather.precipitationHours?.toFixed(1) ?? '0.0';
-        const metrics = compact
-            ? `
-                <div class="weather-card-metrics">
-                    <span>${tempMin}° / ${tempMax}°</span>
-                    <span>${precipitation} mm</span>
-                    <span>${precipitationHours} h</span>
-                </div>
-            `
-            : `
-                <div class="weather-card-metrics">
-                    <span>${tempMin}° / ${tempMax}°</span>
-                    <span>${precipitation} mm</span>
-                </div>
-            `;
-
-        return `
-            <div class="weather-card weather-card--${visual.theme} ${compact ? 'weather-card--compact' : ''}">
-                <div class="weather-card-visual">
-                    <div class="weather-icon">${visual.icon}</div>
-                </div>
-                <div class="weather-card-copy">
-                    <span class="weather-card-kicker">OŚWIĘCIM</span>
-                    <strong>${weather.label}</strong>
-                    ${metrics}
-                </div>
-            </div>
-        `;
-    }
-
-    getWeatherVisual(weather) {
-        const code = weather.code ?? -1;
-
-        if (code === 0 || code === 1) {
-            return {
-                theme: 'sun',
-                icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="12"></circle><path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l6 6M43 43l6 6M49 15l-6 6M21 43l-6 6"></path></svg>'
-            };
-        }
-
-        if (code === 2 || code === 3 || code === 45 || code === 48) {
-            return {
-                theme: 'cloud',
-                icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 49h24a11 11 0 0 0 1-22 16 16 0 0 0-30-4A10 10 0 0 0 22 49Z"></path></svg>'
-            };
-        }
-
-        if ([71, 73, 75, 77, 85, 86].includes(code)) {
-            return {
-                theme: 'snow',
-                icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 36h22a10 10 0 0 0 1-20 14 14 0 0 0-26-3A9 9 0 0 0 22 36Z"></path><path d="M21 45h22M26 41l-5 4 5 4M38 41l5 4-5 4M32 39v12"></path></svg>'
-            };
-        }
-
-        if ([95, 96, 99].includes(code)) {
-            return {
-                theme: 'storm',
-                icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 35h23a10 10 0 0 0 1-20 14 14 0 0 0-26-2A9 9 0 0 0 22 35Z"></path><path d="M33 35l-6 11h7l-3 10 10-14h-7l4-7"></path></svg>'
-            };
-        }
-
-        if ((weather.precipitationHours || 0) >= 4 && (weather.precipitationSum || 0) < 1) {
-            return {
-                theme: 'wind',
-                icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24h29c6 0 10-3 10-8 0-4-3-7-7-7-5 0-8 3-8 7"></path><path d="M8 34h39c5 0 9 3 9 8 0 4-3 7-7 7-4 0-7-3-7-7"></path><path d="M14 44h20"></path></svg>'
-            };
-        }
-
-        return {
-            theme: 'rain',
-            icon: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 34h23a10 10 0 0 0 1-20 14 14 0 0 0-26-2A9 9 0 0 0 22 34Z"></path><path d="M24 40l-3 8M33 40l-3 8M42 40l-3 8"></path></svg>'
-        };
-    }
 }
 
 export const adminRender = new AdminRender();

@@ -1,4 +1,5 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=5';
 
 const DEFAULT_MONTH_HOURS = 160;
 
@@ -28,6 +29,7 @@ export function setupPayrollCalculator(config) {
     const recalc = () => {
         const reports = getReports() || [];
         const name = select.value;
+        syncCalendarMarkers(reports, name);
 
         if (!name) {
             hideResults(resultBox, detailsBox);
@@ -97,6 +99,9 @@ export function setupPayrollCalculator(config) {
         if (previousValue && employees.has(previousValue)) {
             select.value = previousValue;
         }
+        const scope = select.closest('.calc-card, .worker-card, .section-card') || document;
+        enhanceCustomControls(scope);
+        refreshCustomControls(scope);
     };
 
     const setRate = value => {
@@ -106,6 +111,7 @@ export function setupPayrollCalculator(config) {
     const setDateRange = (from, to) => {
         dateFromInput.value = from;
         dateToInput.value = to;
+        refreshCustomControls(dateFromInput.closest('.calc-card, .worker-card, .section-card') || document);
         recalc();
     };
 
@@ -132,6 +138,12 @@ export function setupPayrollCalculator(config) {
         setDateRange,
         setRate
     };
+
+    function syncCalendarMarkers(reports, name) {
+        const markers = name ? buildEmployeeDayMarkers(reports, name) : {};
+        setDateMarkers(dateFromInput, markers);
+        setDateMarkers(dateToInput, markers);
+    }
 }
 
 function hideResults(resultBox, detailsBox) {
@@ -209,4 +221,23 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
 function formatCalcDate(date) {
     const [day, month] = date.split('.');
     return `${day}.${month}`;
+}
+
+function buildEmployeeDayMarkers(reports, name) {
+    return reports.reduce((markers, report) => {
+        const shift = report.employees?.[name];
+        if (!shift) return markers;
+
+        const iso = reportDateToIso(report.date);
+        if (!iso) return markers;
+
+        markers[iso] = (markers[iso] || 0) + calculateHours(shift);
+        return markers;
+    }, {});
+}
+
+function reportDateToIso(date) {
+    const [day, month, year] = date.split('.');
+    if (!day || !month || !year) return '';
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }

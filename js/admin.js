@@ -1,9 +1,9 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
-import { weatherService } from './services/weather.js';
 import { adminRender } from './ui/adminRender.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { isLocalhost, parseLocalDateInput } from './utils.js';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 
 const PASSWORD = "xdxdxd123";
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
@@ -21,7 +21,8 @@ let payrollCalculator = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isLocalhost()) {
-        const pass = prompt("Hasło:");
+        document.body.style.display = 'block';
+        const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", { type: 'password' });
         if (pass !== PASSWORD) return location.href = "index.html";
     }
     document.body.style.display = 'block';
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    processedData = await weatherService.enrichReports(analytics.processReports(allData));
+    processedData = analytics.processReports(allData);
     initUI(processedData);
 });
 
@@ -40,6 +41,7 @@ function initUI(data) {
     populateMonthFilter(data);
     populateLocationFilter(data);
     populateWeekdayFilter();
+    enhanceCustomControls();
     setupListeners();
 
     const monthSelect = document.getElementById('monthFilter');
@@ -118,6 +120,7 @@ function syncDateFiltersToMonth(year, month) {
     const lastDay = new Date(year, month, 0).getDate();
     document.getElementById('dateFromFilter').value = `${year}-${month}-01`;
     document.getElementById('dateToFilter').value = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+    refreshCustomControls();
 }
 
 function buildWeekTabs(data) {
@@ -213,6 +216,7 @@ function setupListeners() {
         syncDateFiltersToMonth(year, month);
         revenueSort = { key: 'date', direction: 'desc' };
         syncSortSelect();
+        refreshCustomControls();
         updateView();
     });
 }
@@ -222,6 +226,7 @@ function syncSortSelect() {
     const value = `${revenueSort.key}_${revenueSort.direction}`;
     if (Array.from(select.options).some(option => option.value === value)) {
         select.value = value;
+        refreshCustomControls(select.parentElement || document);
     }
 }
 
@@ -305,7 +310,6 @@ function projectDayToLocation(day, location) {
         glovoNetTotal: locationStats.glovoNet,
         cashDeskTotal: locationStats.cashDesk,
         rawReports: locationStats.reports,
-        weather: day.weather || null,
         locations: {
             [location]: { ...locationStats }
         },
@@ -333,11 +337,6 @@ function compareRevenueRows(a, b, sort) {
     const multiplier = sort.direction === 'asc' ? 1 : -1;
 
     if (sort.key === 'date') return (a.timestamp - b.timestamp) * multiplier;
-    if (sort.key === 'weatherLabel') {
-        const weatherA = a.weather?.label || '';
-        const weatherB = b.weather?.label || '';
-        return weatherA.localeCompare(weatherB, 'pl') * multiplier;
-    }
     if (sort.key === 'dayOfWeek') {
         return a.dayOfWeek.localeCompare(b.dayOfWeek, 'pl') * multiplier;
     }

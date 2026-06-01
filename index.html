@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-color-mode="dark" data-theme="dark:dark spacing:spacing shape:shape typography:typography">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
+    <link rel="stylesheet" href="style.css?v=33">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -41,21 +41,21 @@
           <label><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> UTARG LOKALU</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
-            <input type="number" id="revenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+            <input type="text" id="revenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
           <label><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> KARTY</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
-            <input type="number" id="cardRevenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+            <input type="text" id="cardRevenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
           <label><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> GLOVO</label>
           <div class="input-group input-group--glovo">
             <span class="currency-symbol">PLN</span>
-            <input type="number" id="glovoRevenueInput" placeholder="0.00" step="0.01" inputmode="decimal">
+            <input type="text" id="glovoRevenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@
         <div class="calc-input-group">
           <label>Stawka</label>
           <div class="rate-input-wrapper">
-            <input type="number" id="workerCalcRate" value="30.50" step="0.5">
+            <input type="text" id="workerCalcRate" value="30.50" inputmode="decimal">
             <span>PLN</span>
           </div>
         </div>
@@ -123,7 +123,7 @@
           <p id="workerResMoney" class="money">0 zł</p>
         </div>
       </div>
-      <div id="workerCalcDetails" style="margin-top: 15px; font-size: 13px; color: #aaa; display:none;"></div>
+      <div id="workerCalcDetails" style="margin-top: 15px; font-size: 13px; color: var(--text-secondary); display:none;"></div>
     </div>
   </div>
 </div>
@@ -147,10 +147,10 @@
   <h3>Wybierz punkt</h3>
   <div class="sheet-actions">
     <button class="sheet-btn location-button" data-location="Oświęcim">
-      <span class="loc-icon material-symbols-rounded" aria-hidden="true">location_city</span> OŚWIĘCIM
+      <span class="loc-icon material-symbols-rounded" aria-hidden="true">near_me</span> OŚWIĘCIM
     </button>
     <button class="sheet-btn location-button" data-location="Osiek">
-      <span class="loc-icon material-symbols-rounded" aria-hidden="true">cottage</span> OSIEK
+      <span class="loc-icon material-symbols-rounded" aria-hidden="true">near_me</span> OSIEK
     </button>
     <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
   </div>
@@ -166,6 +166,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=11"></script>
+<script type="module" src="js/main.js?v=17"></script>
 </body>
 </html>

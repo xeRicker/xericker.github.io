@@ -1,0 +1,69 @@
+/* =================================
+   Theme Variables & Reset
+   ================================= */
+:root {
+    --bg-color: var(--ds-surface-sunken, #18191A);
+    --surface-color: var(--ds-surface, #1F1F21);
+    --surface-raised: var(--ds-surface-raised, #242528);
+    --surface-overlay: var(--ds-surface-overlay, #2B2C2F);
+    --surface-active: var(--ds-background-neutral-hovered, #E3E4F21F);
+    --primary-color: var(--ds-background-brand-bold, #669DF1);
+    --primary-hover: var(--ds-background-brand-bold-hovered, #8FB8F6);
+    --primary-pressed: var(--ds-background-brand-bold-pressed, #ADCBFB);
+    --primary-soft: var(--ds-background-selected, #1C2B42);
+    --primary-glow: rgba(102, 157, 241, 0.28);
+    --glovo-color: var(--ds-text-warning, #FBC828);
+    --glovo-dark: var(--ds-background-warning, #3A2C1F);
+    --glovo-soft: var(--ds-background-accent-yellow-subtlest, #332E1B);
+    --text-primary: var(--ds-text, #CECFD2);
+    --text-secondary: var(--ds-text-subtle, #A9ABAF);
+    --text-muted: var(--ds-text-subtlest, #96999E);
+    --success-color: var(--ds-text-success, #B3DF72);
+    --danger-color: var(--ds-text-danger, #FD9891);
+    --border-color: var(--ds-border, #E3E4F21F);
+    --border-focused: var(--ds-border-focused, #8FB8F6);
+    --shadow-raised: var(--ds-shadow-raised, 0 1px 1px rgba(1, 4, 4, 0.5));
+    --shadow-overlay: var(--ds-shadow-overlay, 0 8px 12px rgba(1, 4, 4, 0.36));
+
+    --radius-sm: var(--ds-radius-medium, 6px);
+    --radius-md: var(--ds-radius-large, 8px);
+    --radius-pill: var(--ds-radius-full, 999px);
+
+    --font-heading: var(--ds-font-family-heading, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --font-body: var(--ds-font-family-body, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.material-symbols-rounded {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    overflow-x: hidden;
+    touch-action: manipulation;
+}
+
+/* Global Typography Rules */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); margin: 0; letter-spacing: 0; }
+button, .btn, label, th, .sheet-btn, .filter-label, .week-tab, .summary-kicker, .section-heading h3, .table-head h3, .calc-input-group label { font-family: var(--font-heading); letter-spacing: 0; }
+input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-heading p, .summary-box small, .revenue-note, .cell-secondary { font-family: var(--font-body); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #121212; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }

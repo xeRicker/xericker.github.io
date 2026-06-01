@@ -42,7 +42,6 @@
     <div class="admin-toolbar animate-enter delay-1">
         <div class="filters filters--primary">
             <div class="filter-group">
-                <label for="monthFilter" class="filter-label">OKRES ROBOCZY</label>
                 <select id="monthFilter"></select>
             </div>
             <div class="toolbar-meta">
@@ -55,7 +54,6 @@
             <div class="panel-heading">
                 <div>
                     <h3>Filtry operacyjne</h3>
-                    <p>Zakres dat, punkt, dzień tygodnia, Glovo netto i analiza utargu.</p>
                 </div>
                 <button id="resetFiltersBtn" class="btn-back btn-back--ghost" type="button">RESETUJ</button>
             </div>
@@ -78,14 +76,6 @@
                     <select id="weekdayFilter"></select>
                 </div>
                 <div class="filter-stack">
-                    <label for="performanceFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">warning</span> SCENARIUSZ</label>
-                    <select id="performanceFilter">
-                        <option value="all">Wszystkie dni</option>
-                        <option value="glovo-heavy">Wysoki udział Glovo</option>
-                        <option value="top-turnover">Ponad średnią</option>
-                    </select>
-                </div>
-                <div class="filter-stack">
                     <label for="sortFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">swap_vert</span> SORTOWANIE</label>
                     <select id="sortFilter">
                         <option value="date_desc">Najnowsze dni</option>
@@ -94,7 +84,8 @@
                         <option value="total_asc">Najniższy utarg</option>
                         <option value="cardTotal_desc">Najwięcej kart</option>
                         <option value="glovoDisplay_desc">Najwięcej Glovo</option>
-                        <option value="cashDeskTotal_asc">Najmniej gotówki na lokalu</option>
+                        <option value="cashDeskTotal_desc">Najwięcej gotówki</option>
+                        <option value="cashDeskTotal_asc">Najmniej gotówki</option>
                     </select>
                 </div>
             </div>
@@ -150,7 +141,6 @@
     <div class="chart-card animate-enter delay-3" style="margin-bottom: 40px;">
         <div class="section-heading section-heading--stack">
             <h3>Mapa Cieplna</h3>
-            <p>Animacja intensywności bazuje na utargu. Najmocniejsze dni pulsują i świecą mocniej.</p>
         </div>
         <div id="heatmapContainer" class="heatmap-grid"></div>
     </div>

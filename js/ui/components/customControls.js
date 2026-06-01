@@ -50,7 +50,6 @@ function closeAllControls(except = null) {
     });
     if (!except) {
         activeFloatingControl = null;
-        document.body.classList.remove('custom-control-scroll-lock');
     }
 }
 
@@ -61,12 +60,10 @@ function toggleControl(wrapper, popover) {
     if (willOpen && popover) {
         mountPopover(wrapper, popover);
         activeFloatingControl = { wrapper, popover };
-        document.body.classList.add('custom-control-scroll-lock');
         requestAnimationFrame(() => positionPopover(wrapper, popover));
     } else if (popover) {
         resetPopoverPosition(popover);
         activeFloatingControl = null;
-        document.body.classList.remove('custom-control-scroll-lock');
     }
 }
 
@@ -100,15 +97,15 @@ function positionPopover(wrapper, popover) {
 
     popover.classList.add('is-floating');
     popover.style.width = `${desiredWidth}px`;
-    popover.style.left = `${left}px`;
+    popover.style.left = `${left + window.scrollX}px`;
     popover.style.right = 'auto';
     popover.style.maxHeight = `${maxHeight}px`;
 
     if (openUp) {
-        popover.style.top = 'auto';
-        popover.style.bottom = `${window.innerHeight - rect.top + 6}px`;
+        popover.style.top = `${rect.top + window.scrollY - popover.offsetHeight - 6}px`;
+        popover.style.bottom = 'auto';
     } else {
-        popover.style.top = `${rect.bottom + 6}px`;
+        popover.style.top = `${rect.bottom + window.scrollY + 6}px`;
         popover.style.bottom = 'auto';
     }
 }
@@ -154,7 +151,6 @@ function resetPopoverPosition(popover) {
 
     if (activeFloatingControl?.popover === popover) {
         activeFloatingControl = null;
-        document.body.classList.remove('custom-control-scroll-lock');
     }
 }
 

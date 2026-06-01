@@ -197,7 +197,7 @@ function setupListeners() {
         });
     });
 
-    ['dateFromFilter', 'dateToFilter', 'locationFilter', 'weekdayFilter', 'performanceFilter'].forEach(id => {
+    ['dateFromFilter', 'dateToFilter', 'locationFilter', 'weekdayFilter'].forEach(id => {
         document.getElementById(id).addEventListener('change', () => updateView());
     });
 
@@ -210,7 +210,6 @@ function setupListeners() {
     document.getElementById('resetFiltersBtn').addEventListener('click', () => {
         document.getElementById('locationFilter').value = 'all';
         document.getElementById('weekdayFilter').value = 'all';
-        document.getElementById('performanceFilter').value = 'all';
 
         const [year, month] = document.getElementById('monthFilter').value.split('-');
         syncDateFiltersToMonth(year, month);
@@ -262,7 +261,6 @@ function applyFilters(data) {
     const to = parseLocalDateInput(document.getElementById('dateToFilter').value);
     const location = document.getElementById('locationFilter').value;
     const weekday = document.getElementById('weekdayFilter').value;
-    const scenario = document.getElementById('performanceFilter').value;
 
     let filtered = data
         .map(day => location === 'all' ? day : projectDayToLocation(day, location))
@@ -280,18 +278,6 @@ function applyFilters(data) {
 
     if (weekday !== 'all') {
         filtered = filtered.filter(day => day.dayOfWeek === weekday);
-    }
-
-    if (scenario !== 'all') {
-        const averageTurnover = filtered.length
-            ? filtered.reduce((sum, day) => sum + day.total, 0) / filtered.length
-            : 0;
-
-        filtered = filtered.filter(day => {
-            if (scenario === 'glovo-heavy') return day.total > 0 && (getGlovoDisplayValue(day) / day.total) >= 0.25;
-            if (scenario === 'top-turnover') return day.total >= averageTurnover;
-            return true;
-        });
     }
 
     return filtered;
@@ -360,15 +346,12 @@ function getActiveFilterLabels() {
     const labels = [];
     const location = document.getElementById('locationFilter').value;
     const weekday = document.getElementById('weekdayFilter').value;
-    const scenario = document.getElementById('performanceFilter').value;
     const from = document.getElementById('dateFromFilter').value;
     const to = document.getElementById('dateToFilter').value;
 
     labels.push('Glovo netto');
     if (location !== 'all') labels.push(location);
     if (weekday !== 'all') labels.push(weekday);
-    if (scenario === 'glovo-heavy') labels.push('Wysoki udział Glovo');
-    if (scenario === 'top-turnover') labels.push('Ponad średnią');
     if (from && to) labels.push(`${from} -> ${to}`);
 
     return labels;

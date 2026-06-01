@@ -144,7 +144,7 @@ class AdminRender {
 
         container.innerHTML = `
             <div class="summary-box summary-box--primary">
-                <span class="summary-kicker">${this.buildSymbolIcon('store')} Utarg lokalu</span>
+                <span class="summary-kicker">${this.buildSymbolIcon('store')} Utarg</span>
                 <h3>Łączny wynik</h3>
                 <p class="highlight">${formatMoney(total)}</p>
                 <small>${data.length} dni / średnio ${formatMoney(averageDay)}</small>
@@ -163,7 +163,7 @@ class AdminRender {
             </div>
             <div class="summary-box">
                 <span class="summary-kicker">${this.buildSymbolIcon('payments')} Kasetka</span>
-                <h3>Gotówka na lokalu</h3>
+                <h3>Gotówka</h3>
                 <p>${formatMoney(cashDesk)}</p>
                 <small>${this.formatPercent(cashDesk, total)} po odjęciu kart i Glovo</small>
             </div>
@@ -186,7 +186,7 @@ class AdminRender {
 
         container.innerHTML = `
             <div class="insight-card">
-                <span class="insight-label">${this.buildSymbolIcon('local_fire_department')} Najmocniejszy dzień</span>
+                <span class="insight-label">${this.buildSymbolIcon('local_fire_department')} Najlepszy dzień</span>
                 <strong>${strongestDay.dateStr}</strong>
                 <p>${formatMoney(strongestDay.total)} / ${strongestDay.dayOfWeek}</p>
             </div>
@@ -224,7 +224,7 @@ class AdminRender {
                     <div><span>Średnio / dzień</span><strong>${formatMoney(location.avgDay)}</strong></div>
                     <div><span>Karty</span><strong>${formatMoney(location.card)}</strong></div>
                     <div class="location-stat--glovo"><span>Glovo netto</span><strong>${formatMoney(location.glovoNet)}</strong></div>
-                    <div><span>Gotówka na lokalu</span><strong>${formatMoney(location.cashDesk)}</strong></div>
+                    <div><span>Gotówka</span><strong>${formatMoney(location.cashDesk)}</strong></div>
                 </div>
                 <div class="location-foot">
                     <span>Najlepszy dzień: ${location.bestDay.dateStr}</span>
@@ -340,10 +340,12 @@ class AdminRender {
                         <span class="tt-label">${totalLabel}</span>
                         <span class="tt-value-main">${formatMoney(totalValue)}</span>
                     </div>
-                    <div class="tt-big-row">
-                        <span class="tt-label">UTARG LOKALU</span>
-                        <span class="tt-value-sub">${formatMoney(data.total)}</span>
-                    </div>
+                    ${options.viewMode === 'total' ? '' : `
+                        <div class="tt-big-row">
+                            <span class="tt-label">UTARG</span>
+                            <span class="tt-value-sub">${formatMoney(data.total)}</span>
+                        </div>
+                    `}
                     <div class="tt-big-row">
                         <span class="tt-label">KARTY</span>
                         <span class="tt-value-sub">${formatMoney(data.cardTotal)}</span>
@@ -353,7 +355,7 @@ class AdminRender {
                         <span class="tt-value-sub">${formatMoney(this.getGlovoDisplayValue(data))}</span>
                     </div>
                     <div class="tt-big-row">
-                        <span class="tt-label">GOTÓWKA NA LOKALU</span>
+                        <span class="tt-label">GOTÓWKA</span>
                         <span class="tt-value-sub">${formatMoney(data.cashDeskTotal)}</span>
                     </div>
                 </div>
@@ -489,8 +491,8 @@ class AdminRender {
     getViewLabel(viewMode) {
         if (viewMode === 'cards') return 'KARTY';
         if (viewMode === 'glovo') return 'GLOVO NETTO';
-        if (viewMode === 'cash') return 'GOTÓWKA NA LOKALU';
-        return 'UTARG LOKALU';
+        if (viewMode === 'cash') return 'GOTÓWKA';
+        return 'UTARG';
     }
 
     formatPercent(value, total) {

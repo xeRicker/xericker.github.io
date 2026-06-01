@@ -6,10 +6,6 @@
     pointer-events: none !important;
 }
 
-body.custom-control-scroll-lock {
-    overflow: hidden;
-}
-
 .custom-control {
     position: relative;
     width: 100%;
@@ -74,7 +70,7 @@ body.custom-control-scroll-lock {
 }
 
 .custom-control__popover.is-floating {
-    position: fixed;
+    position: absolute;
     z-index: 100020;
 }
 

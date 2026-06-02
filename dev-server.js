@@ -28,6 +28,31 @@ function send(res, status, body, type = 'text/plain; charset=utf-8') {
     res.end(body);
 }
 
+async function readJsonFiles(dir) {
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    const results = [];
+
+    for (const entry of entries) {
+        const entryPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            results.push(...await readJsonFiles(entryPath));
+            continue;
+        }
+        if (!entry.name.endsWith('.json') || entry.name === 'products.json' || dir === path.join(root, 'database')) continue;
+
+        try {
+            const parsed = JSON.parse(await fs.promises.readFile(entryPath, 'utf8'));
+            if (parsed && parsed.location && parsed.date) {
+                results.push(parsed);
+            }
+        } catch (error) {
+            console.warn(`Skipping invalid JSON ${entryPath}: ${error.message}`);
+        }
+    }
+
+    return results;
+}
+
 function readRequestBody(req) {
     return new Promise((resolve, reject) => {
         let body = '';
@@ -57,13 +82,26 @@ async function handleProductsWrite(req, res, targetPath) {
 }
 
 const server = http.createServer(async (req, res) => {
+    if (req.method === 'GET' && req.url.split('?')[0] === '/__local-data') {
+        try {
+            const data = await readJsonFiles(path.join(root, 'database'));
+            send(res, 200, JSON.stringify(data), 'application/json; charset=utf-8');
+        } catch (error) {
+            send(res, 500, JSON.stringify({ ok: false, error: error.message }), 'application/json; charset=utf-8');
+        }
+        return;
+    }
+
     const targetPath = resolvePath(req.url);
     if (!targetPath) {
         send(res, 403, 'Forbidden');
         return;
     }
 
-    if ((req.method === 'PUT' || req.method === 'POST') && targetPath === path.join(root, 'database', 'products.json')) {
+    const databaseRoot = path.join(root, 'database');
+    const isDatabaseJson = targetPath.startsWith(databaseRoot) && path.extname(targetPath) === '.json';
+
+    if ((req.method === 'PUT' || req.method === 'POST') && isDatabaseJson) {
         await handleProductsWrite(req, res, targetPath);
         return;
     }

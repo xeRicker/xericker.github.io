@@ -1,3 +1,5 @@
+import { escapeHtml, renderMaterialIcon } from '../utils.js';
+
 const CATEGORY_SYMBOLS = {
     "🥩": "restaurant",
     "🥗": "eco",
@@ -54,29 +56,30 @@ export const mainRender = {
 
         container.innerHTML = categories.map(category => `
             <div class="category-header animate-stagger" style="animation-delay:${idx++*0.05}s">
-                <span class="category-icon material-symbols-rounded" aria-hidden="true">${category.icon || CATEGORY_SYMBOLS[category.name] || 'inventory_2'}</span>
+                ${renderMaterialIcon(category.icon || CATEGORY_SYMBOLS[category.name] || 'inventory_2', 'category-icon')}
             </div>
             <div class="products-grid">
                 ${(category.items || []).map(p => {
             const delay = idx++ * 0.02;
+            const name = escapeHtml(p.name);
             if(p.type === 's' || p.type === 'toggle') {
                 return `
-                        <div class="product-card animate-stagger type-toggle" data-name="${p.name}" style="animation-delay:${delay}s">
-                            <div class="product-name">${p.name}</div>
+                        <div class="product-card animate-stagger type-toggle" data-name="${name}" style="animation-delay:${delay}s">
+                            <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="toggle-indicator"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-                                <input type="checkbox" id="checkbox-${p.name}" data-name="${p.name}" style="display:none">
+                                <input type="checkbox" id="checkbox-${name}" data-name="${name}" style="display:none">
                             </div>
                         </div>`;
             } else {
                 return `
-                        <div class="product-card animate-stagger" data-name="${p.name}" style="animation-delay:${delay}s">
-                            <div class="product-name">${p.name}</div>
+                        <div class="product-card animate-stagger" data-name="${name}" style="animation-delay:${delay}s">
+                            <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="counter-wrapper">
-                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${p.name}">−</button>
-                                    <input type="text" inputmode="numeric" id="input-${p.name}" class="qty-display" value="0" data-name="${p.name}">
-                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${p.name}">+</button>
+                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${name}">−</button>
+                                    <input type="text" inputmode="numeric" id="input-${name}" class="qty-display" value="0" data-name="${name}">
+                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${name}">+</button>
                                 </div>
                             </div>
                         </div>`;
@@ -87,7 +90,8 @@ export const mainRender = {
     },
 
     toggleHighlight(name, isActive) {
-        const el = document.querySelector(`.product-card[data-name="${name}"]`);
+        const selectorName = window.CSS?.escape ? CSS.escape(name) : String(name).replaceAll('"', '\\"');
+        const el = document.querySelector(`.product-card[data-name="${selectorName}"]`);
         if(el) el.classList.toggle('active', isActive);
     },
 

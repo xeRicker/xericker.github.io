@@ -220,20 +220,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-color: rgba(242, 204, 56, 0.28);
 }
 .summary-box--empty { text-align: center; }
-.summary-kicker { display: inline-block; margin-bottom: 8px; color: #7a7a7a; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 1px; }
+.summary-kicker { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #7a7a7a; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0; }
 .summary-icon-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-grid;
+    place-items: center;
     width: 22px;
     height: 22px;
-    margin-right: 6px;
-    border-radius: 999px;
+    margin-right: 0;
+    border-radius: var(--radius-md);
     background: rgba(212, 82, 26, 0.14);
     border: 1px solid rgba(212, 82, 26, 0.3);
     vertical-align: middle;
     line-height: 1;
     flex: 0 0 auto;
+    font-size: 16px;
+    text-align: center;
 }
 
 .summary-icon-badge--glovo {
@@ -256,7 +257,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .insight-card {
     background: #171717;
     border: 1px solid #303030;
-    border-radius: 18px;
+    border-radius: var(--radius-md);
     padding: 18px 20px;
 }
 
@@ -471,7 +472,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
         radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 28%),
         linear-gradient(180deg, rgba(30,30,30,0.98), rgba(20,20,20,0.98));
     border: 1px solid #333;
-    border-radius: 20px;
+    border-radius: var(--radius-md);
     padding: 22px;
 }
 
@@ -516,7 +517,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 
 .location-stats div {
     padding: 12px 14px;
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     background: #151515;
     border: 1px solid #2d2d2d;
 }
@@ -554,7 +555,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .calc-res-item p.money { color: var(--success-color); }
 .calc-icon { color: var(--primary-color); width: 16px; height: 16px; }
 .calc-breakdown-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 18px; }
-.calc-breakdown-card { background: linear-gradient(180deg, rgba(26,26,26,0.96), rgba(18,18,18,0.96)); border: 1px solid #333; border-radius: 14px; padding: 14px 16px; }
+.calc-breakdown-card { background: linear-gradient(180deg, rgba(26,26,26,0.96), rgba(18,18,18,0.96)); border: 1px solid #333; border-radius: var(--radius-md); padding: 14px 16px; }
 .calc-breakdown-card strong { display: block; margin-top: 6px; font-size: 18px; color: #fff; }
 .calc-breakdown-label { display: block; color: #888; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0.5px; }
 .calc-breakdown-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
@@ -698,6 +699,8 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .admin-row-actions {
     gap: 8px;
     flex: 0 0 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .icon-action {
@@ -713,9 +716,36 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     transition: 0.2s ease;
 }
 
+.icon-action .material-symbols-rounded,
+.state-switch .material-symbols-rounded,
+.type-switch .material-symbols-rounded,
+.icon-picker-button .material-symbols-rounded,
+.admin-page-tab .material-symbols-rounded,
+.admin-save-btn .material-symbols-rounded {
+    display: inline-grid;
+    place-items: center;
+    line-height: 1;
+}
+
 .icon-action:hover {
     border-color: var(--primary-color);
     color: white;
+}
+
+.icon-action:disabled {
+    opacity: 0.36;
+    cursor: not-allowed;
+}
+
+.icon-action:disabled:hover {
+    border-color: #363636;
+    color: #bdbdbd;
+}
+
+.icon-action--move {
+    color: var(--primary-hover);
+    background: var(--primary-soft);
+    border-color: color-mix(in srgb, var(--primary-color) 34%, var(--border-color));
 }
 
 .icon-action--danger:hover {
@@ -818,6 +848,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-sm);
     padding: 10px 12px;
+    transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
 }
 
 .admin-product-row[draggable="true"] {
@@ -831,6 +862,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .drag-handle {
     color: #6d6d6d;
     flex: 0 0 auto;
+    cursor: grab;
 }
 
 .admin-product-main {

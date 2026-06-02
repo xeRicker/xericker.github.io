@@ -37,7 +37,7 @@
 .custom-control__button:focus-visible {
     outline: none;
     border-color: var(--border-focused);
-    box-shadow: 0 0 0 2px rgba(212, 82, 26, 0.24);
+    box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
 .custom-control__value {
@@ -109,7 +109,7 @@
 .custom-option:hover,
 .custom-calendar__day:hover,
 .custom-time__option:hover {
-    background: rgba(212, 82, 26, 0.12);
+    background: var(--surface-active);
 }
 
 .custom-option.is-selected,
@@ -193,8 +193,8 @@
     border-radius: 999px;
     display: grid;
     place-items: center;
-    background: rgba(212, 82, 26, 0.18);
-    border: 1px solid rgba(212, 82, 26, 0.4);
+    background: var(--primary-soft);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 40%, var(--border-color));
     color: var(--primary-hover);
     font-size: 11px;
     font-weight: 800;

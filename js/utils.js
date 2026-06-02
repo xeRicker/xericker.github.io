@@ -10,6 +10,20 @@ export function formatMoney(amount) {
     return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(amount);
 }
 
+export function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+export function renderMaterialIcon(name, extraClass = '') {
+    const className = ['material-symbols-rounded', extraClass].filter(Boolean).join(' ');
+    return `<span class="${className}" aria-hidden="true">${escapeHtml(name)}</span>`;
+}
+
 export function parseLocalDateInput(value) {
     if (!value) return null;
     const [year, month, day] = value.split('-').map(Number);

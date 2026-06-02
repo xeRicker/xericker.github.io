@@ -4,7 +4,9 @@ import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from 
 export class AnalyticsService {
     processReports(reports) {
         const map = new Map();
-        reports.forEach(r => {
+        reports
+            .filter(r => r?.date && r?.location)
+            .forEach(r => {
             if (!map.has(r.date)) {
                 const [d, m, y] = r.date.split('.');
                 const dateObj = new Date(y, m - 1, d);

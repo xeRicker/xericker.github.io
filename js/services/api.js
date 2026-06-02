@@ -15,7 +15,15 @@ class ApiService {
     }
 
     async checkFileExists(location, date) {
-        if (isLocalhost()) return false;
+        if (isLocalhost()) {
+            const localPath = `database/${location.toLowerCase()}/${date}.json`;
+            try {
+                const response = await fetch(localPath, { method: 'HEAD' });
+                return response.ok;
+            } catch {
+                return false;
+            }
+        }
         const url = `${this.baseUrl}database/${location.toLowerCase()}/${date}.json`;
         try {
             const response = await fetch(url, { method: 'GET', headers: this.headers });
@@ -27,7 +35,7 @@ class ApiService {
 
     async saveReport(data) {
         if (isLocalhost()) {
-            console.log("LOCALHOST SAVE:", data);
+            await this.saveLocalJson(`database/${data.location.toLowerCase()}/${data.date}.json`, data, 'Local report save failed.');
             return;
         }
         const filePath = `database/${data.location.toLowerCase()}/${data.date}.json`;
@@ -118,6 +126,10 @@ class ApiService {
     }
 
     async saveLocalProducts(filePath, data) {
+        await this.saveLocalJson(filePath, data, "Local products save failed. Uruchom lokalny dev-server z obslugą PUT.");
+    }
+
+    async saveLocalJson(filePath, data, message) {
         const res = await fetch(filePath, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -125,12 +137,23 @@ class ApiService {
         });
 
         if (!res.ok) {
-            throw new Error("Local products save failed. Uruchom lokalny dev-server z obslugą PUT.");
+            throw new Error(message);
         }
     }
 
     async fetchAllData() {
-        if (isLocalhost()) return this.getMockData();
+        if (isLocalhost()) {
+            try {
+                const response = await fetch(`__local-data?v=${Date.now()}`);
+                if (response.ok) {
+                    const localData = await response.json();
+                    if (Array.isArray(localData) && localData.length) return localData;
+                }
+            } catch (error) {
+                console.warn('Local data endpoint unavailable, using mock data.', error);
+            }
+            return this.getMockData();
+        }
 
         try {
             const locRes = await fetch(`${this.baseUrl}database`, { headers: this.headers });

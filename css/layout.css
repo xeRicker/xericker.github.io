@@ -67,7 +67,7 @@
     transition: all 0.3s;
     font-family: var(--font-heading);
     font-size: 14px;
-    letter-spacing: 1px;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 

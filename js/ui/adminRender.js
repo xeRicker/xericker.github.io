@@ -1,4 +1,4 @@
-import { formatMoney } from '../utils.js';
+import { formatMoney, renderMaterialIcon } from '../utils.js';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',
@@ -19,8 +19,7 @@ class AdminRender {
     }
 
     buildSymbolIcon(name, extraClass = '') {
-        const className = ['summary-icon-badge', extraClass].filter(Boolean).join(' ');
-        return `<span class="${className} material-symbols-rounded" aria-hidden="true">${name}</span>`;
+        return renderMaterialIcon(name, ['summary-icon-badge', extraClass].filter(Boolean).join(' '));
     }
 
     renderChart(ctx, data, type, options) {

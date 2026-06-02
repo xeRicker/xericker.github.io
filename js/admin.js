@@ -1,7 +1,7 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js';
-import { adminProducts } from './ui/adminProducts.js?v=2';
+import { adminProducts } from './ui/adminProducts.js?v=3';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { isLocalhost, parseLocalDateInput } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';

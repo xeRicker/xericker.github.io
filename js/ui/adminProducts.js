@@ -1,13 +1,7 @@
 import { apiService } from '../services/api.js?v=2';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=2';
+import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=5';
-
-const escapeHtml = value => String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
 
 const ICON_OPTIONS = [
     'restaurant', 'eco', 'kitchen', 'lunch_dining', 'bakery_dining', 'science',
@@ -76,34 +70,37 @@ class AdminProducts {
             </form>
 
             <div class="admin-category-list">
-                ${this.catalog.categories.map(category => this.renderCategory(category)).join('')}
+                ${this.catalog.categories.map((category, index) => this.renderCategory(category, index)).join('')}
             </div>
         `;
     }
 
-    renderCategory(category) {
+    renderCategory(category, categoryIndex) {
+        const categoryCount = this.catalog.categories.length;
         return `
             <section class="admin-category-card ${category.enabled ? '' : 'is-disabled'}" data-category-id="${category.id}">
                 <div class="admin-category-head">
                     <div class="admin-category-title">
-                        <span class="category-icon material-symbols-rounded" aria-hidden="true">${escapeHtml(category.icon)}</span>
+                        ${renderMaterialIcon(category.icon, 'category-icon')}
                         <div>
                             <h4>${escapeHtml(category.name)}</h4>
                             <span>${category.items.length} produktów</span>
                         </div>
                     </div>
                     <div class="admin-row-actions">
+                        ${this.renderMoveButton('move-category-up', 'keyboard_arrow_up', 'Przesuń kategorię wyżej', categoryIndex === 0)}
+                        ${this.renderMoveButton('move-category-down', 'keyboard_arrow_down', 'Przesuń kategorię niżej', categoryIndex === categoryCount - 1)}
                         <button class="state-switch ${category.enabled ? 'is-on' : 'is-off'}" type="button" data-action="toggle-category" title="Włącz/wyłącz kategorię">
-                            <span class="material-symbols-rounded" aria-hidden="true">${category.enabled ? 'visibility' : 'visibility_off'}</span>
+                            ${renderMaterialIcon(category.enabled ? 'visibility' : 'visibility_off')}
                         </button>
                         <button class="icon-action" type="button" data-action="edit-category" title="Edytuj kategorię">
-                            <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                            ${renderMaterialIcon('edit')}
                         </button>
                         <button class="icon-action" type="button" data-action="edit-category-icon" title="Zmień ikonę">
-                            <span class="material-symbols-rounded" aria-hidden="true">category</span>
+                            ${renderMaterialIcon('category')}
                         </button>
                         <button class="icon-action icon-action--danger" type="button" data-action="delete-category" title="Usuń kategorię">
-                            <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+                            ${renderMaterialIcon('delete')}
                         </button>
                     </div>
                 </div>
@@ -118,35 +115,45 @@ class AdminProducts {
                 </form>
 
                 <div class="admin-product-list" data-category-id="${category.id}">
-                    ${category.items.map(product => this.renderProduct(product)).join('') || '<div class="empty-products">Brak produktów w tej kategorii.</div>'}
+                    ${category.items.map((product, index) => this.renderProduct(product, index, category.items.length)).join('') || '<div class="empty-products">Brak produktów w tej kategorii.</div>'}
                 </div>
             </section>
         `;
     }
 
-    renderProduct(product) {
+    renderProduct(product, index, count) {
         return `
             <div class="admin-product-row ${product.enabled ? '' : 'is-disabled'}" draggable="true" data-product-id="${product.id}">
-                <span class="drag-handle material-symbols-rounded" aria-hidden="true">drag_indicator</span>
+                ${renderMaterialIcon('drag_indicator', 'drag-handle')}
                 <div class="admin-product-main">
                     <strong>${escapeHtml(product.name)}</strong>
                     <span>${product.type === 'toggle' ? 'Przełącznik' : 'Ilość +/-'}</span>
                 </div>
                 <div class="admin-row-actions">
+                    ${this.renderMoveButton('move-product-up', 'keyboard_arrow_up', 'Przesuń produkt wyżej', index === 0)}
+                    ${this.renderMoveButton('move-product-down', 'keyboard_arrow_down', 'Przesuń produkt niżej', index === count - 1)}
                     <button class="type-switch ${product.type === 'toggle' ? 'is-toggle' : 'is-quantity'}" type="button" data-action="toggle-product-type" title="Zmień typ produktu">
-                        <span class="material-symbols-rounded" aria-hidden="true">${product.type === 'toggle' ? 'toggle_on' : 'add_circle'}</span>
+                        ${renderMaterialIcon(product.type === 'toggle' ? 'toggle_on' : 'add_circle')}
                     </button>
                     <button class="state-switch ${product.enabled ? 'is-on' : 'is-off'}" type="button" data-action="toggle-product" title="Włącz/wyłącz produkt">
-                        <span class="material-symbols-rounded" aria-hidden="true">${product.enabled ? 'visibility' : 'visibility_off'}</span>
+                        ${renderMaterialIcon(product.enabled ? 'visibility' : 'visibility_off')}
                     </button>
                     <button class="icon-action" type="button" data-action="edit-product" title="Edytuj produkt">
-                        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+                        ${renderMaterialIcon('edit')}
                     </button>
                     <button class="icon-action icon-action--danger" type="button" data-action="delete-product" title="Usuń produkt">
-                        <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+                        ${renderMaterialIcon('delete')}
                     </button>
                 </div>
             </div>
+        `;
+    }
+
+    renderMoveButton(action, icon, title, disabled) {
+        return `
+            <button class="icon-action icon-action--move" type="button" data-action="${action}" title="${title}" ${disabled ? 'disabled' : ''}>
+                ${renderMaterialIcon(icon)}
+            </button>
         `;
     }
 
@@ -157,11 +164,15 @@ class AdminProducts {
         if (action === 'add-category' || action === 'add-product') return;
         const snapshotBefore = this.serializeCatalog();
         if (action === 'toggle-category') this.toggleCategory(event);
+        if (action === 'move-category-up') this.moveCategory(event, -1);
+        if (action === 'move-category-down') this.moveCategory(event, 1);
         if (action === 'delete-category') await this.deleteCategory(event);
         if (action === 'edit-category') await this.editCategory(event);
         if (action === 'edit-category-icon') await this.editCategoryIcon(event);
         if (action === 'toggle-product') this.toggleProduct(event);
         if (action === 'toggle-product-type') this.toggleProductType(event);
+        if (action === 'move-product-up') this.moveProduct(event, -1);
+        if (action === 'move-product-down') this.moveProduct(event, 1);
         if (action === 'delete-product') await this.deleteProduct(event);
         if (action === 'edit-product') await this.editProduct(event);
         if (action === 'pick-category-icon') await this.pickFormIcon(event);
@@ -271,6 +282,12 @@ class AdminProducts {
         if (category) category.enabled = !category.enabled;
     }
 
+    moveCategory(event, direction) {
+        const category = this.findEventCategory(event);
+        if (!category) return;
+        this.moveItem(this.catalog.categories, category.id, direction);
+    }
+
     async deleteCategory(event) {
         const category = this.findEventCategory(event);
         if (!category) return;
@@ -313,6 +330,13 @@ class AdminProducts {
     toggleProduct(event) {
         const product = this.findEventProduct(event);
         if (product) product.enabled = !product.enabled;
+    }
+
+    moveProduct(event, direction) {
+        const productId = event.target.closest('[data-product-id]')?.dataset.productId;
+        const category = this.catalog.categories.find(item => item.items.some(product => product.id === productId));
+        if (!category) return;
+        this.moveItem(category.items, productId, direction);
     }
 
     async deleteProduct(event) {
@@ -420,6 +444,14 @@ class AdminProducts {
             if (index >= 0) return category.items.splice(index, 1)[0];
         }
         return null;
+    }
+
+    moveItem(list, id, direction) {
+        const from = list.findIndex(item => item.id === id);
+        const to = from + direction;
+        if (from < 0 || to < 0 || to >= list.length) return;
+        const [item] = list.splice(from, 1);
+        list.splice(to, 0, item);
     }
 
     hasUnsavedChanges() {

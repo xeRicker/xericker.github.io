@@ -1,14 +1,26 @@
 {
   "location": "Osiek",
   "date": "02.06.2026",
-  "revenue": 0,
-  "cardRevenue": 0,
+  "revenue": 760,
+  "cardRevenue": 605,
   "glovoRevenue": 0,
   "employees": {
-    "Sebastian": "12:00 – 19:30"
+    "Sebastian": "14:00 – 20:30"
   },
   "products": {
-    "Bułki": 0,
-    "Drwal Fajny": 1
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Halloumi": 2,
+    "Frytki": 2,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
   }
 }

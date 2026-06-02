@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T07:58:50.820Z",
+  "updatedAt": "2026-06-02T07:59:40.940Z",
   "categories": [
     {
       "id": "category-1",
@@ -430,20 +430,6 @@
           "id": "product-12-6",
           "name": "Papier do kasy",
           "type": "toggle",
-          "enabled": true
-        }
-      ]
-    },
-    {
-      "id": "category-mpwcist0-jsig4w",
-      "name": "Testowa",
-      "icon": "inventory_2",
-      "enabled": true,
-      "items": [
-        {
-          "id": "product-mpwcj0x6-jmaw4b",
-          "name": "Drwal Fajny",
-          "type": "quantity",
           "enabled": true
         }
       ]

@@ -392,12 +392,14 @@ class AdminRender {
 
         let x = event.clientX + 15;
         let y = event.clientY + 15;
+        const tooltipWidth = tooltip.offsetWidth || 260;
+        const tooltipHeight = tooltip.offsetHeight || 160;
 
-        if (x + 260 > window.innerWidth) x = event.clientX - 270;
-        if (y + 160 > window.innerHeight) y = event.clientY - 170;
+        if (x + tooltipWidth > window.innerWidth) x = event.clientX - tooltipWidth - 10;
+        if (y + tooltipHeight > window.innerHeight) y = event.clientY - tooltipHeight - 10;
 
-        tooltip.style.left = `${x}px`;
-        tooltip.style.top = `${y}px`;
+        tooltip.style.left = `${x + window.scrollX}px`;
+        tooltip.style.top = `${y + window.scrollY}px`;
     }
 
     hideTooltip() {

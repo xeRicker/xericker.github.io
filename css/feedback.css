@@ -140,7 +140,7 @@ input[type=number] {
    ================================= */
 
 #customTooltip {
-    position: fixed;
+    position: absolute;
     background: rgba(18, 18, 18, 0.98);
     border: 1px solid #333;
     border-left: 4px solid var(--primary-color);

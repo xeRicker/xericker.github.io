@@ -10,6 +10,10 @@ class ApiService {
         };
     }
 
+    hasGithubToken() {
+        return Boolean(GITHUB_CONFIG.TOKEN && GITHUB_CONFIG.TOKEN !== '__GH_TOKEN__');
+    }
+
     async checkFileExists(location, date) {
         if (isLocalhost()) return false;
         const url = `${this.baseUrl}database/${location.toLowerCase()}/${date}.json`;
@@ -43,6 +47,86 @@ class ApiService {
 
         const res = await fetch(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) });
         if (!res.ok) throw new Error("GitHub Save Failed");
+    }
+
+    async fetchProducts() {
+        const path = 'database/products.json';
+
+        try {
+            if (this.hasGithubToken()) {
+                const githubProducts = await this.fetchGithubProducts(path);
+                if (githubProducts) return githubProducts;
+            }
+
+            if (isLocalhost()) {
+                return this.fetchLocalProducts(path);
+            }
+
+            return null;
+        } catch (error) {
+            console.warn('Products config unavailable, falling back to defaults.', error);
+            return null;
+        }
+    }
+
+    async fetchGithubProducts(path) {
+        const response = await fetch(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers });
+        if (!response.ok) return null;
+        const file = await response.json();
+        if (file.content) {
+            return JSON.parse(decodeURIComponent(escape(atob(file.content))));
+        }
+        return null;
+    }
+
+    async fetchLocalProducts(path) {
+        const response = await fetch(`${path}?v=${Date.now()}`);
+        return response.ok ? response.json() : null;
+    }
+
+    async saveProducts(data) {
+        const filePath = 'database/products.json';
+        if (this.hasGithubToken()) {
+            await this.saveGithubProducts(filePath, data);
+            return;
+        }
+
+        if (isLocalhost()) {
+            await this.saveLocalProducts(filePath, data);
+            return;
+        }
+
+        throw new Error("GitHub token is not configured");
+    }
+
+    async saveGithubProducts(filePath, data) {
+        const url = `${this.baseUrl}${filePath}`;
+        let sha;
+
+        try {
+            const getRes = await fetch(url, { method: 'GET', headers: this.headers });
+            if (getRes.ok) {
+                const json = await getRes.json();
+                sha = json.sha;
+            }
+        } catch (e) {}
+
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        const body = { message: 'Update products catalog', content, sha };
+        const res = await fetch(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) });
+        if (!res.ok) throw new Error("GitHub Products Save Failed");
+    }
+
+    async saveLocalProducts(filePath, data) {
+        const res = await fetch(filePath, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data, null, 2)
+        });
+
+        if (!res.ok) {
+            throw new Error("Local products save failed. Uruchom lokalny dev-server z obslugą PUT.");
+        }
     }
 
     async fetchAllData() {

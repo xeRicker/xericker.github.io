@@ -5,7 +5,7 @@
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=33">
+    <link rel="stylesheet" href="style.css?v=35">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body style="display: none;">
@@ -39,7 +39,22 @@
         </a>
     </div>
 
-    <div class="admin-toolbar animate-enter delay-1">
+    <div class="admin-page-tabs animate-enter delay-1" role="tablist" aria-label="Strony panelu admina">
+        <button class="admin-page-tab is-active" type="button" data-admin-tab="revenue" role="tab" aria-selected="true">
+            <span class="material-symbols-rounded" aria-hidden="true">payments</span>
+            Utargi
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">badge</span>
+            Wynagrodzenia
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="products" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
+            Produkty
+        </button>
+    </div>
+
+    <div class="admin-toolbar animate-enter delay-1" data-admin-page="revenue">
         <div class="filters filters--primary">
             <div class="filter-group">
                 <select id="monthFilter"></select>
@@ -96,13 +111,13 @@
         </div>
     </div>
 
-    <div id="weekTabsContainer" class="week-tabs animate-enter delay-1"></div>
-    <div id="summarySection" class="summary animate-enter delay-2"></div>
-    <div id="insightsSection" class="insight-grid animate-enter delay-2"></div>
+    <div id="weekTabsContainer" class="week-tabs animate-enter delay-1" data-admin-page="revenue"></div>
+    <div id="summarySection" class="summary animate-enter delay-2" data-admin-page="revenue"></div>
+    <div id="insightsSection" class="insight-grid animate-enter delay-2" data-admin-page="revenue"></div>
 
  
 
-    <div class="view-toggle animate-enter delay-2">
+    <div class="view-toggle animate-enter delay-2" data-admin-page="revenue">
         <button class="view-btn active" data-view="total">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
             UTARG CAŁKOWITY
@@ -117,7 +132,7 @@
         </button>
     </div>
 
-    <div class="dashboard-grid dashboard-grid--focus animate-enter delay-3">
+    <div class="dashboard-grid dashboard-grid--focus animate-enter delay-3" data-admin-page="revenue">
         <div class="chart-card chart-card--feature">
             <div class="chart-header">
                 <div class="section-heading">
@@ -136,16 +151,16 @@
 
     </div>
 
-    <div id="locationPerformanceSection" class="location-grid animate-enter delay-3"></div>
+    <div id="locationPerformanceSection" class="location-grid animate-enter delay-3" data-admin-page="revenue"></div>
 
-    <div class="chart-card animate-enter delay-3" style="margin-bottom: 40px;">
+    <div class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="revenue">
         <div class="section-heading section-heading--stack">
             <h3>Mapa Cieplna</h3>
         </div>
         <div id="heatmapContainer" class="heatmap-grid"></div>
     </div>
 
-    <div class="chart-card animate-enter delay-3 calc-card" style="margin-bottom: 40px;">
+    <div class="chart-card animate-enter delay-3 calc-card" style="margin-bottom: 40px;" data-admin-page="payroll" hidden>
         <div class="chart-header">
             <div class="section-heading">
                 <h3>Kalkulator Wypłaty</h3>
@@ -197,7 +212,7 @@
 
 
 
-    <div class="table-card animate-enter delay-3" style="margin-bottom: 40px;">
+    <div class="table-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="payroll" hidden>
         <div class="table-head">
             <div class="section-heading">
                 <h3>Raport Godzin</h3>
@@ -218,7 +233,9 @@
         </div>
     </div>
 
-    <div class="table-card animate-enter delay-3">
+    <div id="adminProductsPage" class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="products" hidden></div>
+
+    <div class="table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
                 <h3>Raport Dzienny</h3>
@@ -244,6 +261,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=8"></script>
+<script type="module" src="js/admin.js?v=13"></script>
 </body>
 </html>

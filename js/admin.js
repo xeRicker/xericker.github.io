@@ -1,6 +1,7 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js';
+import { adminProducts } from './ui/adminProducts.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { isLocalhost, parseLocalDateInput } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
@@ -27,9 +28,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     document.body.style.display = 'block';
 
+    setupAdminPages();
+    await adminProducts.init(document.getElementById('adminProductsPage'));
+
     allData = await apiService.fetchAllData();
     if (!allData.length) {
         document.getElementById('loading').innerText = "Brak danych";
+        hideGlobalLoader();
         return;
     }
 
@@ -54,13 +59,42 @@ function initUI(data) {
     document.getElementById('revenueTable').style.display = 'table';
     document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
 
+    hideGlobalLoader();
+
+    initCalculator();
+}
+
+function setupAdminPages() {
+    document.querySelectorAll('.admin-page-tab').forEach(tab => {
+        tab.addEventListener('click', async () => {
+            await switchAdminPage(tab.dataset.adminTab);
+        });
+    });
+    switchAdminPage('revenue');
+}
+
+async function switchAdminPage(pageName) {
+    const currentTab = document.querySelector('.admin-page-tab.is-active')?.dataset.adminTab;
+    if (currentTab === pageName) return;
+    if (currentTab === 'products' && !(await adminProducts.confirmDiscardChanges())) return;
+
+    document.querySelectorAll('.admin-page-tab').forEach(tab => {
+        const active = tab.dataset.adminTab === pageName;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('[data-admin-page]').forEach(section => {
+        section.hidden = section.dataset.adminPage !== pageName;
+    });
+}
+
+function hideGlobalLoader() {
     const loader = document.getElementById('globalLoader');
     if (loader) {
         loader.classList.add('hidden');
         setTimeout(() => loader.style.display = 'none', 500);
     }
-
-    initCalculator();
 }
 
 function populateMonthFilter(data) {

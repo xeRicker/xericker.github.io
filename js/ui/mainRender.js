@@ -37,14 +37,24 @@ export const mainRender = {
         }).join('');
     },
 
-    renderProducts(container, categories) {
+    renderProducts(container, catalog) {
         let idx = 0;
-        container.innerHTML = Object.entries(categories).map(([cat, {items}]) => `
-            <div class="category-header animate-stagger" style="animation-delay:${idx++*0.05}s"><span class="category-icon material-symbols-rounded" aria-hidden="true">${CATEGORY_SYMBOLS[cat] || 'inventory_2'}</span></div>
+        const categories = Array.isArray(catalog?.categories)
+            ? catalog.categories
+            : Object.entries(catalog || {}).map(([name, category]) => ({
+                name,
+                icon: CATEGORY_SYMBOLS[name] || 'inventory_2',
+                items: category.items || []
+            }));
+
+        container.innerHTML = categories.map(category => `
+            <div class="category-header animate-stagger" style="animation-delay:${idx++*0.05}s">
+                <span class="category-icon material-symbols-rounded" aria-hidden="true">${category.icon || CATEGORY_SYMBOLS[category.name] || 'inventory_2'}</span>
+            </div>
             <div class="products-grid">
-                ${items.map(p => {
+                ${(category.items || []).map(p => {
             const delay = idx++ * 0.02;
-            if(p.type === 's') {
+            if(p.type === 's' || p.type === 'toggle') {
                 return `
                         <div class="product-card animate-stagger type-toggle" data-name="${p.name}" style="animation-delay:${delay}s">
                             <div class="product-name">${p.name}</div>

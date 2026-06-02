@@ -1,4 +1,4 @@
-import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS, CATEGORIES } from './config/data.js';
+import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
 import { mainRender } from './ui/mainRender.js';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
@@ -7,15 +7,18 @@ import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js';
 
 let selectedLocation = null;
 let workerReports = [];
 let workerCalculatorReady = false;
 let workerCalculator = null;
+let productCatalog = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    productCatalog = getActiveProductCatalog(await loadProductCatalog());
     mainRender.renderEmployees(document.getElementById('employees'), EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
-    mainRender.renderProducts(document.getElementById('products'), CATEGORIES);
+    mainRender.renderProducts(document.getElementById('products'), productCatalog);
     enhanceCustomControls();
     restoreState();
     setupEvents();
@@ -217,21 +220,21 @@ async function generateReport() {
     });
 
     let prodText = "";
-    Object.entries(CATEGORIES).forEach(([cat, {items}]) => {
+    productCatalog.categories.forEach(category => {
         let catTxt = "";
-        items.forEach(p => {
+        category.items.forEach(p => {
             const cb = document.getElementById(`checkbox-${p.name}`);
             const inp = document.getElementById(`input-${p.name}`);
-            const qty = cb ? (cb.checked?1:0) : (parseInt(inp.value)||0);
+            const qty = cb ? (cb.checked ? 1 : 0) : (parseInt(inp.value) || 0);
 
             if(p.name.includes("Bułki") && qty === 0) {
                 data.products[p.name] = 0; catTxt += `  • Bułki: ❌\n`;
             } else if(qty > 0) {
                 data.products[p.name] = qty;
-                catTxt += `  • ${p.name}${p.type==='s'?'':': '+qty}\n`;
+                catTxt += `  • ${p.name}${p.type === 'toggle' ? '' : ': ' + qty}\n`;
             }
         });
-        if(catTxt) prodText += `\n${cat}\n${catTxt}`;
+        if(catTxt) prodText += `\n${category.name}\n${catTxt}`;
     });
 
     text += prodText;

@@ -1,10 +1,12 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
-import { adminRender } from './ui/adminRender.js';
+import { adminRender } from './ui/adminRender.js?v=2';
 import { adminProducts } from './ui/adminProducts.js?v=3';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
-import { isLocalhost, parseLocalDateInput } from './utils.js';
+import { escapeHtml, fallbackCopyToClipboard, isLocalhost, parseLocalDateInput } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
+import { buildReportText } from './services/reportFormatter.js';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 
 const PASSWORD = "xdxdxd123";
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
@@ -19,6 +21,8 @@ let currentViewData = [];
 let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
 let payrollCalculator = null;
+let productCatalog = null;
+let selectedListKey = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isLocalhost()) {
@@ -29,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.style.display = 'block';
 
     setupAdminPages();
+    productCatalog = getActiveProductCatalog(await loadProductCatalog());
     await adminProducts.init(document.getElementById('adminProductsPage'));
 
     allData = await apiService.fetchAllData();
@@ -39,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     processedData = analytics.processReports(allData);
+    initListsPage();
     initUI(processedData);
 });
 
@@ -71,6 +77,178 @@ function setupAdminPages() {
         });
     });
     switchAdminPage('revenue');
+}
+
+function initListsPage() {
+    populateListLocationFilter();
+    setupListListeners();
+    renderListsPage();
+}
+
+function populateListLocationFilter() {
+    const select = document.getElementById('listLocationFilter');
+    const locations = Array.from(new Set(allData.map(report => report.location).filter(Boolean)))
+        .sort((a, b) => a.localeCompare(b, 'pl'));
+
+    select.innerHTML = [
+        '<option value="all">Wszystkie punkty</option>',
+        ...locations.map(location => `<option value="${escapeHtml(location)}">${escapeHtml(location)}</option>`)
+    ].join('');
+}
+
+function setupListListeners() {
+    document.getElementById('listLocationFilter').addEventListener('change', () => {
+        selectedListKey = null;
+        renderListsPage();
+    });
+
+    document.getElementById('listSearchInput').addEventListener('input', () => {
+        selectedListKey = null;
+        renderListsPage();
+    });
+
+    document.getElementById('adminListsContent').addEventListener('click', async event => {
+        const previewButton = event.target.closest('[data-list-preview]');
+        const copyButton = event.target.closest('[data-list-copy]');
+
+        if (previewButton) {
+            selectedListKey = previewButton.dataset.listPreview;
+            renderListsPage();
+            return;
+        }
+
+        if (copyButton) {
+            const report = findReportByKey(copyButton.dataset.listCopy);
+            if (!report) return;
+            await copyReportText(report, copyButton);
+        }
+    });
+}
+
+function renderListsPage() {
+    const container = document.getElementById('adminListsContent');
+    const reports = getFilteredListReports();
+    const selectedReport = reports.find(report => getReportKey(report) === selectedListKey) || reports[0] || null;
+    selectedListKey = selectedReport ? getReportKey(selectedReport) : null;
+
+    if (!reports.length) {
+        container.innerHTML = `
+            <div class="admin-list-empty">
+                <span class="material-symbols-rounded" aria-hidden="true">content_paste_search</span>
+                <strong>Brak list</strong>
+                <p>Nie znaleziono zapisanych raportów dla wybranych filtrów.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <section class="admin-category-card admin-list-panel">
+            <div class="admin-category-head">
+                <div class="admin-category-title">
+                    <span class="material-symbols-rounded category-icon" aria-hidden="true">content_paste</span>
+                    <div>
+                        <h4>Zapisane raporty</h4>
+                        <span>${reports.length} ${formatListCount(reports.length)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-product-list admin-list-items">
+                ${reports.map(report => renderListItem(report, selectedListKey)).join('')}
+            </div>
+        </section>
+        <section class="admin-category-card admin-list-preview">
+            ${renderListPreview(selectedReport)}
+        </section>
+    `;
+}
+
+function getFilteredListReports() {
+    const location = document.getElementById('listLocationFilter').value;
+    const query = document.getElementById('listSearchInput').value.trim().toLowerCase();
+
+    return [...allData]
+        .filter(report => report?.date && report?.location)
+        .filter(report => location === 'all' || report.location === location)
+        .filter(report => {
+            if (!query) return true;
+            return `${report.location} ${report.date}`.toLowerCase().includes(query);
+        })
+        .sort((left, right) => parseReportTimestamp(right) - parseReportTimestamp(left));
+}
+
+function renderListItem(report, activeKey) {
+    const key = getReportKey(report);
+    const productsCount = Object.values(report.products || {}).filter(value => Number(value) > 0 || value === true).length;
+    const employeesCount = Object.keys(report.employees || {}).length;
+
+    return `
+        <button class="admin-product-row admin-list-item ${key === activeKey ? 'is-active' : ''}" type="button" data-list-preview="${escapeHtml(key)}">
+            <span class="material-symbols-rounded drag-handle" aria-hidden="true">receipt_long</span>
+            <span class="admin-list-item__main">
+                <strong>${escapeHtml(report.date)}</strong>
+                <span>${escapeHtml(report.location)} / ${employeesCount} prac. / ${productsCount} prod.</span>
+            </span>
+            <span class="material-symbols-rounded admin-list-item__chevron" aria-hidden="true">chevron_right</span>
+        </button>
+    `;
+}
+
+function renderListPreview(report) {
+    if (!report) return '';
+
+    const text = buildReportText(report, productCatalog);
+
+    return `
+        <div class="admin-list-preview__head">
+            <div>
+                <span class="summary-kicker">${adminRender.buildSymbolIcon('receipt_long')} Podgląd listy</span>
+                <h3>${escapeHtml(report.location)} / ${escapeHtml(report.date)}</h3>
+            </div>
+            <button class="btn-back admin-save-btn has-unsaved-changes" type="button" data-list-copy="${escapeHtml(getReportKey(report))}">
+                <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
+                Kopiuj
+            </button>
+        </div>
+        <pre class="admin-list-copy-preview">${escapeHtml(text)}</pre>
+    `;
+}
+
+async function copyReportText(report, button) {
+    const text = buildReportText(report, productCatalog);
+
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch {
+        fallbackCopyToClipboard(text);
+    }
+
+    button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">check</span> Skopiowano';
+    button.classList.add('is-copied');
+    setTimeout(() => {
+        button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">content_copy</span> Kopiuj';
+        button.classList.remove('is-copied');
+    }, 1800);
+}
+
+function getReportKey(report) {
+    return `${report.location}|${report.date}`;
+}
+
+function findReportByKey(key) {
+    if (!key) return null;
+    return allData.find(report => getReportKey(report) === key) || null;
+}
+
+function parseReportTimestamp(report) {
+    const [day, month, year] = report.date.split('.').map(Number);
+    return new Date(year, month - 1, day).getTime();
+}
+
+function formatListCount(count) {
+    if (count === 1) return 'lista';
+    if (count >= 2 && count <= 4) return 'listy';
+    return 'list';
 }
 
 async function switchAdminPage(pageName) {

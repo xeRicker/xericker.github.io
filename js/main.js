@@ -8,6 +8,7 @@ import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
+import { buildReportText } from './services/reportFormatter.js';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -207,7 +208,6 @@ async function generateReport() {
         employees: {},
         products: {}
     };
-    let text = `📋 ${selectedLocation} ${date}\n`;
 
     EMPLOYEES.forEach(name => {
         const id = name.toLowerCase();
@@ -215,36 +215,29 @@ async function generateReport() {
         const t = document.getElementById(`${id}_do`).value;
         if(f && t) {
             data.employees[name] = `${f} – ${t}`;
-            text += `• ${name}: ${f} – ${t}\n`;
         }
     });
 
-    let prodText = "";
     productCatalog.categories.forEach(category => {
-        let catTxt = "";
         category.items.forEach(p => {
             const cb = document.getElementById(`checkbox-${p.name}`);
             const inp = document.getElementById(`input-${p.name}`);
             const qty = cb ? (cb.checked ? 1 : 0) : (parseInt(inp.value) || 0);
 
             if(p.name.includes("Bułki") && qty === 0) {
-                data.products[p.name] = 0; catTxt += `  • Bułki: ❌\n`;
+                data.products[p.name] = 0;
             } else if(qty > 0) {
                 data.products[p.name] = qty;
-                catTxt += `  • ${p.name}${p.type === 'toggle' ? '' : ': ' + qty}\n`;
             }
         });
-        if(catTxt) prodText += `\n${category.name}\n${catTxt}`;
     });
-
-    text += prodText;
 
     if(await apiService.checkFileExists(selectedLocation, date)) {
         if(!(await dialogService.confirm("Raport z tego dnia już istnieje. Nadpisać?", "Nadpisać raport?"))) return;
     }
 
     await apiService.saveReport(data);
-    uiShared.showSuccess(text.trim());
+    uiShared.showSuccess(buildReportText(data, productCatalog));
 }
 
 function updateRevenueInsights() {

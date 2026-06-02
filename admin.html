@@ -5,7 +5,7 @@
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=35">
+    <link rel="stylesheet" href="style.css?v=38">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body style="display: none;">
@@ -51,6 +51,10 @@
         <button class="admin-page-tab" type="button" data-admin-tab="products" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
             Produkty
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="lists" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">content_paste</span>
+            Listy
         </button>
     </div>
 
@@ -235,6 +239,20 @@
 
     <div id="adminProductsPage" class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="products" hidden></div>
 
+    <div id="adminListsPage" class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="lists" hidden>
+        <div class="admin-lists-head">
+            <div class="section-heading">
+                <h3>Wygenerowane Listy</h3>
+                <p>Podgląd zapisanych raportów i ponowne kopiowanie listy na Messengera.</p>
+            </div>
+            <div class="admin-lists-filters">
+                <select id="listLocationFilter" class="calc-input"></select>
+                <input id="listSearchInput" type="search" class="calc-input" placeholder="Szukaj daty lub punktu">
+            </div>
+        </div>
+        <div id="adminListsContent" class="admin-lists-layout"></div>
+    </div>
+
     <div class="table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
@@ -261,6 +279,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=15"></script>
+<script type="module" src="js/admin.js?v=18"></script>
 </body>
 </html>

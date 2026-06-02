@@ -143,26 +143,26 @@ class AdminRender {
 
         container.innerHTML = `
             <div class="summary-box summary-box--primary">
-                <span class="summary-kicker">${this.buildSymbolIcon('store')} Utarg</span>
-                <h3>Łączny wynik</h3>
+                <span class="summary-kicker">${this.buildSymbolIcon('monitoring', 'summary-icon-badge--revenue')} Utarg</span>
+                <h3>Łączny</h3>
                 <p class="highlight">${formatMoney(total)}</p>
                 <small>${data.length} dni / średnio ${formatMoney(averageDay)}</small>
             </div>
             <div class="summary-box">
-                <span class="summary-kicker">${this.buildSymbolIcon('credit_card')} Płatności</span>
-                <h3>Karty</h3>
+                <span class="summary-kicker">${this.buildSymbolIcon('credit_card', 'summary-icon-badge--cards')} Karty</span>
+                <h3>Suma</h3>
                 <p>${formatMoney(cards)}</p>
                 <small>${this.formatPercent(cards, total)} całego utargu</small>
             </div>
             <div class="summary-box summary-box--glovo">
-                <span class="summary-kicker">${this.buildSymbolIcon('delivery_dining', 'summary-icon-badge--glovo')} Glovo</span>
-                <h3>Glovo netto</h3>
+                <span class="summary-kicker">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Glovo</span>
+                <h3>Suma</h3>
                 <p>${formatMoney(glovoNet)}</p>
                 <small>Po prowizji Glovo</small>
             </div>
             <div class="summary-box">
-                <span class="summary-kicker">${this.buildSymbolIcon('payments')} Kasetka</span>
-                <h3>Gotówka</h3>
+                <span class="summary-kicker">${this.buildSymbolIcon('savings', 'summary-icon-badge--cash')} Gotówka</span>
+                <h3>Suma</h3>
                 <p>${formatMoney(cashDesk)}</p>
                 <small>${this.formatPercent(cashDesk, total)} po odjęciu kart i Glovo</small>
             </div>
@@ -182,6 +182,8 @@ class AdminRender {
             return rightRatio - leftRatio;
         })[0];
         const leader = this.aggregateLocations(data)[0];
+        const weekEvents = this.getWeekEvents(data);
+        const leadEvent = weekEvents[0];
 
         container.innerHTML = `
             <div class="insight-card">
@@ -190,7 +192,7 @@ class AdminRender {
                 <p>${formatMoney(strongestDay.total)} / ${strongestDay.dayOfWeek}</p>
             </div>
             <div class="insight-card insight-card--glovo">
-                <span class="insight-label">${this.buildSymbolIcon('delivery_dining', 'summary-icon-badge--glovo')} Największy udział Glovo</span>
+                <span class="insight-label">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Największy udział Glovo</span>
                 <strong>${glovoHeavy.dateStr}</strong>
                 <p>${this.formatPercent(this.getGlovoDisplayValue(glovoHeavy), glovoHeavy.total)} dnia</p>
             </div>
@@ -199,7 +201,19 @@ class AdminRender {
                 <strong>${leader?.name || 'Brak'}</strong>
                 <p>${leader ? `${formatMoney(leader.total)} / średnio ${formatMoney(leader.avgDay)}` : '-'}</p>
             </div>
+            <div class="insight-card insight-card--events" data-week-events="true">
+                <span class="insight-label">${this.buildSymbolIcon('event', 'summary-icon-badge--event')} Wydarzenia tygodnia</span>
+                <strong>${weekEvents.length ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}` : 'Brak'}</strong>
+                <p>${leadEvent ? `${leadEvent.dateStr} / ${leadEvent.name}` : 'Brak świąt i wydarzeń w tym tygodniu'}</p>
+            </div>
         `;
+
+        const eventCard = container.querySelector('[data-week-events="true"]');
+        if (eventCard) {
+            eventCard.addEventListener('mouseenter', () => this.showEventsTooltip(weekEvents));
+            eventCard.addEventListener('mousemove', event => this.moveTooltip(event));
+            eventCard.addEventListener('mouseleave', () => this.hideTooltip());
+        }
     }
 
     renderLocationPerformance(container, data, options) {
@@ -401,6 +415,37 @@ class AdminRender {
         tooltip.style.top = `${y + window.scrollY}px`;
     }
 
+    buildEventsTooltipHtml(events) {
+        const rows = events.length
+            ? events.map(event => `
+                <div class="tt-event-row">
+                    <div>
+                        <strong>${event.name}</strong>
+                        <span>${event.type}</span>
+                    </div>
+                    <time>${event.dateStr}</time>
+                </div>
+            `).join('')
+            : '<div class="tt-empty-note">Brak świąt i wydarzeń w aktywnym tygodniu.</div>';
+
+        return `
+            <div class="tt-inner">
+                <div class="tt-header">
+                    <span>Wydarzenia tygodnia</span>
+                    <span class="tt-day">${events.length || 0}</span>
+                </div>
+                <div class="tt-events-list">${rows}</div>
+            </div>
+        `;
+    }
+
+    showEventsTooltip(events) {
+        const tooltip = document.getElementById('customTooltip');
+        if (!tooltip) return;
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = this.buildEventsTooltipHtml(events);
+    }
+
     hideTooltip() {
         const tooltip = document.getElementById('customTooltip');
         if (tooltip) tooltip.style.display = 'none';
@@ -499,6 +544,130 @@ class AdminRender {
     formatPercent(value, total) {
         if (!total) return '0.0%';
         return `${((value / total) * 100).toFixed(1)}%`;
+    }
+
+    getWeekEvents(data) {
+        const weekRange = this.getCurrentWeekRange(data);
+        if (!weekRange) return [];
+        const events = [];
+
+        for (const event of this.getCalendarEvents(weekRange.start.getFullYear())) {
+            if (event.date >= weekRange.start && event.date <= weekRange.end) {
+                events.push({ ...event, dateStr: this.formatDate(event.date) });
+            }
+        }
+
+        if (weekRange.start.getFullYear() !== weekRange.end.getFullYear()) {
+            for (const event of this.getCalendarEvents(weekRange.end.getFullYear())) {
+                if (event.date >= weekRange.start && event.date <= weekRange.end) {
+                    events.push({ ...event, dateStr: this.formatDate(event.date) });
+                }
+            }
+        }
+
+        return events.sort((left, right) => left.date - right.date);
+    }
+
+    getCurrentWeekRange(data) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dataDates = data
+            .map(day => day.dateObj)
+            .filter(Boolean)
+            .map(date => {
+                const copy = new Date(date);
+                copy.setHours(0, 0, 0, 0);
+                return copy;
+            });
+
+        const anchor = dataDates.find(date => this.isSameWeek(date, today)) || dataDates[0] || today;
+        const start = new Date(anchor);
+        const day = start.getDay() || 7;
+        start.setDate(start.getDate() - day + 1);
+        start.setHours(0, 0, 0, 0);
+
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        end.setHours(23, 59, 59, 999);
+
+        return { start, end };
+    }
+
+    getCalendarEvents(year) {
+        const easter = this.getEasterDate(year);
+        const corpusChristi = this.addDays(easter, 60);
+        const fatThursday = this.addDays(easter, -52);
+
+        return [
+            { date: new Date(year, 0, 1), name: 'Nowy Rok', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 0, 6), name: 'Trzech Króli', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 1, 14), name: 'Walentynki', type: 'Wydarzenie' },
+            { date: fatThursday, name: 'Tłusty Czwartek', type: 'Wydarzenie' },
+            { date: new Date(year, 2, 8), name: 'Dzień Kobiet', type: 'Wydarzenie' },
+            { date: new Date(year, 4, 1), name: 'Święto Pracy', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 4, 3), name: 'Święto Konstytucji 3 Maja', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 4, 26), name: 'Dzień Matki', type: 'Wydarzenie' },
+            { date: new Date(year, 5, 1), name: 'Dzień Dziecka', type: 'Wydarzenie' },
+            { date: corpusChristi, name: 'Boże Ciało', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 5, 23), name: 'Dzień Ojca', type: 'Wydarzenie' },
+            { date: new Date(year, 7, 15), name: 'Wniebowzięcie NMP', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 10, 1), name: 'Wszystkich Świętych', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 10, 11), name: 'Święto Niepodległości', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 11, 24), name: 'Wigilia', type: 'Wydarzenie' },
+            { date: new Date(year, 11, 25), name: 'Boże Narodzenie', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 11, 26), name: 'Drugi dzień Świąt', type: 'Dzień wolny od pracy' },
+            { date: new Date(year, 11, 31), name: 'Sylwester', type: 'Wydarzenie' }
+        ];
+    }
+
+    getEasterDate(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31) - 1;
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month, day);
+    }
+
+    addDays(date, days) {
+        const copy = new Date(date);
+        copy.setDate(copy.getDate() + days);
+        return copy;
+    }
+
+    isSameWeek(left, right) {
+        const range = this.getCurrentWeekRangeFromDate(right);
+        return left >= range.start && left <= range.end;
+    }
+
+    getCurrentWeekRangeFromDate(date) {
+        const start = new Date(date);
+        const day = start.getDay() || 7;
+        start.setDate(start.getDate() - day + 1);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        end.setHours(23, 59, 59, 999);
+        return { start, end };
+    }
+
+    formatDate(date) {
+        return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    }
+
+    formatEventCount(count) {
+        if (count === 1) return 'wydarzenie';
+        if (count >= 2 && count <= 4) return 'wydarzenia';
+        return 'wydarzeń';
     }
 
     capitalize(value = '') {

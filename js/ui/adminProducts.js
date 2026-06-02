@@ -1,5 +1,5 @@
-import { apiService } from '../services/api.js';
-import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js';
+import { apiService } from '../services/api.js?v=2';
+import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=2';
 import { dialogService } from './components/customControls.js?v=5';
 
 const escapeHtml = value => String(value ?? '')
@@ -213,6 +213,7 @@ class AdminProducts {
 
         try {
             this.catalog.updatedAt = new Date().toISOString();
+            this.catalog = normalizeProductCatalog(this.catalog);
             await apiService.saveProducts(this.catalog);
             this.savedSnapshot = this.serializeCatalog();
             this.isDirty = false;

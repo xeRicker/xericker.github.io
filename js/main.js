@@ -1,5 +1,5 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js';
+import { mainRender } from './ui/mainRender.js?v=2';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
@@ -7,7 +7,7 @@ import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 
 let selectedLocation = null;
 let workerReports = [];

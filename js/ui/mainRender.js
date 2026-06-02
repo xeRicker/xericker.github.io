@@ -40,11 +40,16 @@ export const mainRender = {
     renderProducts(container, catalog) {
         let idx = 0;
         const categories = Array.isArray(catalog?.categories)
-            ? catalog.categories
-            : Object.entries(catalog || {}).map(([name, category]) => ({
+            ? catalog.categories.map((category = {}) => ({
+                ...category,
+                name: category.name || 'Kategoria',
+                icon: category.icon || CATEGORY_SYMBOLS[category.name] || 'inventory_2',
+                items: Array.isArray(category.items) ? category.items : []
+            }))
+            : Object.entries(catalog || {}).map(([name, category = {}]) => ({
                 name,
                 icon: CATEGORY_SYMBOLS[name] || 'inventory_2',
-                items: category.items || []
+                items: Array.isArray(category.items) ? category.items : []
             }));
 
         container.innerHTML = categories.map(category => `

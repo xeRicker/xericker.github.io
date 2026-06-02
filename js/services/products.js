@@ -1,5 +1,5 @@
 import { CATEGORIES } from '../config/data.js';
-import { apiService } from './api.js';
+import { apiService } from './api.js?v=2';
 
 const CATEGORY_ICONS = {
     "🥩": "restaurant",
@@ -20,12 +20,12 @@ export function legacyCategoriesToCatalog(categories = CATEGORIES) {
     return {
         version: 1,
         updatedAt: null,
-        categories: Object.entries(categories).map(([label, category], categoryIndex) => ({
+        categories: Object.entries(categories || {}).map(([label, category = {}], categoryIndex) => ({
             id: `category-${categoryIndex + 1}`,
             name: label,
             icon: CATEGORY_ICONS[label] || 'inventory_2',
             enabled: true,
-            items: (category.items || []).map((product, productIndex) => ({
+            items: (Array.isArray(category.items) ? category.items : []).map((product = {}, productIndex) => ({
                 id: `product-${categoryIndex + 1}-${productIndex + 1}`,
                 name: product.name,
                 type: product.type === 's' ? 'toggle' : 'quantity',
@@ -45,12 +45,12 @@ export function normalizeProductCatalog(input) {
     return {
         version: Number(input.version) || 1,
         updatedAt: input.updatedAt || null,
-        categories: input.categories.map((category, categoryIndex) => ({
+        categories: input.categories.map((category = {}, categoryIndex) => ({
             id: category.id || `category-${categoryIndex + 1}`,
             name: category.name || `Kategoria ${categoryIndex + 1}`,
             icon: category.icon || 'inventory_2',
             enabled: category.enabled !== false,
-            items: (category.items || []).map((product, productIndex) => ({
+            items: (Array.isArray(category.items) ? category.items : []).map((product = {}, productIndex) => ({
                 id: product.id || `product-${categoryIndex + 1}-${productIndex + 1}`,
                 name: product.name || `Produkt ${productIndex + 1}`,
                 type: product.type === 'toggle' || product.type === 's' ? 'toggle' : 'quantity',
@@ -68,7 +68,7 @@ export function getActiveProductCatalog(catalog) {
             .filter(category => category.enabled !== false)
             .map(category => ({
                 ...category,
-                items: category.items.filter(product => product.enabled !== false)
+                items: (Array.isArray(category.items) ? category.items : []).filter(product => product.enabled !== false)
             }))
             .filter(category => category.items.length)
     };

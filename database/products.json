@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-06-02T07:53:14.452Z",
   "categories": [
     {
       "id": "category-1",
@@ -8,11 +8,36 @@
       "icon": "restaurant",
       "enabled": true,
       "items": [
-        { "id": "product-1-1", "name": "Mięso: Małe", "type": "quantity", "enabled": true },
-        { "id": "product-1-2", "name": "Mięso: Duże", "type": "quantity", "enabled": true },
-        { "id": "product-1-3", "name": "Stripsy", "type": "quantity", "enabled": true },
-        { "id": "product-1-4", "name": "Boczek", "type": "quantity", "enabled": true },
-        { "id": "product-1-5", "name": "Chorizo", "type": "toggle", "enabled": true }
+        {
+          "id": "product-1-1",
+          "name": "Mięso: MałeXD",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-1-2",
+          "name": "Mięso: Duże",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-1-3",
+          "name": "Stripsy",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-1-4",
+          "name": "Boczek",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-1-5",
+          "name": "Chorizo",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -21,11 +46,36 @@
       "icon": "eco",
       "enabled": true,
       "items": [
-        { "id": "product-2-1", "name": "Sałata", "type": "quantity", "enabled": true },
-        { "id": "product-2-2", "name": "Ogórki", "type": "quantity", "enabled": true },
-        { "id": "product-2-3", "name": "Pomidory", "type": "toggle", "enabled": true },
-        { "id": "product-2-4", "name": "Cebula", "type": "toggle", "enabled": true },
-        { "id": "product-2-5", "name": "Jalapeno", "type": "toggle", "enabled": true }
+        {
+          "id": "product-2-1",
+          "name": "Sałata",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-2-2",
+          "name": "Ogórki",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-2-3",
+          "name": "Pomidory",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-2-4",
+          "name": "Cebula",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-2-5",
+          "name": "Jalapeno",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -34,9 +84,24 @@
       "icon": "kitchen",
       "enabled": true,
       "items": [
-        { "id": "product-3-1", "name": "Cheddar", "type": "quantity", "enabled": true },
-        { "id": "product-3-2", "name": "Halloumi", "type": "quantity", "enabled": true },
-        { "id": "product-3-3", "name": "Majonez", "type": "toggle", "enabled": true }
+        {
+          "id": "product-3-1",
+          "name": "Cheddar",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-3-2",
+          "name": "Halloumi",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-3-3",
+          "name": "Majonez",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -45,10 +110,30 @@
       "icon": "lunch_dining",
       "enabled": true,
       "items": [
-        { "id": "product-4-1", "name": "Frytki", "type": "quantity", "enabled": true },
-        { "id": "product-4-2", "name": "Placki", "type": "quantity", "enabled": true },
-        { "id": "product-4-3", "name": "Krążki", "type": "quantity", "enabled": true },
-        { "id": "product-4-4", "name": "Frytura", "type": "toggle", "enabled": true }
+        {
+          "id": "product-4-1",
+          "name": "Frytki",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-4-2",
+          "name": "Placki",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-4-3",
+          "name": "Krążki",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-4-4",
+          "name": "Frytura",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -57,7 +142,12 @@
       "icon": "bakery_dining",
       "enabled": true,
       "items": [
-        { "id": "product-5-1", "name": "Bułki", "type": "quantity", "enabled": true }
+        {
+          "id": "product-5-1",
+          "name": "Bułki",
+          "type": "quantity",
+          "enabled": true
+        }
       ]
     },
     {
@@ -66,11 +156,36 @@
       "icon": "science",
       "enabled": true,
       "items": [
-        { "id": "product-6-1", "name": "Cebula prażona", "type": "quantity", "enabled": true },
-        { "id": "product-6-2", "name": "Sriracha", "type": "toggle", "enabled": true },
-        { "id": "product-6-3", "name": "Tabasco", "type": "toggle", "enabled": true },
-        { "id": "product-6-4", "name": "Przyprawa do grilla", "type": "toggle", "enabled": true },
-        { "id": "product-6-5", "name": "Sól do frytek", "type": "toggle", "enabled": true }
+        {
+          "id": "product-6-1",
+          "name": "Cebula prażona",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-6-2",
+          "name": "Sriracha",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-6-3",
+          "name": "Tabasco",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-6-4",
+          "name": "Przyprawa do grilla",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-6-5",
+          "name": "Sól do frytek",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -79,12 +194,42 @@
       "icon": "inventory_2",
       "enabled": true,
       "items": [
-        { "id": "product-7-1", "name": "Sos: Ketchup", "type": "toggle", "enabled": true },
-        { "id": "product-7-2", "name": "Sos: Carolina", "type": "toggle", "enabled": true },
-        { "id": "product-7-3", "name": "Sos: Czosnek", "type": "toggle", "enabled": true },
-        { "id": "product-7-4", "name": "Sos: Barbecue", "type": "toggle", "enabled": true },
-        { "id": "product-7-5", "name": "Sos: Sweet Chilli", "type": "toggle", "enabled": true },
-        { "id": "product-7-6", "name": "Saszetki: Ketchup", "type": "toggle", "enabled": true }
+        {
+          "id": "product-7-1",
+          "name": "Sos: Ketchup",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-7-2",
+          "name": "Sos: Carolina",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-7-3",
+          "name": "Sos: Czosnek",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-7-4",
+          "name": "Sos: Barbecue",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-7-5",
+          "name": "Sos: Sweet Chilli",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-7-6",
+          "name": "Saszetki: Ketchup",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -93,9 +238,24 @@
       "icon": "construction",
       "enabled": true,
       "items": [
-        { "id": "product-8-1", "name": "Zbój: Czosnek", "type": "toggle", "enabled": true },
-        { "id": "product-8-2", "name": "Zbój: Pieprz", "type": "toggle", "enabled": true },
-        { "id": "product-8-3", "name": "Zbój: Cytryna", "type": "toggle", "enabled": true }
+        {
+          "id": "product-8-1",
+          "name": "Zbój: Czosnek",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-8-2",
+          "name": "Zbój: Pieprz",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-8-3",
+          "name": "Zbój: Cytryna",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -104,10 +264,30 @@
       "icon": "local_drink",
       "enabled": true,
       "items": [
-        { "id": "product-9-1", "name": "Pepsi", "type": "toggle", "enabled": true },
-        { "id": "product-9-2", "name": "Pepsi Max", "type": "toggle", "enabled": true },
-        { "id": "product-9-3", "name": "Mirinda", "type": "toggle", "enabled": true },
-        { "id": "product-9-4", "name": "Lipton", "type": "toggle", "enabled": true }
+        {
+          "id": "product-9-1",
+          "name": "Pepsi",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-9-2",
+          "name": "Pepsi Max",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-9-3",
+          "name": "Mirinda",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-9-4",
+          "name": "Lipton",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -116,16 +296,66 @@
       "icon": "shopping_bag",
       "enabled": true,
       "items": [
-        { "id": "product-10-1", "name": "Torby: Małe", "type": "toggle", "enabled": true },
-        { "id": "product-10-2", "name": "Torby: Średnie", "type": "toggle", "enabled": true },
-        { "id": "product-10-3", "name": "Torby: Duże", "type": "toggle", "enabled": true },
-        { "id": "product-10-4", "name": "Sos: Pojemniki", "type": "toggle", "enabled": true },
-        { "id": "product-10-5", "name": "Sos: Pokrywki", "type": "toggle", "enabled": true },
-        { "id": "product-10-6", "name": "Opakowania na frytki", "type": "toggle", "enabled": true },
-        { "id": "product-10-7", "name": "Folia", "type": "toggle", "enabled": true },
-        { "id": "product-10-8", "name": "Serwetki", "type": "toggle", "enabled": true },
-        { "id": "product-10-9", "name": "Rękawiczki", "type": "toggle", "enabled": true },
-        { "id": "product-10-10", "name": "Papier pod grilla", "type": "toggle", "enabled": true }
+        {
+          "id": "product-10-1",
+          "name": "Torby: Małe",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-2",
+          "name": "Torby: Średnie",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-3",
+          "name": "Torby: Duże",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-4",
+          "name": "Sos: Pojemniki",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-5",
+          "name": "Sos: Pokrywki",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-6",
+          "name": "Opakowania na frytki",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-7",
+          "name": "Folia",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-8",
+          "name": "Serwetki",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-9",
+          "name": "Rękawiczki",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-10-10",
+          "name": "Papier pod grilla",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -134,10 +364,30 @@
       "icon": "cleaning_services",
       "enabled": true,
       "items": [
-        { "id": "product-11-1", "name": "Szmaty", "type": "toggle", "enabled": true },
-        { "id": "product-11-2", "name": "Zielony papier", "type": "toggle", "enabled": true },
-        { "id": "product-11-3", "name": "Odtłuszczacz", "type": "toggle", "enabled": true },
-        { "id": "product-11-4", "name": "Worki na śmieci 120L", "type": "toggle", "enabled": true }
+        {
+          "id": "product-11-1",
+          "name": "Szmaty",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-11-2",
+          "name": "Zielony papier",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-11-3",
+          "name": "Odtłuszczacz",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-11-4",
+          "name": "Worki na śmieci 120L",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     },
     {
@@ -146,12 +396,42 @@
       "icon": "receipt_long",
       "enabled": true,
       "items": [
-        { "id": "product-12-1", "name": "Drobne: 1,2,5", "type": "toggle", "enabled": true },
-        { "id": "product-12-2", "name": "Drobne: 10,20", "type": "toggle", "enabled": true },
-        { "id": "product-12-3", "name": "Długopis", "type": "toggle", "enabled": true },
-        { "id": "product-12-4", "name": "Pisak", "type": "toggle", "enabled": true },
-        { "id": "product-12-5", "name": "Zeszyt", "type": "toggle", "enabled": true },
-        { "id": "product-12-6", "name": "Papier do kasy", "type": "toggle", "enabled": true }
+        {
+          "id": "product-12-1",
+          "name": "Drobne: 1,2,5",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-12-2",
+          "name": "Drobne: 10,20",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-12-3",
+          "name": "Długopis",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-12-4",
+          "name": "Pisak",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-12-5",
+          "name": "Zeszyt",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-12-6",
+          "name": "Papier do kasy",
+          "type": "toggle",
+          "enabled": true
+        }
       ]
     }
   ]

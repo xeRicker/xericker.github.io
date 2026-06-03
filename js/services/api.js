@@ -1,5 +1,6 @@
 import { GITHUB_CONFIG } from '../config/config.js';
 import { isLocalhost } from '../utils.js';
+import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName } from './reportDates.js';
 
 class ApiService {
     constructor() {
@@ -149,13 +150,11 @@ class ApiService {
     }
 
     getMonthKeyFromDateString(dateString) {
-        const [day, month, year] = String(dateString || '').split('.').map(Number);
-        if (!day || !month || !year) return '';
-        return `${year}-${String(month).padStart(2, '0')}`;
+        return getMonthKeyFromReportDate(dateString);
     }
 
     getMonthKeyFromFileName(fileName) {
-        return this.getMonthKeyFromDateString(String(fileName || '').replace(/\.json$/i, ''));
+        return getMonthKeyFromReportFileName(fileName);
     }
 
     filterReportsByRecentMonths(reports, monthCount = 2) {

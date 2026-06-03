@@ -1,4 +1,5 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
+import { reportDateToIso } from '../services/reportDates.js';
 import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=5';
 
 const DEFAULT_MONTH_HOURS = 160;
@@ -246,10 +247,4 @@ function buildEmployeeDayMarkers(reports, name) {
         markers[iso] = (markers[iso] || 0) + calculateHours(shift);
         return markers;
     }, {});
-}
-
-function reportDateToIso(date) {
-    const [day, month, year] = date.split('.');
-    if (!day || !month || !year) return '';
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }

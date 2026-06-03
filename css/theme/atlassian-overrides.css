@@ -286,10 +286,6 @@ select:focus,
     background: var(--primary-color);
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(69%) sepia(16%) saturate(1812%) hue-rotate(181deg) brightness(98%) contrast(93%);
-}
-
 .heatmap-cell {
     background:
         linear-gradient(180deg, rgba(255,255,255,0.06), transparent 42%),

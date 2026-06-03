@@ -5,7 +5,7 @@ import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
 import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=2';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 import { buildReportText } from './services/reportFormatter.js';

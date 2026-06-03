@@ -1,5 +1,6 @@
 import { calculateHours } from '../utils.js';
 import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './revenue.js';
+import { parseReportDate } from './reportDates.js';
 
 export class AnalyticsService {
     processReports(reports) {
@@ -8,8 +9,8 @@ export class AnalyticsService {
             .filter(r => r?.date && r?.location)
             .forEach(r => {
             if (!map.has(r.date)) {
-                const [d, m, y] = r.date.split('.');
-                const dateObj = new Date(y, m - 1, d);
+                const dateObj = parseReportDate(r.date);
+                if (!dateObj) return;
                 map.set(r.date, {
                     dateStr: r.date,
                     dateObj,

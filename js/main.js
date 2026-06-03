@@ -1,5 +1,5 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=3';
+import { mainRender } from './ui/mainRender.js?v=4';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js';
@@ -15,6 +15,7 @@ let workerReports = [];
 let workerCalculatorReady = false;
 let workerCalculator = null;
 let productCatalog = null;
+let temporaryEmployeeCounter = 0;
 
 document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function setupEvents() {
     document.getElementById('products').addEventListener('click', handleProductClick);
     document.getElementById('products').addEventListener('change', handleProductChange);
+    document.getElementById('employees').addEventListener('click', handleEmployeesClick);
     document.getElementById('employees').addEventListener('change', handleEmployeePreset);
     document.getElementById('employees').addEventListener('input', saveState);
     document.getElementById('revenueInput').addEventListener('input', saveState);
@@ -126,6 +128,23 @@ function handleEmployeePreset(e) {
     saveState();
 }
 
+function handleEmployeesClick(e) {
+    if (!e.target.closest('[data-add-temporary-employee]')) return;
+    addTemporaryEmployee();
+}
+
+function addTemporaryEmployee() {
+    temporaryEmployeeCounter += 1;
+    const employee = {
+        id: `temp_employee_${temporaryEmployeeCounter}`,
+        name: 'Nowy',
+        color: 'var(--primary-soft)'
+    };
+    const row = mainRender.appendTemporaryEmployee(document.getElementById('employees'), employee, TIME_PRESETS);
+    enhanceCustomControls(row);
+    row.querySelector('.emp-name-input')?.select();
+}
+
 function saveState() {
     const state = {
         products: {},
@@ -150,9 +169,23 @@ function saveState() {
         if(f || t) state.employees[id] = { f, t };
     });
 
-    storageService.save(state);
+    if (hasPersistedState(state)) {
+        storageService.save(state);
+    } else {
+        storageService.clear();
+    }
     mainRender.updateResetBtn();
     updateRevenueInsights();
+}
+
+function hasPersistedState(state) {
+    return Boolean(
+        Object.keys(state.products).length ||
+        Object.keys(state.employees).length ||
+        state.revenue ||
+        state.cardRevenue ||
+        state.glovoRevenue
+    );
 }
 
 function restoreState() {
@@ -209,13 +242,8 @@ async function generateReport() {
         products: {}
     };
 
-    EMPLOYEES.forEach(name => {
-        const id = name.toLowerCase();
-        const f = document.getElementById(`${id}_od`).value;
-        const t = document.getElementById(`${id}_do`).value;
-        if(f && t) {
-            data.employees[name] = `${f} – ${t}`;
-        }
+    collectReportEmployees().forEach(({ name, start, end }) => {
+        data.employees[name] = `${start} – ${end}`;
     });
 
     productCatalog.categories.forEach(category => {
@@ -238,6 +266,21 @@ async function generateReport() {
 
     await apiService.saveReport(data);
     uiShared.showSuccess(buildReportText(data, productCatalog));
+}
+
+function collectReportEmployees() {
+    return Array.from(document.querySelectorAll('.employee-row[data-employee-id]'))
+        .map(row => {
+            const id = row.dataset.employeeId;
+            const start = document.getElementById(`${id}_od`)?.value;
+            const end = document.getElementById(`${id}_do`)?.value;
+            const name = row.dataset.temporaryEmployee === 'true'
+                ? row.querySelector('.emp-name-input')?.value.trim()
+                : row.querySelector('.emp-name')?.textContent.trim();
+
+            return { name, start, end };
+        })
+        .filter(employee => employee.name && employee.start && employee.end);
 }
 
 function updateRevenueInsights() {

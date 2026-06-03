@@ -1,6 +1,6 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
-import { adminRender } from './ui/adminRender.js?v=2';
+import { adminRender } from './ui/adminRender.js?v=3';
 import { adminProducts } from './ui/adminProducts.js?v=3';
 import { createAdminListsPage } from './ui/adminLists.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
@@ -71,8 +71,6 @@ function initUI(data) {
 
     document.getElementById('loading').style.display = 'none';
     document.getElementById('revenueTable').style.display = 'table';
-    document.getElementById('lastUpdate').innerText = new Date().toLocaleString('pl-PL');
-
     hideGlobalLoader();
 
     initCalculator();
@@ -472,7 +470,7 @@ function getActiveFilterLabels() {
     const from = document.getElementById('dateFromFilter').value;
     const to = document.getElementById('dateToFilter').value;
 
-    labels.push('Glovo netto');
+    labels.push('Glovo');
     if (location !== 'all') labels.push(location);
     if (weekday !== 'all') labels.push(weekday);
     if (from && to) labels.push(`${from} -> ${to}`);

@@ -34,6 +34,9 @@
             </div>
         </div>
         <div class="header-actions">
+            <div class="admin-month-select">
+                <select id="monthFilter" aria-label="Miesiąc raportów"></select>
+            </div>
             <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded" aria-hidden="true">database</span>
                 WSZYSTKIE DANE
@@ -65,16 +68,6 @@
     </div>
 
     <div class="admin-toolbar animate-enter delay-1" data-admin-page="revenue">
-        <div class="filters filters--primary">
-            <div class="filter-group">
-                <select id="monthFilter"></select>
-            </div>
-            <div class="toolbar-meta">
-                <span class="toolbar-meta-label">Aktualizacja</span>
-                <strong id="lastUpdate">-</strong>
-            </div>
-        </div>
-
         <div class="filter-panel">
             <div class="panel-heading">
                 <div>
@@ -285,6 +278,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=21"></script>
+<script type="module" src="js/admin.js?v=22"></script>
 </body>
 </html>

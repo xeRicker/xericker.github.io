@@ -68,7 +68,7 @@ Statyczna aplikacja dla Burbone do generowania dziennych list operacyjnych oraz 
 
 ## Podzial odpowiedzialnosci
 
-- `js/main.js`: logika generatora raportu, zakladki generator/pracownicy, zapis stanu formularza.
+- `js/main.js`: logika generatora raportu, zakladki generator/pracownicy, tymczasowy pracownik na jedna zmiane, zapis trwalego stanu formularza.
 - `js/admin.js`: kontroler panelu admina, filtry, zakladki admina, widok utargow i kalkulator.
 - `js/ui/adminLists.js`: widok zapisanych list, filtrowanie, podglad i kopiowanie raportow.
 - `js/ui/adminProducts.js`: edycja katalogu produktow, kolejnosc, typy, aktywnosc, zapis.
@@ -107,5 +107,6 @@ Serwer obsluguje statyczne pliki oraz lokalne zapisy JSON. Bez niego sama strona
 - Przy zmianie plikow JS importowanych w HTML podbij query string `?v=...`, bo nie ma bundlera.
 - Przy dodawaniu wspolnej logiki szukac najpierw w `js/services/` i `js/ui/components/`.
 - Daty raportow w danych sa w formacie `dd.mm.yyyy`; daty formularzy w UI sa w formacie ISO `yyyy-mm-dd`.
+- Ekipy z `js/config/data.js` sa stale, ale generator pozwala dodac pracownika tymczasowego do biezacego raportu. Taki pracownik nie zapisuje sie w `localStorage` i znika po reloadzie/resetcie.
 - Lokalizacje wystepuja z polskimi znakami, np. `Oświęcim`. Nie normalizowac ich agresywnie bez sprawdzenia sciezek w `database/`.
 - Nie zmieniac struktury danych JSON bez aktualizacji `api.js`, `analytics.js`, `reportFormatter.js` i panelu admina.

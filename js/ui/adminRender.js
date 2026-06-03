@@ -236,7 +236,7 @@ class AdminRender {
                 <div class="location-stats">
                     <div><span>Średnio / dzień</span><strong>${formatMoney(location.avgDay)}</strong></div>
                     <div><span>Karty</span><strong>${formatMoney(location.card)}</strong></div>
-                    <div class="location-stat--glovo"><span>Glovo netto</span><strong>${formatMoney(location.glovoNet)}</strong></div>
+                    <div class="location-stat--glovo"><span>Glovo</span><strong>${formatMoney(location.glovoNet)}</strong></div>
                     <div><span>Gotówka</span><strong>${formatMoney(location.cashDesk)}</strong></div>
                 </div>
                 <div class="location-foot">
@@ -529,14 +529,14 @@ class AdminRender {
 
     buildDatasetLabel(location, options) {
         if (options.viewMode === 'cards') return `${location} • karty`;
-        if (options.viewMode === 'glovo') return `${location} • Glovo netto`;
+        if (options.viewMode === 'glovo') return `${location} • Glovo`;
         if (options.viewMode === 'cash') return `${location} • gotówka`;
         return `${location} • utarg`;
     }
 
     getViewLabel(viewMode) {
         if (viewMode === 'cards') return 'KARTY';
-        if (viewMode === 'glovo') return 'GLOVO NETTO';
+        if (viewMode === 'glovo') return 'GLOVO';
         if (viewMode === 'cash') return 'GOTÓWKA';
         return 'UTARG';
     }

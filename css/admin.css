@@ -38,9 +38,17 @@ select:focus { border-color: var(--primary-color); }
     opacity: 0.84;
 }
 
-.filters { display: flex; justify-content: space-between; align-items: center; background-color: var(--surface-color); padding: 20px 30px; border-radius: var(--radius-md); margin-bottom: 0; border: 1px solid #333; }
-.filters--primary {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+.admin-month-select {
+    min-width: 190px;
+}
+
+.admin-month-select .custom-control__button {
+    min-height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--ds-background-neutral, #CECED912);
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    font-size: 13px;
 }
 
 .admin-page-tabs {
@@ -92,22 +100,6 @@ select:focus { border-color: var(--primary-color); }
 .filter-group { display: flex; align-items: center; gap: 15px; }
 .filter-stack { display: flex; flex-direction: column; gap: 8px; }
 
-.toolbar-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-}
-
-.toolbar-meta-label {
-    font-size: 11px;
-    color: #7c7c7c;
-    text-transform: uppercase;
-    font-family: var(--font-heading);
-    letter-spacing: 1px;
-}
-
-.toolbar-meta strong,
 .summary-box p,
 .insight-card strong,
 .location-total,

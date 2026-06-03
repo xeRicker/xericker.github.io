@@ -17,26 +17,68 @@ const CATEGORY_SYMBOLS = {
 
 export const mainRender = {
     renderEmployees(container, list, colors, presets) {
-        container.innerHTML = list.map((name, i) => {
-            const id = name.toLowerCase();
-            const opts = presets.map(p => `<option value="${p.value}">${p.label}</option>`).join('');
-            return `
-            <div class="employee-row animate-stagger" style="animation-delay:${i*0.05}s">
+        container.innerHTML = [
+            ...list.map((name, i) => this.renderEmployeeRow({
+                id: name.toLowerCase(),
+                name,
+                color: colors[name] || '#ccc',
+                presets,
+                delay: i * 0.05
+            })),
+            this.renderTemporaryEmployeeButton(list.length * 0.05)
+        ].join('');
+    },
+
+    renderEmployeeRow({ id, name, color, presets, delay = 0, temporary = false }) {
+        const opts = presets.map(p => `<option value="${p.value}">${p.label}</option>`).join('');
+        const safeId = escapeHtml(id);
+        const safeName = escapeHtml(name);
+
+        return `
+            <div class="employee-row animate-stagger ${temporary ? 'employee-row--temporary active' : ''}" data-employee-id="${safeId}" data-temporary-employee="${temporary ? 'true' : 'false'}" style="animation-delay:${delay}s">
                 <div class="employee-info">
-                    <div class="avatar" style="background-color:${colors[name]||'#ccc'}">${name[0]}</div>
-                    <div class="emp-name">${name}</div>
+                    <div class="avatar" style="background-color:${escapeHtml(color)}">${escapeHtml((name || 'N')[0])}</div>
+                    ${temporary
+                        ? `<input class="emp-name emp-name-input" type="text" value="${safeName}" aria-label="Nazwa pracownika tymczasowego">`
+                        : `<div class="emp-name">${safeName}</div>`
+                    }
                     <div class="preset-btn-wrapper">
-                        <button class="btn-preset" style="color:var(--primary-color)">
+                        <button class="btn-preset" type="button" style="color:var(--primary-color)" aria-label="Szybkie godziny">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         </button>
-                        <select class="hidden-preset-select" data-id="${id}"><option></option>${opts}</select>
+                        <select class="hidden-preset-select" data-id="${safeId}"><option></option>${opts}</select>
                     </div>
                 </div>
                 <div class="time-inputs">
-                    <input type="time" id="${id}_od"><span style="color:#666">-</span><input type="time" id="${id}_do">
+                    <input type="time" id="${safeId}_od"><span style="color:#666">-</span><input type="time" id="${safeId}_do">
                 </div>
             </div>`;
-        }).join('');
+    },
+
+    renderTemporaryEmployeeButton(delay = 0) {
+        return `
+            <button class="employee-row employee-row--add animate-stagger" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
+                <div class="employee-info">
+                    <div class="avatar avatar--new">+</div>
+                    <div class="emp-name">
+                        <span>NOWY</span>
+                        <small>Dodaj jednorazowego pracownika</small>
+                    </div>
+                </div>
+            </button>`;
+    },
+
+    appendTemporaryEmployee(container, employee, presets) {
+        const addButton = container.querySelector('[data-add-temporary-employee]');
+        const rowHtml = this.renderEmployeeRow({
+            id: employee.id,
+            name: employee.name,
+            color: employee.color,
+            presets,
+            temporary: true
+        });
+        addButton.insertAdjacentHTML('beforebegin', rowHtml);
+        return container.querySelector(`[data-employee-id="${employee.id}"]`);
     },
 
     renderProducts(container, catalog) {

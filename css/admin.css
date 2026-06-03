@@ -25,6 +25,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     margin-bottom: 24px;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.admin-load-all-btn {
+    min-width: 168px;
+    justify-content: center;
+}
+
+.admin-load-all-btn:disabled {
+    cursor: default;
+    opacity: 0.84;
+}
+
 .filters { display: flex; justify-content: space-between; align-items: center; background-color: var(--surface-color); padding: 20px 30px; border-radius: var(--radius-md); margin-bottom: 0; border: 1px solid #333; }
 .filters--primary {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
@@ -676,13 +694,10 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .calc-breakdown-pill { color: #aaa; font-size: 13px; }
 .calc-breakdown-pill strong { color: #fff; }
 .calc-breakdown-pill.is-main { border-color: rgba(212, 82, 26, 0.5); color: var(--primary-color); background: rgba(212, 82, 26, 0.08); }
-.calc-breakdown-report { margin-top: 14px; border: 1px solid #333; border-radius: 10px; overflow: hidden; background: #121212; }
-.calc-breakdown-report summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--font-heading); color: #f2f2f2; letter-spacing: 0.4px; background: linear-gradient(180deg, rgba(212, 82, 26, 0.08), rgba(212, 82, 26, 0.02)); }
-.calc-breakdown-report summary::-webkit-details-marker { display: none; }
-.calc-breakdown-report summary span { font-family: var(--font-body); font-size: 13px; color: #aaa; font-weight: 500; }
-.calc-breakdown-table-wrap { overflow-x: auto; }
-.calc-breakdown-table th { padding: 14px 16px; font-size: 12px; }
-.calc-breakdown-table td { padding: 14px 16px; font-size: 14px; }
+.calc-breakdown-report { margin-top: 14px; border: 1px solid #333; border-radius: var(--radius-md); overflow: hidden; background: var(--surface-color); }
+.calc-breakdown-head { padding: 20px 24px; }
+.calc-breakdown-table th { padding: 18px 20px; font-size: 13px; }
+.calc-breakdown-table td { padding: 18px 20px; font-size: 14px; vertical-align: middle; }
 .calc-breakdown-table tbody tr:hover td { background: rgba(212, 82, 26, 0.05); }
 
 .loc-bar-container { display: flex; height: 6px; width: 100%; background: #333; border-radius: 3px; overflow: hidden; margin-top: 6px; }
@@ -1218,6 +1233,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 }
 
 @media (max-width: 760px) {
+    .header-actions,
     .admin-products-head,
     .admin-lists-head,
     .admin-category-head,

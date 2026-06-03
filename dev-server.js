@@ -53,6 +53,20 @@ async function readJsonFiles(dir) {
     return results;
 }
 
+function getRecentMonthKeys(count) {
+    const now = new Date();
+    return Array.from({ length: count }, (_, index) => {
+        const date = new Date(now.getFullYear(), now.getMonth() - index, 1);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    });
+}
+
+function getReportMonthKey(report) {
+    const [day, month, year] = String(report?.date || '').split('.').map(Number);
+    if (!day || !month || !year) return '';
+    return `${year}-${String(month).padStart(2, '0')}`;
+}
+
 function readRequestBody(req) {
     return new Promise((resolve, reject) => {
         let body = '';
@@ -84,7 +98,13 @@ async function handleProductsWrite(req, res, targetPath) {
 const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && req.url.split('?')[0] === '/__local-data') {
         try {
-            const data = await readJsonFiles(path.join(root, 'database'));
+            const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+            const recentMonths = Number(url.searchParams.get('recentMonths')) || 0;
+            let data = await readJsonFiles(path.join(root, 'database'));
+            if (recentMonths > 0) {
+                const monthKeys = new Set(getRecentMonthKeys(recentMonths));
+                data = data.filter(report => monthKeys.has(getReportMonthKey(report)));
+            }
             send(res, 200, JSON.stringify(data), 'application/json; charset=utf-8');
         } catch (error) {
             send(res, 500, JSON.stringify({ ok: false, error: error.message }), 'application/json; charset=utf-8');

@@ -141,37 +141,90 @@ class ApiService {
         }
     }
 
-    async fetchAllData() {
+    getRecentMonthKeys(count = 2, referenceDate = new Date()) {
+        return Array.from({ length: count }, (_, index) => {
+            const date = new Date(referenceDate.getFullYear(), referenceDate.getMonth() - index, 1);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        });
+    }
+
+    getMonthKeyFromDateString(dateString) {
+        const [day, month, year] = String(dateString || '').split('.').map(Number);
+        if (!day || !month || !year) return '';
+        return `${year}-${String(month).padStart(2, '0')}`;
+    }
+
+    getMonthKeyFromFileName(fileName) {
+        return this.getMonthKeyFromDateString(String(fileName || '').replace(/\.json$/i, ''));
+    }
+
+    filterReportsByRecentMonths(reports, monthCount = 2) {
+        const monthKeys = new Set(this.getRecentMonthKeys(monthCount));
+        return reports.filter(report => monthKeys.has(this.getMonthKeyFromDateString(report?.date)));
+    }
+
+    reportProgress(onProgress, loaded, total) {
+        if (typeof onProgress === 'function') {
+            onProgress({
+                loaded,
+                total,
+                percent: total ? Math.round((loaded / total) * 100) : 0
+            });
+        }
+    }
+
+    async fetchAllData(options = {}) {
+        const { recentMonths = null, onProgress = null } = options;
         if (isLocalhost()) {
             try {
-                const response = await fetch(`__local-data?v=${Date.now()}`);
+                const params = new URLSearchParams({ v: Date.now() });
+                if (recentMonths) params.set('recentMonths', recentMonths);
+                const response = await fetch(`__local-data?${params.toString()}`);
                 if (response.ok) {
                     const localData = await response.json();
-                    if (Array.isArray(localData) && localData.length) return localData;
+                    if (Array.isArray(localData) && localData.length) {
+                        this.reportProgress(onProgress, localData.length, localData.length);
+                        return localData;
+                    }
                 }
             } catch (error) {
                 console.warn('Local data endpoint unavailable, using mock data.', error);
             }
-            return this.getMockData();
+            const mockData = await this.getMockData();
+            const data = recentMonths ? this.filterReportsByRecentMonths(mockData, recentMonths) : mockData;
+            this.reportProgress(onProgress, data.length, data.length);
+            return data;
         }
 
         try {
             const locRes = await fetch(`${this.baseUrl}database`, { headers: this.headers });
             if (!locRes.ok) return [];
             const locations = (await locRes.json()).filter(i => i.type === 'dir');
+            const monthKeys = recentMonths ? new Set(this.getRecentMonthKeys(recentMonths)) : null;
 
-            const promises = locations.map(async loc => {
+            const filesByLocation = await Promise.all(locations.map(async loc => {
                 const filesRes = await fetch(loc.url, { headers: this.headers });
                 if (!filesRes.ok) return [];
-                const files = await filesRes.json();
-                return Promise.all(files.filter(f => f.name.endsWith('.json')).map(async f => {
-                    const r = await fetch(f.download_url);
-                    return r.ok ? r.json() : null;
-                }));
-            });
+                return (await filesRes.json())
+                    .filter(f => f.name.endsWith('.json'))
+                    .filter(f => !monthKeys || monthKeys.has(this.getMonthKeyFromFileName(f.name)));
+            }));
 
-            const results = await Promise.all(promises);
-            return results.flat().filter(Boolean);
+            const files = filesByLocation.flat();
+            let loaded = 0;
+            this.reportProgress(onProgress, loaded, files.length);
+
+            const results = await Promise.all(files.map(async f => {
+                try {
+                    const r = await fetch(f.download_url);
+                    return r.ok ? await r.json() : null;
+                } finally {
+                    loaded += 1;
+                    this.reportProgress(onProgress, loaded, files.length);
+                }
+            }));
+
+            return results.filter(Boolean);
         } catch (e) {
             console.error(e);
             return [];

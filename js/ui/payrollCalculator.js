@@ -163,15 +163,25 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
         </div>
     `).join('');
 
-    const rowsHtml = breakdown.map(day => `
+    const rowsHtml = breakdown.length ? breakdown.map(day => `
         <tr>
-            <td>${formatCalcDate(day.date)}</td>
+            <td>
+                <div class="cell-primary">${formatCalcDate(day.date)}</div>
+                <div class="cell-secondary">${day.date}</div>
+            </td>
             <td>${day.location}</td>
-            <td>${day.shift}</td>
+            <td><span class="point-pill">${day.shift}</span></td>
             <td class="val-cell">${day.hours.toFixed(1)} h</td>
             <td class="val-cell">${formatMoney(day.amount)}</td>
         </tr>
-    `).join('');
+    `).join('') : `
+        <tr>
+            <td colspan="5">
+                <div class="cell-primary">Brak zmian w wybranym okresie</div>
+                <div class="cell-secondary">Zmień zakres dat albo wybierz innego pracownika.</div>
+            </td>
+        </tr>
+    `;
 
     return `
         <div class="calc-breakdown-summary">
@@ -195,12 +205,14 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
 
         <div class="calc-breakdown-pills">${summaryHtml}</div>
 
-        <details class="calc-breakdown-report" open>
-            <summary>
-                Mini-raport wypłaty
-                <span>${shiftCount} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</span>
-            </summary>
-            <div class="calc-breakdown-table-wrap">
+        <section class="calc-breakdown-report">
+            <div class="table-head calc-breakdown-head">
+                <div class="section-heading">
+                    <h3>Raport Wypłaty</h3>
+                    <p>${shiftCount} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</p>
+                </div>
+            </div>
+            <div class="table-responsive">
                 <table class="calc-breakdown-table">
                     <thead>
                         <tr>
@@ -214,7 +226,7 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
                     <tbody>${rowsHtml}</tbody>
                 </table>
             </div>
-        </details>
+        </section>
     `;
 }
 

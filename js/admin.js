@@ -2,7 +2,7 @@ import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=2';
 import { adminProducts } from './ui/adminProducts.js?v=3';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=2';
 import { escapeHtml, fallbackCopyToClipboard, isLocalhost, parseLocalDateInput } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 import { buildReportText } from './services/reportFormatter.js';
@@ -10,6 +10,7 @@ import { getActiveProductCatalog, loadProductCatalog } from './services/products
 
 const PASSWORD = "xdxdxd123";
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
+const DEFAULT_DATA_MONTHS = 2;
 
 let allData = [];
 let processedData = [];
@@ -23,6 +24,8 @@ let revenueSort = { key: 'date', direction: 'desc' };
 let payrollCalculator = null;
 let productCatalog = null;
 let selectedListKey = null;
+let isFullDataLoaded = false;
+let isLoadingFullData = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isLocalhost()) {
@@ -36,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     await adminProducts.init(document.getElementById('adminProductsPage'));
 
-    allData = await apiService.fetchAllData();
+    allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS });
     if (!allData.length) {
         document.getElementById('loading').innerText = "Brak danych";
         hideGlobalLoader();
@@ -71,12 +74,88 @@ function initUI(data) {
 }
 
 function setupAdminPages() {
+    document.getElementById('loadAllDataBtn')?.addEventListener('click', loadFullDataInBackground);
+
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         tab.addEventListener('click', async () => {
             await switchAdminPage(tab.dataset.adminTab);
         });
     });
     switchAdminPage('revenue');
+}
+
+async function loadFullDataInBackground() {
+    if (isLoadingFullData || isFullDataLoaded) return;
+
+    const button = document.getElementById('loadAllDataBtn');
+    isLoadingFullData = true;
+    setLoadAllButtonState(button, 'Pobieranie 0%', true);
+
+    try {
+        const fullData = await apiService.fetchAllData({
+            onProgress: progress => {
+                setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true);
+            }
+        });
+
+        if (!fullData.length) {
+            setLoadAllButtonState(button, 'Brak danych', false);
+            return;
+        }
+
+        isFullDataLoaded = true;
+        applyLoadedData(fullData);
+        setLoadAllButtonState(button, 'Pobrano wszystko', false, true);
+    } catch (error) {
+        console.error(error);
+        setLoadAllButtonState(button, 'Błąd pobierania', false);
+    } finally {
+        isLoadingFullData = false;
+    }
+}
+
+function setLoadAllButtonState(button, label, busy, done = false) {
+    if (!button) return;
+    button.disabled = busy || done;
+    button.classList.toggle('is-saving', busy);
+    button.classList.toggle('is-clean', done);
+    button.innerHTML = `
+        <span class="material-symbols-rounded" aria-hidden="true">${done ? 'check' : 'database'}</span>
+        ${escapeHtml(label)}
+    `;
+}
+
+function applyLoadedData(data) {
+    const activeMonth = document.getElementById('monthFilter')?.value || '';
+
+    allData = data;
+    processedData = analytics.processReports(allData);
+    currentData = [];
+    currentWeeks = [];
+    activeWeekKey = 'all';
+
+    populateMonthFilter(processedData);
+    restoreMonthSelection(activeMonth);
+    populateLocationFilter(processedData);
+    populateListLocationFilter();
+    renderListsPage();
+    refreshCustomControls();
+
+    if (document.getElementById('monthFilter').options.length > 0) {
+        handleMonthChange(processedData);
+    }
+
+    payrollCalculator?.refresh();
+}
+
+function restoreMonthSelection(value) {
+    const select = document.getElementById('monthFilter');
+    if (!select) return;
+    if (value && Array.from(select.options).some(option => option.value === value)) {
+        select.value = value;
+        return;
+    }
+    select.selectedIndex = 0;
 }
 
 function initListsPage() {

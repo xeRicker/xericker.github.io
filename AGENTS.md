@@ -1,20 +1,21 @@
 # Burbone Site Context
 
-## Cel projektu
+## Project Goal
 
-Statyczna aplikacja dla Burbone do generowania dziennych list operacyjnych oraz panel admina do analizy utargów, godzin pracowników, produktów i zapisanych raportów. Strona działa jako GitHub Pages, a lokalnie może używać `dev-server.js` do zapisu plików JSON przez `PUT`.
+Static Burbone app for generating daily operations lists and an admin dashboard for revenue, employee hours, products, and saved reports. The site runs on GitHub Pages. Locally it can use `dev-server.js` to persist JSON files through `PUT`.
 
 ## Stack
 
-- HTML statyczny: `index.html`, `admin.html`
-- JavaScript: ES modules bez bundlera
-- CSS: importy przez `style.css`
-- Dane: pliki JSON w `database/<lokalizacja>/<dd.mm.yyyy>.json`
-- Wykresy: Chart.js z CDN na stronie admina
-- Ikony: Google Material Symbols Rounded
-- Design tokens: lokalny zestaw tokenów Atlassian w `css/atlassian-tokens.css`
+- Static HTML: `index.html`, `admin.html`
+- JavaScript: ES modules without a bundler
+- CSS: imported through `style.css`
+- Data: JSON files in `database/<location>/<dd.mm.yyyy>.json`
+- Charts: Chart.js from CDN on the admin page
+- Icons: Google Material Symbols Rounded
+- Design tokens: local Atlassian token set in `css/atlassian-tokens.css`
+- Active app palette: Burbone aliases in `css/theme/palette.css`
 
-## Drzewko plików
+## File Tree
 
 ```text
 .
@@ -63,50 +64,102 @@ Statyczna aplikacja dla Burbone do generowania dziennych list operacyjnych oraz 
 └── database/
     ├── products.json
     ├── default.json
-    └── <lokalizacja>/*.json
+    └── <location>/*.json
 ```
 
-## Podzial odpowiedzialnosci
+## Responsibilities
 
-- `js/main.js`: logika generatora raportu, zakladki generator/pracownicy, tymczasowy pracownik na jedna zmiane, zapis trwalego stanu formularza.
-- `js/admin.js`: kontroler panelu admina, filtry, zakladki admina, widok utargow i kalkulator.
-- `js/ui/adminLists.js`: widok zapisanych list, filtrowanie, podglad i kopiowanie raportow.
-- `js/ui/adminProducts.js`: edycja katalogu produktow, kolejnosc, typy, aktywnosc, zapis.
-- `js/ui/adminRender.js`: renderowanie podsumowan, wykresow, tabeli, heatmapy i tooltipow.
-- `js/ui/payrollCalculator.js`: wspolny kalkulator godzin dla strony glownej i admina.
-- `js/ui/components/customControls.js`: wlasne kontrolki `select`, `date`, `time` i dialogi. Nie uzywac `alert`, `confirm`, `prompt` ani natywnych pickerow jako interfejsu.
-- `js/services/reportDates.js`: wspolne parsowanie dat raportow, klucze raportow i sortowanie po dacie.
-- `js/services/api.js`: odczyt/zapis danych z GitHub API albo lokalnego dev-servera.
-- `js/services/analytics.js`: laczenie raportow dziennych i wyliczenia statystyk.
+- `js/main.js`: report generator logic, generator/employees tabs, one-shift temporary employee, persistent form state.
+- `js/admin.js`: admin dashboard controller, filters, admin tabs, revenue view, calculator.
+- `js/ui/adminLists.js`: saved lists view, filtering, report preview, report copying.
+- `js/ui/adminProducts.js`: product catalog editing, ordering, types, active state, saving.
+- `js/ui/adminRender.js`: summaries, charts, tables, heatmap, tooltips.
+- `js/ui/payrollCalculator.js`: shared hours calculator for the main page and admin.
+- `js/ui/components/customControls.js`: custom `select`, `date`, `time`, and dialog controls. Do not use `alert`, `confirm`, `prompt`, or native pickers as UI.
+- `js/services/reportDates.js`: shared report date parsing, report keys, date sorting.
+- `js/services/api.js`: read/write through the GitHub API or local dev server.
+- `js/services/analytics.js`: daily report aggregation and statistics.
 
-## Design
+## Design Direction
 
-Projekt ma isc w kierunku Atlassian: spokojny, uzytkowy, ciemny dashboard z malymi promieniami zaokraglen, czytelnymi kontrolkami i konsekwentna typografia. Preferowane sa tokeny Atlassian oraz zmienne z `css/base.css`; nie wprowadzac losowych kolorow, jesli da sie uzyc istniejacych zmiennych.
+The app should feel like a calm, utility-first, dark Atlassian-style dashboard adapted to Burbone's current warm brand palette: compact radii, clear controls, dense admin views, and consistent typography. Prefer the active aliases from `css/theme/palette.css` and `css/base.css`; do not introduce unrelated colors or font stacks.
 
-Zasady UI:
+## Color System
 
-- Wszystkie kontrolki formularzy maja wygladac jak nasze komponenty. `select`, `date` i `time` powinny przechodzic przez `enhanceCustomControls()`.
-- Do dialogow uzywac `dialogService` z `customControls.js`; nie uzywac przegladarkowych `alert`, `confirm`, `prompt`.
-- Czcionka ma byc spojna: uzywac `--font-body` i `--font-heading`.
-- Ikony w przyciskach preferuja Material Symbols przez `renderMaterialIcon()` albo istniejacy markup Material Symbols.
-- Nie dodawac dekoracyjnych kart w kartach. Karty sa dla powtarzalnych elementow, tabel, paneli i modali.
-- Przy zmianach CSS sprawdzic mobile, bo panel admina ma wiele siatek i stale akcje w wierszach.
+All UI colors must come from the current palette and token aliases. New CSS should use variables, not raw hex/rgb values, unless the variable is being defined inside `css/theme/palette.css`.
 
-## Praca lokalna
+Primary color roles:
 
-Uruchomienie lokalne:
+- Brand primary and main actions: `--primary-color`, `--primary-hover`, `--primary-pressed`
+- Soft selected/active brand surfaces: `--primary-soft`, `--surface-active`, `--primary-glow`
+- Page background: `--bg-color`
+- Default panels/cards/tables: `--surface-color`
+- Raised panels, inputs, and grouped controls: `--surface-raised`
+- Overlays, dropdowns, popovers, dialogs, and tooltip backgrounds: `--surface-overlay`
+- Borders: `--border-color`, stronger focus/active borders: `--border-focused`
+- Large text, headings, primary values, table primary cells: `--text-primary`
+- Supporting/small text, descriptions, labels: `--text-secondary`
+- Muted metadata, placeholders, secondary captions: `--text-muted`
+- Inverse text on strong filled buttons or bright badges: `--app-text-inverse`
+- Success states and positive totals: `--success-color`, `--app-success-bg`
+- Danger/destructive states: `--danger-color`, `--app-danger-bg`
+- Warning/Glovo states: `--glovo-color`, `--glovo-dark`, `--glovo-soft`
+- Information states: `--app-info`, `--app-info-bg`
+- Charts: `--app-chart-1` through `--app-chart-5`
+
+Color rules:
+
+- Keep Burbone orange (`--brand-primary` / `--primary-color`) as the only dominant brand accent.
+- Use semantic variables for status colors instead of custom reds, greens, yellows, or blues.
+- Use `--surface-overlay` for tooltip and popover backgrounds so floating UI matches dialogs and menus.
+- Use `--text-primary` for important text and metrics, `--text-secondary` for readable supporting text, and `--text-muted` only for low-emphasis metadata.
+- Use `color-mix()` only when deriving a transparent or hover state from an approved variable.
+- Do not add new palette roles without updating this section and `css/theme/palette.css`.
+- When touching older CSS with hard-coded colors, prefer migrating the touched block to the approved variables.
+
+## Typography System
+
+All typography must use the existing font library. Do not add custom font families or ad hoc font stacks.
+
+Font roles:
+
+- App body, paragraphs, inputs, table cells, descriptions: `--font-body`
+- Headings, labels, buttons, tabs, table headers, compact UI controls: `--font-heading`
+- Code-like technical values only: `--ds-font-family-code`
+- Atlassian full text styles may be used when a complete size/weight/line-height token is needed: `--ds-font-heading-*`, `--ds-font-body`, `--ds-font-body-small`, `--ds-font-metric-*`
+
+Typography rules:
+
+- Use `--font-heading` for controls and UI labels that need stronger hierarchy.
+- Use `--font-body` for all editable fields, descriptions, table content, helper text, and report content.
+- Metrics and dashboard numbers should use heading/metric tokens, with color determined by the Color System.
+- Keep letter spacing at `0` unless matching an existing local uppercase label pattern.
+- Do not scale font size with viewport width. Use fixed sizes with responsive layout changes.
+- Text must fit its container on mobile and desktop; prefer wrapping or layout changes over shrinking text aggressively.
+
+## UI Rules
+
+- All form controls should look like project components. `select`, `date`, and `time` should go through `enhanceCustomControls()`.
+- Use `dialogService` from `customControls.js` for dialogs; do not use browser `alert`, `confirm`, or `prompt`.
+- Use Material Symbols in buttons through `renderMaterialIcon()` or existing Material Symbols markup.
+- Do not add decorative cards inside cards. Cards are for repeated items, tables, panels, and modals.
+- When changing CSS, check mobile because the admin page has dense grids and fixed row actions.
+
+## Local Development
+
+Run locally with:
 
 ```bash
 node dev-server.js
 ```
 
-Serwer obsluguje statyczne pliki oraz lokalne zapisy JSON. Bez niego sama strona moze sie otworzyc, ale zapisy przez `PUT` nie beda dzialac.
+The server handles static files and local JSON writes. The site can open without it, but `PUT` saves will not work.
 
-## Wskazowki dla kolejnych zmian
+## Change Notes
 
-- Przy zmianie plikow JS importowanych w HTML podbij query string `?v=...`, bo nie ma bundlera.
-- Przy dodawaniu wspolnej logiki szukac najpierw w `js/services/` i `js/ui/components/`.
-- Daty raportow w danych sa w formacie `dd.mm.yyyy`; daty formularzy w UI sa w formacie ISO `yyyy-mm-dd`.
-- Ekipy z `js/config/data.js` sa stale, ale generator pozwala dodac pracownika tymczasowego do biezacego raportu. Taki pracownik nie zapisuje sie w `localStorage` i znika po reloadzie/resetcie.
-- Lokalizacje wystepuja z polskimi znakami, np. `Oświęcim`. Nie normalizowac ich agresywnie bez sprawdzenia sciezek w `database/`.
-- Nie zmieniac struktury danych JSON bez aktualizacji `api.js`, `analytics.js`, `reportFormatter.js` i panelu admina.
+- When changing JS files imported by HTML, bump the query string `?v=...` because there is no bundler.
+- Before adding shared logic, check `js/services/` and `js/ui/components/`.
+- Report data dates use `dd.mm.yyyy`; UI form dates use ISO `yyyy-mm-dd`.
+- Teams in `js/config/data.js` are fixed, but the generator allows adding a temporary employee for the current report. That employee is not saved to `localStorage` and disappears after reload/reset.
+- Locations may include Polish characters, for example `Oświęcim`. Do not normalize them aggressively without checking paths in `database/`.
+- Do not change the JSON data structure without updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel.

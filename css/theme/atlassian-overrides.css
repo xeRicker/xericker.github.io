@@ -89,15 +89,17 @@ body {
 }
 
 .generator-tab.is-active,
+.admin-page-tab.is-active,
 .view-btn.active,
 .week-tab.active,
 .toggle-pill.active,
 .chart-controls button.active,
+.chart-btn.active,
 .primary-fab,
 .success-close-btn {
     background: var(--primary-color);
     border-color: var(--primary-color);
-    color: var(--ds-text-inverse, #1F1F21);
+    color: var(--app-text-inverse);
     box-shadow: 0 0 0 1px rgba(212, 82, 26, 0.2), 0 8px 18px var(--primary-glow);
 }
 
@@ -237,7 +239,7 @@ select:focus,
 .product-card.active .toggle-indicator {
     background: var(--ds-background-success-bold, #94C748);
     border-color: var(--ds-background-success-bold, #94C748);
-    color: var(--ds-text-inverse, #1F1F21);
+    color: var(--app-text-inverse);
 }
 
 .btn-plus,
@@ -416,6 +418,296 @@ tbody tr:hover td,
     background: var(--surface-overlay);
     border-left-color: var(--primary-color);
     box-shadow: var(--shadow-overlay);
+}
+
+/* =================================
+   Burbone Palette Consistency Pass
+   ================================= */
+.header-copy p,
+.admin-page-tab,
+.generator-tab,
+.view-btn,
+.toggle-pill,
+.filter-chip,
+.chart-btn,
+.chart-controls button,
+.admin-list-item__main span,
+.admin-category-title span:not(.category-icon),
+.admin-product-main span,
+.empty-products,
+.drag-handle,
+.product-icon-dialog p,
+.product-icon-option,
+.weather-card-empty,
+.weather-card--muted,
+.tt-day,
+.tt-label,
+.tt-shift-time,
+.tt-event-row span,
+.tt-empty-note,
+.summary-kicker,
+.summary-box h3,
+.summary-box small,
+.insight-label,
+.insight-card p,
+.heatmap-day-header,
+.cell-secondary,
+.location-stats span,
+.location-foot span,
+.calc-input-group label,
+.calc-res-item h4,
+.calc-breakdown-label,
+.calc-breakdown-pill,
+.loc-text {
+    color: var(--text-secondary);
+}
+
+.panel-heading h3,
+.admin-list-item__main strong,
+.admin-list-preview__head h3,
+.admin-list-empty strong,
+.admin-category-title h4,
+.admin-product-main strong,
+.product-icon-dialog h3,
+.summary-box p,
+.insight-card strong,
+.tt-header,
+.tt-shift-name,
+.tt-event-row strong,
+.section-heading h3,
+.heatmap-cell,
+.cell-primary,
+.location-rank,
+.location-total,
+.location-stats strong,
+.location-foot strong,
+.calc-res-item p,
+.calc-breakdown-card strong,
+.calc-breakdown-pill strong {
+    color: var(--text-primary);
+}
+
+.btn-admin:hover,
+.btn-back:hover,
+.generator-tab:hover,
+.view-btn:hover,
+.chart-btn:hover,
+.chart-controls button:hover,
+.icon-action:hover,
+.product-icon-option:hover,
+.product-icon-option.is-selected {
+    color: var(--text-primary);
+}
+
+.admin-page-tab.is-active,
+.admin-save-btn.has-unsaved-changes,
+.chart-btn.active,
+.state-switch.is-on,
+.state-switch.is-off,
+.type-switch,
+.primary-fab,
+.success-close-btn {
+    color: var(--app-text-inverse);
+}
+
+.header-bar,
+.section-card,
+.filter-panel,
+.summary-box,
+.insight-card,
+.chart-card,
+.table-card,
+.location-card,
+.admin-category-card,
+.admin-list-empty,
+.product-icon-dialog,
+.admin-list-preview,
+.calc-result-box,
+.calc-breakdown-card,
+.calc-breakdown-report {
+    border-color: var(--border-color);
+    background: var(--surface-color);
+}
+
+.filter-panel,
+.summary-box--primary,
+.admin-category-card,
+.admin-list-empty,
+.product-icon-dialog,
+.location-card--lead {
+    background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--primary-color) 16%, transparent), transparent 34%),
+        var(--surface-color);
+    border-color: color-mix(in srgb, var(--primary-color) 38%, var(--border-color));
+}
+
+.summary-box--glovo,
+.insight-card--glovo {
+    background: var(--surface-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+.btn-admin,
+.btn-back,
+.generator-tab,
+.admin-page-tab,
+.view-btn,
+.week-tab,
+.chart-btn,
+.chart-controls button,
+.toggle-pill,
+.filter-chip,
+.icon-action,
+.admin-save-btn.is-clean,
+.admin-save-btn:disabled,
+.icon-picker-button,
+.product-icon-option,
+.point-pill,
+.employee-loc-pill,
+.calc-breakdown-pill,
+.location-stats div,
+.revenue-note,
+.weather-card-empty,
+.weather-card--muted,
+.tt-day {
+    background: var(--surface-raised);
+    border-color: var(--border-color);
+}
+
+.employee-row.active,
+.product-card.active,
+.admin-list-item.is-active,
+.admin-product-list.is-drop-target,
+.point-pill--accent,
+.calc-breakdown-pill.is-main,
+.alert-badge--accent,
+.type-switch.is-toggle,
+.product-icon-option.is-selected {
+    background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 48%, var(--border-color));
+    color: var(--primary-hover);
+}
+
+.summary-icon-badge--revenue,
+.location-rank,
+.success-icon-wrapper {
+    background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+    border-color: color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
+    color: var(--primary-hover);
+}
+
+.revenue-note--success,
+.alert-badge--success,
+.state-switch.is-on {
+    background: color-mix(in srgb, var(--success-color) 16%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
+    color: var(--success-color);
+}
+
+.revenue-note--danger,
+.alert-badge--danger,
+.state-switch.is-off,
+.cancel-btn {
+    background: color-mix(in srgb, var(--danger-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
+    color: var(--danger-color);
+}
+
+.revenue-note--accent,
+.alert-badge--warning,
+.location-stat--glovo,
+.summary-icon-badge--glovo {
+    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised)) !important;
+    border-color: color-mix(in srgb, var(--glovo-color) 38%, var(--border-color)) !important;
+    color: var(--glovo-color);
+}
+
+.type-switch.is-quantity,
+.insight-card--events,
+.summary-icon-badge--cards,
+.summary-icon-badge--event {
+    background: color-mix(in srgb, var(--app-chart-3) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--app-chart-3) 42%, var(--border-color));
+    color: var(--app-chart-3);
+}
+
+.alert-badge--muted,
+.filter-chip--status {
+    background: var(--surface-raised);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.icon-action:disabled:hover {
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
+.icon-action--danger:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.admin-list-copy-preview,
+.product-icon-grid,
+.custom-control__popover {
+    scrollbar-color: var(--border-color) var(--bg-color);
+}
+
+.admin-list-copy-preview {
+    border-color: var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.product-icon-dialog-layer,
+.custom-dialog-layer,
+.overlay {
+    background: rgba(9, 10, 12, 0.72);
+}
+
+.burger-icon span:nth-child(2) {
+    background: var(--success-color);
+}
+
+.burger-icon span:nth-child(3) {
+    background: var(--danger-color);
+}
+
+.weather-icon,
+.weather-card-copy strong,
+.weather-card-metrics span {
+    color: var(--text-primary);
+}
+
+.weather-card-kicker {
+    color: var(--text-secondary);
+    letter-spacing: 0;
+}
+
+.weather-card-metrics span {
+    background: var(--surface-active);
+}
+
+.tt-header,
+.tt-divider,
+.tt-shift-item {
+    border-color: var(--border-color);
+}
+
+.tt-value-sub,
+.tt-loc-row,
+.tt-loc-row span:last-child {
+    color: var(--text-secondary);
+}
+
+.summary-box h3,
+.insight-label,
+.alert-badge,
+.calc-breakdown-label,
+.product-icon-dialog h3,
+.weather-card-copy strong {
+    letter-spacing: 0;
 }
 
 @supports not (color: color-mix(in srgb, white, black)) {

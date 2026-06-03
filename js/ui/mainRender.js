@@ -50,7 +50,7 @@ export const mainRender = {
                     </div>
                 </div>
                 <div class="time-inputs">
-                    <input type="time" id="${safeId}_od"><span style="color:#666">-</span><input type="time" id="${safeId}_do">
+                    <input type="time" id="${safeId}_od"><span style="color:var(--text-muted)">-</span><input type="time" id="${safeId}_do">
                 </div>
             </div>`;
     },

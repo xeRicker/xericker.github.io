@@ -51,15 +51,15 @@
 }
 
 .revenue-note--success {
-    color: #9fe0b7;
-    border-color: rgba(39, 174, 96, 0.35);
-    background: rgba(39, 174, 96, 0.08);
+    color: var(--success-color);
+    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
+    background: color-mix(in srgb, var(--success-color) 12%, var(--surface-raised));
 }
 
 .revenue-note--danger {
-    color: #ffb0a8;
-    border-color: rgba(192, 57, 43, 0.4);
-    background: rgba(192, 57, 43, 0.1);
+    color: var(--danger-color);
+    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
+    background: color-mix(in srgb, var(--danger-color) 12%, var(--surface-raised));
 }
 
 .input-group {
@@ -230,7 +230,7 @@ input:focus { outline: none; }
     border-radius: 6px;
     color: #fff;
     border: 1px solid #333;
-    letter-spacing: 0.5px;
+    letter-spacing: 0;
 }
 
 /* =================================
@@ -391,7 +391,7 @@ input:focus { outline: none; }
     font-size: 18px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0;
     display: flex; align-items: center; gap: 10px;
     box-shadow: 0 4px 15px var(--primary-glow);
     cursor: pointer;
@@ -467,11 +467,11 @@ input:focus { outline: none; }
 
 .cancel-btn {
     border-color: var(--danger-color);
-    background: rgba(192, 57, 43, 0.1);
+    background: color-mix(in srgb, var(--danger-color) 14%, var(--surface-raised));
     color: var(--danger-color);
     margin-top: 10px;
 }
-.cancel-btn:active { background: rgba(192, 57, 43, 0.2); }
+.cancel-btn:active { background: color-mix(in srgb, var(--danger-color) 22%, var(--surface-raised)); }
 
 .success-icon-wrapper {
     width: 80px; height: 80px;

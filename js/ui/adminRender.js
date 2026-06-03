@@ -333,13 +333,13 @@ class AdminRender {
                 <div class="tt-shifts-list">
                     ${shifts.map(shift => `
                         <div class="tt-shift-item">
-                            <span class="tt-shift-name"><span class="tt-shift-dot"></span>${shift.name} <span style="color:#666; font-size:10px; margin-left:4px;">(${shift.loc.slice(0, 3)})</span></span>
+                            <span class="tt-shift-name"><span class="tt-shift-dot"></span>${shift.name} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${shift.loc.slice(0, 3)})</span></span>
                             <span class="tt-shift-time">${shift.time}</span>
                         </div>
                     `).join('')}
                 </div>
             `
-            : `<div class="tt-divider"></div><div style="font-size:11px; color:#666; font-style:italic;">Brak danych o zmianach</div>`;
+            : `<div class="tt-divider"></div><div style="font-size:11px; color:var(--text-muted); font-style:italic;">Brak danych o zmianach</div>`;
 
         return `
             <div class="tt-inner">

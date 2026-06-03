@@ -171,7 +171,7 @@ select:focus { border-color: var(--primary-color); }
     padding: 9px 14px;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 0;
     font-family: var(--font-heading);
 }
 
@@ -272,7 +272,7 @@ select:focus { border-color: var(--primary-color); }
     border-color: rgba(125, 206, 130, 0.34);
     color: var(--success-color);
 }
-.summary-box h3 { font-size: 14px; color: #888; margin: 0 0 10px 0; font-family: var(--font-heading); letter-spacing: 0.4px; }
+.summary-box h3 { font-size: 14px; color: #888; margin: 0 0 10px 0; font-family: var(--font-heading); letter-spacing: 0; }
 .summary-box p { font-size: 32px; font-weight: 700; color: white; margin: 0; }
 .summary-box small { display: block; margin-top: 8px; color: #a9a9a9; font-size: 13px; }
 .summary-box p.highlight { color: var(--primary-color); }
@@ -292,8 +292,8 @@ select:focus { border-color: var(--primary-color); }
 }
 
 .insight-card--warning {
-    border-color: rgba(243, 156, 18, 0.45);
-    background: rgba(243, 156, 18, 0.08);
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+    background: color-mix(in srgb, var(--glovo-color) 12%, var(--surface-raised));
 }
 
 .insight-card--accent {
@@ -360,7 +360,7 @@ select:focus { border-color: var(--primary-color); }
     font-size: 11px;
     text-transform: uppercase;
     font-family: var(--font-heading);
-    letter-spacing: 1px;
+    letter-spacing: 0;
     margin-bottom: 10px;
 }
 
@@ -460,7 +460,10 @@ select:focus { border-color: var(--primary-color); }
     border-color: rgba(255,255,255,0.04);
     cursor: default;
 }
-.heatmap-cell.warm { border-color: rgba(243, 156, 18, 0.42); box-shadow: 0 0 16px rgba(243, 156, 18, 0.12); }
+.heatmap-cell.warm {
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+    box-shadow: 0 0 16px color-mix(in srgb, var(--glovo-color) 12%, transparent);
+}
 .heatmap-cell.fire { border-color: rgba(212, 82, 26, 0.62); box-shadow: 0 0 18px rgba(212, 82, 26, 0.16); color: white !important; font-weight: bold; }
 
 .table-card { background: var(--surface-color); border-radius: var(--radius-md); overflow: hidden; border: 1px solid #333; }
@@ -545,26 +548,26 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     border: 1px solid transparent;
     font-size: 12px;
     font-family: var(--font-heading);
-    letter-spacing: 0.8px;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
 .alert-badge--success {
-    background: rgba(39, 174, 96, 0.1);
-    border-color: rgba(39, 174, 96, 0.35);
-    color: #9fe0b7;
+    background: color-mix(in srgb, var(--success-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
+    color: var(--success-color);
 }
 
 .alert-badge--warning {
-    background: rgba(243, 156, 18, 0.12);
-    border-color: rgba(243, 156, 18, 0.4);
-    color: #f7c874;
+    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+    color: var(--glovo-color);
 }
 
 .alert-badge--danger {
-    background: rgba(192, 57, 43, 0.12);
-    border-color: rgba(192, 57, 43, 0.38);
-    color: #ffb0a8;
+    background: color-mix(in srgb, var(--danger-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--danger-color) 42%, var(--border-color));
+    color: var(--danger-color);
 }
 
 .alert-badge--accent {
@@ -676,7 +679,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .calc-breakdown-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 18px; }
 .calc-breakdown-card { background: linear-gradient(180deg, rgba(26,26,26,0.96), rgba(18,18,18,0.96)); border: 1px solid #333; border-radius: var(--radius-md); padding: 14px 16px; }
 .calc-breakdown-card strong { display: block; margin-top: 6px; font-size: 18px; color: #fff; }
-.calc-breakdown-label { display: block; color: #888; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0.5px; }
+.calc-breakdown-label { display: block; color: #888; font-size: 11px; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 0; }
 .calc-breakdown-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .calc-breakdown-pill { color: #aaa; font-size: 13px; }
 .calc-breakdown-pill strong { color: #fff; }

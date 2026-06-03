@@ -9,6 +9,7 @@ import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 import { buildReportText } from './services/reportFormatter.js';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=6';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -16,6 +17,7 @@ let workerCalculatorReady = false;
 let workerCalculator = null;
 let productCatalog = null;
 let temporaryEmployeeCounter = 0;
+let burgerConfiguratorReady = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
@@ -59,7 +61,9 @@ function setupTabs() {
 
 async function switchTab(tabName) {
     const isGenerator = tabName === 'generator';
+    const isBurgers = tabName === 'burgers';
     const generatorPanel = document.getElementById('generatorPanel');
+    const burgersPanel = document.getElementById('burgersPanel');
     const workersPanel = document.getElementById('workersPanel');
     const floatingBar = document.getElementById('generatorFloatingBar');
 
@@ -70,11 +74,27 @@ async function switchTab(tabName) {
     });
 
     generatorPanel.classList.toggle('is-active', isGenerator);
-    workersPanel.classList.toggle('is-active', !isGenerator);
+    burgersPanel.classList.toggle('is-active', isBurgers);
+    workersPanel.classList.toggle('is-active', tabName === 'workers');
     floatingBar.classList.toggle('is-hidden', !isGenerator);
 
-    if (!isGenerator) {
+    if (isBurgers) {
+        await initBurgerConfigurator();
+    }
+
+    if (tabName === 'workers') {
         await initWorkerCalculator();
+    }
+}
+
+async function initBurgerConfigurator() {
+    if (burgerConfiguratorReady) return;
+    try {
+        await setupBurgerConfigurator(document.getElementById('burgersPanel'));
+        burgerConfiguratorReady = true;
+    } catch (error) {
+        console.error(error);
+        await dialogService.alert('Nie udało się wczytać danych burgerów z database/burgers.json.', 'Błąd konfiguracji');
     }
 }
 

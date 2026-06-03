@@ -1,0 +1,459 @@
+.burger-configurator,
+.burger-builder,
+.burger-summary-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.burger-control-grid,
+.burger-add-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.burger-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.burger-section-head h2 {
+    min-width: 0;
+}
+
+.burger-add-row {
+    grid-template-columns: minmax(0, 1fr) 112px 52px;
+}
+
+.burger-add-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--primary-color) 38%, var(--border-color));
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--primary-color) 10%, transparent), transparent),
+        var(--surface-raised);
+}
+
+.burger-add-panel__label {
+    color: var(--primary-hover);
+    font: 700 12px/1 var(--font-heading);
+    text-transform: uppercase;
+}
+
+.burger-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.burger-field label,
+.burger-doneness label {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.burger-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 12px;
+    border: 1px solid var(--app-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-overlay);
+    color: var(--text-primary);
+    font: 500 15px/1.2 var(--font-body);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 3%, transparent);
+}
+
+.burger-input:focus {
+    border-color: var(--border-focused);
+    box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.burger-field .custom-control__button {
+    min-height: 48px;
+    border-color: var(--app-border-strong);
+    background: var(--surface-overlay);
+}
+
+.burger-field--compact .burger-input {
+    text-align: center;
+}
+
+.burger-field input.burger-input[type="number"] {
+    border: 1px solid var(--app-border-strong);
+    background: var(--surface-overlay);
+    padding: 10px 12px;
+}
+
+.burger-doneness {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+}
+
+.burger-doneness > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+}
+
+.burger-doneness span {
+    color: var(--primary-hover);
+    font-size: 13px;
+    text-align: right;
+}
+
+.burger-doneness input[type="range"] {
+    width: 100%;
+    accent-color: var(--primary-color);
+}
+
+.burger-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.burger-primary-action,
+.burger-secondary-action,
+.burger-icon-action {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: var(--font-heading);
+    letter-spacing: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.burger-section-head .burger-secondary-action {
+    min-height: 40px;
+    padding: 8px 12px;
+    flex: 0 0 auto;
+}
+
+.burger-primary-action,
+.burger-secondary-action {
+    min-height: 46px;
+    padding: 10px 14px;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.burger-primary-action {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--app-text-inverse);
+}
+
+.burger-secondary-action,
+.burger-icon-action {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+}
+
+.burger-primary-action:hover {
+    background: var(--primary-hover);
+}
+
+.burger-secondary-action:hover,
+.burger-icon-action:hover {
+    border-color: var(--border-focused);
+    color: var(--primary-hover);
+}
+
+.burger-icon-action {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+}
+
+.burger-icon-action--add {
+    width: 52px;
+    height: 48px;
+    background: color-mix(in srgb, var(--primary-color) 16%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 44%, var(--border-color));
+    color: var(--primary-hover);
+}
+
+.burger-icon-action--danger {
+    color: var(--danger-color);
+}
+
+.burger-ingredient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.burger-ingredient-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 64px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+}
+
+.burger-ingredient-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.burger-ingredient-main strong {
+    color: var(--text-primary);
+    font-size: 15px;
+}
+
+.burger-ingredient-main span,
+.burger-empty {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.burger-ingredient-macros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.macro-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-height: 22px;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    background: var(--surface-color);
+    font: 700 12px/1 var(--font-heading);
+}
+
+.macro-chip .material-symbols-rounded,
+.macro-head .material-symbols-rounded {
+    font-size: 15px;
+}
+
+.macro-chip--calories,
+.burger-macro-card--calories {
+    color: var(--primary-hover);
+}
+
+.macro-chip--protein,
+.burger-macro-card--protein {
+    color: var(--app-chart-3);
+}
+
+.macro-chip--fat,
+.burger-macro-card--fat {
+    color: var(--glovo-color);
+}
+
+.macro-chip--carbs,
+.burger-macro-card--carbs {
+    color: var(--success-color);
+}
+
+.burger-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.burger-qty {
+    min-width: 24px;
+    color: var(--text-primary);
+    font: 700 16px/1 var(--font-heading);
+    text-align: center;
+}
+
+.burger-empty {
+    padding: 18px;
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    text-align: center;
+}
+
+.burger-macro-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.burger-macro-card {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    position: relative;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.burger-macro-card:hover,
+.burger-macro-card.is-sorted {
+    border-color: currentColor;
+}
+
+.burger-macro-card .material-symbols-rounded {
+    color: currentColor;
+    font-size: 22px;
+}
+
+.burger-macro-card small {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.burger-macro-card strong {
+    color: currentColor;
+    font-size: 18px;
+    line-height: 1.1;
+}
+
+.burger-sort-indicator.material-symbols-rounded {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    color: currentColor;
+    font-size: 18px;
+    opacity: 0.45;
+}
+
+.burger-macro-card.is-sorted .burger-sort-indicator {
+    opacity: 1;
+}
+
+.burger-macro-card--calories {
+    background: color-mix(in srgb, var(--primary-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
+}
+
+.burger-macro-card--protein {
+    background: color-mix(in srgb, var(--app-chart-3) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--app-chart-3) 42%, var(--border-color));
+}
+
+.burger-macro-card--fat {
+    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+}
+
+.burger-macro-card--carbs {
+    background: color-mix(in srgb, var(--success-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
+}
+
+.burger-details-table {
+    overflow-x: visible;
+}
+
+.burger-details-table table {
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.burger-details-table th,
+.burger-details-table td {
+    padding: 10px 6px;
+    text-align: right;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.burger-details-table th:not(:first-child),
+.burger-details-table td:not(:first-child) {
+    width: 58px;
+}
+
+.burger-details-table th:first-child,
+.burger-details-table td:first-child {
+    text-align: left;
+    width: auto;
+}
+
+.burger-details-table .cell-primary,
+.burger-details-table .cell-secondary {
+    display: block;
+}
+
+.burger-details-table .cell-primary {
+    overflow-wrap: anywhere;
+}
+
+.macro-head {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 700px) {
+    .burger-control-grid,
+    .burger-add-row {
+        grid-template-columns: 1fr;
+    }
+
+    .burger-ingredient-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .burger-row-actions {
+        justify-content: space-between;
+    }
+
+    .burger-macro-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .burger-section-head {
+        align-items: flex-start;
+    }
+
+    .burger-section-head .burger-secondary-action {
+        width: auto;
+    }
+
+    .burger-details-table th,
+    .burger-details-table td {
+        padding: 9px 4px;
+        font-size: 12px;
+    }
+
+    .burger-details-table th:not(:first-child),
+    .burger-details-table td:not(:first-child) {
+        width: 44px;
+    }
+}

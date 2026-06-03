@@ -6,7 +6,7 @@
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=35">
+    <link rel="stylesheet" href="style.css?v=37">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
@@ -28,8 +28,9 @@
     </a>
   </div>
 
-  <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki generatora">
-    <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">GENERATOR</button>
+  <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki aplikacji">
+    <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">LISTA</button>
+    <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">BURGERY</button>
     <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">PRACOWNICY</button>
   </div>
 
@@ -73,6 +74,83 @@
     <div id="products"></div>
 
     <div class="spacer-bottom"></div>
+  </div>
+
+  <div id="burgersPanel" class="tab-panel">
+    <div class="section-card burger-configurator animate-stagger">
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">lunch_dining</span> BURGERY</h2>
+
+      <div class="burger-control-grid">
+        <div class="burger-field">
+          <label for="burgerPreset">Preset</label>
+          <select id="burgerPreset" class="burger-input"></select>
+        </div>
+        <div class="burger-field">
+          <label for="burgerSize">Rozmiar</label>
+          <select id="burgerSize" class="burger-input">
+            <option value="small">Mały</option>
+            <option value="large">Duży</option>
+          </select>
+        </div>
+        <div class="burger-field">
+          <label for="burgerSauce">Sos w presetach</label>
+          <select id="burgerSauce" class="burger-input">
+            <option value="mayoSauce">Majonez</option>
+            <option value="ketchup">Ketchup</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="burger-doneness">
+        <div>
+          <label for="burgerFatRetention">Wysmażenie mięsa</label>
+          <span id="burgerDonenessLabel">Średnio</span>
+        </div>
+        <input id="burgerFatRetention" type="range" min="50" max="95" step="5" value="75">
+      </div>
+
+      <div class="burger-actions">
+        <button id="burgerApplyPreset" class="burger-primary-action" type="button">
+          <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
+          Dodaj preset
+        </button>
+      </div>
+    </div>
+
+    <div class="section-card burger-builder animate-stagger">
+      <div class="burger-section-head">
+        <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">inventory_2</span> SKŁADNIKI</h2>
+        <button id="burgerReset" class="burger-secondary-action" type="button">
+          <span class="material-symbols-rounded" aria-hidden="true">restart_alt</span>
+          Wyczyść
+        </button>
+      </div>
+
+      <div class="burger-add-panel">
+        <span class="burger-add-panel__label">Dodaj produkt</span>
+        <div class="burger-add-row">
+          <div class="burger-field">
+            <label for="burgerIngredient">Produkt</label>
+            <select id="burgerIngredient" class="burger-input"></select>
+          </div>
+          <div class="burger-field burger-field--compact">
+            <label for="burgerIngredientQty">Ilość</label>
+            <input id="burgerIngredientQty" class="burger-input" type="number" min="1" step="1" value="1" inputmode="numeric">
+          </div>
+          <button id="burgerAddIngredient" class="burger-icon-action burger-icon-action--add" type="button" aria-label="Dodaj składnik">
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="burgerIngredients" class="burger-ingredient-list"></div>
+    </div>
+
+    <div class="section-card burger-summary-card animate-stagger">
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">monitoring</span> MAKRO</h2>
+      <div id="burgerMacroSummary" class="burger-macro-grid"></div>
+      <div id="burgerMacroDetails" class="burger-details-table"></div>
+    </div>
   </div>
 
   <div id="workersPanel" class="tab-panel">
@@ -166,6 +244,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=22"></script>
+<script type="module" src="js/main.js?v=27"></script>
 </body>
 </html>

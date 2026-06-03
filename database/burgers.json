@@ -73,13 +73,13 @@
       "label": "Cheddar",
       "unitLabel": "szt.",
       "unitGrams": 12,
-      "macros": { "calories": 338, "fat": 27, "carbs": 3, "protein": 19 }
+      "macros": { "calories": 338, "fat": 27, "carbs": 3.1, "protein": 19 }
     },
     "chorizo": {
       "label": "Chorizo",
       "unitLabel": "szt.",
       "unitGrams": 6,
-      "macros": { "calories": 342, "fat": 31, "carbs": 4, "protein": 19 }
+      "macros": { "calories": 342, "fat": 26.2, "carbs": 4, "protein": 22.7 }
     },
     "bacon": {
       "label": "Bekon",
@@ -98,8 +98,7 @@
       "label": "Halloumi",
       "unitLabel": "szt.",
       "unitGrams": 40,
-      "macros": { "calories": 313, "fat": 25, "carbs": 2, "protein": 21 },
-      "note": "makro orientacyjne"
+      "macros": { "calories": 313, "fat": 24, "carbs": 1.7, "protein": 22 }
     },
     "fries": {
       "label": "Frytki",
@@ -117,7 +116,7 @@
       "label": "Krążki Cebulowe",
       "unitLabel": "szt.",
       "unitGrams": 10,
-      "macros": { "calories": 214, "fat": 9, "carbs": 28, "protein": 3.5 }
+      "macros": { "calories": 217, "fat": 11, "carbs": 25, "protein": 3.6 }
     },
     "hashbrown": {
       "label": "Placek Ziemniaczany",

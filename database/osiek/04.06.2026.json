@@ -1,0 +1,33 @@
+{
+  "location": "Osiek",
+  "date": "04.06.2026",
+  "revenue": 1501,
+  "cardRevenue": 968,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Saszetki: Ketchup": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Średnie": 1,
+    "Szmaty": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

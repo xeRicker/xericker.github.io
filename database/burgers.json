@@ -104,24 +104,28 @@
       "label": "Frytki",
       "unitLabel": "paczka",
       "unitGrams": 300,
+      "fryable": true,
       "macros": { "calories": 129, "fat": 3.5, "carbs": 22, "protein": 2.3 }
     },
     "strips": {
       "label": "Stripsy",
       "unitLabel": "szt.",
       "unitGrams": 50,
+      "fryable": true,
       "macros": { "calories": 188, "fat": 8, "carbs": 11, "protein": 18 }
     },
     "rings": {
       "label": "Krążki Cebulowe",
       "unitLabel": "szt.",
       "unitGrams": 10,
+      "fryable": true,
       "macros": { "calories": 217, "fat": 11, "carbs": 25, "protein": 3.6 }
     },
     "hashbrown": {
       "label": "Placek Ziemniaczany",
       "unitLabel": "szt.",
       "unitGrams": 57,
+      "fryable": true,
       "macros": { "calories": 114, "fat": 2, "carbs": 19, "protein": 3 }
     }
   },

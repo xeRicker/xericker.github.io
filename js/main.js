@@ -9,7 +9,7 @@ import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=6';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=9';
 
 let selectedLocation = null;
 let workerReports = [];

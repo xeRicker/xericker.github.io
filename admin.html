@@ -5,7 +5,7 @@
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=38">
+    <link rel="stylesheet" href="style.css?v=44">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body style="display: none;">
@@ -37,10 +37,12 @@
             <div class="admin-month-select">
                 <select id="monthFilter" aria-label="Miesiąc raportów"></select>
             </div>
-            <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
-                <span class="material-symbols-rounded" aria-hidden="true">database</span>
+            <div class="admin-load-all-wrap" data-callout-anchor="load-all-data">
+                <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
+                <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
                 WSZYSTKIE DANE
-            </button>
+                </button>
+            </div>
             <a href="index.html" class="btn-back">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 WRÓĆ
@@ -73,7 +75,7 @@
                 <div>
                     <h3>Filtry operacyjne</h3>
                 </div>
-                <button id="resetFiltersBtn" class="btn-back btn-back--ghost" type="button">RESETUJ</button>
+                <button id="resetFiltersBtn" class="btn-back btn-back--ghost" type="button">WYCZYŚĆ</button>
             </div>
 
             <div class="filter-grid">
@@ -278,6 +280,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=22"></script>
+<script type="module" src="js/admin.js?v=31"></script>
 </body>
 </html>

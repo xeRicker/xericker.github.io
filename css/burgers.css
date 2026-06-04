@@ -1,4 +1,5 @@
 .burger-configurator,
+.burger-options,
 .burger-builder,
 .burger-summary-card {
     display: flex;
@@ -55,7 +56,7 @@
 }
 
 .burger-field label,
-.burger-doneness label {
+.burger-range-control label {
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 700;
@@ -95,7 +96,13 @@
     padding: 10px 12px;
 }
 
-.burger-doneness {
+.burger-option-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.burger-range-control {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -105,20 +112,20 @@
     background: var(--surface-raised);
 }
 
-.burger-doneness > div {
+.burger-range-control > div {
     display: flex;
     justify-content: space-between;
     gap: 12px;
     align-items: center;
 }
 
-.burger-doneness span {
+.burger-range-control span {
     color: var(--primary-hover);
     font-size: 13px;
     text-align: right;
 }
 
-.burger-doneness input[type="range"] {
+.burger-range-control input[type="range"] {
     width: 100%;
     accent-color: var(--primary-color);
 }
@@ -243,18 +250,50 @@
 .macro-chip {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     min-height: 22px;
     padding: 2px 7px;
-    border: 1px solid currentColor;
+    border: 1px solid color-mix(in srgb, currentColor 52%, var(--border-color));
     border-radius: var(--radius-pill);
-    background: var(--surface-color);
+    background: color-mix(in srgb, currentColor 12%, var(--surface-color));
     font: 700 12px/1 var(--font-heading);
+}
+
+.burger-ingredient-macros .macro-chip--calories,
+.macro-head.macro-chip--calories {
+    color: var(--primary-hover);
+    background: color-mix(in srgb, var(--primary-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
+}
+
+.burger-ingredient-macros .macro-chip--protein,
+.macro-head.macro-chip--protein {
+    color: var(--app-chart-3);
+    background: color-mix(in srgb, var(--app-chart-3) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--app-chart-3) 42%, var(--border-color));
+}
+
+.burger-ingredient-macros .macro-chip--fat,
+.macro-head.macro-chip--fat {
+    color: var(--glovo-color);
+    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+}
+
+.burger-ingredient-macros .macro-chip--carbs,
+.macro-head.macro-chip--carbs {
+    color: var(--success-color);
+    background: color-mix(in srgb, var(--success-color) 14%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
 }
 
 .macro-chip .material-symbols-rounded,
 .macro-head .material-symbols-rounded {
     font-size: 15px;
+}
+
+.macro-chip .material-symbols-rounded {
+    color: currentColor;
 }
 
 .macro-chip--calories,
@@ -283,11 +322,22 @@
     gap: 7px;
 }
 
-.burger-qty {
-    min-width: 24px;
-    color: var(--text-primary);
-    font: 700 16px/1 var(--font-heading);
-    text-align: center;
+.burger-processing-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+}
+
+.burger-processing-toggle:hover,
+.burger-processing-toggle.is-fried {
+    border-color: color-mix(in srgb, var(--glovo-color) 58%, var(--border-color));
+    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised));
+    color: var(--glovo-color);
+}
+
+.burger-processing-toggle .material-symbols-rounded {
+    font-size: 21px;
 }
 
 .burger-empty {
@@ -421,6 +471,7 @@
 
 @media (max-width: 700px) {
     .burger-control-grid,
+    .burger-option-grid,
     .burger-add-row {
         grid-template-columns: 1fr;
     }
@@ -432,6 +483,7 @@
 
     .burger-row-actions {
         justify-content: space-between;
+        flex-wrap: wrap;
     }
 
     .burger-macro-grid {

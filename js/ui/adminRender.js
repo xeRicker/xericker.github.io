@@ -201,7 +201,7 @@ class AdminRender {
                 <strong>${leader?.name || 'Brak'}</strong>
                 <p>${leader ? `${formatMoney(leader.total)} / średnio ${formatMoney(leader.avgDay)}` : '-'}</p>
             </div>
-            <div class="insight-card insight-card--events" data-week-events="true">
+            <div class="insight-card insight-card--events" data-week-events="true" data-callout-anchor="week-events">
                 <span class="insight-label">${this.buildSymbolIcon('event', 'summary-icon-badge--event')} Wydarzenia tygodnia</span>
                 <strong>${weekEvents.length ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}` : 'Brak'}</strong>
                 <p>${leadEvent ? `${leadEvent.dateStr} / ${leadEvent.name}` : 'Brak świąt i wydarzeń w tym tygodniu'}</p>

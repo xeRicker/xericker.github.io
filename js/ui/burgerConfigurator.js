@@ -1,6 +1,6 @@
 import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=5';
 
-const BURGER_DATA_URL = 'database/burgers.json?v=1';
+const BURGER_DATA_URL = 'database/burgers.json?v=3';
 
 export async function setupBurgerConfigurator(root) {
     const config = await loadBurgerConfig();
@@ -21,6 +21,8 @@ export async function setupBurgerConfigurator(root) {
     const ingredientQty = root.querySelector('#burgerIngredientQty');
     const fatRetention = root.querySelector('#burgerFatRetention');
     const donenessLabel = root.querySelector('#burgerDonenessLabel');
+    const oilAbsorption = root.querySelector('#burgerOilAbsorption');
+    const oilAbsorptionLabel = root.querySelector('#burgerOilAbsorptionLabel');
     const list = root.querySelector('#burgerIngredients');
     const summary = root.querySelector('#burgerMacroSummary');
     const details = root.querySelector('#burgerMacroDetails');
@@ -33,7 +35,7 @@ export async function setupBurgerConfigurator(root) {
         .join('');
 
     root.querySelector('#burgerApplyPreset').addEventListener('click', () => {
-        applyPreset(state, presets, presetSelect.value, sizeSelect.value, sauceSelect.value);
+        applyPreset(state, products, presets, presetSelect.value, sizeSelect.value, sauceSelect.value);
         render();
     });
     root.querySelector('#burgerReset').addEventListener('click', () => {
@@ -41,13 +43,14 @@ export async function setupBurgerConfigurator(root) {
         render();
     });
     root.querySelector('#burgerAddIngredient').addEventListener('click', () => {
-        addItem(state, ingredientSelect.value, Number(ingredientQty.value) || 1);
+        addItem(state, products, ingredientSelect.value, Number(ingredientQty.value) || 1);
         ingredientQty.value = '1';
         render();
     });
     sizeSelect.addEventListener('change', render);
     sauceSelect.addEventListener('change', render);
     fatRetention.addEventListener('input', render);
+    oilAbsorption.addEventListener('input', render);
     list.addEventListener('click', event => handleIngredientClick(event, state, render));
     summary.addEventListener('click', event => {
         const card = event.target.closest('.burger-macro-card[data-sort-key]');
@@ -61,8 +64,9 @@ export async function setupBurgerConfigurator(root) {
 
     function render() {
         updateDonenessLabel(donenessLabel, Number(fatRetention.value));
-        renderIngredientList(list, products, beefConfig, state.items, Number(fatRetention.value));
-        const rows = state.items.map(item => calculateItem(products, beefConfig, item, Number(fatRetention.value)));
+        updateOilAbsorptionLabel(oilAbsorptionLabel, Number(oilAbsorption.value));
+        renderIngredientList(list, products, beefConfig, state.items, Number(fatRetention.value), Number(oilAbsorption.value));
+        const rows = state.items.map(item => calculateItem(products, beefConfig, item, Number(fatRetention.value), Number(oilAbsorption.value)));
         const sortedRows = sortRows(rows, state.sortKey, state.sortDir);
         const totals = sumRows(rows);
         renderSummary(summary, totals, state);
@@ -88,7 +92,7 @@ function validateBurgerConfig(config) {
     }
 }
 
-function applyPreset(state, presets, presetId, size, sauceId) {
+function applyPreset(state, products, presets, presetId, size, sauceId) {
     const preset = presets[presetId];
     if (!preset) return;
 
@@ -96,7 +100,7 @@ function applyPreset(state, presets, presetId, size, sauceId) {
     preset.ingredients.forEach(entry => {
         const resolvedId = resolvePresetProduct(entry.id, size, sauceId);
         const qty = resolveQty(entry.qty, size);
-        addItem(state, resolvedId, qty);
+        addItem(state, products, resolvedId, qty);
     });
 }
 
@@ -111,13 +115,13 @@ function resolveQty(qty, size) {
     return qty[size] ?? 0;
 }
 
-function addItem(state, productId, qty) {
+function addItem(state, products, productId, qty) {
     const existing = state.items.find(item => item.productId === productId);
     if (existing) {
         existing.qty += qty;
         return;
     }
-    state.items.push({ id: state.nextId, productId, qty });
+    state.items.push({ id: state.nextId, productId, qty, fried: Boolean(products[productId]?.fryable) });
     state.nextId += 1;
 }
 
@@ -136,6 +140,8 @@ function handleIngredientClick(event, state, render) {
     } else if (button.dataset.action === 'dec') {
         item.qty = Math.max(0, item.qty - 1);
         if (item.qty === 0) state.items = state.items.filter(current => current.id !== item.id);
+    } else if (button.dataset.action === 'toggle-fried') {
+        item.fried = !item.fried;
     }
     render();
 }
@@ -150,7 +156,7 @@ function updateSortState(state, sortKey) {
     state.sortDir = 'desc';
 }
 
-function calculateItem(products, beefConfig, item, fatRetention) {
+function calculateItem(products, beefConfig, item, fatRetention, oilAbsorption) {
     const product = products[item.productId];
     if (!product) {
         return {
@@ -162,6 +168,7 @@ function calculateItem(products, beefConfig, item, fatRetention) {
             note: 'brak produktu w database/burgers.json',
             calories: 0,
             fat: 0,
+            addedOil: 0,
             carbs: 0,
             protein: 0
         };
@@ -171,6 +178,9 @@ function calculateItem(products, beefConfig, item, fatRetention) {
     const macros = product.beef
         ? calculateBeefMacros(beefConfig, grams, fatRetention)
         : scaleMacros(product.macros, grams);
+    const addedOil = product.fryable && item.fried
+        ? grams * (oilAbsorption / 100)
+        : 0;
 
     return {
         id: item.id,
@@ -179,7 +189,12 @@ function calculateItem(products, beefConfig, item, fatRetention) {
         unitLabel: product.unitLabel,
         grams,
         note: product.note,
-        ...macros
+        fried: Boolean(product.fryable && item.fried),
+        fryable: Boolean(product.fryable),
+        addedOil,
+        baseCalories: macros.calories,
+        baseFat: macros.fat,
+        ...addOilMacros(macros, addedOil)
     };
 }
 
@@ -210,6 +225,15 @@ function scaleMacros(macros, grams) {
     };
 }
 
+function addOilMacros(macros, addedOil) {
+    return {
+        calories: macros.calories + addedOil * 9,
+        fat: macros.fat + addedOil,
+        carbs: macros.carbs,
+        protein: macros.protein
+    };
+}
+
 function sumRows(rows) {
     return rows.reduce((totals, row) => ({
         calories: totals.calories + row.calories,
@@ -229,7 +253,7 @@ function sortRows(rows, sortKey, sortDir) {
     });
 }
 
-function renderIngredientList(list, products, beefConfig, items, fatRetention) {
+function renderIngredientList(list, products, beefConfig, items, fatRetention, oilAbsorption) {
     if (!items.length) {
         list.innerHTML = '<div class="burger-empty">Dodaj preset albo pojedyncze składniki.</div>';
         return;
@@ -237,24 +261,29 @@ function renderIngredientList(list, products, beefConfig, items, fatRetention) {
 
     list.innerHTML = items.map(item => {
         const product = products[item.productId];
-        const row = calculateItem(products, beefConfig, item, fatRetention);
+        const row = calculateItem(products, beefConfig, item, fatRetention, oilAbsorption);
+        const processingButton = row.fryable ? `
+            <button class="burger-icon-action burger-processing-toggle ${row.fried ? 'is-fried' : ''}" type="button" data-action="toggle-fried" aria-label="${row.fried ? 'Frytura' : 'Airfryer'}: ${row.label}">
+                <span class="material-symbols-rounded" aria-hidden="true">${row.fried ? 'local_fire_department' : 'air'}</span>
+            </button>
+        ` : '';
         return `
             <div class="burger-ingredient-row" data-item-id="${item.id}">
                 <div class="burger-ingredient-main">
                     <strong>${row.label}</strong>
                     <span>${formatNumber(row.grams)} g · ${item.qty} ${product?.unitLabel || 'szt.'}</span>
                     <div class="burger-ingredient-macros" aria-label="Makro składnika">
-                        <span class="macro-chip macro-chip--calories"><span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span>${Math.round(row.calories)}</span>
+                        <span class="macro-chip macro-chip--calories"><span class="material-symbols-rounded" aria-hidden="true">local_fire_department</span>${formatMacroWithAddition(row.baseCalories, row.addedOil * 9, true)}</span>
                         <span class="macro-chip macro-chip--protein"><span class="material-symbols-rounded" aria-hidden="true">fitness_center</span>${formatNumber(row.protein)}</span>
-                        <span class="macro-chip macro-chip--fat"><span class="material-symbols-rounded" aria-hidden="true">opacity</span>${formatNumber(row.fat)}</span>
+                        <span class="macro-chip macro-chip--fat"><span class="material-symbols-rounded" aria-hidden="true">opacity</span>${formatMacroWithAddition(row.baseFat, row.addedOil)}</span>
                         <span class="macro-chip macro-chip--carbs"><span class="material-symbols-rounded" aria-hidden="true">grain</span>${formatNumber(row.carbs)}</span>
                     </div>
                 </div>
                 <div class="burger-row-actions">
+                    ${processingButton}
                     <button class="burger-icon-action" type="button" data-action="dec" aria-label="Zmniejsz ${row.label}">
                         <span class="material-symbols-rounded" aria-hidden="true">remove</span>
                     </button>
-                    <span class="burger-qty">${item.qty}</span>
                     <button class="burger-icon-action" type="button" data-action="inc" aria-label="Zwiększ ${row.label}">
                         <span class="material-symbols-rounded" aria-hidden="true">add</span>
                     </button>
@@ -306,6 +335,7 @@ function renderDetails(details, rows) {
                         <td>
                             <span class="cell-primary">${row.label}</span>
                             <span class="cell-secondary">${formatNumber(row.grams)} g · ${row.qty} ${row.unitLabel}</span>
+                            ${row.addedOil > 0 ? '<span class="cell-secondary">Frytura</span>' : ''}
                             ${row.note ? `<span class="cell-secondary">${row.note}</span>` : ''}
                         </td>
                         <td>${Math.round(row.calories)}</td>
@@ -329,8 +359,22 @@ function updateDonenessLabel(label, fatRetention) {
     }
 }
 
+function updateOilAbsorptionLabel(label, oilAbsorption) {
+    label.textContent = `${formatNumber(oilAbsorption)} g / 100 g`;
+}
+
 function formatNumber(value) {
     return Number(value).toLocaleString('pl-PL', {
         maximumFractionDigits: value >= 10 ? 0 : 1
     });
+}
+
+function formatMacroWithAddition(baseValue, addedValue, round = false) {
+    if (!addedValue) {
+        return round ? Math.round(baseValue) : formatNumber(baseValue);
+    }
+
+    const base = round ? Math.round(baseValue) : formatNumber(baseValue);
+    const added = round ? Math.round(addedValue) : formatNumber(addedValue);
+    return `${base}+${added}`;
 }

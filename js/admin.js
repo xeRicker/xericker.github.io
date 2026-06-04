@@ -1,6 +1,6 @@
 import { apiService } from './services/api.js';
 import { analytics } from './services/analytics.js';
-import { adminRender } from './ui/adminRender.js?v=3';
+import { adminRender } from './ui/adminRender.js?v=4';
 import { adminProducts } from './ui/adminProducts.js?v=3';
 import { createAdminListsPage } from './ui/adminLists.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
@@ -11,6 +11,22 @@ import { getActiveProductCatalog, loadProductCatalog } from './services/products
 const PASSWORD = "xdxdxd123";
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 2;
+const INFO_CALLOUTS = [
+    {
+        id: 'load-all-data',
+        anchor: '[data-callout-anchor="load-all-data"]',
+        className: 'info-callout--load',
+        placement: 'bottom-end',
+        text: 'Na start ładowane są tylko dane z dwóch miesięcy, żeby panel działał szybciej. Kliknij „Wszystkie dane”, aby pobrać pełną historię.'
+    },
+    {
+        id: 'week-events',
+        anchor: '[data-callout-anchor="week-events"]',
+        className: 'info-callout--events',
+        placement: 'left',
+        text: 'Tutaj będą pokazywane święta i wydarzenia z obecnego tygodnia.'
+    }
+];
 
 let allData = [];
 let processedData = [];
@@ -26,6 +42,9 @@ let productCatalog = null;
 let adminListsPage = null;
 let isFullDataLoaded = false;
 let isLoadingFullData = false;
+let dismissedCallouts = new Set();
+let calloutsReady = false;
+let calloutInitialTimer = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isLocalhost()) {
@@ -36,6 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.style.display = 'block';
 
     setupAdminPages();
+    setupInfoCallouts();
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     await adminProducts.init(document.getElementById('adminProductsPage'));
     adminListsPage = createAdminListsPage({
@@ -72,6 +92,7 @@ function initUI(data) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('revenueTable').style.display = 'table';
     hideGlobalLoader();
+    renderInfoCallouts();
 
     initCalculator();
 }
@@ -85,6 +106,25 @@ function setupAdminPages() {
         });
     });
     switchAdminPage('revenue');
+}
+
+function setupInfoCallouts() {
+    document.addEventListener('pointerdown', event => {
+        const callout = event.target.closest('[data-dismissible-callout]');
+        if (!callout) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        dismissInfoCallout(callout);
+    }, true);
+
+    window.addEventListener('resize', () => renderInfoCallouts({ force: true }));
+
+    calloutInitialTimer = setTimeout(() => {
+        calloutsReady = true;
+        calloutInitialTimer = null;
+        renderInfoCallouts();
+    }, 1000);
 }
 
 async function loadFullDataInBackground() {
@@ -123,9 +163,73 @@ function setLoadAllButtonState(button, label, busy, done = false) {
     button.classList.toggle('is-saving', busy);
     button.classList.toggle('is-clean', done);
     button.innerHTML = `
-        <span class="material-symbols-rounded" aria-hidden="true">${done ? 'check' : 'database'}</span>
+        <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
+}
+
+function dismissInfoCallout(callout) {
+    if (callout.dataset.calloutId) dismissedCallouts.add(callout.dataset.calloutId);
+    callout.classList.add('is-dismissed');
+    setTimeout(() => callout.remove(), 180);
+}
+
+function renderInfoCallouts({ force = false } = {}) {
+    if (!calloutsReady) return;
+
+    if (force) {
+        document.querySelectorAll('.info-callout[data-dismissible-callout]').forEach(callout => callout.remove());
+    }
+
+    INFO_CALLOUTS.forEach(config => {
+        if (dismissedCallouts.has(config.id)) return;
+        if (!force && document.querySelector(`.info-callout[data-callout-id="${config.id}"]`)) return;
+
+        const anchor = document.querySelector(config.anchor);
+        if (!anchor || anchor.closest('[hidden]')) return;
+
+        const callout = document.createElement('button');
+        callout.type = 'button';
+        callout.className = `info-callout ${config.className}`;
+        callout.dataset.dismissibleCallout = '';
+        callout.dataset.calloutId = config.id;
+        callout.innerHTML = `
+            <span class="material-symbols-rounded" aria-hidden="true">priority_high</span>
+            <span>${escapeHtml(config.text)}</span>
+        `;
+        document.body.appendChild(callout);
+        positionInfoCallout(callout, anchor, config.placement);
+    });
+}
+
+function positionInfoCallout(callout, anchor, placement) {
+    const anchorRect = anchor.getBoundingClientRect();
+    const calloutRect = callout.getBoundingClientRect();
+    const gap = 12;
+    const viewportLeft = window.scrollX;
+    const viewportTop = window.scrollY;
+    let left = viewportLeft + anchorRect.left;
+    let top = viewportTop + anchorRect.bottom + gap;
+
+    if (placement === 'bottom-end') {
+        left = viewportLeft + anchorRect.right - calloutRect.width;
+    } else if (placement === 'left') {
+        left = viewportLeft + anchorRect.left - calloutRect.width - gap;
+        top = viewportTop + anchorRect.top + 16;
+    }
+
+    const margin = 16;
+    if (left < viewportLeft + margin) left = viewportLeft + margin;
+    if (left + calloutRect.width > viewportLeft + window.innerWidth - margin) {
+        left = viewportLeft + window.innerWidth - calloutRect.width - margin;
+    }
+    if (top < viewportTop + margin) top = viewportTop + margin;
+    if (top + calloutRect.height > viewportTop + window.innerHeight - margin) {
+        top = Math.max(viewportTop + margin, viewportTop + window.innerHeight - calloutRect.height - margin);
+    }
+
+    callout.style.left = `${Math.round(left)}px`;
+    callout.style.top = `${Math.round(top)}px`;
 }
 
 function applyLoadedData(data) {
@@ -174,6 +278,7 @@ async function switchAdminPage(pageName) {
     document.querySelectorAll('[data-admin-page]').forEach(section => {
         section.hidden = section.dataset.adminPage !== pageName;
     });
+    renderInfoCallouts();
 }
 
 function hideGlobalLoader() {
@@ -370,6 +475,7 @@ function updateView() {
     adminRender.renderActiveFilters(document.getElementById('activeFilterChips'), getActiveFilterLabels());
 
     renderRevenueTable();
+    renderInfoCallouts();
 }
 
 function getActiveWeekData() {

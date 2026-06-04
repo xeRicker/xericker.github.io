@@ -6,7 +6,7 @@
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=37">
+    <link rel="stylesheet" href="style.css?v=44">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
@@ -31,7 +31,10 @@
   <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki aplikacji">
     <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">LISTA</button>
     <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">BURGERY</button>
-    <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">PRACOWNICY</button>
+    <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">
+      <span class="material-symbols-rounded" aria-hidden="true">badge</span>
+      WYNAGRODZENIA
+    </button>
   </div>
 
   <div id="generatorPanel" class="tab-panel is-active">
@@ -101,19 +104,33 @@
         </div>
       </div>
 
-      <div class="burger-doneness">
-        <div>
-          <label for="burgerFatRetention">Wysmażenie mięsa</label>
-          <span id="burgerDonenessLabel">Średnio</span>
-        </div>
-        <input id="burgerFatRetention" type="range" min="50" max="95" step="5" value="75">
-      </div>
-
       <div class="burger-actions">
         <button id="burgerApplyPreset" class="burger-primary-action" type="button">
           <span class="material-symbols-rounded" aria-hidden="true">add_circle</span>
           Dodaj preset
         </button>
+      </div>
+    </div>
+
+    <div class="section-card burger-options animate-stagger">
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">tune</span> OPCJE</h2>
+
+      <div class="burger-option-grid">
+        <div class="burger-range-control">
+          <div>
+            <label for="burgerFatRetention">Wysmażenie mięsa</label>
+            <span id="burgerDonenessLabel">Średnio</span>
+          </div>
+          <input id="burgerFatRetention" type="range" min="50" max="95" step="5" value="75">
+        </div>
+
+        <div class="burger-range-control">
+          <div>
+            <label for="burgerOilAbsorption">Wchłonięty olej</label>
+            <span id="burgerOilAbsorptionLabel">8 g / 100 g</span>
+          </div>
+          <input id="burgerOilAbsorption" type="range" min="0" max="20" step="1" value="8">
+        </div>
       </div>
     </div>
 
@@ -244,6 +261,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=27"></script>
+<script type="module" src="js/main.js?v=30"></script>
 </body>
 </html>

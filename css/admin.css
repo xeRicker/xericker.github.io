@@ -33,6 +33,29 @@ select:focus { border-color: var(--primary-color); }
     justify-content: center;
 }
 
+.admin-load-all-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.admin-load-all-icon.is-attention {
+    color: var(--glovo-color);
+    animation: admin-load-all-pulse 1.35s ease-in-out infinite;
+}
+
+@keyframes admin-load-all-pulse {
+    0%, 100% {
+        opacity: 0.72;
+        transform: scale(1);
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.16);
+        filter: drop-shadow(0 0 8px color-mix(in srgb, var(--glovo-color) 72%, transparent));
+    }
+}
+
 .admin-load-all-btn:disabled {
     cursor: default;
     opacity: 0.84;
@@ -324,8 +347,100 @@ select:focus { border-color: var(--primary-color); }
     inset: -1px;
     pointer-events: none;
     background: linear-gradient(110deg, transparent 0%, rgba(122, 184, 255, 0.0) 38%, rgba(122, 184, 255, 0.18) 50%, rgba(122, 184, 255, 0.0) 62%, transparent 100%);
+    clip-path: inset(0 round var(--radius-md));
     transform: translateX(-120%);
     animation: event-card-shine 4.2s ease-in-out infinite;
+}
+
+.info-callout {
+    position: absolute;
+    z-index: 500;
+    width: min(310px, calc(100vw - 32px));
+    border: 1px solid var(--glovo-dark);
+    border-radius: var(--radius-md);
+    background: var(--glovo-color);
+    color: var(--app-text-inverse);
+    box-shadow: var(--shadow-overlay), 0 0 0 1px color-mix(in srgb, var(--glovo-color) 54%, transparent);
+    padding: 12px 14px;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 9px;
+    text-align: left;
+    font: 500 13px/1.35 var(--font-body);
+    cursor: pointer;
+    opacity: 1;
+    transform-origin: top right;
+    animation: info-callout-pop 0.28s cubic-bezier(0.2, 1.18, 0.28, 1) both;
+}
+
+.info-callout::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--glovo-color);
+    border-left: 1px solid var(--glovo-dark);
+    border-top: 1px solid var(--glovo-dark);
+    transform: rotate(45deg);
+}
+
+.info-callout .material-symbols-rounded {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border: 1px solid color-mix(in srgb, var(--app-text-inverse) 44%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--app-text-inverse) 10%, transparent);
+    color: var(--app-text-inverse);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+    line-height: 1;
+}
+
+.info-callout--load::before {
+    top: -7px;
+    right: 24px;
+}
+
+.info-callout--events::before {
+    top: 18px;
+    right: -7px;
+    transform: rotate(135deg);
+}
+
+.info-callout.is-dismissed {
+    pointer-events: none;
+    animation: info-callout-out 0.18s ease-in forwards;
+}
+
+.info-callout.is-outside-anchor {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+@keyframes info-callout-out {
+    to {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+}
+
+@keyframes info-callout-pop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.94);
+    }
+    72% {
+        opacity: 1;
+        transform: translateY(1px) scale(1.02);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .insight-card--events strong {
@@ -698,5 +813,18 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     .header-actions {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .admin-load-all-wrap,
+    .admin-load-all-btn {
+        width: 100%;
+    }
+
+    .info-callout {
+        width: 100%;
+    }
+
+    .info-callout::before {
+        display: none;
     }
 }

@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "06.06.2026",
+  "revenue": 1470,
+  "cardRevenue": 684,
+  "glovoRevenue": 327,
+  "employees": {
+    "Natalia": "12:00 – 21:00",
+    "Tymur": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 3,
+    "Bułki": 0,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Saszetki: Ketchup": 1,
+    "Folia": 1,
+    "Papier pod grilla": 1
+  }
+}

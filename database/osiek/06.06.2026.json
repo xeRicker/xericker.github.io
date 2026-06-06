@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "06.06.2026",
+  "revenue": 1812,
+  "cardRevenue": 1138,
+  "glovoRevenue": 0,
+  "employees": {
+    "Radek": "14:00 – 21:00",
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Halloumi": 2,
+    "Frytki": 3,
+    "Bułki": 4,
+    "Cebula prażona": 2,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Rękawiczki": 1
+  }
+}

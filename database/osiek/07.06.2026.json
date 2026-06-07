@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "07.06.2026",
+  "revenue": 1501,
+  "cardRevenue": 845,
+  "glovoRevenue": 0,
+  "employees": {
+    "Radek": "14:00 – 21:00",
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 13,
+    "Cebula prażona": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Rękawiczki": 1,
+    "Papier do kasy": 1
+  }
+}

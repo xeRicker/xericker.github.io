@@ -314,8 +314,8 @@ function updateRevenueInsights() {
     const glovoInfo = document.getElementById('glovoNetInfo');
 
     glovoInfo.textContent = glovo > 0
-        ? `Glovo Netto (-30%): ${glovoNet.toFixed(2)} PLN`
-        : 'Glovo Netto (-30%): 0.00 PLN';
+        ? `Glovo (-30%): ${glovoNet.toFixed(2)} PLN`
+        : 'Glovo (-30%): 0.00 PLN';
 
     if (rev === 0 && card === 0) {
         validation.textContent = 'Wpisz utarg, karty i ewentualnie Glovo, a policzę gotówkę do odłożenia do koperty na koniec dnia.';

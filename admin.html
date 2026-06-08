@@ -40,7 +40,7 @@
             <div class="admin-load-all-wrap" data-callout-anchor="load-all-data">
                 <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
-                WSZYSTKIE DANE
+                ZAŁADUJ DANE
                 </button>
             </div>
             <a href="index.html" class="btn-back">
@@ -58,6 +58,10 @@
         <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">badge</span>
             Wynagrodzenia
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="monthlyReport" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">query_stats</span>
+            Raport miesiąca
         </button>
         <button class="admin-page-tab" type="button" data-admin-tab="products" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
@@ -217,6 +221,11 @@
 
 
 
+    <div id="monthlyReportPage" class="monthly-report-page animate-enter delay-3" data-admin-page="monthlyReport" hidden>
+        <div id="monthlyReportStatus" class="monthly-report-status"></div>
+        <div id="monthlyReportContent" class="monthly-report-content"></div>
+    </div>
+
     <div class="table-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="payroll" hidden>
         <div class="table-head">
             <div class="section-heading">
@@ -280,6 +289,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=31"></script>
+<script type="module" src="js/admin.js?v=33"></script>
 </body>
 </html>

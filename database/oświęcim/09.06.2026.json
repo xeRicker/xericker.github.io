@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "09.06.2026",
+  "revenue": 1023,
+  "cardRevenue": 792,
+  "glovoRevenue": 50,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 3,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Frytura": 1,
+    "Bułki": 15,
+    "Cebula prażona": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Torby: Duże": 1,
+    "Szmaty": 1
+  }
+}

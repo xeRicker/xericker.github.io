@@ -1,0 +1,14 @@
+{
+  "location": "Oświęcim",
+  "date": "10.06.2026",
+  "revenue": 42,
+  "cardRevenue": 42,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "12:00 – 17:30"
+  },
+  "products": {
+    "Sałata": 1,
+    "Bułki": 25
+  }
+}

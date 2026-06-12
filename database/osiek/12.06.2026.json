@@ -1,0 +1,25 @@
+{
+  "location": "Osiek",
+  "date": "12.06.2026",
+  "revenue": 862,
+  "cardRevenue": 660,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Przyprawa do grilla": 1,
+    "Torby: Małe": 1,
+    "Rękawiczki": 1,
+    "Papier pod grilla": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

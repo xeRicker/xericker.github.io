@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "19.06.2026",
+  "revenue": 667,
+  "cardRevenue": 0,
+  "glovoRevenue": 50,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Placki": 1,
+    "Bułki": 21,
+    "Cebula prażona": 1,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
+  }
+}

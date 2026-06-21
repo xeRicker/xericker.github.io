@@ -1,0 +1,33 @@
+{
+  "location": "Osiek",
+  "date": "21.06.2026",
+  "revenue": 1643,
+  "cardRevenue": 1234,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:00",
+    "Kacper": "14:00 – 21:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Jalapeno": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Rękawiczki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 10,20": 1
+  }
+}

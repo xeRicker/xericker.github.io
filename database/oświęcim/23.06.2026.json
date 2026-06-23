@@ -1,0 +1,37 @@
+{
+  "location": "Oświęcim",
+  "date": "23.06.2026",
+  "revenue": 911,
+  "cardRevenue": 669,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 3,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Jalapeno": 1,
+    "Halloumi": 2,
+    "Majonez": 1,
+    "Frytki": 4,
+    "Bułki": 10,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Duże": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Zielony papier": 1
+  }
+}

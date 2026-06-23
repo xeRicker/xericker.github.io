@@ -1,0 +1,25 @@
+{
+  "location": "Osiek",
+  "date": "23.06.2026",
+  "revenue": 701,
+  "cardRevenue": 258,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Majonez": 1,
+    "Bułki": 15,
+    "Sriracha": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1
+  }
+}

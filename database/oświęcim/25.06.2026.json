@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "25.06.2026",
+  "revenue": 1015,
+  "cardRevenue": 659,
+  "glovoRevenue": 0,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 8,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Szmaty": 1
+  }
+}

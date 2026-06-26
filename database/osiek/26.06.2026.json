@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "26.06.2026",
+  "revenue": 1356,
+  "cardRevenue": 814,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 15,
+    "Zbój: Czosnek": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "30.06.2026",
+  "revenue": 507,
+  "cardRevenue": 404,
+  "glovoRevenue": 100,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Placki": 1,
+    "Bułki": 0,
+    "Tabasco": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Odtłuszczacz": 1
+  }
+}

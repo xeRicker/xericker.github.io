@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "01.07.2026",
+  "revenue": 1143,
+  "cardRevenue": 434,
+  "glovoRevenue": 283,
+  "employees": {
+    "Paweł": "12:00 – 20:30"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 2,
+    "Majonez": 1,
+    "Placki": 1,
+    "Frytura": 1,
+    "Bułki": 0
+  }
+}

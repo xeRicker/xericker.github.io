@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "02.07.2026",
+  "revenue": 503,
+  "cardRevenue": 366,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "12:00 – 20:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Frytki": 2,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Tabasco": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
+  }
+}

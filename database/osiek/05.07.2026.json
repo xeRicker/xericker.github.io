@@ -1,0 +1,33 @@
+{
+  "location": "Osiek",
+  "date": "05.07.2026",
+  "revenue": 1901,
+  "cardRevenue": 816,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Kacper": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Krążki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Średnie": 1,
+    "Folia": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

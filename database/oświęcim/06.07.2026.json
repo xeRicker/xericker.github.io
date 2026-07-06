@@ -1,19 +1,25 @@
 {
   "location": "Oświęcim",
   "date": "06.07.2026",
-  "revenue": 236,
-  "cardRevenue": 170,
+  "revenue": 712,
+  "cardRevenue": 655,
   "glovoRevenue": 0,
   "employees": {
-    "Tomek": "14:00 – 18:00"
+    "Kacper": "12:00 – 21:00"
   },
   "products": {
-    "Ogórki": 1,
-    "Bułki": 19,
-    "Zbój: Czosnek": 1,
-    "Pepsi Max": 1,
-    "Torby: Średnie": 1,
-    "Sos: Pokrywki": 1,
-    "Zielony papier": 1
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Jalapeno": 1,
+    "Frytki": 1,
+    "Bułki": 25,
+    "Cebula prażona": 1,
+    "Tabasco": 1,
+    "Folia": 1,
+    "Rękawiczki": 1,
+    "Szmaty": 1,
+    "Drobne: 1,2,5": 1
   }
 }

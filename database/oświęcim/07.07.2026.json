@@ -1,0 +1,36 @@
+{
+  "location": "Oświęcim",
+  "date": "07.07.2026",
+  "revenue": 1234,
+  "cardRevenue": 795,
+  "glovoRevenue": 50,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Krążki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Tabasco": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Barbecue": 1,
+    "Pepsi Max": 1,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

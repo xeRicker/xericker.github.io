@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "07.07.2026",
+  "revenue": 751,
+  "cardRevenue": 450,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Frytki": 2,
+    "Bułki": 12,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Pepsi Max": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1
+  }
+}

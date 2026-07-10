@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "10.07.2026",
+  "revenue": 1177,
+  "cardRevenue": 1031,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Frytura": 1,
+    "Bułki": 15,
+    "Zbój: Czosnek": 1,
+    "Sos: Pokrywki": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

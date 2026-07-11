@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "11.07.2026",
+  "revenue": 1709,
+  "cardRevenue": 1608,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Torby: Duże": 1,
+    "Folia": 1,
+    "Szmaty": 1
+  }
+}

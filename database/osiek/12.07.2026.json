@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "12.07.2026",
+  "revenue": 1785,
+  "cardRevenue": 1108,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Frytura": 1,
+    "Bułki": 2,
+    "Sól do frytek": 1,
+    "Torby: Małe": 1,
+    "Folia": 1
+  }
+}

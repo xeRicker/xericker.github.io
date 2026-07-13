@@ -1,0 +1,19 @@
+{
+  "location": "Osiek",
+  "date": "13.07.2026",
+  "revenue": 632,
+  "cardRevenue": 538,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Ogórki": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki": 16,
+    "Torby: Średnie": 1
+  }
+}

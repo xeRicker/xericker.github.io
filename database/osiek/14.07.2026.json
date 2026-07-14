@@ -1,23 +1,23 @@
 {
   "location": "Osiek",
   "date": "14.07.2026",
-  "revenue": 1233,
-  "cardRevenue": 927,
-  "glovoRevenue": 0,
+  "revenue": 843,
+  "cardRevenue": 628,
+  "glovoRevenue": 52,
   "employees": {
-    "Paweł": "14:00 – 20:30"
+    "Kacper": "12:00 – 21:00"
   },
   "products": {
     "Mięso: Duże": 1,
-    "Stripsy": 2,
     "Boczek": 1,
     "Sałata": 1,
     "Pomidory": 1,
     "Cheddar": 1,
     "Halloumi": 1,
-    "Majonez": 1,
-    "Frytki": 2,
-    "Bułki": 3,
-    "Sól do frytek": 1
+    "Frytki": 1,
+    "Bułki": 17,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Drobne: 1,2,5": 1
   }
 }

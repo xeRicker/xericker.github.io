@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "16.07.2026",
+  "revenue": 935,
+  "cardRevenue": 331,
+  "glovoRevenue": 88,
+  "employees": {
+    "Paweł": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "17.07.2026",
+  "revenue": 1596,
+  "cardRevenue": 1003,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Krążki": 2,
+    "Bułki": 7,
+    "Cebula prażona": 1,
+    "Pepsi": 1,
+    "Torby: Małe": 1
+  }
+}

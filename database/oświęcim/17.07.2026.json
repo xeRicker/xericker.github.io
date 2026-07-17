@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "17.07.2026",
+  "revenue": 1335,
+  "cardRevenue": 1121,
+  "glovoRevenue": 50,
+  "employees": {
+    "Kacper": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 8,
+    "Sos: Carolina": 1,
+    "Zbój: Czosnek": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "18.07.2026",
+  "revenue": 1894,
+  "cardRevenue": 1216,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Halloumi": 2,
+    "Krążki": 1,
+    "Bułki": 3,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Sweet Chilli": 1,
+    "Zbój: Czosnek": 1,
+    "Pepsi": 1,
+    "Serwetki": 1
+  }
+}

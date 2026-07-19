@@ -1,0 +1,20 @@
+{
+  "location": "Osiek",
+  "date": "19.07.2026",
+  "revenue": 1668,
+  "cardRevenue": 715,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 30,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 12,
+    "Papier pod grilla": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "20.07.2026",
+  "revenue": 989,
+  "cardRevenue": 423,
+  "glovoRevenue": 88,
+  "employees": {
+    "Kacper": "12:00 – 21:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Sos: Barbecue": 1,
+    "Serwetki": 1,
+    "Szmaty": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

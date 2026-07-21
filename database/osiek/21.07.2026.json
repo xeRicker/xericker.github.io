@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "21.07.2026",
+  "revenue": 876,
+  "cardRevenue": 552,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 13,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki": 13,
+    "Sriracha": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1
+  }
+}

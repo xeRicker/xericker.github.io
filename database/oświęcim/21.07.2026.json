@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "21.07.2026",
+  "revenue": 1475,
+  "cardRevenue": 786,
+  "glovoRevenue": 192,
+  "employees": {
+    "Paweł": "12:00 – 20:30"
+  },
+  "products": {
+    "Mięso: Małe": 30,
+    "Mięso: Duże": 25,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

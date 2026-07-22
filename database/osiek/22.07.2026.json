@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "22.07.2026",
+  "revenue": 984,
+  "cardRevenue": 479,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 16,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 6,
+    "Cebula prażona": 1,
+    "Sos: Czosnek": 1,
+    "Pepsi": 1,
+    "Lipton": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1
+  }
+}

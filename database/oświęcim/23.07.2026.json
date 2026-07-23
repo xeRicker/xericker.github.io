@@ -1,0 +1,33 @@
+{
+  "location": "Oświęcim",
+  "date": "23.07.2026",
+  "revenue": 1298,
+  "cardRevenue": 998,
+  "glovoRevenue": 42,
+  "employees": {
+    "Sebastian": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 25,
+    "Mięso: Duże": 10,
+    "Stripsy": 3,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Placki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Zbój: Pieprz": 1,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Folia": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "location": "Oświęcim",
+  "date": "25.07.2026",
+  "revenue": 1120,
+  "cardRevenue": 754,
+  "glovoRevenue": 245,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 3,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Frytura": 1,
+    "Bułki": 18,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Przyprawa do grilla": 1,
+    "Sól do frytek": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "26.07.2026",
+  "revenue": 1505,
+  "cardRevenue": 831,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 2,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 8,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Małe": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

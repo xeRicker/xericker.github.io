@@ -1,0 +1,15 @@
+{
+  "location": "Oświęcim",
+  "date": "27.07.2026",
+  "revenue": 689,
+  "cardRevenue": 502,
+  "glovoRevenue": 103,
+  "employees": {
+    "Paweł": "12:00 – 20:00"
+  },
+  "products": {
+    "Frytki": 1,
+    "Bułki": 21,
+    "Torby: Średnie": 1
+  }
+}

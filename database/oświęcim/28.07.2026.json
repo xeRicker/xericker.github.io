@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "28.07.2026",
+  "revenue": 765,
+  "cardRevenue": 438,
+  "glovoRevenue": 68,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Sos: Barbecue": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Rękawiczki": 1,
+    "Papier pod grilla": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

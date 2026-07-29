@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "29.07.2026",
+  "revenue": 974,
+  "cardRevenue": 793,
+  "glovoRevenue": 142,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 2,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki": 18,
+    "Sriracha": 1,
+    "Sól do frytek": 1,
+    "Sos: Carolina": 1,
+    "Sos: Barbecue": 1,
+    "Folia": 1
+  }
+}

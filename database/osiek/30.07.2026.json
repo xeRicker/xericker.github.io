@@ -1,0 +1,35 @@
+{
+  "location": "Osiek",
+  "date": "30.07.2026",
+  "revenue": 1249,
+  "cardRevenue": 992,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 8,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Sól do frytek": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Średnie": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

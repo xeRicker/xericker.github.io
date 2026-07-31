@@ -1,0 +1,21 @@
+{
+  "location": "Osiek",
+  "date": "31.07.2026",
+  "revenue": 1472,
+  "cardRevenue": 252,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 2,
+    "Mięso: Duże": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 8,
+    "Rękawiczki": 1
+  }
+}

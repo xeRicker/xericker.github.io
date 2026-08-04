@@ -1,0 +1,27 @@
+{
+  "location": "Osiek",
+  "date": "04.08.2026",
+  "revenue": 641,
+  "cardRevenue": 375,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "17:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 17,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

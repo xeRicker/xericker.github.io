@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "04.08.2026",
+  "revenue": 688,
+  "cardRevenue": 577,
+  "glovoRevenue": 50,
+  "employees": {
+    "Sebastian": "17:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 2,
+    "Stripsy": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki": 10,
+    "Serwetki": 1,
+    "Zielony papier": 1
+  }
+}

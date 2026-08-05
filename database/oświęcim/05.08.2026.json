@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "05.08.2026",
+  "revenue": 569,
+  "cardRevenue": 419,
+  "glovoRevenue": 76,
+  "employees": {
+    "Sebastian": "17:00 – 21:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Bułki": 14,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "06.08.2026",
+  "revenue": 956,
+  "cardRevenue": 557,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 20:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytura": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1
+  }
+}

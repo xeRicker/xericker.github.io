@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "07.08.2026",
+  "revenue": 868,
+  "cardRevenue": 297,
+  "glovoRevenue": 62,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Halloumi": 1,
+    "Bułki": 17,
+    "Cebula prażona": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Sos: Sweet Chilli": 1
+  }
+}

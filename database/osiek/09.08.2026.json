@@ -1,0 +1,33 @@
+{
+  "location": "Osiek",
+  "date": "09.08.2026",
+  "revenue": 1988,
+  "cardRevenue": 1040,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 21:30",
+    "Natalia": "14:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Placki": 1,
+    "Bułki": 0,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "10.08.2026",
+  "revenue": 806,
+  "cardRevenue": 579,
+  "glovoRevenue": 70,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 11,
+    "Cebula prażona": 1,
+    "Sos: Barbecue": 1,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Lipton": 1,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Drobne: 10,20": 1
+  }
+}

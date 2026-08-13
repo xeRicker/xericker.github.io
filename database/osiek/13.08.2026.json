@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "13.08.2026",
+  "revenue": 1105,
+  "cardRevenue": 0,
+  "glovoRevenue": 0,
+  "employees": {
+    "Tomek": "14:00 – 21:00"
+  },
+  "products": {
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Bułki": 16,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Serwetki": 1
+  }
+}

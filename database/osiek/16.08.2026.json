@@ -1,0 +1,32 @@
+{
+  "location": "Osiek",
+  "date": "16.08.2026",
+  "revenue": 1224,
+  "cardRevenue": 0,
+  "glovoRevenue": 0,
+  "employees": {
+    "Sebastian": "14:00 – 19:30",
+    "Kacper": "14:00 – 19:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 0,
+    "Sriracha": 1,
+    "Saszetki: Ketchup": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1
+  }
+}

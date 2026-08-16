@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "16.08.2026",
+  "revenue": 1097,
+  "cardRevenue": 791,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Sriracha": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Drobne: 10,20": 1
+  }
+}

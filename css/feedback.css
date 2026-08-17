@@ -103,6 +103,36 @@ input[type=number] {
 
 .loader-content { text-align: center; }
 
+.loader-content--error {
+    max-width: 34rem;
+    padding: var(--ds-space-400, 32px);
+    color: var(--text-secondary);
+}
+
+.loader-content--error h1 {
+    margin: var(--ds-space-200, 16px) 0 var(--ds-space-100, 8px);
+    color: var(--text-primary);
+    font: var(--ds-font-heading-large, 600 24px/1.25 var(--font-heading));
+}
+
+.loader-content--error p { margin: var(--ds-space-100, 8px) 0; }
+
+.loader-error-icon {
+    color: var(--danger-color);
+    font-size: 44px;
+}
+
+.loader-error-code {
+    color: var(--danger-color);
+    font-family: var(--font-heading);
+}
+
+.loader-error-details {
+    color: var(--text-muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
 .burger-icon {
     width: 60px; height: 50px; position: relative; margin: 0 auto 20px auto;
     display: flex; flex-direction: column; justify-content: space-between;

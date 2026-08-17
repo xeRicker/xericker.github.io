@@ -347,7 +347,7 @@ async function initWorkerCalculator() {
         resHoursId: 'workerResHours',
         resMoneyId: 'workerResMoney',
         detailsBoxId: 'workerCalcDetails',
-        defaultRate: 30.5
+        defaultRate: 30
     });
 
     const now = new Date();

@@ -9,9 +9,11 @@ import { dialogService, enhanceCustomControls, refreshCustomControls } from './u
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
 
 const PASSWORD = "xdxdxd123";
+const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
+const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 2;
-const PAYROLL_RATE = 30.5;
+const PAYROLL_RATE = 30;
 
 let allData = [];
 let processedData = [];
@@ -31,33 +33,79 @@ let monthlyReportCharts = [];
 let monthlyReportGenerated = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    if (!isLocalhost()) {
+    try {
+        if (!isLocalhost() && !(await hasValidAdminAccess())) {
+            document.body.style.display = 'block';
+            const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", { type: 'password' });
+            if (pass !== PASSWORD) return location.href = "index.html";
+            saveAdminAccess();
+        }
         document.body.style.display = 'block';
-        const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", { type: 'password' });
-        if (pass !== PASSWORD) return location.href = "index.html";
+
+        allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS });
+        if (!allData.length) {
+            document.getElementById('loading').innerText = "Brak danych";
+            hideGlobalLoader();
+            return;
+        }
+
+        setupAdminPages();
+        productCatalog = getActiveProductCatalog(await loadProductCatalog());
+        await adminProducts.init(document.getElementById('adminProductsPage'));
+        adminListsPage = createAdminListsPage({
+            getAllData: () => allData,
+            getProductCatalog: () => productCatalog,
+            buildSymbolIcon: (...args) => adminRender.buildSymbolIcon(...args)
+        });
+
+        processedData = analytics.processReports(allData);
+        adminListsPage.init();
+        initUI(processedData);
+    } catch (error) {
+        console.error('Admin panel unavailable.', error);
+        showAdminUnavailable(error);
     }
-    document.body.style.display = 'block';
-
-    setupAdminPages();
-    productCatalog = getActiveProductCatalog(await loadProductCatalog());
-    await adminProducts.init(document.getElementById('adminProductsPage'));
-    adminListsPage = createAdminListsPage({
-        getAllData: () => allData,
-        getProductCatalog: () => productCatalog,
-        buildSymbolIcon: (...args) => adminRender.buildSymbolIcon(...args)
-    });
-
-    allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS });
-    if (!allData.length) {
-        document.getElementById('loading').innerText = "Brak danych";
-        hideGlobalLoader();
-        return;
-    }
-
-    processedData = analytics.processReports(allData);
-    adminListsPage.init();
-    initUI(processedData);
 });
+
+async function hasValidAdminAccess() {
+    try {
+        const access = JSON.parse(localStorage.getItem(ADMIN_AUTH_STORAGE_KEY));
+        if (Number.isFinite(access?.expiresAt) && access.expiresAt > Date.now()) return true;
+        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
+    } catch {
+        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
+    }
+    return false;
+}
+
+function saveAdminAccess() {
+    try {
+        localStorage.setItem(ADMIN_AUTH_STORAGE_KEY, JSON.stringify({
+            expiresAt: Date.now() + ADMIN_AUTH_DURATION_MS
+        }));
+    } catch (error) {
+        console.warn('Nie udało się zapamiętać dostępu do panelu admina.', error);
+    }
+}
+
+function showAdminUnavailable(error) {
+    document.body.style.display = 'block';
+    const loader = document.getElementById('globalLoader');
+    if (!loader) return;
+
+    const code = error?.status ? `HTTP ${error.status}` : 'Błąd połączenia';
+    const details = error?.message || 'Nie udało się pobrać danych z GitHub.';
+    loader.classList.remove('hidden');
+    loader.innerHTML = `
+        <div class="loader-content loader-content--error" role="alert">
+            ${renderMaterialIcon('cloud_off', 'loader-error-icon')}
+            <h1>Panel jest obecnie niedostępny</h1>
+            <p>Nie udało się załadować danych.</p>
+            <p class="loader-error-code">Kod błędu: ${escapeHtml(code)}</p>
+            <p class="loader-error-details">${escapeHtml(details)}</p>
+        </div>
+    `;
+}
 
 function initUI(data) {
     populateMonthFilter(data);
@@ -604,7 +652,7 @@ function renderMonthlyReport(report) {
             ${renderMonthlyKpi('Średnio / dzień', report.current.averageDay, report.previous.averageDay, 'calendar_month', true)}
             ${renderMonthlyKpi('Karty', report.current.card, report.previous.card, 'credit_card', true)}
             ${renderMonthlyKpi('Glovo', report.current.glovo, report.previous.glovo, 'takeout_dining', true)}
-            ${renderMonthlyKpi('Wypłaty 30.50', getPayrollTotal(report.current), getPayrollTotal(report.previous), 'payments', true)}
+            ${renderMonthlyKpi('Wypłaty 30', getPayrollTotal(report.current), getPayrollTotal(report.previous), 'payments', true)}
             ${renderMonthlyKpi('Utarg / roboczogodzina', getRevenuePerHour(report.current), getRevenuePerHour(report.previous), 'speed', true)}
         </div>
 
@@ -721,7 +769,7 @@ function renderMonthlyEfficiencyPanel(report) {
                     `${currentPayrollShare.toFixed(1)}%`,
                     currentPayrollShare - previousPayrollShare,
                     false,
-                    'Szacowany koszt wypłat przy stawce 30.50 jako procent utargu. Niżej jest lepiej, bo mniej obrotu idzie na godziny pracy.',
+                    'Szacowany koszt wypłat przy stawce 30 jako procent utargu. Niżej jest lepiej, bo mniej obrotu idzie na godziny pracy.',
                     ' pp',
                     true
                 )}
@@ -1126,7 +1174,7 @@ function initCalculator() {
         resHoursId: 'resHours',
         resMoneyId: 'resMoney',
         detailsBoxId: 'calcDetails',
-        defaultRate: 30.5
+        defaultRate: 30
     });
 
     payrollCalculator.refresh();

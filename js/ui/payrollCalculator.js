@@ -15,7 +15,7 @@ export function setupPayrollCalculator(config) {
         resHoursId,
         resMoneyId,
         detailsBoxId,
-        defaultRate = 30.5
+        defaultRate = 30
     } = config;
 
     const select = document.getElementById(employeeSelectId);
@@ -106,7 +106,7 @@ export function setupPayrollCalculator(config) {
     };
 
     const setRate = value => {
-        rateInput.value = Number(value).toFixed(2);
+        rateInput.value = String(Number(value));
     };
 
     const setDateRange = (from, to) => {

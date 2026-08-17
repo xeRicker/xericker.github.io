@@ -172,6 +172,22 @@ class ApiService {
         }
     }
 
+    async createGithubApiError(response, resource) {
+        let details = '';
+
+        try {
+            const payload = await response.json();
+            details = payload?.message ? `: ${payload.message}` : '';
+        } catch {
+            // The HTTP status is still enough to explain the failed request.
+        }
+
+        const error = new Error(`GitHub API (${resource}) zwróciło błąd HTTP ${response.status}${details}`);
+        error.status = response.status;
+        error.resource = resource;
+        return error;
+    }
+
     async fetchAllData(options = {}) {
         const { recentMonths = null, onProgress = null } = options;
         if (isLocalhost()) {
@@ -195,39 +211,36 @@ class ApiService {
             return data;
         }
 
-        try {
-            const locRes = await fetch(`${this.baseUrl}database`, { headers: this.headers });
-            if (!locRes.ok) return [];
-            const locations = (await locRes.json()).filter(i => i.type === 'dir');
-            const monthKeys = recentMonths ? new Set(this.getRecentMonthKeys(recentMonths)) : null;
+        const locRes = await fetch(`${this.baseUrl}database`, { headers: this.headers });
+        if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
 
-            const filesByLocation = await Promise.all(locations.map(async loc => {
-                const filesRes = await fetch(loc.url, { headers: this.headers });
-                if (!filesRes.ok) return [];
-                return (await filesRes.json())
-                    .filter(f => f.name.endsWith('.json'))
-                    .filter(f => !monthKeys || monthKeys.has(this.getMonthKeyFromFileName(f.name)));
-            }));
+        const locations = (await locRes.json()).filter(i => i.type === 'dir');
+        const monthKeys = recentMonths ? new Set(this.getRecentMonthKeys(recentMonths)) : null;
 
-            const files = filesByLocation.flat();
-            let loaded = 0;
-            this.reportProgress(onProgress, loaded, files.length);
+        const filesByLocation = await Promise.all(locations.map(async loc => {
+            const filesRes = await fetch(loc.url, { headers: this.headers });
+            if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${loc.name}`);
+            return (await filesRes.json())
+                .filter(f => f.name.endsWith('.json'))
+                .filter(f => !monthKeys || monthKeys.has(this.getMonthKeyFromFileName(f.name)));
+        }));
 
-            const results = await Promise.all(files.map(async f => {
-                try {
-                    const r = await fetch(f.download_url);
-                    return r.ok ? await r.json() : null;
-                } finally {
-                    loaded += 1;
-                    this.reportProgress(onProgress, loaded, files.length);
-                }
-            }));
+        const files = filesByLocation.flat();
+        let loaded = 0;
+        this.reportProgress(onProgress, loaded, files.length);
 
-            return results.filter(Boolean);
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        const results = await Promise.all(files.map(async f => {
+            try {
+                const response = await fetch(f.download_url);
+                if (!response.ok) throw await this.createGithubApiError(response, f.path || f.name);
+                return await response.json();
+            } finally {
+                loaded += 1;
+                this.reportProgress(onProgress, loaded, files.length);
+            }
+        }));
+
+        return results;
     }
 
     getMockData() {

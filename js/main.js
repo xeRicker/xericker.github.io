@@ -342,6 +342,7 @@ function updateRevenueInsights() {
 async function initWorkerCalculator() {
     if (workerCalculatorReady) return;
 
+    setWorkerCalculatorEnabled(false);
     setWorkerDataStatus('Ładowanie danych z bieżącego i poprzedniego miesiąca...', 'loading');
     try {
         workerReports = await apiService.fetchAllData({ recentMonths: 2 });
@@ -369,12 +370,18 @@ async function initWorkerCalculator() {
         );
 
         workerCalculatorReady = true;
+        setWorkerCalculatorEnabled(true);
         setWorkerDataStatus('', 'ready');
     } catch (error) {
         console.error('Worker calculator data unavailable.', error);
         const code = error?.status ? ` (HTTP ${error.status})` : '';
         setWorkerDataStatus(`Nie udało się pobrać danych wynagrodzeń${code}. Sprawdź połączenie z GitHub i spróbuj ponownie.`, 'error');
     }
+}
+
+function setWorkerCalculatorEnabled(enabled) {
+    const controls = document.getElementById('workerCalculatorControls');
+    if (controls) controls.disabled = !enabled;
 }
 
 function setWorkerDataStatus(message, state) {

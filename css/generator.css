@@ -66,6 +66,22 @@
     margin: 0 0 var(--ds-space-200, 16px);
 }
 
+.worker-calculator-controls {
+    border: 0;
+    margin: 0;
+    min-inline-size: 0;
+    padding: 0;
+}
+
+.worker-calculator-controls:disabled {
+    opacity: 0.55;
+}
+
+.worker-calculator-controls:disabled .calc-input,
+.worker-calculator-controls:disabled .rate-input-wrapper {
+    cursor: not-allowed;
+}
+
 .revenue-note--loading {
     color: var(--text-secondary);
     border-color: var(--border-focused);

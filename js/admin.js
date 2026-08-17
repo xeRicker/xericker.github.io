@@ -33,6 +33,7 @@ let monthlyReportCharts = [];
 let monthlyReportGenerated = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    setAdminScrollLocked(true);
     try {
         if (!isLocalhost() && !(await hasValidAdminAccess())) {
             document.body.style.display = 'block';
@@ -105,6 +106,13 @@ function showAdminUnavailable(error) {
             <p class="loader-error-details">${escapeHtml(details)}</p>
         </div>
     `;
+}
+
+function setAdminScrollLocked(locked) {
+    document.documentElement.classList.toggle('admin-scroll-locked', locked);
+    document.body.classList.toggle('admin-scroll-locked', locked);
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+    document.body.style.overflow = locked ? 'hidden' : '';
 }
 
 function initUI(data) {
@@ -235,6 +243,7 @@ function hideGlobalLoader() {
     const loader = document.getElementById('globalLoader');
     if (loader) {
         loader.classList.add('hidden');
+        setAdminScrollLocked(false);
         setTimeout(() => loader.style.display = 'none', 500);
     }
 }

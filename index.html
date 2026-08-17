@@ -6,7 +6,7 @@
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=44">
+    <link rel="stylesheet" href="style.css?v=45">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
@@ -29,8 +29,14 @@
   </div>
 
   <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki aplikacji">
-    <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">LISTA</button>
-    <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">BURGERY</button>
+    <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">
+      <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
+      LISTA
+    </button>
+    <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">
+      <span class="material-symbols-rounded" aria-hidden="true">lunch_dining</span>
+      BURGERY
+    </button>
     <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">
       <span class="material-symbols-rounded" aria-hidden="true">badge</span>
       WYNAGRODZENIA
@@ -171,37 +177,34 @@
   </div>
 
   <div id="workersPanel" class="tab-panel">
-    <div class="chart-card calc-card animate-stagger worker-card">
-      <div class="chart-header">
-        <div class="section-heading">
-          <h3>Kalkulator Godzin</h3>
-          <p>Wybierz pracownika, zakres dat i stawkę, żeby szybko policzyć godziny, % etatu i wypłatę.</p>
-        </div>
-      </div>
+    <div class="section-card calc-card animate-stagger worker-card">
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">schedule</span> KALKULATOR GODZIN</h2>
       <p id="workerDataStatus" class="revenue-note worker-data-status" hidden></p>
-      <div class="calc-grid">
-        <div class="calc-input-group">
-          <label>Pracownik</label>
-          <select id="workerCalcEmployee" class="calc-input"></select>
-        </div>
-        <div class="calc-input-group">
-          <label>Stawka</label>
-          <div class="rate-input-wrapper">
-            <input type="text" id="workerCalcRate" value="30" inputmode="decimal">
-            <span>PLN</span>
+      <fieldset id="workerCalculatorControls" class="worker-calculator-controls" disabled>
+        <div class="calc-grid">
+          <div class="calc-input-group">
+            <label>Pracownik</label>
+            <select id="workerCalcEmployee" class="calc-input"></select>
+          </div>
+          <div class="calc-input-group">
+            <label>Stawka</label>
+            <div class="rate-input-wrapper">
+              <input type="text" id="workerCalcRate" value="30" inputmode="decimal">
+              <span>PLN</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="calc-grid">
-        <div class="calc-input-group">
-          <label>Od daty</label>
-          <input type="date" id="workerCalcDateFrom" class="calc-input">
+        <div class="calc-grid">
+          <div class="calc-input-group">
+            <label>Od daty</label>
+            <input type="date" id="workerCalcDateFrom" class="calc-input">
+          </div>
+          <div class="calc-input-group">
+            <label>Do daty</label>
+            <input type="date" id="workerCalcDateTo" class="calc-input">
+          </div>
         </div>
-        <div class="calc-input-group">
-          <label>Do daty</label>
-          <input type="date" id="workerCalcDateTo" class="calc-input">
-        </div>
-      </div>
+      </fieldset>
 
       <div id="workerCalcResult" class="calc-result-box" style="display:none;">
         <div class="calc-res-item">
@@ -262,6 +265,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=33"></script>
+<script type="module" src="js/main.js?v=34"></script>
 </body>
 </html>

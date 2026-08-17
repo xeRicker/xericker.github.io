@@ -122,8 +122,9 @@ input[type=number] {
 .loader-content--error p { margin: var(--ds-space-100, 8px) 0; }
 
 .loader-error-icon {
-    display: inline-grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 48px;
     height: 48px;
     border: 1px solid color-mix(in srgb, var(--danger-color) 42%, var(--border-color));
@@ -131,6 +132,8 @@ input[type=number] {
     background: var(--app-danger-bg);
     color: var(--danger-color);
     font-size: 26px;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 .loader-error-code {

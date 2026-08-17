@@ -14,23 +14,32 @@ export const uiShared = {
         this.stopFireworks();
     },
 
-    showSuccess(text) {
+    showSuccess(text, { saveError = null } = {}) {
         this.closeModals();
         const sheet = document.getElementById('successSheet');
         const icon = document.getElementById('successIcon');
         const btn = document.getElementById('finalCopyBtn');
+        const title = document.getElementById('successTitle');
+        const message = document.getElementById('successMessage');
+        const saveFailed = Boolean(saveError);
 
         document.getElementById('locationOverlay').classList.add('visible');
         sheet.classList.add('visible');
 
         icon.style.color = getDesignToken('--brand-primary', '#D4521A');
         icon.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>`;
-        btn.innerText = "SKOPIUJ";
+        title.innerText = saveFailed ? 'LISTA NIE ZOSTAŁA WYSŁANA' : 'LISTA GOTOWA!';
+        message.innerText = saveFailed
+            ? `GitHub nie zapisał raportu. Możesz mimo to skopiować listę. ${saveError.message || ''}`
+            : 'Kliknij poniżej, aby skopiować i wklej na Messengerze.';
+        btn.innerText = "SKOPIUJ LISTĘ";
         btn.style.background = "";
 
         btn.onclick = () => {
             navigator.clipboard.writeText(text).catch(() => fallbackCopyToClipboard(text));
             btn.innerText = "SKOPIOWANO!";
+            title.innerText = 'LISTA SKOPIOWANA';
+            if (saveFailed) message.innerText = 'Lista została skopiowana, ale nie została wysłana do GitHub. Spróbuj zapisać ją później.';
             btn.style.background = getDesignToken('--ds-background-success-bold', '#94C748');
             icon.style.color = getDesignToken('--ds-icon-success', '#82B536');
             icon.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;

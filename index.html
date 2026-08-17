@@ -178,6 +178,7 @@
           <p>Wybierz pracownika, zakres dat i stawkę, żeby szybko policzyć godziny, % etatu i wypłatę.</p>
         </div>
       </div>
+      <p id="workerDataStatus" class="revenue-note worker-data-status" hidden></p>
       <div class="calc-grid">
         <div class="calc-input-group">
           <label>Pracownik</label>
@@ -254,13 +255,13 @@
 <div id="successSheet" class="bottom-sheet">
   <div class="sheet-handle"></div>
   <div class="success-icon-wrapper" id="successIcon"></div>
-  <h3>LISTA GOTOWA!</h3>
-  <p class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
+  <h3 id="successTitle">LISTA GOTOWA!</h3>
+  <p id="successMessage" class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
   <div class="sheet-actions">
     <button id="finalCopyBtn" class="sheet-btn success-close-btn">SKOPIUJ</button>
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=32"></script>
+<script type="module" src="js/main.js?v=33"></script>
 </body>
 </html>

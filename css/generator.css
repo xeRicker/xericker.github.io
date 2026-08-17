@@ -62,6 +62,22 @@
     background: color-mix(in srgb, var(--danger-color) 12%, var(--surface-raised));
 }
 
+.worker-data-status {
+    margin: 0 0 var(--ds-space-200, 16px);
+}
+
+.revenue-note--loading {
+    color: var(--text-secondary);
+    border-color: var(--border-focused);
+    background: var(--surface-raised);
+}
+
+.revenue-note--error {
+    color: var(--danger-color);
+    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
+    background: var(--app-danger-bg);
+}
+
 .input-group {
     display: flex;
     align-items: center;

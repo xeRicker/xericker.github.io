@@ -1,5 +1,5 @@
 import { CATEGORIES } from '../config/data.js';
-import { apiService } from './api.js?v=2';
+import { apiService } from './api.js?v=3';
 
 const CATEGORY_ICONS = {
     "🥩": "restaurant",

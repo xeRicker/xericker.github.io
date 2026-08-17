@@ -6,9 +6,9 @@ class ApiService {
     constructor() {
         this.baseUrl = `https://api.github.com/repos/${GITHUB_CONFIG.REPO_OWNER}/${GITHUB_CONFIG.REPO_NAME}/contents/`;
         this.headers = {
-            'Authorization': `token ${GITHUB_CONFIG.TOKEN}`,
-            'Accept': 'application/vnd.github.v3+json',
+            'Accept': 'application/vnd.github+json',
         };
+        if (this.hasGithubToken()) this.headers.Authorization = `Bearer ${GITHUB_CONFIG.TOKEN}`;
     }
 
     hasGithubToken() {
@@ -26,12 +26,10 @@ class ApiService {
             }
         }
         const url = `${this.baseUrl}database/${location.toLowerCase()}/${date}.json`;
-        try {
-            const response = await fetch(url, { method: 'GET', headers: this.headers });
-            return response.status === 200;
-        } catch {
-            return false;
-        }
+        const response = await this.fetchGithub(url, { method: 'GET', headers: this.headers }, `database/${location.toLowerCase()}/${date}.json`);
+        if (response.status === 404) return false;
+        if (!response.ok) throw await this.createGithubApiError(response, `database/${location.toLowerCase()}/${date}.json`);
+        return true;
     }
 
     async saveReport(data) {
@@ -54,8 +52,8 @@ class ApiService {
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
         const body = { message: `Update ${data.location} ${data.date}`, content, sha };
 
-        const res = await fetch(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) });
-        if (!res.ok) throw new Error("GitHub Save Failed");
+        const res = await this.fetchGithub(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) }, filePath);
+        if (!res.ok) throw await this.createGithubApiError(res, filePath);
     }
 
     async fetchProducts() {
@@ -122,8 +120,8 @@ class ApiService {
 
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
         const body = { message: 'Update products catalog', content, sha };
-        const res = await fetch(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) });
-        if (!res.ok) throw new Error("GitHub Products Save Failed");
+        const res = await this.fetchGithub(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) }, filePath);
+        if (!res.ok) throw await this.createGithubApiError(res, filePath);
     }
 
     async saveLocalProducts(filePath, data) {
@@ -172,6 +170,49 @@ class ApiService {
         }
     }
 
+    async fetchGithub(url, options, resource) {
+        const maxAttempts = 3;
+        let lastNetworkError;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+            try {
+                const response = await fetch(url, options);
+                const retryable = response.status === 429 || response.status === 503;
+                if (!retryable || attempt === maxAttempts) return response;
+
+                const retryAfter = Number(response.headers.get('retry-after'));
+                const delay = Number.isFinite(retryAfter) && retryAfter > 0
+                    ? retryAfter * 1000
+                    : attempt * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+            } catch (error) {
+                lastNetworkError = error;
+                if (attempt < maxAttempts) await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+            }
+        }
+
+        const error = new Error(`Nie udało się połączyć z GitHub podczas pobierania ${resource}.`);
+        error.cause = lastNetworkError;
+        error.resource = resource;
+        throw error;
+    }
+
+    async mapWithConcurrency(items, limit, mapper) {
+        const results = new Array(items.length);
+        let nextIndex = 0;
+
+        const worker = async () => {
+            while (nextIndex < items.length) {
+                const index = nextIndex;
+                nextIndex += 1;
+                results[index] = await mapper(items[index], index);
+            }
+        };
+
+        await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+        return results;
+    }
+
     async createGithubApiError(response, resource) {
         let details = '';
 
@@ -211,14 +252,14 @@ class ApiService {
             return data;
         }
 
-        const locRes = await fetch(`${this.baseUrl}database`, { headers: this.headers });
+        const locRes = await this.fetchGithub(`${this.baseUrl}database`, { headers: this.headers }, 'database');
         if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
 
         const locations = (await locRes.json()).filter(i => i.type === 'dir');
         const monthKeys = recentMonths ? new Set(this.getRecentMonthKeys(recentMonths)) : null;
 
         const filesByLocation = await Promise.all(locations.map(async loc => {
-            const filesRes = await fetch(loc.url, { headers: this.headers });
+            const filesRes = await this.fetchGithub(loc.url, { headers: this.headers }, `database/${loc.name}`);
             if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${loc.name}`);
             return (await filesRes.json())
                 .filter(f => f.name.endsWith('.json'))
@@ -229,16 +270,16 @@ class ApiService {
         let loaded = 0;
         this.reportProgress(onProgress, loaded, files.length);
 
-        const results = await Promise.all(files.map(async f => {
+        const results = await this.mapWithConcurrency(files, 3, async f => {
             try {
-                const response = await fetch(f.download_url);
+                const response = await this.fetchGithub(f.download_url, {}, f.path || f.name);
                 if (!response.ok) throw await this.createGithubApiError(response, f.path || f.name);
                 return await response.json();
             } finally {
                 loaded += 1;
                 this.reportProgress(onProgress, loaded, files.length);
             }
-        }));
+        });
 
         return results;
     }

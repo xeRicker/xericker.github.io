@@ -2,12 +2,12 @@ import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
 import { mainRender } from './ui/mainRender.js?v=4';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js';
+import { apiService } from './services/api.js?v=3';
 import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=4';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=3';
 import { buildReportText } from './services/reportFormatter.js';
 import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=9';
 
@@ -280,12 +280,18 @@ async function generateReport() {
         });
     });
 
-    if(await apiService.checkFileExists(selectedLocation, date)) {
-        if(!(await dialogService.confirm("Raport z tego dnia już istnieje. Nadpisać?", "Nadpisać raport?"))) return;
-    }
+    const reportText = buildReportText(data, productCatalog);
+    try {
+        if (await apiService.checkFileExists(selectedLocation, date)) {
+            if(!(await dialogService.confirm("Raport z tego dnia już istnieje. Nadpisać?", "Nadpisać raport?"))) return;
+        }
 
-    await apiService.saveReport(data);
-    uiShared.showSuccess(buildReportText(data, productCatalog));
+        await apiService.saveReport(data);
+        uiShared.showSuccess(reportText);
+    } catch (error) {
+        console.error('Report was not saved to GitHub.', error);
+        uiShared.showSuccess(reportText, { saveError: error });
+    }
 }
 
 function collectReportEmployees() {
@@ -336,29 +342,45 @@ function updateRevenueInsights() {
 async function initWorkerCalculator() {
     if (workerCalculatorReady) return;
 
-    workerReports = await apiService.fetchAllData();
-    workerCalculator = setupPayrollCalculator({
-        getReports: () => workerReports,
-        employeeSelectId: 'workerCalcEmployee',
-        rateInputId: 'workerCalcRate',
-        dateFromId: 'workerCalcDateFrom',
-        dateToId: 'workerCalcDateTo',
-        resultBoxId: 'workerCalcResult',
-        resHoursId: 'workerResHours',
-        resMoneyId: 'workerResMoney',
-        detailsBoxId: 'workerCalcDetails',
-        defaultRate: 30
-    });
+    setWorkerDataStatus('Ładowanie danych z bieżącego i poprzedniego miesiąca...', 'loading');
+    try {
+        workerReports = await apiService.fetchAllData({ recentMonths: 2 });
+        workerCalculator = setupPayrollCalculator({
+            getReports: () => workerReports,
+            employeeSelectId: 'workerCalcEmployee',
+            rateInputId: 'workerCalcRate',
+            dateFromId: 'workerCalcDateFrom',
+            dateToId: 'workerCalcDateTo',
+            resultBoxId: 'workerCalcResult',
+            resHoursId: 'workerResHours',
+            resMoneyId: 'workerResMoney',
+            detailsBoxId: 'workerCalcDetails',
+            defaultRate: 30
+        });
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const lastDay = new Date(year, Number(month), 0).getDate();
-    workerCalculator.refresh();
-    workerCalculator.setDateRange(
-        `${year}-${month}-01`,
-        `${year}-${month}-${String(lastDay).padStart(2, '0')}`
-    );
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const lastDay = new Date(year, Number(month), 0).getDate();
+        workerCalculator.refresh();
+        workerCalculator.setDateRange(
+            `${year}-${month}-01`,
+            `${year}-${month}-${String(lastDay).padStart(2, '0')}`
+        );
 
-    workerCalculatorReady = true;
+        workerCalculatorReady = true;
+        setWorkerDataStatus('', 'ready');
+    } catch (error) {
+        console.error('Worker calculator data unavailable.', error);
+        const code = error?.status ? ` (HTTP ${error.status})` : '';
+        setWorkerDataStatus(`Nie udało się pobrać danych wynagrodzeń${code}. Sprawdź połączenie z GitHub i spróbuj ponownie.`, 'error');
+    }
+}
+
+function setWorkerDataStatus(message, state) {
+    const status = document.getElementById('workerDataStatus');
+    if (!status) return;
+    status.textContent = message;
+    status.hidden = !message;
+    status.className = `revenue-note worker-data-status revenue-note--${state}`;
 }

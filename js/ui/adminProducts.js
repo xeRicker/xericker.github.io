@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=2';
+import { apiService } from '../services/api.js?v=3';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=2';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=5';

@@ -1,18 +1,18 @@
-import { apiService } from './services/api.js';
+import { apiService } from './services/api.js?v=3';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=4';
-import { adminProducts } from './ui/adminProducts.js?v=3';
+import { adminProducts } from './ui/adminProducts.js?v=4';
 import { createAdminListsPage } from './ui/adminLists.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=3';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=4';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=2';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=3';
 
 const PASSWORD = "xdxdxd123";
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
 const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
-const DEFAULT_DATA_MONTHS = 2;
+const DEFAULT_DATA_MONTHS = 1;
 const PAYROLL_RATE = 30;
 
 let allData = [];

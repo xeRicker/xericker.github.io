@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "19.08.2026",
+  "revenue": 1128,
+  "cardRevenue": 412,
+  "glovoRevenue": 413,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 3,
+    "Krążki": 1,
+    "Bułki": 15,
+    "Przyprawa do grilla": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

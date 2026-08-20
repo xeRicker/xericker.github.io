@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "20.08.2026",
+  "revenue": 774,
+  "cardRevenue": 459,
+  "glovoRevenue": 136,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Bułki": 19,
+    "Cebula prażona": 1,
+    "Opakowania na frytki": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

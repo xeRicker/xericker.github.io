@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "21.08.2026",
+  "revenue": 1172,
+  "cardRevenue": 987,
+  "glovoRevenue": 35,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Bułki": 7,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

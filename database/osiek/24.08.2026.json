@@ -1,0 +1,20 @@
+{
+  "location": "Osiek",
+  "date": "24.08.2026",
+  "revenue": 621,
+  "cardRevenue": 328,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "14:00 – 20:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Bułki": 17,
+    "Sól do frytek": 1,
+    "Papier pod grilla": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

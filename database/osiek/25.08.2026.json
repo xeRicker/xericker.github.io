@@ -1,0 +1,30 @@
+{
+  "location": "Osiek",
+  "date": "25.08.2026",
+  "revenue": 870,
+  "cardRevenue": 625,
+  "glovoRevenue": 0,
+  "employees": {
+    "Kacper": "12:00 – 21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Frytki": 1,
+    "Bułki": 7,
+    "Cebula prażona": 1,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci 120L": 1,
+    "Pisak": 1
+  }
+}

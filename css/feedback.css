@@ -151,36 +151,162 @@ input[type=number] {
     overflow: hidden;
 }
 
+.loader-burger-stage {
+    position: relative;
+    width: 80px;
+    height: 70px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.burger-glow {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 35%, transparent) 0%, transparent 70%);
+    filter: blur(14px);
+    animation: loader-glow-pulse 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
 .burger-icon {
-    width: 60px; height: 50px; position: relative; margin: 0 auto 20px auto;
-    display: flex; flex-direction: column; justify-content: space-between;
+    width: 64px;
+    height: 52px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
-.burger-icon span {
-    display: block; height: 8px; width: 100%; background: var(--primary-color);
-    border-radius: 4px; animation: burger-bounce 1s infinite alternate ease-in-out;
+
+.burger-layer {
+    display: block;
+    border-radius: 4px;
+    animation: burger-float 1.6s infinite ease-in-out alternate;
 }
-/* Bułka górna */
-.burger-icon span:nth-child(1) { width: 100%; border-top-left-radius: 20px; border-top-right-radius: 20px; animation-delay: 0s; }
-/* Sałata/Ser/Mięso */
-.burger-icon span:nth-child(2) { width: 90%; margin: 0 auto; background: #27AE60; animation-delay: 0.1s; }
-.burger-icon span:nth-child(3) { width: 90%; margin: 0 auto; background: #C0392B; animation-delay: 0.2s; }
-/* Bułka dolna */
-.burger-icon span:nth-child(4) { width: 100%; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; animation-delay: 0.3s; }
+
+.burger-layer--top {
+    height: 13px;
+    width: 100%;
+    background: linear-gradient(180deg, #ff8a4c, var(--primary-color));
+    border-radius: 16px 16px 4px 4px;
+    box-shadow: 0 2px 8px rgba(212, 82, 26, 0.45);
+    animation-delay: 0s;
+}
+
+.burger-layer--lettuce {
+    height: 6px;
+    width: 88%;
+    margin: 0 auto;
+    background: var(--success-color, #27AE60);
+    border-radius: 3px;
+    animation-delay: 0.1s;
+}
+
+.burger-layer--cheese {
+    height: 5px;
+    width: 92%;
+    margin: 0 auto;
+    background: var(--glovo-color, #f2cc38);
+    border-radius: 2px;
+    animation-delay: 0.2s;
+    transform: rotate(-1.5deg);
+}
+
+.burger-layer--meat {
+    height: 10px;
+    width: 94%;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #8B3A2B, #5C241B);
+    border-radius: 4px;
+    animation-delay: 0.3s;
+}
+
+.burger-layer--bottom {
+    height: 9px;
+    width: 100%;
+    background: linear-gradient(180deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 80%, black));
+    border-radius: 4px 4px 12px 12px;
+    animation-delay: 0.4s;
+}
 
 .loader-text {
-    font-family: var(--font-heading); font-size: 18px; color: var(--text-secondary);
-    letter-spacing: 0; text-transform: uppercase; animation: pulse 1.5s infinite;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    animation: loader-text-shimmer 2s infinite ease-in-out;
 }
 
-@keyframes burger-bounce {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.1); }
+.loader-subtext {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
 }
-@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-/* =================================
-   NEW TOOLTIP STYLES
-   ================================= */
+.loader-progress-track {
+    width: 130px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.loader-progress-bar {
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    border-radius: 999px;
+    position: absolute;
+    animation: loader-indeterminate-slide 1.4s infinite ease-in-out;
+}
+
+@keyframes burger-float {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        transform: translateY(-4px) scale(1.03);
+    }
+}
+
+@keyframes loader-glow-pulse {
+    0%, 100% {
+        opacity: 0.35;
+        transform: scale(0.9);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(1.15);
+    }
+}
+
+@keyframes loader-text-shimmer {
+    0%, 100% {
+        opacity: 0.75;
+    }
+    50% {
+        opacity: 1;
+        color: #ffffff;
+    }
+}
+
+@keyframes loader-indeterminate-slide {
+    0% {
+        left: -50%;
+    }
+    100% {
+        left: 110%;
+    }
+}
 
 #customTooltip {
     position: absolute;

@@ -3,7 +3,7 @@ import { mainRender } from './ui/mainRender.js?v=4';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js?v=3';
-import { calculateCashDesk, calculateGlovoNet } from './services/revenue.js';
+import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=4';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     restoreState();
     setupEvents();
     setupTabs();
-    updateRevenueInsights();
 });
 
 function setupEvents() {
@@ -195,7 +194,6 @@ function saveState() {
         storageService.clear();
     }
     mainRender.updateResetBtn();
-    updateRevenueInsights();
 }
 
 function hasPersistedState(state) {
@@ -230,7 +228,6 @@ function restoreState() {
         if(times.f && times.t) r.classList.add('active');
     });
     mainRender.updateResetBtn();
-    updateRevenueInsights();
     refreshCustomControls();
 }
 
@@ -307,36 +304,6 @@ function collectReportEmployees() {
             return { name, start, end };
         })
         .filter(employee => employee.name && employee.start && employee.end);
-}
-
-function updateRevenueInsights() {
-    const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
-    const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
-    const glovo = parseFloat(document.getElementById('glovoRevenueInput').value) || 0;
-    const cash = calculateCashDesk(rev, card, glovo);
-    const glovoNet = calculateGlovoNet(glovo);
-
-    const validation = document.getElementById('revenueValidation');
-    const glovoInfo = document.getElementById('glovoNetInfo');
-
-    glovoInfo.textContent = glovo > 0
-        ? `Glovo (-30%): ${glovoNet.toFixed(2)} PLN`
-        : 'Glovo (-30%): 0.00 PLN';
-
-    if (rev === 0 && card === 0) {
-        validation.textContent = 'Wpisz utarg, karty i ewentualnie Glovo, a policzę gotówkę do odłożenia do koperty na koniec dnia.';
-        validation.className = 'revenue-note';
-        return;
-    }
-
-    if (cash < 0) {
-        validation.textContent = `Błąd: karty i Glovo przekraczają utarg lokalu o ${Math.abs(cash).toFixed(2)} PLN.`;
-        validation.className = 'revenue-note revenue-note--danger';
-        return;
-    }
-
-    validation.textContent = `Do koperty na koniec dnia: ${cash.toFixed(2)} PLN`;
-    validation.className = 'revenue-note revenue-note--success';
 }
 
 async function initWorkerCalculator() {

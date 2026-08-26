@@ -5,7 +5,7 @@
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=46">
+    <link rel="stylesheet" href="style.css?v=47">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body style="display: none; overflow: hidden;">
@@ -14,15 +14,25 @@
 
 <div id="globalLoader">
     <div class="loader-content">
-        <div class="burger-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="loader-burger-stage">
+            <div class="burger-glow"></div>
+            <div class="burger-icon">
+                <span class="burger-layer burger-layer--top"></span>
+                <span class="burger-layer burger-layer--lettuce"></span>
+                <span class="burger-layer burger-layer--cheese"></span>
+                <span class="burger-layer burger-layer--meat"></span>
+                <span class="burger-layer burger-layer--bottom"></span>
+            </div>
         </div>
-        <div class="loader-text">ŁADOWANIE DANYCH...</div>
+        <div class="loader-text">ŁADOWANIE DANYCH</div>
+        <div class="loader-subtext">Przygotowywanie raportów i statystyk...</div>
+        <div class="loader-progress-track">
+            <div class="loader-progress-bar"></div>
+        </div>
     </div>
 </div>
+
+<div id="adminTopProgressBar" class="admin-top-progress-bar" hidden></div>
 
 <div class="admin-container">
 
@@ -34,16 +44,13 @@
             </div>
         </div>
         <div class="header-actions">
-            <div class="admin-month-select">
-                <select id="monthFilter" aria-label="Miesiąc raportów"></select>
-            </div>
             <div class="admin-load-all-wrap" data-callout-anchor="load-all-data">
                 <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
                 ZAŁADUJ DANE
                 </button>
             </div>
-            <a href="index.html" class="btn-back">
+            <a href="index.html" id="adminBackBtn" class="btn-back">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 WRÓĆ
             </a>
@@ -73,54 +80,25 @@
         </button>
     </div>
 
-    <div class="admin-toolbar animate-enter delay-1" data-admin-page="revenue">
-        <div class="filter-panel">
-            <div class="panel-heading">
-                <div>
-                    <h3>Filtry operacyjne</h3>
-                </div>
-                <button id="resetFiltersBtn" class="btn-back btn-back--ghost" type="button">WYCZYŚĆ</button>
-            </div>
-
-            <div class="filter-grid">
-                <div class="filter-stack">
-                    <label for="dateFromFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">calendar_month</span> OD DNIA</label>
-                    <input id="dateFromFilter" type="date" class="calc-input">
-                </div>
-                <div class="filter-stack">
-                    <label for="dateToFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">today</span> DO DNIA</label>
-                    <input id="dateToFilter" type="date" class="calc-input">
-                </div>
-                <div class="filter-stack">
-                    <label for="locationFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">place</span> PUNKT</label>
-                    <select id="locationFilter"></select>
-                </div>
-                <div class="filter-stack">
-                    <label for="weekdayFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">event</span> DZIEŃ TYGODNIA</label>
-                    <select id="weekdayFilter"></select>
-                </div>
-                <div class="filter-stack">
-                    <label for="sortFilter" class="filter-label"><span class="filter-icon material-symbols-rounded" aria-hidden="true">swap_vert</span> SORTOWANIE</label>
-                    <select id="sortFilter">
-                        <option value="date_desc">Najnowsze dni</option>
-                        <option value="date_asc">Najstarsze dni</option>
-                        <option value="total_desc">Najwyższy utarg</option>
-                        <option value="total_asc">Najniższy utarg</option>
-                        <option value="cardTotal_desc">Najwięcej kart</option>
-                        <option value="glovoDisplay_desc">Najwięcej Glovo</option>
-                        <option value="cashDeskTotal_desc">Najwięcej gotówki</option>
-                        <option value="cashDeskTotal_asc">Najmniej gotówki</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="filter-toggle-row">
-                <div id="activeFilterChips" class="active-filter-chips"></div>
+    <div class="admin-period-bar animate-enter delay-1" data-admin-page="revenue">
+        <div class="admin-period-month">
+            <label for="monthFilter" class="period-label">
+                <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
+                MIESIĄC
+            </label>
+            <div class="admin-month-select">
+                <select id="monthFilter" aria-label="Miesiąc raportów"></select>
             </div>
         </div>
+        <div class="admin-period-divider" aria-hidden="true"></div>
+        <div class="admin-period-weeks">
+            <span class="period-label">
+                <span class="material-symbols-rounded" aria-hidden="true">date_range</span>
+                TYDZIEŃ
+            </span>
+            <div id="weekTabsContainer" class="week-tabs"></div>
+        </div>
     </div>
-
-    <div id="weekTabsContainer" class="week-tabs animate-enter delay-1" data-admin-page="revenue"></div>
     <div id="summarySection" class="summary animate-enter delay-2" data-admin-page="revenue"></div>
     <div id="insightsSection" class="insight-grid animate-enter delay-2" data-admin-page="revenue"></div>
 
@@ -289,6 +267,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=36"></script>
+<script type="module" src="js/admin.js?v=37"></script>
 </body>
 </html>

@@ -117,8 +117,6 @@ function setAdminScrollLocked(locked) {
 
 function initUI(data) {
     populateMonthFilter(data);
-    populateLocationFilter(data);
-    populateWeekdayFilter();
     enhanceCustomControls();
     setupListeners();
 
@@ -149,21 +147,31 @@ async function loadFullDataInBackground() {
     if (isLoadingFullData || isFullDataLoaded) return;
 
     const button = document.getElementById('loadAllDataBtn');
+    const topProgressBar = document.getElementById('adminTopProgressBar');
     isLoadingFullData = true;
     setLoadAllButtonState(button, 'Pobieranie 0%', true);
+    if (topProgressBar) {
+        topProgressBar.hidden = false;
+        topProgressBar.style.width = '5%';
+    }
 
     try {
         const fullData = await apiService.fetchAllData({
             onProgress: progress => {
                 setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true);
+                if (topProgressBar) {
+                    topProgressBar.style.width = `${Math.max(5, progress.percent)}%`;
+                }
             }
         });
 
         if (!fullData.length) {
             setLoadAllButtonState(button, 'Brak danych', false);
+            if (topProgressBar) topProgressBar.hidden = true;
             return;
         }
 
+        if (topProgressBar) topProgressBar.style.width = '100%';
         isFullDataLoaded = true;
         applyLoadedData(fullData);
         setLoadAllButtonState(button, 'Pobrano wszystko', false, true);
@@ -172,6 +180,12 @@ async function loadFullDataInBackground() {
         setLoadAllButtonState(button, 'Błąd pobierania', false);
     } finally {
         isLoadingFullData = false;
+        if (topProgressBar) {
+            setTimeout(() => {
+                topProgressBar.hidden = true;
+                topProgressBar.style.width = '0%';
+            }, 600);
+        }
     }
 }
 
@@ -197,7 +211,6 @@ function applyLoadedData(data) {
 
     populateMonthFilter(processedData);
     restoreMonthSelection(activeMonth);
-    populateLocationFilter(processedData);
     adminListsPage.refresh();
     refreshCustomControls();
 
@@ -265,31 +278,10 @@ function populateMonthFilter(data) {
         .join('');
 }
 
-function populateLocationFilter(data) {
-    const select = document.getElementById('locationFilter');
-    const locations = Array.from(
-        new Set(data.flatMap(day => Object.keys(day.locations || {})))
-    ).sort((a, b) => a.localeCompare(b, 'pl'));
-
-    select.innerHTML = [
-        '<option value="all">Wszystkie punkty</option>',
-        ...locations.map(location => `<option value="${location}">${location}</option>`)
-    ].join('');
-}
-
-function populateWeekdayFilter() {
-    const select = document.getElementById('weekdayFilter');
-    select.innerHTML = [
-        '<option value="all">Cały tydzień</option>',
-        ...WEEKDAYS.map(day => `<option value="${day}">${day.charAt(0).toUpperCase() + day.slice(1)}</option>`)
-    ].join('');
-}
-
 function handleMonthChange(fullData) {
     const [year, month] = document.getElementById('monthFilter').value.split('-');
     currentData = analytics.filterByMonth(fullData, year, month);
 
-    syncDateFiltersToMonth(year, month);
     buildWeekTabs(currentData);
     activeWeekKey = 'all';
     updateView();
@@ -299,13 +291,6 @@ function handleMonthChange(fullData) {
         `${year}-${month}-01`,
         `${year}-${month}-${String(lastDay).padStart(2, '0')}`
     );
-}
-
-function syncDateFiltersToMonth(year, month) {
-    const lastDay = new Date(year, month, 0).getDate();
-    document.getElementById('dateFromFilter').value = `${year}-${month}-01`;
-    document.getElementById('dateToFilter').value = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
-    refreshCustomControls();
 }
 
 function buildWeekTabs(data) {
@@ -352,7 +337,7 @@ function createWeekTab(key, label) {
 }
 
 function setupListeners() {
-    document.getElementById('monthFilter').addEventListener('change', () => handleMonthChange(processedData));
+    document.getElementById('monthFilter')?.addEventListener('change', () => handleMonthChange(processedData));
 
     document.querySelectorAll('.chart-btn').forEach(button => {
         button.onclick = event => {
@@ -377,61 +362,52 @@ function setupListeners() {
             const key = th.dataset.sort;
             revenueSort.direction = revenueSort.key === key && revenueSort.direction === 'asc' ? 'desc' : 'asc';
             revenueSort.key = key;
-            syncSortSelect();
             renderRevenueTable();
         });
     });
 
-    ['dateFromFilter', 'dateToFilter', 'locationFilter', 'weekdayFilter'].forEach(id => {
-        document.getElementById(id).addEventListener('change', () => updateView());
-    });
-
-    document.getElementById('sortFilter').addEventListener('change', event => {
-        const [key, direction] = event.target.value.split('_');
-        revenueSort = { key, direction };
-        renderRevenueTable();
-    });
-
-    document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-        document.getElementById('locationFilter').value = 'all';
-        document.getElementById('weekdayFilter').value = 'all';
-
-        const [year, month] = document.getElementById('monthFilter').value.split('-');
-        syncDateFiltersToMonth(year, month);
-        revenueSort = { key: 'date', direction: 'desc' };
-        syncSortSelect();
-        refreshCustomControls();
-        updateView();
-    });
-}
-
-function syncSortSelect() {
-    const select = document.getElementById('sortFilter');
-    const value = `${revenueSort.key}_${revenueSort.direction}`;
-    if (Array.from(select.options).some(option => option.value === value)) {
-        select.value = value;
-        refreshCustomControls(select.parentElement || document);
+    const backBtn = document.getElementById('adminBackBtn') || document.querySelector('.btn-back[href="index.html"]');
+    if (backBtn) {
+        backBtn.addEventListener('click', async event => {
+            event.preventDefault();
+            if (isLoadingFullData) {
+                const confirmed = await dialogService.confirm(
+                    'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz wyjść do generatora?',
+                    'Trwa pobieranie danych'
+                );
+                if (confirmed) window.location.href = 'index.html';
+            } else if (allData && allData.length > 0) {
+                const confirmed = await dialogService.confirm(
+                    'Dane panelu administratora są załadowane. Czy na pewno chcesz wyjść do generatora?',
+                    'Wyjście z panelu'
+                );
+                if (confirmed) window.location.href = 'index.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
     }
 }
 
 function updateView() {
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    const [year, month] = document.getElementById('monthFilter').value.split('-');
+    const ctx = document.getElementById('revenueChart')?.getContext('2d');
+    const [year, month] = (document.getElementById('monthFilter')?.value || '').split('-');
     const baseData = getActiveWeekData();
 
-    currentViewData = applyFilters(baseData);
+    currentViewData = baseData;
 
-    adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
-    adminRender.renderInsights(document.getElementById('insightsSection'), currentViewData, getRenderOptions());
-    adminRender.renderChart(ctx, currentViewData, chartType, getRenderOptions());
-    adminRender.renderLocationPerformance(
-        document.getElementById('locationPerformanceSection'),
-        currentViewData,
-        getRenderOptions()
-    );
-    adminRender.renderHeatmap(document.getElementById('heatmapContainer'), currentViewData, year, month, getRenderOptions());
-    adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), analytics.calculateEmployeeStats(currentViewData));
-    adminRender.renderActiveFilters(document.getElementById('activeFilterChips'), getActiveFilterLabels());
+    if (ctx) {
+        adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
+        adminRender.renderInsights(document.getElementById('insightsSection'), currentViewData, getRenderOptions());
+        adminRender.renderChart(ctx, currentViewData, chartType, getRenderOptions());
+        adminRender.renderLocationPerformance(
+            document.getElementById('locationPerformanceSection'),
+            currentViewData,
+            getRenderOptions()
+        );
+        adminRender.renderHeatmap(document.getElementById('heatmapContainer'), currentViewData, year, month, getRenderOptions());
+        adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), analytics.calculateEmployeeStats(currentViewData));
+    }
 
     renderRevenueTable();
 }
@@ -439,64 +415,6 @@ function updateView() {
 function getActiveWeekData() {
     if (activeWeekKey === 'all') return currentData;
     return currentWeeks[Number(activeWeekKey)] || currentData;
-}
-
-function applyFilters(data) {
-    const from = parseLocalDateInput(document.getElementById('dateFromFilter').value);
-    const to = parseLocalDateInput(document.getElementById('dateToFilter').value);
-    const location = document.getElementById('locationFilter').value;
-    const weekday = document.getElementById('weekdayFilter').value;
-
-    let filtered = data
-        .map(day => location === 'all' ? day : projectDayToLocation(day, location))
-        .filter(Boolean);
-
-    if (from) {
-        filtered = filtered.filter(day => day.dateObj >= from);
-    }
-
-    if (to) {
-        const end = new Date(to);
-        end.setHours(23, 59, 59, 999);
-        filtered = filtered.filter(day => day.dateObj <= end);
-    }
-
-    if (weekday !== 'all') {
-        filtered = filtered.filter(day => day.dayOfWeek === weekday);
-    }
-
-    return filtered;
-}
-
-function projectDayToLocation(day, location) {
-    const locationStats = day.locations?.[location];
-    if (!locationStats) return null;
-
-    return {
-        ...day,
-        total: locationStats.total,
-        cardTotal: locationStats.card,
-        cashTotal: locationStats.cash,
-        glovoTotal: locationStats.glovo,
-        glovoNetTotal: locationStats.glovoNet,
-        cashDeskTotal: locationStats.cashDesk,
-        rawReports: locationStats.reports,
-        locations: {
-            [location]: { ...locationStats }
-        },
-        oswiecim: location === 'Oświęcim' ? locationStats.total : 0,
-        osiek: location === 'Osiek' ? locationStats.total : 0,
-        wilamowice: location === 'Wilamowice' ? locationStats.total : 0,
-        oswiecimCard: location === 'Oświęcim' ? locationStats.card : 0,
-        osiekCard: location === 'Osiek' ? locationStats.card : 0,
-        wilamowiceCard: location === 'Wilamowice' ? locationStats.card : 0,
-        oswiecimGlovo: location === 'Oświęcim' ? locationStats.glovo : 0,
-        osiekGlovo: location === 'Osiek' ? locationStats.glovo : 0,
-        wilamowiceGlovo: location === 'Wilamowice' ? locationStats.glovo : 0,
-        oswiecimGlovoNet: location === 'Oświęcim' ? locationStats.glovoNet : 0,
-        osiekGlovoNet: location === 'Osiek' ? locationStats.glovoNet : 0,
-        wilamowiceGlovoNet: location === 'Wilamowice' ? locationStats.glovoNet : 0
-    };
 }
 
 function renderRevenueTable() {
@@ -1153,21 +1071,6 @@ function getRenderOptions() {
 
 function getGlovoDisplayValue(entry) {
     return entry.glovoNetTotal;
-}
-
-function getActiveFilterLabels() {
-    const labels = [];
-    const location = document.getElementById('locationFilter').value;
-    const weekday = document.getElementById('weekdayFilter').value;
-    const from = document.getElementById('dateFromFilter').value;
-    const to = document.getElementById('dateToFilter').value;
-
-    labels.push('Glovo');
-    if (location !== 'all') labels.push(location);
-    if (weekday !== 'all') labels.push(weekday);
-    if (from && to) labels.push(`${from} -> ${to}`);
-
-    return labels;
 }
 
 window.sortEmpTable = () => {};

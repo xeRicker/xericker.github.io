@@ -22,14 +22,6 @@
     display: inline-flex;
     align-items: center;
 }
-
-.revenue-insights {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 14px;
-}
-
 .revenue-note {
     min-height: 48px;
     display: flex;

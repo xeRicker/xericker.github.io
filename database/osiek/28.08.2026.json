@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "28.08.2026",
+  "revenue": 909,
+  "cardRevenue": 574,
+  "glovoRevenue": 0,
+  "employees": {
+    "Paweł": "12:00 – 20:30"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 17,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 10,20": 1
+  }
+}

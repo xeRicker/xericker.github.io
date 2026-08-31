@@ -1,0 +1,32 @@
+{
+  "location": "Oświęcim",
+  "date": "31.08.2026",
+  "revenue": 965,
+  "cardRevenue": 533,
+  "glovoRevenue": 0,
+  "employees": {
+    "Kacper": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Frytura": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1,
+    "Papier do kasy": 1
+  }
+}

@@ -1,11 +1,11 @@
-import { apiService } from './services/api.js?v=62';
+import { apiService } from './services/api.js?v=63';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=60';
 import { adminProducts } from './ui/adminProducts.js?v=60';
 import { createAdminListsPage } from './ui/adminLists.js?v=60';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=60';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=67';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { cardClass } from './ui/components/Card.js';
 
@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
                 type: 'password',
                 inputmode: 'numeric',
-                autocomplete: 'current-password'
+                autocomplete: 'current-password',
+                autoSubmit: value => value === PASSWORD
             });
             if (pass !== PASSWORD) return location.href = "index.html";
             saveAdminAccess();
@@ -52,8 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS, onMeta: updateDataLoadInfo });
         if (!allData.length) {
-            document.getElementById('loading').innerText = "Brak danych";
-            hideGlobalLoader();
+            showAdminUnavailable(new Error('GitHub nie zawiera raportów w wybranym zakresie.'));
             return;
         }
 
@@ -160,6 +160,7 @@ async function loadFullDataInBackground() {
     if (selectedRange && loadedMonthCount >= Math.min(selectedRange, availableMonthCount || selectedRange)) return;
     if (!selectedRange && isFullDataLoaded) return;
     isLoadingFullData = true;
+    setDataLoadStatus('', '');
     setLoadAllButtonState(button, 'Pobieranie 0%', true);
     if (topProgressBar) {
         topProgressBar.hidden = false;
@@ -180,6 +181,7 @@ async function loadFullDataInBackground() {
 
         if (!fullData.length) {
             setLoadAllButtonState(button, 'Brak danych', false);
+            setDataLoadStatus('GitHub odpowiedział, ale nie znaleziono danych dla wybranego zakresu.', 'empty');
             if (topProgressBar) topProgressBar.hidden = true;
             return;
         }
@@ -191,6 +193,7 @@ async function loadFullDataInBackground() {
     } catch (error) {
         console.error(error);
         setLoadAllButtonState(button, 'Błąd pobierania', false);
+        setDataLoadStatus(formatDataLoadError(error), 'error');
     } finally {
         isLoadingFullData = false;
         if (topProgressBar) {
@@ -212,6 +215,19 @@ function setLoadAllButtonState(button, label, busy, done = false) {
         <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Dane załadowane' ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
+}
+
+function formatDataLoadError(error) {
+    const code = error?.status ? `HTTP ${error.status}` : 'Błąd połączenia';
+    return `${code}: ${error?.message || 'Nie udało się połączyć z GitHubem.'}`;
+}
+
+function setDataLoadStatus(message, state) {
+    const status = document.getElementById('dataLoadStatus');
+    if (!status) return;
+    status.hidden = !message;
+    status.className = `admin-load-status ${state ? `admin-load-status--${state}` : ''}`;
+    status.textContent = message;
 }
 
 function applyLoadedData(data) {

@@ -156,8 +156,24 @@ class ApiService {
     }
 
     filterReportsByRecentMonths(reports, monthCount = 2) {
-        const monthKeys = new Set(this.getRecentMonthKeys(monthCount));
+        const monthKeys = new Set(
+            Array.from(new Set(reports
+                .map(report => this.getMonthKeyFromDateString(report?.date))
+                .filter(Boolean)))
+                .sort()
+                .reverse()
+                .slice(0, monthCount)
+        );
         return reports.filter(report => monthKeys.has(this.getMonthKeyFromDateString(report?.date)));
+    }
+
+    getRecentAvailableMonthKeys(files, monthCount) {
+        return new Set(Array.from(new Set(files
+            .map(file => this.getMonthKeyFromFileName(file.name))
+            .filter(Boolean)))
+            .sort()
+            .reverse()
+            .slice(0, monthCount));
     }
 
     reportProgress(onProgress, loaded, total) {
@@ -176,11 +192,15 @@ class ApiService {
 
     async fetchGithub(url, options, resource) {
         const maxAttempts = 3;
+        const requestTimeoutMs = 15000;
         let lastNetworkError;
 
         for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
             try {
-                const response = await fetch(url, options);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), requestTimeoutMs);
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(timeoutId);
                 const retryable = response.status === 429 || response.status === 503;
                 if (!retryable || attempt === maxAttempts) return response;
 
@@ -263,8 +283,6 @@ class ApiService {
         if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
 
         const locations = (await locRes.json()).filter(i => i.type === 'dir');
-        const monthKeys = recentMonths ? new Set(this.getRecentMonthKeys(recentMonths)) : null;
-
         const filesByLocation = await Promise.all(locations.map(async loc => {
             const filesRes = await this.fetchGithub(loc.url, { headers: this.headers }, `database/${loc.name}`);
             if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${loc.name}`);
@@ -274,6 +292,7 @@ class ApiService {
 
         const availableFiles = filesByLocation.flat();
         const availableMonthKeys = new Set(availableFiles.map(file => this.getMonthKeyFromFileName(file.name)).filter(Boolean));
+        const monthKeys = recentMonths ? this.getRecentAvailableMonthKeys(availableFiles, recentMonths) : null;
         const files = monthKeys
             ? availableFiles.filter(file => monthKeys.has(this.getMonthKeyFromFileName(file.name)))
             : availableFiles;

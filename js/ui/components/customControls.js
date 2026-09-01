@@ -479,7 +479,8 @@ export const dialogService = {
                 type: options.type || 'text',
                 value: options.value || '',
                 inputmode: options.inputmode || (options.type === 'password' ? 'numeric' : undefined),
-                autocomplete: options.autocomplete || 'off'
+                autocomplete: options.autocomplete || 'off',
+                autoSubmit: options.autoSubmit
             },
             actions: [
                 { label: 'Anuluj', value: null },
@@ -525,9 +526,15 @@ function openDialog(config) {
 
         const input = dialog.querySelector('.custom-dialog__input');
         if (input) {
+            input.focus({ preventScroll: true });
             requestAnimationFrame(() => {
                 input.focus({ preventScroll: true });
                 input.select?.();
+            });
+            input.addEventListener('input', () => {
+                if (typeof config.input.autoSubmit === 'function' && config.input.autoSubmit(input.value)) {
+                    finish(input.value);
+                }
             });
             input.addEventListener('keydown', event => {
                 if (event.key === 'Enter') finish(input.value);

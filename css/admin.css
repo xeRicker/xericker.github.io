@@ -60,6 +60,22 @@ select:focus { border-color: var(--primary-color); }
     text-transform: uppercase;
 }
 
+.admin-load-status {
+    grid-area: info;
+    margin-top: 18px;
+    max-width: 100%;
+    color: var(--text-secondary);
+    font: 600 11px/1.35 var(--font-body);
+}
+
+.admin-load-status--error {
+    color: var(--danger-color);
+}
+
+.admin-load-status--empty {
+    color: var(--glovo-color);
+}
+
 .admin-load-range select {
     min-height: 42px;
     padding: 9px 34px 9px 12px;
@@ -1161,6 +1177,11 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 
     .admin-load-info {
         max-width: none;
+        text-align: center;
+    }
+
+    .admin-load-status {
+        margin-top: 4px;
         text-align: center;
     }
 

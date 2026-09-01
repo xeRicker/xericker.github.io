@@ -11,6 +11,7 @@ import { cardClass } from './ui/components/Card.js';
 
 const PASSWORD = "1232123";
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
+const ADMIN_FORCE_LOGIN_STORAGE_KEY = 'burbone-admin-force-login';
 const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 1;
@@ -38,7 +39,7 @@ let monthlyReportGenerated = false;
 document.addEventListener('DOMContentLoaded', async () => {
     setAdminScrollLocked(true);
     try {
-        if (!isLocalhost() && !(await hasValidAdminAccess())) {
+        if ((!isLocalhost() || isAdminLogoutRequested()) && !(await hasValidAdminAccess())) {
             document.body.style.display = 'block';
             const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
                 type: 'password',
@@ -91,6 +92,7 @@ function saveAdminAccess() {
         localStorage.setItem(ADMIN_AUTH_STORAGE_KEY, JSON.stringify({
             expiresAt: Date.now() + ADMIN_AUTH_DURATION_MS
         }));
+        localStorage.removeItem(ADMIN_FORCE_LOGIN_STORAGE_KEY);
     } catch (error) {
         console.warn('Nie udało się zapamiętać dostępu do panelu admina.', error);
     }
@@ -215,6 +217,14 @@ function setLoadAllButtonState(button, label, busy, done = false) {
         <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Dane załadowane' ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
+}
+
+function isAdminLogoutRequested() {
+    try {
+        return localStorage.getItem(ADMIN_FORCE_LOGIN_STORAGE_KEY) === '1';
+    } catch {
+        return false;
+    }
 }
 
 function formatDataLoadError(error) {
@@ -396,27 +406,37 @@ function setupListeners() {
         });
     });
 
-    const backBtn = document.getElementById('adminBackBtn') || document.querySelector('.btn-back[href="index.html"]');
-    if (backBtn) {
-        backBtn.addEventListener('click', async event => {
+    const logoutBtn = document.getElementById('adminBackBtn') || document.querySelector('.btn-back[href="index.html"]');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async event => {
             event.preventDefault();
             if (isLoadingFullData) {
                 const confirmed = await dialogService.confirm(
-                    'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz wyjść do generatora list?',
+                    'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz się wylogować?',
                     'Trwa pobieranie danych'
                 );
-                if (confirmed) window.location.href = 'index.html';
+                if (confirmed) logoutAdmin();
             } else if (allData && allData.length > 0) {
                 const confirmed = await dialogService.confirm(
-                    'Dane panelu administratora są załadowane. Czy na pewno chcesz wyjść do generatora list?',
-                    'Wyjście z panelu'
+                    'Czy na pewno chcesz się wylogować? Przy następnym wejściu trzeba będzie ponownie podać hasło.',
+                    'Wylogowanie z panelu'
                 );
-                if (confirmed) window.location.href = 'index.html';
+                if (confirmed) logoutAdmin();
             } else {
-                window.location.href = 'index.html';
+                logoutAdmin();
             }
         });
     }
+}
+
+function logoutAdmin() {
+    try {
+        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
+        if (isLocalhost()) localStorage.setItem(ADMIN_FORCE_LOGIN_STORAGE_KEY, '1');
+    } catch (error) {
+        console.warn('Nie udało się usunąć zapisanego dostępu do panelu admina.', error);
+    }
+    window.location.href = 'index.html';
 }
 
 function updateView() {

@@ -475,7 +475,12 @@ export const dialogService = {
         return openDialog({
             title,
             message,
-            input: { type: options.type || 'text', value: options.value || '' },
+            input: {
+                type: options.type || 'text',
+                value: options.value || '',
+                inputmode: options.inputmode || (options.type === 'password' ? 'numeric' : undefined),
+                autocomplete: options.autocomplete || 'off'
+            },
             actions: [
                 { label: 'Anuluj', value: null },
                 { label: 'OK', value: 'input', primary: true }
@@ -490,7 +495,7 @@ function openDialog(config) {
     dialog.innerHTML = `
         <h3>${config.title}</h3>
         <p>${config.message}</p>
-        ${config.input ? `<input class="custom-dialog__input" type="${config.input.type}" value="${config.input.value}">` : ''}
+        ${config.input ? `<input class="custom-dialog__input" type="${config.input.type}" value="${config.input.value}"${config.input.inputmode ? ` inputmode="${config.input.inputmode}"` : ''}${config.input.inputmode === 'numeric' ? ' pattern="[0-9]*"' : ''}${config.input.autocomplete ? ` autocomplete="${config.input.autocomplete}"` : ''}>` : ''}
         <div class="custom-dialog__actions"></div>
     `;
 
@@ -520,7 +525,10 @@ function openDialog(config) {
 
         const input = dialog.querySelector('.custom-dialog__input');
         if (input) {
-            input.focus();
+            requestAnimationFrame(() => {
+                input.focus({ preventScroll: true });
+                input.select?.();
+            });
             input.addEventListener('keydown', event => {
                 if (event.key === 'Enter') finish(input.value);
             });

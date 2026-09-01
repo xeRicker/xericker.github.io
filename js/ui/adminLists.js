@@ -1,6 +1,7 @@
 import { buildReportText } from '../services/reportFormatter.js';
 import { getReportKey, getReportTimestamp } from '../services/reportDates.js';
 import { escapeHtml, fallbackCopyToClipboard } from '../utils.js';
+import { cardClass } from './components/Card.js';
 
 export function createAdminListsPage(config) {
     let selectedListKey = null;
@@ -10,16 +11,28 @@ export function createAdminListsPage(config) {
     const container = () => document.getElementById('adminListsContent');
     const locationSelect = () => document.getElementById('listLocationFilter');
     const searchInput = () => document.getElementById('listSearchInput');
+    const monthSelect = () => document.getElementById('listMonthFilter');
 
     function init() {
         populateLocationFilter();
+        populateMonthFilter();
         setupListeners();
         render();
     }
 
     function refresh() {
         populateLocationFilter();
+        populateMonthFilter();
         render();
+    }
+
+    function populateMonthFilter() {
+        const select = monthSelect();
+        if (!select) return;
+        const months = Array.from(new Set(getAllData().map(report => report.date?.slice(3)).filter(Boolean))).sort().reverse();
+        const current = select.value;
+        select.innerHTML = ['<option value="all">Wszystkie miesiące</option>', ...months.map(month => `<option value="${month}">${month}</option>`)].join('');
+        if (months.includes(current)) select.value = current;
     }
 
     function populateLocationFilter() {
@@ -38,6 +51,7 @@ export function createAdminListsPage(config) {
             selectedListKey = null;
             render();
         });
+        monthSelect()?.addEventListener('change', () => { selectedListKey = null; render(); });
 
         searchInput().addEventListener('input', () => {
             selectedListKey = null;
@@ -47,7 +61,6 @@ export function createAdminListsPage(config) {
         container().addEventListener('click', async event => {
             const previewButton = event.target.closest('[data-list-preview]');
             const copyButton = event.target.closest('[data-list-copy]');
-
             if (previewButton) {
                 selectedListKey = previewButton.dataset.listPreview;
                 render();
@@ -68,23 +81,21 @@ export function createAdminListsPage(config) {
 
         if (!reports.length) {
             container().innerHTML = `
-                <div class="admin-list-empty">
+                <div class="${cardClass('summary', 'admin-list-empty')} ">
                     <span class="material-symbols-rounded" aria-hidden="true">content_paste_search</span>
                     <strong>Brak list</strong>
-                    <p>Nie znaleziono zapisanych raportów dla wybranych filtrów.</p>
+                    <p>Nie znaleziono zapisanych list dla wybranych filtrów.</p>
                 </div>
             `;
             return;
         }
 
         container().innerHTML = `
-            <section class="admin-category-card admin-list-panel">
+            <section class="${cardClass('summary', 'admin-category-card admin-list-panel')} ">
                 <div class="admin-category-head">
                     <div class="admin-category-title">
-                        <span class="material-symbols-rounded category-icon" aria-hidden="true">content_paste</span>
                         <div>
-                            <h4>Zapisane raporty</h4>
-                            <span>${reports.length} ${formatListCount(reports.length)}</span>
+                            <h4><span class="material-symbols-rounded" aria-hidden="true">content_paste</span> ZAPISANE LISTY</h4>
                         </div>
                     </div>
                 </div>
@@ -92,7 +103,7 @@ export function createAdminListsPage(config) {
                     ${reports.map(report => renderListItem(report, selectedListKey)).join('')}
                 </div>
             </section>
-            <section class="admin-category-card admin-list-preview">
+            <section class="${cardClass('summary', 'admin-category-card admin-list-preview')} ">
                 ${renderListPreview(selectedReport)}
             </section>
         `;
@@ -100,11 +111,13 @@ export function createAdminListsPage(config) {
 
     function getFilteredReports() {
         const location = locationSelect().value;
+        const month = monthSelect()?.value || 'all';
         const query = searchInput().value.trim().toLowerCase();
 
         return [...getAllData()]
             .filter(report => report?.date && report?.location)
             .filter(report => location === 'all' || report.location === location)
+            .filter(report => month === 'all' || report.date?.slice(3) === month)
             .filter(report => !query || `${report.location} ${report.date}`.toLowerCase().includes(query))
             .sort((left, right) => getReportTimestamp(right) - getReportTimestamp(left));
     }
@@ -168,10 +181,4 @@ export function createAdminListsPage(config) {
     }
 
     return { init, refresh, render };
-}
-
-function formatListCount(count) {
-    if (count === 1) return 'lista';
-    if (count >= 2 && count <= 4) return 'listy';
-    return 'list';
 }

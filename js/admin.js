@@ -1,14 +1,15 @@
-import { apiService } from './services/api.js?v=3';
+import { apiService } from './services/api.js?v=62';
 import { analytics } from './services/analytics.js';
-import { adminRender } from './ui/adminRender.js?v=4';
-import { adminProducts } from './ui/adminProducts.js?v=4';
-import { createAdminListsPage } from './ui/adminLists.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=4';
+import { adminRender } from './ui/adminRender.js?v=60';
+import { adminProducts } from './ui/adminProducts.js?v=60';
+import { createAdminListsPage } from './ui/adminLists.js?v=60';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=3';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=60';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
+import { cardClass } from './ui/components/Card.js';
 
-const PASSWORD = "xdxdxd123";
+const PASSWORD = "1232123";
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
 const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
@@ -29,6 +30,8 @@ let productCatalog = null;
 let adminListsPage = null;
 let isFullDataLoaded = false;
 let isLoadingFullData = false;
+let loadedMonthCount = 0;
+let availableMonthCount = 0;
 let monthlyReportCharts = [];
 let monthlyReportGenerated = false;
 
@@ -37,13 +40,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         if (!isLocalhost() && !(await hasValidAdminAccess())) {
             document.body.style.display = 'block';
-            const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", { type: 'password' });
+            const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
+                type: 'password',
+                inputmode: 'numeric',
+                autocomplete: 'current-password'
+            });
             if (pass !== PASSWORD) return location.href = "index.html";
             saveAdminAccess();
         }
         document.body.style.display = 'block';
 
-        allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS });
+        allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS, onMeta: updateDataLoadInfo });
         if (!allData.length) {
             document.getElementById('loading').innerText = "Brak danych";
             hideGlobalLoader();
@@ -135,6 +142,7 @@ function initUI(data) {
 
 function setupAdminPages() {
     document.getElementById('loadAllDataBtn')?.addEventListener('click', loadFullDataInBackground);
+    document.getElementById('loadDataRange')?.addEventListener('change', updateLoadButtonLabel);
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         tab.addEventListener('click', async () => {
             await switchAdminPage(tab.dataset.adminTab);
@@ -144,10 +152,13 @@ function setupAdminPages() {
 }
 
 async function loadFullDataInBackground() {
-    if (isLoadingFullData || isFullDataLoaded) return;
+    if (isLoadingFullData) return;
 
     const button = document.getElementById('loadAllDataBtn');
     const topProgressBar = document.getElementById('adminTopProgressBar');
+    const selectedRange = Number(document.getElementById('loadDataRange')?.value || 0);
+    if (selectedRange && loadedMonthCount >= Math.min(selectedRange, availableMonthCount || selectedRange)) return;
+    if (!selectedRange && isFullDataLoaded) return;
     isLoadingFullData = true;
     setLoadAllButtonState(button, 'Pobieranie 0%', true);
     if (topProgressBar) {
@@ -157,6 +168,8 @@ async function loadFullDataInBackground() {
 
     try {
         const fullData = await apiService.fetchAllData({
+            recentMonths: selectedRange || null,
+            onMeta: updateDataLoadInfo,
             onProgress: progress => {
                 setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true);
                 if (topProgressBar) {
@@ -172,9 +185,9 @@ async function loadFullDataInBackground() {
         }
 
         if (topProgressBar) topProgressBar.style.width = '100%';
-        isFullDataLoaded = true;
+        isFullDataLoaded = !selectedRange || loadedMonthCount >= availableMonthCount;
         applyLoadedData(fullData);
-        setLoadAllButtonState(button, 'Pobrano wszystko', false, true);
+        setLoadAllButtonState(button, isFullDataLoaded ? 'Pobrano wszystko' : 'Dane załadowane', false, isFullDataLoaded);
     } catch (error) {
         console.error(error);
         setLoadAllButtonState(button, 'Błąd pobierania', false);
@@ -194,8 +207,9 @@ function setLoadAllButtonState(button, label, busy, done = false) {
     button.disabled = busy || done;
     button.classList.toggle('is-saving', busy);
     button.classList.toggle('is-clean', done);
+    button.classList.toggle('is-loaded', !busy && !done && label === 'Dane załadowane');
     button.innerHTML = `
-        <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done ? 'check' : 'database'}</span>
+        <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Dane załadowane' ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
 }
@@ -372,13 +386,13 @@ function setupListeners() {
             event.preventDefault();
             if (isLoadingFullData) {
                 const confirmed = await dialogService.confirm(
-                    'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz wyjść do generatora?',
+                    'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz wyjść do generatora list?',
                     'Trwa pobieranie danych'
                 );
                 if (confirmed) window.location.href = 'index.html';
             } else if (allData && allData.length > 0) {
                 const confirmed = await dialogService.confirm(
-                    'Dane panelu administratora są załadowane. Czy na pewno chcesz wyjść do generatora?',
+                    'Dane panelu administratora są załadowane. Czy na pewno chcesz wyjść do generatora list?',
                     'Wyjście z panelu'
                 );
                 if (confirmed) window.location.href = 'index.html';
@@ -429,7 +443,7 @@ async function generateMonthlyReport(options = {}) {
     const button = document.getElementById('generateMonthlyReportBtn');
     if (!status || !content) return;
 
-    setMonthlyReportStatus('Przygotowuję raport...', 'loading');
+    setMonthlyReportStatus('Przygotowuję listę miesięczną...', 'loading');
     if (button) button.disabled = true;
 
     try {
@@ -448,7 +462,7 @@ async function generateMonthlyReport(options = {}) {
         setMonthlyReportStatus('', 'ready');
     } catch (error) {
         console.error(error);
-        setMonthlyReportStatus('Nie udało się wygenerować raportu.', 'error');
+        setMonthlyReportStatus('Nie udało się wygenerować listy.', 'error');
     } finally {
         if (button) button.disabled = false;
     }
@@ -462,17 +476,18 @@ async function ensureMonthlyReportData() {
     const button = document.getElementById('loadAllDataBtn');
     isLoadingFullData = true;
     setLoadAllButtonState(button, 'Pobieranie 0%', true);
-    setMonthlyReportStatus('Pobieram pełną historię, żeby porównać dwa zamknięte miesiące...', 'loading');
+    setMonthlyReportStatus('Pobieram dane, żeby porównać dwa zamknięte miesiące...', 'loading');
 
     try {
-        const fullData = await apiService.fetchAllData({
+        const comparisonData = await apiService.fetchAllData({
+            recentMonths: 2,
+            onMeta: updateDataLoadInfo,
             onProgress: progress => setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true)
         });
 
-        if (!fullData.length) throw new Error('No reports available');
-        isFullDataLoaded = true;
-        applyLoadedData(fullData);
-        setLoadAllButtonState(button, 'Pobrano wszystko', false, true);
+        if (!comparisonData.length) throw new Error('No reports available');
+        applyLoadedData(comparisonData);
+        setLoadAllButtonState(button, 'Dane załadowane', false);
     } finally {
         isLoadingFullData = false;
     }
@@ -567,69 +582,119 @@ function renderMonthlyReport(report) {
     if (!content) return;
 
     destroyMonthlyReportCharts();
+    const current = report.current;
+    const previous = report.previous;
+    const currentHours = getEmployeeHoursTotal(current);
+    const currentPayroll = getPayrollTotal(current);
+    const revenuePerHour = getRevenuePerHour(current);
+    const payrollShare = getPayrollShare(current);
+    const totalDelta = current.total - previous.total;
+    const hoursDelta = currentHours - getEmployeeHoursTotal(previous);
+    const currentLeader = current.locations[0];
+    const assessment = totalDelta > 0 && (hoursDelta <= 0 || revenuePerHour >= getRevenuePerHour(previous))
+        ? { tone: 'positive', title: 'Miesiąc wygląda zdrowo', text: 'Sprzedaż rośnie bez proporcjonalnego zwiększania obciążenia zespołu.' }
+        : totalDelta > 0
+            ? { tone: 'watch', title: 'Sprzedaż rośnie, ale pilnuj kosztu pracy', text: 'Wynik jest lepszy, jednak warto sprawdzić, czy dodatkowe godziny dają odpowiedni zwrot.' }
+            : { tone: 'negative', title: 'Potrzebna jest szybka reakcja', text: 'Wynik spadł względem poprzedniego miesiąca. Najpierw sprawdź punkty i dni z największą różnicą.' };
+
     content.innerHTML = `
         <div class="monthly-report-range">
-            <span>${renderMaterialIcon('calendar_month', 'summary-icon-badge')} Analizowany okres</span>
-            <strong>${escapeHtml(report.previous.label)} → ${escapeHtml(report.current.label)}</strong>
-            <p>Porównanie pokazuje zmianę w nowszym miesiącu względem wcześniejszego.</p>
+            <span>${renderMaterialIcon('calendar_month', 'summary-icon-badge')} RAPORT ZARZĄDCZY</span>
+            <strong>${escapeHtml(current.label)}</strong>
+            <p>Porównanie z ${escapeHtml(previous.label)} pokazuje, co realnie zmieniło się w firmie.</p>
         </div>
 
-        <div class="monthly-report-summary">
-            ${renderMonthlyKpi('Utarg', report.current.total, report.previous.total, 'monitoring', true)}
-            ${renderMonthlyKpi('Średnio / dzień', report.current.averageDay, report.previous.averageDay, 'calendar_month', true)}
-            ${renderMonthlyKpi('Karty', report.current.card, report.previous.card, 'credit_card', true)}
-            ${renderMonthlyKpi('Glovo', report.current.glovo, report.previous.glovo, 'takeout_dining', true)}
-            ${renderMonthlyKpi('Wypłaty 30', getPayrollTotal(report.current), getPayrollTotal(report.previous), 'payments', true)}
-            ${renderMonthlyKpi('Utarg / roboczogodzina', getRevenuePerHour(report.current), getRevenuePerHour(report.previous), 'speed', true)}
+        <div class="monthly-assessment monthly-assessment--${assessment.tone}">
+            <div><strong>${assessment.title}</strong><p>${assessment.text}</p></div>
         </div>
 
-        <div class="monthly-report-grid">
-            <div class="chart-card monthly-report-chart">
-                <div class="section-heading">
-                    <h3>Utarg dzień do dnia</h3>
-                    <p>${escapeHtml(report.previous.label)} jako baza, ${escapeHtml(report.current.label)} jako miesiąc porównywany.</p>
+        <div class="monthly-command-grid">
+            ${renderDecisionMetric('Utarg netto', formatMoney(current.total), totalDelta, true, getDecisionHint('revenue', totalDelta))}
+            ${renderDecisionMetric('Średnio dziennie', formatMoney(current.averageDay), current.averageDay - previous.averageDay, true, getDecisionHint('average', current.averageDay - previous.averageDay))}
+            ${renderDecisionMetric('Utarg / godzina', formatMoney(revenuePerHour), revenuePerHour - getRevenuePerHour(previous), true, getDecisionHint('hour', revenuePerHour - getRevenuePerHour(previous)))}
+            ${renderDecisionMetric('Udział wypłat', `${payrollShare.toFixed(1)}%`, payrollShare - getPayrollShare(previous), false, getDecisionHint('payroll', payrollShare - getPayrollShare(previous)))}
+        </div>
+
+        <div class="monthly-report-grid monthly-report-grid--decision">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
+                <div class="section-heading"><h3>Jak radzą sobie punkty</h3><p>Ranking według średniego dziennego utargu — łatwiej porównać punkty o różnej liczbie dni.</p></div>
+                <div class="monthly-location-list">
+                    ${current.locations.map(location => {
+                        const old = previous.locations.find(item => item.name === location.name);
+                        const delta = location.avgDay - (old?.avgDay || 0);
+                        return `<div class="monthly-location-row"><div><strong>${escapeHtml(location.name)}</strong><span>${formatMoney(location.avgDay)} średnio / dzień</span></div><em class="${getDeltaClass(delta)}">${formatSignedValue(delta, true)} / ${old ? formatPercentDelta(location.avgDay, old.avgDay) : 'nowy'}</em></div>`;
+                    }).join('')}
                 </div>
-                <div class="chart-wrapper"><canvas id="monthlyRevenueChart"></canvas></div>
             </div>
-            <div class="chart-card monthly-report-chart">
-                <div class="section-heading">
-                    <h3>Karty i gotówka</h3>
-                    <p>Porównanie głównych form płatności w obu miesiącach.</p>
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
+                <div class="section-heading"><h3>Zespół i obciążenie</h3><p>Najważniejsze informacje o czasie pracy i koszcie zespołu.</p></div>
+                <div class="monthly-focus-list">
+                    <div><span>Przepracowane godziny</span><strong>${currentHours.toFixed(1)} h <em class="${getDeltaClass(hoursDelta)}">${formatSignedValue(hoursDelta, false, ' h')}</em></strong></div>
+                    <div><span>Szacowany koszt wypłat</span><strong>${formatMoney(currentPayroll)} <em class="is-neutral">stawka 30 PLN</em></strong></div>
+                    <div><span>Najmocniejszy punkt</span><strong>${currentLeader ? escapeHtml(currentLeader.name) : '-'} <em class="is-neutral">${currentLeader ? formatMoney(currentLeader.avgDay) + ' / dzień' : ''}</em></strong></div>
                 </div>
-                <div class="chart-wrapper"><canvas id="monthlyChannelsChart"></canvas></div>
             </div>
         </div>
 
-        <div class="monthly-report-grid">
-            <div class="chart-card monthly-report-chart monthly-report-chart--glovo">
-                <div class="section-heading">
-                    <h3>Glovo dzień do dnia</h3>
-                    <p>Wartości po odjęciu 30% prowizji.</p>
-                </div>
-                <div class="chart-wrapper"><canvas id="monthlyGlovoChart"></canvas></div>
-            </div>
+        <div class="monthly-report-grid monthly-report-grid--details">
+            ${renderMonthlyHighlights(report)}
             ${renderMonthlyEfficiencyPanel(report)}
         </div>
 
-        <div class="monthly-report-grid monthly-report-grid--three">
-            ${renderMonthlyHighlights(report)}
-            ${renderMonthlyLocationTable(report)}
+        <div class="monthly-report-grid monthly-report-grid--details">
             ${renderMonthlyPayrollTable(report)}
-        </div>
-
-        <div class="monthly-report-grid">
-            <div class="chart-card monthly-report-chart">
-                <div class="section-heading">
-                    <h3>Najczęściej zamawiane produkty</h3>
-                    <p>Ilości z list produktów zapisanych w raportach.</p>
-                </div>
-                <div class="chart-wrapper"><canvas id="monthlyProductsChart"></canvas></div>
-            </div>
             ${renderMonthlyProductTable(report)}
         </div>
     `;
+}
 
-    renderMonthlyCharts(report);
+function updateDataLoadInfo(meta) {
+    loadedMonthCount = meta?.loadedMonths || 0;
+    availableMonthCount = meta?.availableMonths || 0;
+    const info = document.getElementById('dataLoadInfo');
+    if (info) info.textContent = `Załadowane: ${loadedMonthCount} / dostępne: ${availableMonthCount} miesięcy`;
+}
+
+function updateLoadButtonLabel() {
+    const select = document.getElementById('loadDataRange');
+    const button = document.getElementById('loadAllDataBtn');
+    if (!select || !button || isLoadingFullData) return;
+    const label = select.value === '0' ? 'Wszystko' : `Ostatnie ${select.value} mies.`;
+    button.title = `Załaduj: ${label}`;
+    if (select.value === '0' && isFullDataLoaded) {
+        setLoadAllButtonState(button, 'Pobrano wszystko', false, true);
+        return;
+    }
+    button.disabled = false;
+    button.classList.remove('is-loaded', 'is-clean');
+    button.innerHTML = `
+        <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
+        ZAŁADUJ DANE
+    `;
+}
+
+function renderDecisionMetric(label, value, delta, money, description) {
+    const lowerIsBetter = label === 'Udział wypłat';
+    return `<div class="${cardClass('summary', 'summary-box monthly-decision-metric')}"><span class="summary-kicker">${escapeHtml(label)}</span><p>${escapeHtml(value)}</p><small class="${getDeltaClass(delta, lowerIsBetter)}">${formatSignedValue(delta, money)} względem poprzedniego miesiąca</small><span class="monthly-decision-metric__hint"><span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>${escapeHtml(description)}</span></div>`;
+}
+
+function getDecisionHint(type, delta) {
+    if (type === 'payroll') {
+        if (delta < -0.4) return 'Koszt zespołu spadł względem utargu — to dobry sygnał, o ile nie ucierpiała obsada.';
+        if (delta > 0.4) return 'Wypłaty zajmują większą część utargu. Sprawdź, czy dodatkowe godziny przełożyły się na sprzedaż.';
+        return 'Udział wypłat jest stabilny. Na ten moment koszty pracy są pod kontrolą.';
+    }
+    if (delta > 0) return type === 'hour'
+        ? 'Każda godzina zespołu przyniosła więcej utargu — grafik pracuje efektywniej.'
+        : type === 'average'
+            ? 'Typowy dzień był mocniejszy, więc wynik nie opiera się wyłącznie na jednym rekordzie.'
+            : 'Firma zrobiła więcej niż wcześniej. Warto sprawdzić, który punkt napędził wzrost.';
+    if (delta < 0) return type === 'hour'
+        ? 'Godzina pracy daje mniej utargu. To pierwszy kandydat do przeglądu grafików i słabszych dni.'
+        : type === 'average'
+            ? 'Słabszy był przeciętny dzień. Poszukaj powtarzalnego problemu, nie tylko najsłabszej daty.'
+            : 'Łączny wynik spadł. Zacznij od punktu z największym spadkiem średniej dziennej.';
+    return 'Wynik jest stabilny. Najwięcej powie porównanie z kolejnym miesiącem.';
 }
 
 function renderMonthlyKpi(label, current, previous, icon, money = false) {
@@ -637,7 +702,7 @@ function renderMonthlyKpi(label, current, previous, icon, money = false) {
     const deltaClass = getDeltaClass(delta);
     const display = money ? formatMoney(current) : current.toFixed(1);
     return `
-        <div class="summary-box monthly-kpi">
+        <div class="${cardClass('summary', 'summary-box monthly-kpi')} ">
             <span class="summary-kicker">${renderMaterialIcon(icon, 'summary-icon-badge')} ${escapeHtml(label)}</span>
             <p>${display}</p>
             <small><span class="monthly-delta ${deltaClass}">${formatSignedValue(delta, money)}</span> / ${formatPercentDelta(current, previous)}</small>
@@ -649,7 +714,7 @@ function renderMonthlyHighlights(report) {
     const currentLeader = report.current.employees[0];
     const previousLeader = report.previous.employees[0];
     return `
-        <div class="chart-card monthly-report-panel">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
             <div class="section-heading">
                 <h3>Najważniejsze sygnały</h3>
             </div>
@@ -678,7 +743,7 @@ function renderMonthlyEfficiencyPanel(report) {
     const previousBestLocation = report.previous.locations.find(location => location.name === currentBestLocation?.name);
 
     return `
-        <div class="chart-card monthly-report-panel">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
             <div class="section-heading">
                 <h3>Efektywność operacyjna</h3>
                 <p>Wskaźniki pokazujące, czy sprzedaż rosła szybciej niż czas pracy i koszty zmian.</p>
@@ -714,7 +779,7 @@ function renderMonthlyEfficiencyPanel(report) {
                     `${currentHours.toFixed(1)} h`,
                     currentHours - previousHours,
                     false,
-                    'Suma godzin wpisanych w raportach. Warto porównać tę zmianę ze zmianą utargu.',
+                    'Suma godzin wpisanych na listach. Warto porównać tę zmianę ze zmianą utargu.',
                     ' h'
                 )}
                 ${renderEfficiencyCard(
@@ -763,7 +828,7 @@ function renderMonthlyLocationTable(report) {
     const rows = mergeNamedRows(report.current.locations, report.previous.locations, 'total')
         .sort((left, right) => right.current - left.current);
     return `
-        <div class="chart-card monthly-report-panel">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
             <div class="section-heading">
                 <h3>Punkty</h3>
             </div>
@@ -776,7 +841,7 @@ function renderMonthlyLocationTable(report) {
 
 function renderMonthlyPayrollTable(report) {
     return `
-        <div class="chart-card monthly-report-panel">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
             <div class="section-heading">
                 <h3>Pracownicy i wypłaty</h3>
             </div>
@@ -792,7 +857,7 @@ function renderMonthlyPayrollTable(report) {
 
 function renderMonthlyProductTable(report) {
     return `
-        <div class="chart-card monthly-report-panel">
+            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
             <div class="section-heading">
                 <h3>Produkty</h3>
             </div>
@@ -820,7 +885,7 @@ function renderMonthlyCharts(report) {
     const info = styles.getPropertyValue('--app-info').trim();
     const warning = styles.getPropertyValue('--glovo-color').trim();
     const muted = styles.getPropertyValue('--text-muted').trim();
-    Chart.defaults.font.family = styles.getPropertyValue('--ds-font-family-body').trim() || 'sans-serif';
+    Chart.defaults.font.family = styles.getPropertyValue('--font-body').trim() || 'sans-serif';
     Chart.defaults.color = styles.getPropertyValue('--text-secondary').trim() || '#C8BAB3';
 
     const dayLabels = buildDayLabels(report);
@@ -890,7 +955,7 @@ function renderMonthlyCharts(report) {
             plugins: {
                 legend: {
                     labels: {
-                        font: { family: styles.getPropertyValue('--ds-font-family-heading').trim() || 'sans-serif' }
+                        font: { family: styles.getPropertyValue('--font-heading').trim() || 'sans-serif' }
                     }
                 },
                 tooltip: {
@@ -935,7 +1000,7 @@ function buildMonthlyChartOptions() {
         plugins: {
             legend: {
                 labels: {
-                    font: { family: styles.getPropertyValue('--ds-font-family-heading').trim() || 'sans-serif' }
+                    font: { family: styles.getPropertyValue('--font-heading').trim() || 'sans-serif' }
                 }
             },
             tooltip: {
@@ -970,7 +1035,13 @@ function setMonthlyReportStatus(message, state) {
     const status = document.getElementById('monthlyReportStatus');
     if (!status) return;
     status.className = `monthly-report-status monthly-report-status--${state}`;
-    status.textContent = message;
+    if (!message) {
+        status.innerHTML = '';
+        return;
+    }
+    status.innerHTML = state === 'loading'
+        ? `<span class="material-symbols-rounded" aria-hidden="true">progress_activity</span><span>${message}</span><span class="monthly-report-status__bar"><i></i></span>`
+        : `<span class="material-symbols-rounded" aria-hidden="true">${state === 'error' ? 'error' : 'info'}</span><span>${message}</span>`;
 }
 
 function getReportMonthPair(referenceDate = new Date()) {

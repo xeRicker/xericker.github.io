@@ -36,6 +36,28 @@
     --app-chart-4: #F6C85F;
     --app-chart-5: #C58CFF;
 
+    --employee-color-1: #7AB8FF;
+    --employee-color-2: #7DCE82;
+    --employee-color-3: #FF8F82;
+    --employee-color-4: #F6C85F;
+    --employee-color-5: #C58CFF;
+    --employee-color-6: #E76A32;
+    --employee-color-7: #9DD9EE;
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-pill: 999px;
+
+    --font-heading: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+
     --bg-color: var(--app-bg);
     --surface-color: var(--app-surface);
     --surface-raised: var(--app-surface-raised);

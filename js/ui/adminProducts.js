@@ -1,7 +1,8 @@
-import { apiService } from '../services/api.js?v=3';
-import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=2';
+import { apiService } from '../services/api.js?v=60';
+import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=60';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=5';
+import { dialogService } from './components/customControls.js?v=60';
+import { cardClass } from './components/Card.js';
 
 const ICON_OPTIONS = [
     'restaurant', 'eco', 'kitchen', 'lunch_dining', 'bakery_dining', 'science',
@@ -51,8 +52,8 @@ class AdminProducts {
         this.container.innerHTML = `
             <div class="admin-products-head">
                 <div class="section-heading">
-                    <h3>Produkty</h3>
-                    <p>Kategorie i aktywne produkty z tej listy są używane przez generator raportów.</p>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span> PRODUKTY</h3>
+                    <p>Kategorie i aktywne produkty z tej listy są używane przez generator list.</p>
                 </div>
                 <button id="saveProductsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span>
@@ -78,7 +79,7 @@ class AdminProducts {
     renderCategory(category, categoryIndex) {
         const categoryCount = this.catalog.categories.length;
         return `
-            <section class="admin-category-card ${category.enabled ? '' : 'is-disabled'}" data-category-id="${category.id}">
+            <section class="${cardClass('product', `admin-category-card ${category.enabled ? '' : 'is-disabled'}`)}" data-category-id="${category.id}">
                 <div class="admin-category-head">
                     <div class="admin-category-title">
                         ${renderMaterialIcon(category.icon, 'category-icon')}

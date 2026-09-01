@@ -170,6 +170,10 @@ class ApiService {
         }
     }
 
+    reportMeta(onMeta, loadedMonths, availableMonths) {
+        if (typeof onMeta === 'function') onMeta({ loadedMonths, availableMonths });
+    }
+
     async fetchGithub(url, options, resource) {
         const maxAttempts = 3;
         let lastNetworkError;
@@ -230,17 +234,19 @@ class ApiService {
     }
 
     async fetchAllData(options = {}) {
-        const { recentMonths = null, onProgress = null } = options;
+        const { recentMonths = null, onProgress = null, onMeta = null } = options;
         if (isLocalhost()) {
             try {
                 const params = new URLSearchParams({ v: Date.now() });
-                if (recentMonths) params.set('recentMonths', recentMonths);
                 const response = await fetch(`__local-data?${params.toString()}`);
                 if (response.ok) {
                     const localData = await response.json();
                     if (Array.isArray(localData) && localData.length) {
-                        this.reportProgress(onProgress, localData.length, localData.length);
-                        return localData;
+                        const availableMonthKeys = new Set(localData.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean));
+                        const data = recentMonths ? this.filterReportsByRecentMonths(localData, recentMonths) : localData;
+                        this.reportMeta(onMeta, new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size, availableMonthKeys.size);
+                        this.reportProgress(onProgress, data.length, data.length);
+                        return data;
                     }
                 }
             } catch (error) {
@@ -248,6 +254,7 @@ class ApiService {
             }
             const mockData = await this.getMockData();
             const data = recentMonths ? this.filterReportsByRecentMonths(mockData, recentMonths) : mockData;
+            this.reportMeta(onMeta, new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size, new Set(mockData.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size);
             this.reportProgress(onProgress, data.length, data.length);
             return data;
         }
@@ -262,11 +269,15 @@ class ApiService {
             const filesRes = await this.fetchGithub(loc.url, { headers: this.headers }, `database/${loc.name}`);
             if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${loc.name}`);
             return (await filesRes.json())
-                .filter(f => f.name.endsWith('.json'))
-                .filter(f => !monthKeys || monthKeys.has(this.getMonthKeyFromFileName(f.name)));
+                .filter(f => f.name.endsWith('.json'));
         }));
 
-        const files = filesByLocation.flat();
+        const availableFiles = filesByLocation.flat();
+        const availableMonthKeys = new Set(availableFiles.map(file => this.getMonthKeyFromFileName(file.name)).filter(Boolean));
+        const files = monthKeys
+            ? availableFiles.filter(file => monthKeys.has(this.getMonthKeyFromFileName(file.name)))
+            : availableFiles;
+        this.reportMeta(onMeta, monthKeys ? new Set(files.map(file => this.getMonthKeyFromFileName(file.name)).filter(Boolean)).size : availableMonthKeys.size, availableMonthKeys.size);
         let loaded = 0;
         this.reportProgress(onProgress, loaded, files.length);
 

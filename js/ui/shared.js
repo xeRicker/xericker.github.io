@@ -27,10 +27,10 @@ export const uiShared = {
         sheet.classList.add('visible');
 
         icon.style.color = getDesignToken('--brand-primary', '#D4521A');
-        icon.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>`;
+        icon.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">content_copy</span>';
         title.innerText = saveFailed ? 'LISTA NIE ZOSTAŁA WYSŁANA' : 'LISTA GOTOWA!';
         message.innerText = saveFailed
-            ? `GitHub nie zapisał raportu. Możesz mimo to skopiować listę. ${saveError.message || ''}`
+            ? `GitHub nie zapisał listy. Możesz mimo to ją skopiować. ${saveError.message || ''}`
             : 'Kliknij poniżej, aby skopiować i wklej na Messengerze.';
         btn.innerText = "SKOPIUJ LISTĘ";
         btn.style.background = "";
@@ -40,9 +40,9 @@ export const uiShared = {
             btn.innerText = "SKOPIOWANO!";
             title.innerText = 'LISTA SKOPIOWANA';
             if (saveFailed) message.innerText = 'Lista została skopiowana, ale nie została wysłana do GitHub. Spróbuj zapisać ją później.';
-            btn.style.background = getDesignToken('--ds-background-success-bold', '#94C748');
-            icon.style.color = getDesignToken('--ds-icon-success', '#82B536');
-            icon.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            btn.style.background = getDesignToken('--success-color', '#7DCE82');
+            icon.style.color = getDesignToken('--success-color', '#7DCE82');
+            icon.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">check_circle</span>';
             this.triggerConfetti();
             this.startFireworks();
             setTimeout(() => this.closeModals(), 4000);
@@ -54,7 +54,7 @@ export const uiShared = {
         const colors = [
             getDesignToken('--app-chart-1', '#D4521A'),
             getDesignToken('--app-chart-4', '#F6C85F'),
-            getDesignToken('--ds-chart-red-bold', '#E2483D')
+            getDesignToken('--danger-color', '#FF8F82')
         ];
         for(let i=0; i<40; i++) {
             const el = document.createElement('div');
@@ -75,7 +75,7 @@ export const uiShared = {
             const c = document.getElementById('confetti-container');
             const x = Math.random()*100; const y = Math.random()*50+10;
             const colors = [
-                getDesignToken('--ds-chart-red-bold', '#E2483D'),
+                getDesignToken('--danger-color', '#FF8F82'),
                 getDesignToken('--app-chart-4', '#F6C85F'),
                 getDesignToken('--app-chart-3', '#7AB8FF')
             ];

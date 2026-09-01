@@ -105,7 +105,7 @@ input[type=number] {
 
 .loader-content--error {
     width: min(34rem, calc(100vw - 32px));
-    padding: var(--ds-space-400, 32px);
+    padding: var(--space-7);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     background: var(--surface-color);
@@ -114,12 +114,12 @@ input[type=number] {
 }
 
 .loader-content--error h1 {
-    margin: var(--ds-space-200, 16px) 0 var(--ds-space-100, 8px);
+    margin: var(--space-4) 0 var(--space-2);
     color: var(--text-primary);
-    font: var(--ds-font-heading-large, 600 24px/1.25 var(--font-heading));
+    font: 600 24px/1.25 var(--font-heading);
 }
 
-.loader-content--error p { margin: var(--ds-space-100, 8px) 0; }
+.loader-content--error p { margin: var(--space-2) 0; }
 
 .loader-error-icon {
     display: inline-flex;

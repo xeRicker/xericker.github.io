@@ -1,6 +1,7 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
-import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=5';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=60';
+import { cardClass } from './components/Card.js';
 
 const DEFAULT_MONTH_HOURS = 160;
 
@@ -77,6 +78,7 @@ export function setupPayrollCalculator(config) {
         document.getElementById(resHoursId).innerText = `${totalHours.toFixed(1)} h`;
         document.getElementById(resMoneyId).innerText = formatMoney(totalHours * rate);
 
+        detailsBox.classList.remove('u-hidden');
         detailsBox.style.display = 'block';
         detailsBox.innerHTML = buildDetailsHtml(breakdown, locationHours, totalHours, rate);
     };
@@ -149,6 +151,7 @@ export function setupPayrollCalculator(config) {
 
 function hideResults(resultBox, detailsBox) {
     resultBox.style.display = 'none';
+    detailsBox.classList.add('u-hidden');
     detailsBox.style.display = 'none';
 }
 
@@ -186,19 +189,19 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
 
     return `
         <div class="calc-breakdown-summary">
-            <div class="calc-breakdown-card">
+            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
                 <span class="calc-breakdown-label">Liczba zmian</span>
                 <strong>${shiftCount}</strong>
             </div>
-            <div class="calc-breakdown-card">
+            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
                 <span class="calc-breakdown-label">Średnio na zmianę</span>
                 <strong>${shiftCount ? (totalHours / shiftCount).toFixed(1) : '0.0'} h</strong>
             </div>
-            <div class="calc-breakdown-card">
+            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
                 <span class="calc-breakdown-label">% etatu</span>
                 <strong>${employmentPercent}%</strong>
             </div>
-            <div class="calc-breakdown-card">
+            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
                 <span class="calc-breakdown-label">Stawka</span>
                 <strong>${rate.toFixed(2)} PLN</strong>
             </div>
@@ -206,10 +209,10 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
 
         <div class="calc-breakdown-pills">${summaryHtml}</div>
 
-        <section class="calc-breakdown-report">
+        <section class="${cardClass('table', 'calc-breakdown-report')} ">
             <div class="table-head calc-breakdown-head">
                 <div class="section-heading">
-                    <h3>Raport Wypłaty</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> PODSUMOWANIE WYPŁATY</h3>
                     <p>${shiftCount} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</p>
                 </div>
             </div>

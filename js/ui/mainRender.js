@@ -1,4 +1,5 @@
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
+import { cardClass } from './components/Card.js';
 
 const CATEGORY_SYMBOLS = {
     "🥩": "restaurant",
@@ -35,7 +36,7 @@ export const mainRender = {
         const safeName = escapeHtml(name);
 
         return `
-            <div class="employee-row animate-stagger ${temporary ? 'employee-row--temporary active' : ''}" data-employee-id="${safeId}" data-temporary-employee="${temporary ? 'true' : 'false'}" style="animation-delay:${delay}s">
+            <div class="${cardClass('employee-row', `employee-row animate-stagger ${temporary ? 'employee-row--temporary active' : ''}`)}" data-employee-id="${safeId}" data-temporary-employee="${temporary ? 'true' : 'false'}" style="animation-delay:${delay}s">
                 <div class="employee-info">
                     <div class="avatar" style="background-color:${escapeHtml(color)}">${escapeHtml((name || 'N')[0])}</div>
                     ${temporary
@@ -44,7 +45,7 @@ export const mainRender = {
                     }
                     <div class="preset-btn-wrapper">
                         <button class="btn-preset" type="button" style="color:var(--primary-color)" aria-label="Szybkie godziny">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span class="material-symbols-rounded" aria-hidden="true">schedule</span>
                         </button>
                         <select class="hidden-preset-select" data-id="${safeId}"><option></option>${opts}</select>
                     </div>
@@ -57,7 +58,7 @@ export const mainRender = {
 
     renderTemporaryEmployeeButton(delay = 0) {
         return `
-            <button class="employee-row employee-row--add animate-stagger" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
+            <button class="${cardClass('employee-row', 'employee-row employee-row--add animate-stagger')}" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
                 <div class="employee-info">
                     <div class="avatar avatar--new">+</div>
                     <div class="emp-name">
@@ -106,16 +107,16 @@ export const mainRender = {
             const name = escapeHtml(p.name);
             if(p.type === 's' || p.type === 'toggle') {
                 return `
-                        <div class="product-card animate-stagger type-toggle" data-name="${name}" style="animation-delay:${delay}s">
+                        <div class="${cardClass('product', 'product-card animate-stagger type-toggle')}" data-name="${name}" style="animation-delay:${delay}s">
                             <div class="product-name">${name}</div>
                             <div class="controls">
-                                <div class="toggle-indicator"><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                <div class="toggle-indicator"><span class="check-icon material-symbols-rounded" aria-hidden="true">check</span></div>
                                 <input type="checkbox" id="checkbox-${name}" data-name="${name}" style="display:none">
                             </div>
                         </div>`;
             } else {
                 return `
-                        <div class="product-card animate-stagger" data-name="${name}" style="animation-delay:${delay}s">
+                        <div class="${cardClass('product', 'product-card animate-stagger')}" data-name="${name}" style="animation-delay:${delay}s">
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="counter-wrapper">

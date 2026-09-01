@@ -1,10 +1,10 @@
 @import url("css/base.css");
 @import url("css/theme/palette.css");
-@import url("css/layout.css?v=1");
-@import url("css/generator.css");
-@import url("css/burgers.css?v=3");
-@import url("css/admin.css?v=4");
-@import url("css/admin-products-lists.css");
+@import url("css/layout.css?v=60");
+@import url("css/generator.css?v=61");
+@import url("css/burgers.css?v=60");
+@import url("css/admin.css?v=66");
+@import url("css/admin-products-lists.css?v=61");
 @import url("css/feedback.css");
 @import url("css/components/custom-controls.css");
 @import url("css/theme/atlassian-overrides.css");

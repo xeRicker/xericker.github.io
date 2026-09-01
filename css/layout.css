@@ -95,7 +95,8 @@
 /* =================================
    Cards (Sections & Products)
    ================================= */
-.section-card {
+.section-card,
+.card--section {
     background: var(--surface-color);
     border-radius: var(--radius-md);
     padding: 20px;
@@ -104,7 +105,8 @@
     border: 1px solid #333;
 }
 
-.section-card h2 { font-size: 18px; margin-bottom: 16px; color: var(--text-secondary); }
+.section-card h2,
+.card--section h2 { font-size: 18px; margin-bottom: 16px; color: var(--text-secondary); }
 .section-card h2,
 .calc-res-item h4 {
     display: flex;

@@ -55,7 +55,7 @@
 }
 
 .worker-data-status {
-    margin: 0 0 var(--ds-space-200, 16px);
+    margin: 0 0 var(--space-4);
 }
 
 .worker-calculator-controls {
@@ -205,10 +205,12 @@ input:focus { outline: none; }
 }
 
 .avatar--new {
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 26px;
     line-height: 1;
+    padding-bottom: 2px;
     color: var(--primary-hover);
     background: var(--primary-soft);
     border: 1px solid color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
@@ -339,8 +341,16 @@ input:focus { outline: none; }
     border-color: var(--success-color);
     color: white;
 }
-.check-icon { display: none; width: 16px; height: 16px; }
-.product-card.active .check-icon { display: block; }
+.check-icon {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+.product-card.active .check-icon { display: inline-flex; }
 
 .counter-wrapper {
     display: flex;

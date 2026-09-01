@@ -35,7 +35,111 @@ select:focus { border-color: var(--primary-color); }
 
 .admin-load-all-wrap {
     position: relative;
-    display: inline-flex;
+    display: grid;
+    grid-template-columns: 178px 178px;
+    grid-template-areas:
+        "range button"
+        ". info";
+    align-items: end;
+    gap: 4px 10px;
+}
+
+.admin-load-range {
+    grid-area: range;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 178px;
+}
+
+.admin-load-range span,
+.admin-load-info {
+    color: var(--text-muted);
+    font: 700 10px/1.2 var(--font-heading);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.admin-load-range select {
+    min-height: 42px;
+    padding: 9px 34px 9px 12px;
+    border-color: var(--border-focused);
+    background-color: var(--surface-raised);
+    font-size: 13px;
+}
+
+.admin-load-all-btn {
+    grid-area: button;
+    position: relative;
+    min-width: 178px;
+    min-height: 42px;
+    padding-inline: 10px;
+    gap: 6px;
+    white-space: nowrap;
+    font-size: 12px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--surface-raised), var(--surface-color));
+    border-color: color-mix(in srgb, var(--primary-color) 48%, var(--border-color));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 12%, transparent), 0 8px 20px color-mix(in srgb, var(--primary-color) 12%, transparent);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.admin-load-all-btn.is-loaded {
+    background: color-mix(in srgb, var(--success-color) 10%, var(--surface-raised));
+    border-color: color-mix(in srgb, var(--success-color) 62%, var(--border-color));
+    color: var(--success-color);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--success-color) 12%, transparent);
+}
+
+.admin-load-all-btn.is-loaded .material-symbols-rounded {
+    color: var(--success-color);
+}
+
+.admin-load-all-btn::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(110deg, transparent 20%, color-mix(in srgb, var(--primary-color) 20%, transparent) 50%, transparent 80%);
+    transform: translateX(-130%);
+    transition: transform .55s ease;
+}
+
+.admin-load-all-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--primary-color) 22%, transparent);
+}
+
+.admin-load-all-btn:hover::after { transform: translateX(130%); }
+.admin-load-all-btn > * { position: relative; z-index: 1; }
+
+.admin-load-info {
+    grid-area: info;
+    align-self: center;
+    max-width: none;
+    white-space: nowrap;
+    line-height: 1.35;
+    padding-top: 1px;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.admin-load-range .custom-control__chevron {
+    width: 12px;
+    height: 12px;
+    overflow: visible;
+    font-size: 0;
+}
+
+.admin-load-range .custom-control__chevron::after {
+    content: '';
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid var(--text-muted);
+    border-bottom: 2px solid var(--text-muted);
+    transform: rotate(45deg) translate(-1px, -2px);
 }
 
 .admin-load-all-icon.is-attention {
@@ -81,7 +185,7 @@ select:focus { border-color: var(--primary-color); }
 .admin-month-select .custom-control__button {
     min-height: 40px;
     border-radius: var(--radius-md);
-    background: var(--ds-background-neutral, #CECED912);
+    background: var(--surface-active);
     text-transform: uppercase;
     font-family: var(--font-heading);
     font-size: 13px;
@@ -493,6 +597,25 @@ select:focus { border-color: var(--primary-color); }
 .section-heading h3 { color: #eee; }
 .section-heading p { margin: 6px 0 0; color: #8c8c8c; font-size: 14px; text-transform: none; font-family: var(--font-body); letter-spacing: 0; }
 .section-heading--stack { margin-bottom: 20px; }
+
+/* Wspólny język nagłówków paneli */
+.section-heading h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+.section-heading h3 .material-symbols-rounded {
+    color: var(--primary-color);
+    font-size: 20px;
+    line-height: 1;
+}
 .chart-controls button { background: transparent; border: 1px solid #444; color: var(--text-secondary); padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: var(--font-heading); text-transform: uppercase; font-size: 13px; }
 .chart-controls button.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
@@ -732,10 +855,53 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 }
 
 .monthly-report-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
     color: var(--text-secondary);
     font-size: 13px;
     font-family: var(--font-body);
 }
+.monthly-report-status > .material-symbols-rounded { color: var(--primary-color); font-size: 20px; }
+.monthly-report-status--loading > .material-symbols-rounded { animation: admin-spin 1s linear infinite; }
+.monthly-report-status__bar { flex: 1 1 140px; max-width: 260px; height: 5px; overflow: hidden; border-radius: var(--radius-pill); background: var(--border-color); }
+.monthly-report-status__bar i { display: block; width: 42%; height: 100%; border-radius: inherit; background: var(--primary-color); animation: report-loading 1.2s ease-in-out infinite; }
+.monthly-report-status--error { border-color: color-mix(in srgb, var(--danger-color) 45%, var(--border-color)); color: var(--danger-color); }
+@keyframes report-loading { 0% { transform: translateX(-120%); } 100% { transform: translateX(340%); } }
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+
+/* Filtr tygodni: stabilne kafelki i czytelny przewijany tor */
+.admin-period-weeks { align-items: stretch; }
+.week-tabs { padding: 3px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); gap: 5px; scrollbar-width: none; }
+.week-tab { flex: 0 0 auto; min-height: 36px; padding: 8px 13px; border: 0; border-radius: var(--radius-sm); background: transparent; font-size: 12px; }
+.week-tab.active { box-shadow: none; }
+.daily-report-loading { display: flex; align-items: center; gap: 9px; padding: 18px 24px; color: var(--text-secondary); font-family: var(--font-heading); font-size: 12px; letter-spacing: .02em; }
+.daily-report-loading .material-symbols-rounded { color: var(--primary-color); animation: admin-spin 1s linear infinite; }
+.week-events-note { display: flex; align-items: center; gap: 12px; margin: -8px 0 18px; padding: 8px 12px; color: var(--text-secondary); font-size: 12px; }
+.week-events-note .insight-label { margin: 0; color: var(--text-secondary); }
+.week-events-note strong { color: var(--text-primary); font-family: var(--font-heading); }
+.week-events-note p { margin: 0; color: var(--text-muted); }
+.week-events-note .summary-icon-badge { width: 22px; height: 22px; font-size: 15px; }
+.week-events-note { position: relative; overflow: hidden; min-height: 68px; margin: 0 0 18px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--app-info) 32%, var(--border-color)); border-radius: var(--radius-md); background: linear-gradient(135deg, color-mix(in srgb, var(--app-info-bg) 82%, var(--surface-color)), var(--surface-color)); box-shadow: var(--shadow-raised); cursor: help; }
+.week-events-note.has-events { border-color: color-mix(in srgb, var(--glovo-color) 44%, var(--border-color)); background: linear-gradient(135deg, color-mix(in srgb, var(--glovo-dark) 74%, var(--surface-color)), var(--surface-color)); }
+.week-events-note__icon { flex: 0 0 auto; }
+.week-events-note__icon .summary-icon-badge { width: 36px; height: 36px; font-size: 20px; }
+.week-events-note__content { min-width: 0; display: grid; gap: 2px; }
+.week-events-note__eyebrow { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .08em; text-transform: uppercase; }
+.week-events-note__content strong { font-size: 15px; }
+.week-events-note__content p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.week-events-note__arrow { margin-left: auto; color: var(--text-muted); }
+.admin-lists-filters { display: grid; grid-template-columns: minmax(150px, .8fr) minmax(150px, .8fr) minmax(220px, 1.4fr); gap: 10px; width: min(100%, 720px); }
+.admin-lists-filters .calc-input { min-width: 0; width: 100%; }
+.monthly-report-panel .section-heading h3::before { content: 'monitoring'; font-family: 'Material Symbols Rounded'; color: var(--primary-color); font-size: 20px; line-height: 1; }
+.section-card h2 { display: flex; align-items: center; gap: 9px; color: var(--text-primary); font-family: var(--font-heading); font-size: 14px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
+.section-card h2 .title-icon { color: var(--primary-color); font-size: 20px; }
+@media (max-width: 640px) { .admin-lists-filters { grid-template-columns: 1fr; width: 100%; } }
 
 .monthly-report-status:empty {
     display: none;
@@ -782,7 +948,7 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     display: block;
     margin-top: 10px;
     color: var(--text-primary);
-    font: var(--ds-font-heading-large, 700 26px/32px var(--font-heading));
+    font: 700 26px/32px var(--font-heading);
 }
 
 .monthly-report-range p {
@@ -977,6 +1143,25 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
     .admin-load-all-wrap,
     .admin-load-all-btn {
         width: 100%;
+    }
+
+    .admin-load-all-wrap {
+        align-items: stretch;
+        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "range"
+            "button"
+            "info";
+    }
+
+    .admin-load-range {
+        width: 100%;
+    }
+
+    .admin-load-info {
+        max-width: none;
+        text-align: center;
     }
 
     .monthly-report-grid,

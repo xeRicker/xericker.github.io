@@ -1,6 +1,6 @@
-import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=5';
+import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=60';
 
-const BURGER_DATA_URL = 'database/burgers.json?v=3';
+const BURGER_DATA_URL = 'database/burgers.json?v=60';
 
 export async function setupBurgerConfigurator(root) {
     const config = await loadBurgerConfig();

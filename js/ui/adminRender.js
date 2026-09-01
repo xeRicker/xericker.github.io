@@ -1,4 +1,5 @@
-import { formatMoney, renderMaterialIcon } from '../utils.js';
+import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
+import { cardClass } from './components/Card.js';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',
@@ -33,8 +34,8 @@ class AdminRender {
             getDesignToken(token, ['#D4521A', '#7DCE82', '#7AB8FF', '#F6C85F', '#C58CFF'][index])
         );
 
-        Chart.defaults.font.family = getDesignToken('--ds-font-family-body', 'ui-sans-serif, system-ui, sans-serif');
-        Chart.defaults.color = getDesignToken('--ds-text-subtle', '#A9ABAF');
+        Chart.defaults.font.family = getDesignToken('--font-body', 'sans-serif');
+        Chart.defaults.color = getDesignToken('--text-secondary', '#C8BAB3');
 
         this.chart = new Chart(ctx, {
             type,
@@ -58,7 +59,7 @@ class AdminRender {
                 plugins: {
                     legend: {
                         labels: {
-                            font: { family: getDesignToken('--ds-font-family-heading', 'ui-sans-serif, system-ui, sans-serif'), size: 14 }
+                            font: { family: getDesignToken('--font-heading', 'sans-serif'), size: 14 }
                         }
                     },
                     tooltip: {
@@ -69,7 +70,7 @@ class AdminRender {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: getDesignToken('--ds-border', '#E3E4F21F') },
+                        grid: { color: getDesignToken('--border-color', 'rgba(255, 244, 238, 0.14)') },
                         ticks: {
                             callback: value => `${Math.round(value)} zł`
                         }
@@ -89,8 +90,16 @@ class AdminRender {
         const yearNumber = Number(year);
         const daysInMonth = new Date(yearNumber, monthNumber, 0).getDate();
         const startDay = new Date(yearNumber, monthNumber - 1, 1).getDay() || 7;
-        const monthlyPeak = data.reduce((max, day) => Math.max(max, this.getMetricValue(day, options.viewMode)), 0) || 1;
         const dataMap = new Map(data.map(day => [day.dateStr, day]));
+        const legend = document.getElementById('heatmapLegend');
+        if (legend) {
+            legend.innerHTML = [
+                ['heatmap-legend__low', '0–999', 'średnio'],
+                ['heatmap-legend__ok', '1000–1999', 'dobrze'],
+                ['heatmap-legend__super', '2000–2999', 'super'],
+                ['heatmap-legend__extra', '3000+', 'extra']
+            ].map(([className, value, label]) => `<span><i class="${className}"></i><b>${value}</b> ${label}</span>`).join('');
+        }
 
         for (let offset = 1; offset < startDay; offset++) {
             container.innerHTML += `<div class="heatmap-cell heatmap-empty"></div>`;
@@ -109,13 +118,12 @@ class AdminRender {
             }
 
             const value = this.getMetricValue(entry, options.viewMode);
-            const intensity = Math.min(value / monthlyPeak, 1);
             const cell = document.createElement('div');
             cell.className = 'heatmap-cell';
-            cell.style.setProperty('--heat-intensity', intensity.toFixed(2));
-
-            if (intensity >= 0.78) cell.classList.add('fire');
-            else if (intensity >= 0.45) cell.classList.add('warm');
+            const level = value >= 3000 ? 'extra' : value >= 2000 ? 'super' : value >= 1000 ? 'ok' : 'low';
+            cell.classList.add(`heatmap-cell--${level}`);
+            cell.dataset.heatLevel = level;
+            cell.dataset.heatValue = Math.round(value);
 
             cell.innerHTML = `
                 <span class="heatmap-date">${dayNumber}</span>
@@ -142,25 +150,25 @@ class AdminRender {
         const averageDay = total / data.length;
 
         container.innerHTML = `
-            <div class="summary-box summary-box--primary">
+            <div class="${cardClass('summary', 'summary-box summary-box--primary')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('monitoring', 'summary-icon-badge--revenue')} Utarg</span>
                 <h3>Łączny</h3>
                 <p class="highlight">${formatMoney(total)}</p>
                 <small>${data.length} dni / średnio ${formatMoney(averageDay)}</small>
             </div>
-            <div class="summary-box">
+            <div class="${cardClass('summary', 'summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('credit_card', 'summary-icon-badge--cards')} Karty</span>
                 <h3>Suma</h3>
                 <p>${formatMoney(cards)}</p>
                 <small>${this.formatPercent(cards, total)} całego utargu</small>
             </div>
-            <div class="summary-box summary-box--glovo">
+            <div class="${cardClass('summary', 'summary-box summary-box--glovo')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Glovo</span>
                 <h3>Suma</h3>
                 <p>${formatMoney(glovoNet)}</p>
                 <small>Po prowizji Glovo</small>
             </div>
-            <div class="summary-box">
+            <div class="${cardClass('summary', 'summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('savings', 'summary-icon-badge--cash')} Gotówka</span>
                 <h3>Suma</h3>
                 <p>${formatMoney(cashDesk)}</p>
@@ -175,36 +183,18 @@ class AdminRender {
             return;
         }
 
-        const strongestDay = [...data].sort((left, right) => right.total - left.total)[0];
-        const glovoHeavy = [...data].sort((left, right) => {
-            const rightRatio = right.total ? this.getGlovoDisplayValue(right) / right.total : 0;
-            const leftRatio = left.total ? this.getGlovoDisplayValue(left) / left.total : 0;
-            return rightRatio - leftRatio;
-        })[0];
-        const leader = this.aggregateLocations(data)[0];
         const weekEvents = this.getWeekEvents(data);
         const leadEvent = weekEvents[0];
 
         container.innerHTML = `
-            <div class="insight-card">
-                <span class="insight-label">${this.buildSymbolIcon('local_fire_department')} Najlepszy dzień</span>
-                <strong>${strongestDay.dateStr}</strong>
-                <p>${formatMoney(strongestDay.total)} / ${strongestDay.dayOfWeek}</p>
-            </div>
-            <div class="insight-card insight-card--glovo">
-                <span class="insight-label">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Największy udział Glovo</span>
-                <strong>${glovoHeavy.dateStr}</strong>
-                <p>${this.formatPercent(this.getGlovoDisplayValue(glovoHeavy), glovoHeavy.total)} dnia</p>
-            </div>
-            <div class="insight-card insight-card--accent">
-                <span class="insight-label">${this.buildSymbolIcon('place')} Lider punktów</span>
-                <strong>${leader?.name || 'Brak'}</strong>
-                <p>${leader ? `${formatMoney(leader.total)} / średnio ${formatMoney(leader.avgDay)}` : '-'}</p>
-            </div>
-            <div class="insight-card insight-card--events" data-week-events="true" data-callout-anchor="week-events">
-                <span class="insight-label">${this.buildSymbolIcon('event', 'summary-icon-badge--event')} Wydarzenia tygodnia</span>
-                <strong>${weekEvents.length ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}` : 'Brak'}</strong>
-                <p>${leadEvent ? `${leadEvent.dateStr} / ${leadEvent.name}` : 'Brak świąt i wydarzeń w tym tygodniu'}</p>
+            <div class="week-events-note ${weekEvents.length ? 'has-events' : 'is-empty'}" data-week-events="true" data-callout-anchor="week-events">
+                <span class="week-events-note__icon">${this.buildSymbolIcon(weekEvents.length ? 'celebration' : 'event_available', 'summary-icon-badge--event')}</span>
+                <div class="week-events-note__content">
+                    <span class="week-events-note__eyebrow">Kalendarz tygodnia</span>
+                    <strong>${weekEvents.length ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}` : 'Spokojny tydzień'}</strong>
+                    <p>${leadEvent ? `${escapeHtml(leadEvent.dateStr)} · ${escapeHtml(leadEvent.name)}` : 'Brak świąt i wydarzeń wpływających na ten okres'}</p>
+                </div>
+                <span class="material-symbols-rounded week-events-note__arrow" aria-hidden="true">chevron_right</span>
             </div>
         `;
 
@@ -224,7 +214,7 @@ class AdminRender {
 
         const aggregated = this.aggregateLocations(data);
         container.innerHTML = aggregated.map((location, index) => `
-            <div class="location-card ${index === 0 ? 'location-card--lead' : ''}">
+            <div class="${cardClass('location', `location-card ${index === 0 ? 'location-card--lead' : ''}`)}">
                 <div class="location-card-head">
                     <div>
                         <span class="summary-kicker">${this.buildSymbolIcon('place')} Punkt</span>
@@ -238,10 +228,6 @@ class AdminRender {
                     <div><span>Karty</span><strong>${formatMoney(location.card)}</strong></div>
                     <div class="location-stat--glovo"><span>Glovo</span><strong>${formatMoney(location.glovoNet)}</strong></div>
                     <div><span>Gotówka</span><strong>${formatMoney(location.cashDesk)}</strong></div>
-                </div>
-                <div class="location-foot">
-                    <span>Najlepszy dzień: ${location.bestDay.dateStr}</span>
-                    <strong>${formatMoney(location.bestDay.total)}</strong>
                 </div>
             </div>
         `).join('');
@@ -297,7 +283,6 @@ class AdminRender {
                     </td>
                     <td class="val-cell">
                         <div class="cell-primary">${employee.hours.toFixed(1)} h</div>
-                        <div class="cell-secondary">Łącznie w okresie</div>
                     </td>
                     <td class="val-cell"><span class="point-pill point-pill--accent"><strong>${percent.toFixed(1)}%</strong></span></td>
                     <td><div class="point-pill-list">${locationBadges}</div></td>
@@ -528,10 +513,10 @@ class AdminRender {
     }
 
     buildDatasetLabel(location, options) {
-        if (options.viewMode === 'cards') return `${location} • karty`;
-        if (options.viewMode === 'glovo') return `${location} • Glovo`;
-        if (options.viewMode === 'cash') return `${location} • gotówka`;
-        return `${location} • utarg`;
+        if (options.viewMode === 'cards') return `${location.toUpperCase()} • KARTY`;
+        if (options.viewMode === 'glovo') return `${location.toUpperCase()} • GLOVO`;
+        if (options.viewMode === 'cash') return `${location.toUpperCase()} • GOTÓWKA`;
+        return `${location.toUpperCase()} • UTARG`;
     }
 
     getViewLabel(viewMode) {
@@ -675,7 +660,7 @@ class AdminRender {
     }
 
     buildEmptyState(label) {
-        return `<div class="summary-box summary-box--empty"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
+        return `<div class="${cardClass('summary', 'summary-box summary-box--empty')}"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
     }
 
 }

@@ -1,15 +1,15 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=4';
+import { mainRender } from './ui/mainRender.js?v=60';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js?v=3';
+import { apiService } from './services/api.js?v=62';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=4';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=5';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=3';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=60';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=9';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=60';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -280,7 +280,7 @@ async function generateReport() {
     const reportText = buildReportText(data, productCatalog);
     try {
         if (await apiService.checkFileExists(selectedLocation, date)) {
-            if(!(await dialogService.confirm("Raport z tego dnia już istnieje. Nadpisać?", "Nadpisać raport?"))) return;
+            if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?"))) return;
         }
 
         await apiService.saveReport(data);

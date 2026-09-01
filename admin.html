@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="css/atlassian-tokens.css?v=1">
-    <link rel="stylesheet" href="style.css?v=47">
+    <link rel="stylesheet" href="style.css?v=66">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
-<body style="display: none; overflow: hidden;">
+<body class="admin-page">
 
 <div id="customTooltip"></div>
 
@@ -25,7 +24,7 @@
             </div>
         </div>
         <div class="loader-text">ŁADOWANIE DANYCH</div>
-        <div class="loader-subtext">Przygotowywanie raportów i statystyk...</div>
+        <div class="loader-subtext">Przygotowywanie list i statystyk...</div>
         <div class="loader-progress-track">
             <div class="loader-progress-bar"></div>
         </div>
@@ -45,13 +44,23 @@
         </div>
         <div class="header-actions">
             <div class="admin-load-all-wrap" data-callout-anchor="load-all-data">
+                <label class="admin-load-range">
+                    <span>ZAKRES DANYCH</span>
+                    <select id="loadDataRange" aria-label="Zakres danych do załadowania">
+                        <option value="3">Ostatnie 3 miesiące</option>
+                        <option value="6">Ostatnie 6 miesięcy</option>
+                        <option value="12">Ostatnie 12 miesięcy</option>
+                        <option value="0">Wszystko</option>
+                    </select>
+                </label>
                 <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
                 ZAŁADUJ DANE
                 </button>
+                <span id="dataLoadInfo" class="admin-load-info" role="status">Załadowane: — / dostępne: — miesięcy</span>
             </div>
             <a href="index.html" id="adminBackBtn" class="btn-back">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>
                 WRÓĆ
             </a>
         </div>
@@ -68,7 +77,7 @@
         </button>
         <button class="admin-page-tab" type="button" data-admin-tab="monthlyReport" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">query_stats</span>
-            Raport miesiąca
+            PORÓWNANIE
         </button>
         <button class="admin-page-tab" type="button" data-admin-tab="products" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
@@ -87,7 +96,7 @@
                 MIESIĄC
             </label>
             <div class="admin-month-select">
-                <select id="monthFilter" aria-label="Miesiąc raportów"></select>
+                    <select id="monthFilter" aria-label="Miesiąc list"></select>
             </div>
         </div>
         <div class="admin-period-divider" aria-hidden="true"></div>
@@ -106,25 +115,24 @@
 
     <div class="view-toggle animate-enter delay-2" data-admin-page="revenue">
         <button class="view-btn active" data-view="total">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-            UTARG CAŁKOWITY
+            <span class="material-symbols-rounded" aria-hidden="true">add</span>
+            UTARG
         </button>
         <button class="view-btn" data-view="cards">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span class="material-symbols-rounded" aria-hidden="true">credit_card</span>
             KARTY
         </button>
         <button class="view-btn" data-view="glovo">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l-1.2 6H6.2L5.4 17H18"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/><path d="M16 7l2-3 3 2"/></svg>
+            <span class="material-symbols-rounded" aria-hidden="true">shopping_cart</span>
             GLOVO
         </button>
     </div>
 
     <div class="dashboard-grid dashboard-grid--focus animate-enter delay-3" data-admin-page="revenue">
-        <div class="chart-card chart-card--feature">
+        <div class="card card--chart chart-card chart-card--feature">
             <div class="chart-header">
                 <div class="section-heading">
-                    <h3>Wizualizacja utargu</h3>
-                    <p>Porównanie punktów w aktywnym widoku i filtrowanym zakresie.</p>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> WIZUALIZACJA UTARGU</h3>
                 </div>
                 <div class="chart-controls">
                     <button class="chart-btn active" data-type="bar">Słupkowy</button>
@@ -140,18 +148,19 @@
 
     <div id="locationPerformanceSection" class="location-grid animate-enter delay-3" data-admin-page="revenue"></div>
 
-    <div class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="revenue">
-        <div class="section-heading section-heading--stack">
-            <h3>Mapa Cieplna</h3>
+        <div class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="revenue">
+            <div class="section-heading section-heading--stack">
+                <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> MAPA CIEPLNA</h3>
+                <p>Każdy dzień ma poziom energii zależny od łącznego utargu.</p>
+            </div>
+            <div id="heatmapContainer" class="heatmap-grid"></div>
+            <div id="heatmapLegend" class="heatmap-legend" aria-label="Legenda poziomów utargu"></div>
         </div>
-        <div id="heatmapContainer" class="heatmap-grid"></div>
-    </div>
 
-    <div class="chart-card animate-enter delay-3 calc-card" style="margin-bottom: 40px;" data-admin-page="payroll" hidden>
+    <div class="card card--chart chart-card animate-enter delay-3 calc-card u-card-spacing" data-admin-page="payroll" hidden>
         <div class="chart-header">
             <div class="section-heading">
-                <h3>Kalkulator Wypłaty</h3>
-                <p>Wybierz pracownika, zakres dat i stawkę, żeby szybko policzyć godziny, % etatu i wypłatę.</p>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">calculate</span> KALKULATOR WYPŁATY</h3>
             </div>
         </div>
         <div class="calc-grid">
@@ -178,23 +187,23 @@
             </div>
         </div>
 
-        <div id="calcResult" class="calc-result-box" style="display:none;">
+        <div id="calcResult" class="card card--summary calc-result-box" style="display:none;">
             <div class="calc-res-item">
                 <h4>
-                    <svg class="calc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span class="calc-icon material-symbols-rounded" aria-hidden="true">schedule</span>
                     GODZINY
                 </h4>
                 <p id="resHours">0 h</p>
             </div>
             <div class="calc-res-item">
                 <h4>
-                    <svg class="calc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                    <span class="calc-icon material-symbols-rounded" aria-hidden="true">payments</span>
                     WYPŁATA
                 </h4>
                 <p id="resMoney" class="money">0 zł</p>
             </div>
         </div>
-        <div id="calcDetails" style="margin-top: 15px; font-size: 13px; color: var(--text-secondary); display:none;"></div>
+        <div id="calcDetails" class="u-detail-note"></div>
     </div>
 
 
@@ -204,10 +213,10 @@
         <div id="monthlyReportContent" class="monthly-report-content"></div>
     </div>
 
-    <div class="table-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="payroll" hidden>
+    <div class="card card--table table-card animate-enter delay-3 u-card-spacing" data-admin-page="payroll" hidden>
         <div class="table-head">
             <div class="section-heading">
-                <h3>Raport Godzin</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">schedule</span> GODZINY PRACY</h3>
             </div>
         </div>
         <div class="table-responsive">
@@ -225,29 +234,41 @@
         </div>
     </div>
 
-    <div id="adminProductsPage" class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="products" hidden></div>
+    <div id="adminProductsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="products" hidden></div>
 
-    <div id="adminListsPage" class="chart-card animate-enter delay-3" style="margin-bottom: 40px;" data-admin-page="lists" hidden>
+    <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
-            <div class="section-heading">
-                <h3>Wygenerowane Listy</h3>
-                <p>Podgląd zapisanych raportów i ponowne kopiowanie listy na Messengera.</p>
+            <div class="admin-lists-intro">
+                <span class="material-symbols-rounded" aria-hidden="true">folder_copy</span>
+                <div>
+                    <h3>ZAPISANE LISTY</h3>
+                </div>
             </div>
             <div class="admin-lists-filters">
-                <select id="listLocationFilter" class="calc-input"></select>
-                <input id="listSearchInput" type="search" class="calc-input" placeholder="Szukaj daty lub punktu">
+                <label class="admin-filter-field">
+                    <span>MIESIĄC</span>
+                    <select id="listMonthFilter" class="calc-input" aria-label="Miesiąc list"></select>
+                </label>
+                <label class="admin-filter-field">
+                    <span>PUNKT</span>
+                    <select id="listLocationFilter" class="calc-input" aria-label="Punkt listy"></select>
+                </label>
+                <label class="admin-filter-field admin-filter-field--search">
+                    <span>SZUKAJ</span>
+                    <input id="listSearchInput" type="search" class="calc-input" placeholder="Data, punkt lub liczba produktów" aria-label="Szukaj listy, daty lub punktu">
+                </label>
             </div>
         </div>
         <div id="adminListsContent" class="admin-lists-layout"></div>
     </div>
 
-    <div class="table-card animate-enter delay-3" data-admin-page="revenue">
+    <div class="card card--table table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
-                <h3>Raport Dzienny</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> LISTA DZIENNA</h3>
             </div>
         </div>
-        <div id="loading">Ładowanie danych...</div>
+        <div id="loading" class="daily-report-loading"><span class="material-symbols-rounded" aria-hidden="true">progress_activity</span> ŁADOWANIE DANYCH...</div>
         <div class="table-responsive">
             <table id="revenueTable" style="display:none;">
                 <thead>
@@ -267,6 +288,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=37"></script>
+<script type="module" src="js/admin.js?v=66"></script>
 </body>
 </html>

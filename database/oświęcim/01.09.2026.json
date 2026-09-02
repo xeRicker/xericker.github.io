@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "01.09.2026",
+  "revenue": 956,
+  "cardRevenue": 731,
+  "glovoRevenue": 47,
+  "employees": {
+    "Sebastian": "12:00 – 21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Placki": 1,
+    "Frytura": 1,
+    "Bułki": 13,
+    "Przyprawa do grilla": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
+  }
+}

@@ -920,14 +920,17 @@ a:focus-visible,
 }
 .section-card h2 { margin-bottom: var(--space-5); }
 
-/* Heatmap levels and lightweight energy animations. */
+/* Heatmap: a restrained ember language that scales with the day's revenue. */
 .heatmap-cell {
     overflow: hidden;
     isolation: isolate;
+    min-width: 0;
     border-radius: var(--radius-md);
     border-color: var(--border-color);
     background: var(--surface-raised);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 3%, transparent);
 }
+.heatmap-day-header { min-width: 0; }
 .heatmap-cell::before,
 .heatmap-cell::after {
     content: '';
@@ -938,36 +941,63 @@ a:focus-visible,
 }
 .heatmap-cell::before {
     z-index: -1;
-    background: radial-gradient(circle at 50% 110%, color-mix(in srgb, var(--primary-color) 38%, transparent), transparent 68%);
-    opacity: .18;
+    background:
+        radial-gradient(ellipse at 50% 108%, color-mix(in srgb, var(--heat-accent, var(--primary-color)) 72%, transparent), transparent 64%),
+        linear-gradient(145deg, color-mix(in srgb, var(--heat-accent, var(--primary-color)) 17%, transparent), transparent 66%);
+    opacity: .46;
+    transform-origin: 50% 100%;
 }
 .heatmap-cell::after {
     z-index: -1;
-    inset: -35%;
-    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 55%, transparent) 0 2%, transparent 3% 15%, color-mix(in srgb, var(--primary-color) 28%, transparent) 16% 17%, transparent 18% 100%);
+    inset: 0;
+    background:
+        radial-gradient(circle at 18% 78%, color-mix(in srgb, var(--heat-accent, var(--primary-color)) 90%, transparent) 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 62%, color-mix(in srgb, var(--heat-accent, var(--primary-color)) 76%, transparent) 0 1px, transparent 2px),
+        radial-gradient(circle at 46% 84%, color-mix(in srgb, var(--primary-hover) 74%, transparent) 0 1px, transparent 2px),
+        linear-gradient(115deg, transparent 18%, color-mix(in srgb, var(--heat-accent, var(--primary-color)) 80%, transparent) 48%, transparent 52%);
+    background-size: auto, auto, auto, 180% 180%;
+    background-position: 0 0, 0 0, 0 0, 0 100%;
     opacity: 0;
 }
-.heatmap-cell--low { background: linear-gradient(145deg, color-mix(in srgb, var(--primary-color) 13%, var(--surface-raised)), var(--surface-raised)); }
-.heatmap-cell--ok { border-color: color-mix(in srgb, var(--glovo-color) 46%, var(--border-color)); background: linear-gradient(145deg, color-mix(in srgb, var(--glovo-color) 18%, var(--surface-raised)), var(--surface-raised)); animation: heatmap-breathe 3.8s ease-in-out infinite; }
-.heatmap-cell--super { border-color: color-mix(in srgb, var(--primary-color) 72%, var(--border-color)); background: linear-gradient(145deg, color-mix(in srgb, var(--primary-color) 42%, var(--surface-raised)), var(--surface-raised)); box-shadow: 0 0 18px color-mix(in srgb, var(--primary-color) 24%, transparent); animation: heatmap-breathe 2.8s ease-in-out infinite; }
-.heatmap-cell--extra { border-color: var(--primary-hover); background: linear-gradient(145deg, color-mix(in srgb, var(--primary-hover) 66%, var(--surface-raised)), color-mix(in srgb, var(--primary-color) 24%, var(--surface-raised))); box-shadow: 0 0 12px color-mix(in srgb, var(--primary-hover) 38%, transparent), 0 0 30px color-mix(in srgb, var(--primary-color) 24%, transparent); animation: heatmap-extra 1.9s ease-in-out infinite; }
+.heatmap-cell--low {
+    --heat-accent: var(--primary-color);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--primary-color) 22%, var(--surface-raised)), var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 34%, var(--border-color));
+}
+.heatmap-cell--ok {
+    --heat-accent: var(--glovo-color);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--glovo-color) 22%, var(--surface-raised)), var(--surface-raised));
+    border-color: color-mix(in srgb, var(--glovo-color) 60%, var(--border-color));
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--glovo-color) 11%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--glovo-color) 12%, transparent);
+}
+.heatmap-cell--super {
+    --heat-accent: var(--primary-pressed);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--primary-pressed) 42%, var(--surface-raised)), var(--surface-raised));
+    border-color: color-mix(in srgb, var(--primary-color) 72%, var(--border-color));
+    box-shadow: 0 5px 18px color-mix(in srgb, var(--primary-pressed) 22%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+.heatmap-cell--extra {
+    --heat-accent: var(--primary-hover);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--primary-hover) 56%, var(--surface-raised)), color-mix(in srgb, var(--primary-color) 24%, var(--surface-raised)));
+    border-color: var(--primary-hover);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--primary-color) 28%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--text-primary) 22%, transparent);
+}
+.heatmap-cell--super::before,
+.heatmap-cell--extra::before { animation: heatmap-ember 2.8s ease-in-out infinite; }
 .heatmap-cell--super::after,
-.heatmap-cell--extra::after { opacity: .35; animation: heatmap-particles 4.5s linear infinite; }
-.heatmap-cell--extra::after { opacity: .7; animation-duration: 2.7s; }
+.heatmap-cell--extra::after { opacity: .42; animation: heatmap-sparks 3.8s ease-in-out infinite; }
+.heatmap-cell--extra::before { animation-duration: 1.8s; }
+.heatmap-cell--extra::after { opacity: .72; animation-duration: 2.3s; }
 .heatmap-cell--extra .heatmap-date,
 .heatmap-cell--extra .heatmap-val { text-shadow: 0 0 9px color-mix(in srgb, var(--text-primary) 72%, transparent); }
-@keyframes heatmap-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-@keyframes heatmap-extra { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.025); } }
-@keyframes heatmap-particles { from { transform: rotate(0deg) translate3d(0, 0, 0); } to { transform: rotate(360deg) translate3d(2%, -2%, 0); } }
-.heatmap-legend { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 11px; }
-.heatmap-legend span { display: inline-flex; align-items: center; gap: 5px; }
-.heatmap-legend i { width: 10px; height: 10px; border-radius: 50%; background: var(--primary-color); }
-.heatmap-legend b { color: var(--text-secondary); font-family: var(--font-heading); }
-.heatmap-legend__low { opacity: .35; }
-.heatmap-legend__ok { background: var(--glovo-color) !important; }
-.heatmap-legend__super { opacity: .72; }
-.heatmap-legend__extra { background: var(--primary-hover) !important; box-shadow: 0 0 8px var(--primary-color); }
-@media (prefers-reduced-motion: reduce) { .heatmap-cell--ok, .heatmap-cell--super, .heatmap-cell--extra, .heatmap-cell--super::after, .heatmap-cell--extra::after { animation: none; } }
+.heatmap-empty::before,
+.heatmap-empty::after { display: none; }
+@keyframes heatmap-ember { 0%, 100% { opacity: .36; transform: scaleY(.94); } 50% { opacity: .68; transform: scaleY(1.04); } }
+@keyframes heatmap-sparks { 0%, 100% { opacity: .2; background-position: 0 0, 0 0, 0 0, 0 100%; } 50% { opacity: .78; background-position: 2px -5px, -2px -7px, 3px -4px, 100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .heatmap-cell--super::before, .heatmap-cell--extra::before,
+    .heatmap-cell--super::after, .heatmap-cell--extra::after { animation: none; }
+}
 
 /* Lists: clear hierarchy, contained controls and a stable mobile stack. */
 .admin-lists-head { display: grid; gap: var(--space-5); margin-bottom: var(--space-6); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-color); }

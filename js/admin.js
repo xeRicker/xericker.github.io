@@ -26,6 +26,7 @@ let viewMode = 'total';
 let currentViewData = [];
 let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
+let employeeSort = { key: 'name', direction: 'asc' };
 let payrollCalculator = null;
 let productCatalog = null;
 let adminListsPage = null;
@@ -406,6 +407,25 @@ function setupListeners() {
         });
     });
 
+    document.querySelectorAll('#employeeTable thead th[data-employee-sort]').forEach(th => {
+        const sortEmployees = () => {
+            const key = th.dataset.employeeSort;
+            employeeSort.direction = employeeSort.key === key && employeeSort.direction === 'asc' ? 'desc' : 'asc';
+            employeeSort.key = key;
+            document.querySelectorAll('#employeeTable thead th[data-employee-sort]').forEach(node => {
+                node.setAttribute('aria-sort', node === th ? (employeeSort.direction === 'asc' ? 'ascending' : 'descending') : 'none');
+            });
+            updateView();
+        };
+        th.addEventListener('click', sortEmployees);
+        th.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                sortEmployees();
+            }
+        });
+    });
+
     const logoutBtn = document.getElementById('adminBackBtn') || document.querySelector('.btn-back[href="index.html"]');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async event => {
@@ -456,7 +476,8 @@ function updateView() {
             getRenderOptions()
         );
         adminRender.renderHeatmap(document.getElementById('heatmapContainer'), currentViewData, year, month, getRenderOptions());
-        adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), analytics.calculateEmployeeStats(currentViewData));
+        const employeeStats = analytics.calculateEmployeeStats(currentViewData).sort(compareEmployees);
+        adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), employeeStats);
     }
 
     renderRevenueTable();
@@ -1180,7 +1201,15 @@ function getGlovoDisplayValue(entry) {
     return entry.glovoNetTotal;
 }
 
-window.sortEmpTable = () => {};
+function compareEmployees(a, b) {
+    const multiplier = employeeSort.direction === 'asc' ? 1 : -1;
+    if (employeeSort.key === 'name') return a.name.localeCompare(b.name, 'pl') * multiplier;
+    if (employeeSort.key === 'hours') return (a.hours - b.hours) * multiplier;
+    if (employeeSort.key === 'percent') return ((a.hours / 160) - (b.hours / 160)) * multiplier;
+    const aLocations = Object.keys(a.locBreakdown || {}).length;
+    const bLocations = Object.keys(b.locBreakdown || {}).length;
+    return (aLocations - bLocations) * multiplier;
+}
 
 function initCalculator() {
     payrollCalculator = setupPayrollCalculator({

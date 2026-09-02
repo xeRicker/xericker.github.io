@@ -15,9 +15,9 @@
     background: var(--surface-color);
     padding: 20px 24px;
     border-radius: var(--radius-md);
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
     margin-bottom: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-raised);
 }
 
 .header-bar h1 {
@@ -42,14 +42,14 @@
     height: 42px;
     border-radius: 12px;
     object-fit: cover;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
-    background: #181818;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-raised);
+    background: var(--surface-raised);
 }
 
 .header-copy p {
     margin: 6px 0 0;
-    color: #8f8f8f;
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
@@ -62,8 +62,8 @@
     border-radius: var(--radius-pill);
     font-weight: 500;
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid #444;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-color);
     transition: all 0.3s;
     font-family: var(--font-heading);
     font-size: 14px;
@@ -101,8 +101,8 @@
     border-radius: var(--radius-md);
     padding: 20px;
     margin-bottom: 24px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    border: 1px solid #333;
+    box-shadow: var(--shadow-raised);
+    border: 1px solid var(--border-color);
 }
 
 .section-card h2,
@@ -121,9 +121,9 @@
 }
 
 .generator-tab {
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
     background: var(--surface-color);
-    color: #9d9d9d;
+    color: var(--text-secondary);
     border-radius: var(--radius-pill);
     padding: 14px 18px;
     display: inline-flex;
@@ -145,7 +145,7 @@
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
-    box-shadow: 0 4px 15px rgba(212, 82, 26, 0.3);
+    box-shadow: 0 4px 15px var(--primary-glow);
 }
 
 .tab-panel {

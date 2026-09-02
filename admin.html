@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=68">
+    <link rel="stylesheet" href="style.css?v=69">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -152,10 +152,8 @@
         <div class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="revenue">
             <div class="section-heading section-heading--stack">
                 <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> MAPA CIEPLNA</h3>
-                <p>Każdy dzień ma poziom energii zależny od łącznego utargu.</p>
             </div>
             <div id="heatmapContainer" class="heatmap-grid"></div>
-            <div id="heatmapLegend" class="heatmap-legend" aria-label="Legenda poziomów utargu"></div>
         </div>
 
     <div class="card card--chart chart-card animate-enter delay-3 calc-card u-card-spacing" data-admin-page="payroll" hidden>
@@ -166,11 +164,11 @@
         </div>
         <div class="calc-grid">
             <div class="calc-input-group">
-                <label>Pracownik</label>
+                <label for="calcEmployee">Pracownik</label>
                 <select id="calcEmployee" class="calc-input"></select>
             </div>
             <div class="calc-input-group">
-                <label>Stawka</label>
+                <label for="calcRate">Stawka</label>
                 <div class="rate-input-wrapper">
                     <input type="text" id="calcRate" value="30" inputmode="decimal">
                     <span>PLN</span>
@@ -179,11 +177,11 @@
         </div>
         <div class="calc-grid">
             <div class="calc-input-group">
-                <label>Od daty</label>
+                <label for="calcDateFrom">Od daty</label>
                 <input type="date" id="calcDateFrom" class="calc-input">
             </div>
             <div class="calc-input-group">
-                <label>Do daty</label>
+                <label for="calcDateTo">Do daty</label>
                 <input type="date" id="calcDateTo" class="calc-input">
             </div>
         </div>
@@ -224,10 +222,10 @@
             <table id="employeeTable">
                 <thead>
                 <tr>
-                    <th onclick="sortEmpTable(0)">Pracownik</th>
-                    <th onclick="sortEmpTable(1)">Godziny</th>
-                    <th onclick="sortEmpTable(3)">% Etatu (160h)</th>
-                    <th onclick="sortEmpTable(2)">Lokalizacje (%)</th>
+                    <th data-employee-sort="name" tabindex="0" scope="col" aria-sort="none">Pracownik</th>
+                    <th data-employee-sort="hours" tabindex="0" scope="col" aria-sort="none">Godziny</th>
+                    <th data-employee-sort="percent" tabindex="0" scope="col" aria-sort="none">% Etatu (160h)</th>
+                    <th data-employee-sort="locations" tabindex="0" scope="col" aria-sort="none">Lokalizacje (%)</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -288,7 +286,7 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="js/admin.js?v=70"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script type="module" src="js/admin.js?v=71"></script>
 </body>
 </html>

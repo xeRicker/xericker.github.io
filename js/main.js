@@ -46,6 +46,7 @@ function setupEvents() {
         generateReport();
     }));
     document.getElementById('locationOverlay').addEventListener('click', uiShared.closeModals);
+    document.querySelector('[data-close-location-overlay]')?.addEventListener('click', uiShared.closeModals);
 }
 
 function setupTabs() {

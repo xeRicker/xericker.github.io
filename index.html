@@ -2,10 +2,10 @@
 <html lang="pl" data-color-mode="dark" data-theme="dark:dark spacing:spacing shape:shape typography:typography">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=61">
+    <link rel="stylesheet" href="style.css?v=62">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
@@ -47,21 +47,21 @@
       <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">payments</span> UTARG</h2>
       <div class="revenue-grid">
         <div class="revenue-field">
-          <label><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> UTARG</label>
+          <label for="revenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> UTARG</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="revenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
-          <label><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> KARTY</label>
+          <label for="cardRevenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> KARTY</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="cardRevenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
-          <label><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> GLOVO</label>
+          <label for="glovoRevenueInput"><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> GLOVO</label>
           <div class="input-group input-group--glovo">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="glovoRevenueInput" placeholder="0.00" inputmode="decimal">
@@ -178,11 +178,11 @@
       <fieldset id="workerCalculatorControls" class="worker-calculator-controls" disabled>
         <div class="calc-grid">
           <div class="calc-input-group">
-            <label>Pracownik</label>
+            <label for="workerCalcEmployee">Pracownik</label>
             <select id="workerCalcEmployee" class="calc-input"></select>
           </div>
           <div class="calc-input-group">
-            <label>Stawka</label>
+            <label for="workerCalcRate">Stawka</label>
             <div class="rate-input-wrapper">
               <input type="text" id="workerCalcRate" value="30" inputmode="decimal">
               <span>PLN</span>
@@ -191,11 +191,11 @@
         </div>
         <div class="calc-grid">
           <div class="calc-input-group">
-            <label>Od daty</label>
+            <label for="workerCalcDateFrom">Od daty</label>
             <input type="date" id="workerCalcDateFrom" class="calc-input">
           </div>
           <div class="calc-input-group">
-            <label>Do daty</label>
+            <label for="workerCalcDateTo">Do daty</label>
             <input type="date" id="workerCalcDateTo" class="calc-input">
           </div>
         </div>
@@ -228,7 +228,7 @@
       <span class="material-symbols-rounded" aria-hidden="true">close</span>
     </button>
   </div>
-  <button id="copyButton" class="primary-fab">
+  <button id="copyButton" class="primary-fab" type="button" aria-label="Generuj listę">
     <span>SKOPIUJ LISTĘ</span>
     <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
   </button>
@@ -246,7 +246,7 @@
     <button class="sheet-btn location-button" data-location="Osiek">
       <span class="loc-icon material-symbols-rounded" aria-hidden="true">near_me</span> OSIEK
     </button>
-    <button class="sheet-btn cancel-btn" onclick="document.getElementById('locationOverlay').click()">ANULUJ</button>
+          <button class="sheet-btn cancel-btn" type="button" data-close-location-overlay>ANULUJ</button>
   </div>
 </div>
 
@@ -260,6 +260,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=60"></script>
+<script type="module" src="js/main.js?v=61"></script>
 </body>
 </html>

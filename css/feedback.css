@@ -52,6 +52,24 @@
 .animate-enter { animation: fadeInUp 0.5s forwards; opacity: 0; }
 .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
 
+@media (prefers-reduced-motion: reduce) {
+    .confetti-piece,
+    .firework-particle,
+    .animate-stagger,
+    .animate-slide-up,
+    .anim-fade-in,
+    .anim-fade-out,
+    .animate-enter,
+    .burger-glow,
+    .burger-layer,
+    .loader-text,
+    .loader-progress-bar {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
 @media (min-width: 768px) {
     .products-grid { grid-template-columns: 1fr 1fr; }
     .employee-row { flex-direction: row; }
@@ -76,6 +94,7 @@
     .view-toggle { flex-wrap: wrap; }
     .heatmap-grid { gap: 8px; }
     .heatmap-date { font-size: 18px; }
+    .heatmap-val { font-size: 10px; white-space: nowrap; }
     th, td { padding: 14px 12px; }
     .generator-tabs { grid-template-columns: 1fr; }
 }

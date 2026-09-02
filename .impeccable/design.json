@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-02T00:00:00.000Z",
+  "title": "Design System: Burbone",
+  "extensions": {
+    "colorMeta": {
+      "brand-orange": { "role": "primary", "displayName": "Neonowa pomarańcza Burbone", "canonical": "#D4521A", "tonalRamp": ["#24110A", "#3A1B0F", "#592811", "#7A3515", "#9B4218", "#B84C1A", "#D4521A", "#F08A5D"] },
+      "app-black": { "role": "neutral", "displayName": "Czerń operacyjna", "canonical": "#151312", "tonalRamp": ["#0B0A09", "#151312", "#1F1B19", "#28221F", "#39312D", "#5C504A", "#94847C", "#F2ECE8"] },
+      "surface-dark": { "role": "neutral", "displayName": "Ciepła powierzchnia", "canonical": "#1F1B19", "tonalRamp": ["#0B0A09", "#151312", "#1F1B19", "#28221F", "#39312D", "#5C504A", "#94847C", "#F2ECE8"] },
+      "text-primary": { "role": "neutral", "displayName": "Ciepła biel", "canonical": "#F2ECE8", "tonalRamp": ["#151312", "#28221F", "#39312D", "#5C504A", "#94847C", "#C8BAB3", "#F2ECE8", "#FFF9F5"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Nazwa marki i najważniejsze tytuły." },
+      "body": { "displayName": "Body", "purpose": "Treść formularzy, tabel i raportów." }
+    },
+    "shadows": [
+      { "name": "raised", "value": "0 1px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 244, 238, 0.04)", "purpose": "Delikatne podniesienie standardowych kart." },
+      { "name": "overlay", "value": "0 12px 28px rgba(0, 0, 0, 0.46), 0 0 0 1px var(--app-border)", "purpose": "Dropdowny, tooltipy i dialogi." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Krótka, spokojna reakcja kontrolek i wejścia paneli." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "compact", "value": "760px" },
+      { "name": "wide", "value": "1000px" }
+    ]
+  },
+  "components": [
+    { "name": "Primary Button", "kind": "button", "refersTo": "button-primary", "description": "Główna akcja formularza lub panelu.", "html": "<button class=\"ds-btn-primary\">GENERUJ LISTĘ</button>", "css": ".ds-btn-primary { background: var(--primary-color); color: var(--app-text-inverse); padding: 8px 20px; border: 1px solid var(--primary-color); border-radius: var(--radius-sm); font: 700 12px/1.2 var(--font-heading); transition: background .2s, border-color .2s, box-shadow .2s; } .ds-btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); } .ds-btn-primary:focus-visible { outline: none; box-shadow: var(--focus-ring); }" },
+    { "name": "Ghost Button", "kind": "button", "refersTo": "button-ghost", "description": "Drugorzędna akcja bez dominowania nad treścią.", "html": "<button class=\"ds-btn-ghost\">ANULUJ</button>", "css": ".ds-btn-ghost { background: transparent; color: var(--text-secondary); padding: 8px 20px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font: 700 12px/1.2 var(--font-heading); transition: color .2s, border-color .2s, background .2s; } .ds-btn-ghost:hover { color: var(--text-primary); border-color: var(--primary-color); background: var(--surface-active); } .ds-btn-ghost:focus-visible { outline: none; box-shadow: var(--focus-ring); }" },
+    { "name": "Input Field", "kind": "input", "refersTo": "input", "description": "Pole danych używane w generatorze i filtrach.", "html": "<input class=\"ds-input\" placeholder=\"0.00\" aria-label=\"Kwota\">", "css": ".ds-input { width: 100%; background: var(--surface-raised); color: var(--text-primary); padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font: 400 14px/1.5 var(--font-body); } .ds-input:focus { outline: none; border-color: var(--border-focused); box-shadow: var(--focus-ring); } .ds-input::placeholder { color: var(--text-muted); }" },
+    { "name": "Section Card", "kind": "card", "refersTo": "card", "description": "Panel grupujący jeden obszar operacyjny.", "html": "<section class=\"ds-card\"><h2>UTARG</h2><p>Dane dzienne</p></section>", "css": ".ds-card { background: var(--surface-color); color: var(--text-primary); padding: 20px; border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-raised); } .ds-card h2 { margin: 0 0 8px; color: var(--text-secondary); font: 700 18px/1.3 var(--font-heading); text-transform: uppercase; } .ds-card p { margin: 0; color: var(--text-secondary); font: 400 14px/1.5 var(--font-body); }" }
+  ],
+  "narrative": {
+    "northStar": "Nocna kuchnia pod kontrolą",
+    "overview": "Burbone ma charakter profesjonalnego centrum operacyjnego pracującego w tle lokalu: ciemne powierzchnie ograniczają wizualny hałas, a neonowy pomarańczowy akcent natychmiast wskazuje działanie, stan aktywny lub ważny wynik. System jest konkretny i użytkowy, ale zachowuje ciepło wynikające z marki burgerowni.\n\nUkład jest gęsty, funkcjonalny i oparty na wyraźnych panelach. Hierarchia wynika przede wszystkim z kontrastu tonalnego, rozmiaru tekstu i ograniczonego użycia pomarańczu, nie z dekoracyjnych ozdobników.",
+    "keyCharacteristics": ["Profesjonalny, operacyjny ton", "Czarny motyw z neonowym pomarańczowym akcentem", "Gęste, skanowalne panele i kontrolki", "Ciepłe neutralne teksty zamiast czystej bieli", "Ikony Material Symbols jako funkcjonalne oznaczenia"],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Pomarańczowy jest sygnałem działania lub stanu; nie służy do dekorowania każdej powierzchni.", "section": "colors" },
+      { "name": "The Layered Surface Rule", "body": "Najpierw używaj różnicy powierzchni, dopiero potem cienia; cień nie powinien zastępować struktury.", "section": "elevation" }
+    ],
+    "dos": ["Do używaj istniejących aliasów kolorów i tokenów zamiast nowych wartości.", "Do rezerwuj neonowy pomarańczowy dla działania, aktywności i istotnych wyników.", "Do utrzymuj jedną rodzinę typograficzną oraz rytm odstępów oparty na małych, powtarzalnych krokach.", "Do projektuj równolegle dla generatora mobilnego i gęstego panelu administracyjnego.", "Do zachowuj etykiety, fokus klawiatury i semantyczne stany kontrolek."],
+    "donts": ["Don't dodawaj nowych dominujących kolorów ani przypadkowych gradientów.", "Don't używaj czystej bieli i czystej czerni jako podstawowego kontrastu, gdy istnieją ciepłe tokeny tekstu i powierzchni.", "Don't zamieniaj każdej sekcji w dekoracyjną kartę wewnątrz kolejnej karty.", "Don't poświęcaj czytelności danych na rzecz efektów wizualnych.", "Don't zmieniaj istniejących formatów danych, funkcji ani zachowania kontrolek podczas prac wizualnych."]
+  }
+}

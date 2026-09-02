@@ -91,16 +91,6 @@ class AdminRender {
         const daysInMonth = new Date(yearNumber, monthNumber, 0).getDate();
         const startDay = new Date(yearNumber, monthNumber - 1, 1).getDay() || 7;
         const dataMap = new Map(data.map(day => [day.dateStr, day]));
-        const legend = document.getElementById('heatmapLegend');
-        if (legend) {
-            legend.innerHTML = [
-                ['heatmap-legend__low', '0–999', 'średnio'],
-                ['heatmap-legend__ok', '1000–1999', 'dobrze'],
-                ['heatmap-legend__super', '2000–2999', 'super'],
-                ['heatmap-legend__extra', '3000+', 'extra']
-            ].map(([className, value, label]) => `<span><i class="${className}"></i><b>${value}</b> ${label}</span>`).join('');
-        }
-
         for (let offset = 1; offset < startDay; offset++) {
             container.innerHTML += `<div class="heatmap-cell heatmap-empty"></div>`;
         }

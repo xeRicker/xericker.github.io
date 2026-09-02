@@ -1,13 +1,62 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-09-02T09:23:11.801Z",
   "employees": [
-    { "id": "pawel.komendera", "firstName": "Paweł", "lastName": "Komendera", "shortName": "Paweł K.", "enabled": true, "order": 0 },
-    { "id": "radek.komendera", "firstName": "Radek", "lastName": "Komendera", "shortName": "Radek K.", "enabled": true, "order": 1 },
-    { "id": "sebastian.mąsior", "firstName": "Sebastian", "lastName": "Mąsior", "shortName": "Sebastian M.", "enabled": true, "order": 2 },
-    { "id": "tomek.katański", "firstName": "Tomek", "lastName": "Katański", "shortName": "Tomek K.", "enabled": true, "order": 3 },
-    { "id": "kacper.jarnot", "firstName": "Kacper", "lastName": "Jarnot", "shortName": "Kacper J.", "enabled": true, "order": 4 },
-    { "id": "natalia.duraj", "firstName": "Natalia", "lastName": "Duraj", "shortName": "Natalia D.", "enabled": true, "order": 5 },
-    { "id": "dominik.żabiński", "firstName": "Dominik", "lastName": "Żabiński", "shortName": "Dominik Ż.", "enabled": true, "order": 6 }
+    {
+      "id": "pawel.komendera",
+      "firstName": "Paweł",
+      "lastName": "Komendera",
+      "shortName": "Paweł K.",
+      "enabled": true,
+      "order": 0
+    },
+    {
+      "id": "radek.komendera",
+      "firstName": "Radek",
+      "lastName": "Komendera",
+      "shortName": "Radek K.",
+      "enabled": false,
+      "order": 1
+    },
+    {
+      "id": "sebastian.mąsior",
+      "firstName": "Sebastian",
+      "lastName": "Mąsior",
+      "shortName": "Sebastian M.",
+      "enabled": true,
+      "order": 2
+    },
+    {
+      "id": "tomek.katański",
+      "firstName": "Tomek",
+      "lastName": "Katański",
+      "shortName": "Tomek K.",
+      "enabled": false,
+      "order": 3
+    },
+    {
+      "id": "kacper.jarnot",
+      "firstName": "Kacper",
+      "lastName": "Jarnot",
+      "shortName": "Kacper J.",
+      "enabled": true,
+      "order": 4
+    },
+    {
+      "id": "natalia.duraj",
+      "firstName": "Natalia",
+      "lastName": "Duraj",
+      "shortName": "Natalia D.",
+      "enabled": true,
+      "order": 5
+    },
+    {
+      "id": "dominik.żabiński",
+      "firstName": "Dominik",
+      "lastName": "Żabiński",
+      "shortName": "Dominik Ż.",
+      "enabled": false,
+      "order": 6
+    }
   ]
 }

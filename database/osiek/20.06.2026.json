@@ -5,8 +5,8 @@
   "cardRevenue": 956,
   "glovoRevenue": 0,
   "employees": {
-    "Radek": "14:00 – 20:30",
-    "Tomek": "12:00 – 20:30"
+    "radek.komendera": "14:00,20:30",
+    "tomek.katański": "12:00,20:30"
   },
   "products": {
     "Mięso: Małe": 1,

@@ -1,0 +1,9 @@
+.employee-add-form { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:10px; margin-bottom:18px; }
+.admin-employee-list { display:grid; gap:10px; }
+.admin-employee-row { display:flex; align-items:center; gap:12px; padding:12px; background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--radius-sm); }
+.admin-employee-row.is-disabled { opacity:.55; }
+.admin-employee-avatar { width:40px; height:40px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; background:var(--primary-soft); color:var(--primary-color); font:700 18px var(--font-heading); }
+.admin-employee-row .admin-product-main { flex:1; min-width:0; }
+.admin-employee-row .admin-product-main strong { color:var(--text-primary); }
+.admin-employee-row .admin-product-main span { color:var(--text-secondary); overflow-wrap:anywhere; }
+@media (max-width:760px) { .employee-add-form { grid-template-columns:1fr; } .admin-employee-row { align-items:flex-start; flex-wrap:wrap; } .admin-employee-row .admin-row-actions { width:100%; } }

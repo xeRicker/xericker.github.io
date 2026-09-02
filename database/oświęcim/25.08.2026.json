@@ -5,8 +5,8 @@
   "cardRevenue": 448,
   "glovoRevenue": 399,
   "employees": {
-    "Kacper": "12:00 – 14:00",
-    "Natalia": "14:00 – 21:30"
+    "kacper.jarnot": "12:00,14:00",
+    "natalia.duraj": "14:00,21:30"
   },
   "products": {
     "Mięso: Duże": 1,

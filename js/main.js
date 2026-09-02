@@ -8,6 +8,7 @@ import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=60';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
+import { getActiveEmployees, getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
 import { buildReportText } from './services/reportFormatter.js';
 import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=60';
 
@@ -18,10 +19,12 @@ let workerCalculator = null;
 let productCatalog = null;
 let temporaryEmployeeCounter = 0;
 let burgerConfiguratorReady = false;
+let employeeCatalog = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
-    mainRender.renderEmployees(document.getElementById('employees'), EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS);
+    employeeCatalog = await loadEmployeeCatalog();
+    mainRender.renderEmployees(document.getElementById('employees'), getActiveEmployees(employeeCatalog), EMPLOYEE_COLORS, TIME_PRESETS);
     mainRender.renderProducts(document.getElementById('products'), productCatalog);
     enhanceCustomControls();
     restoreState();
@@ -182,8 +185,8 @@ function saveState() {
         if(inp && inp.value > 0) state.products[name] = inp.value;
     });
 
-    EMPLOYEES.forEach(name => {
-        const id = name.toLowerCase();
+    getActiveEmployees(employeeCatalog).forEach(employee => {
+        const id = employee.id;
         const f = document.getElementById(`${id}_od`).value;
         const t = document.getElementById(`${id}_do`).value;
         if(f || t) state.employees[id] = { f, t };
@@ -261,7 +264,7 @@ async function generateReport() {
     };
 
     collectReportEmployees().forEach(({ name, start, end }) => {
-        data.employees[name] = `${start} – ${end}`;
+        data.employees[name] = `${start},${end}`;
     });
 
     productCatalog.categories.forEach(category => {
@@ -278,7 +281,7 @@ async function generateReport() {
         });
     });
 
-    const reportText = buildReportText(data, productCatalog);
+    const reportText = buildReportText(data, productCatalog, employeeCatalog);
     try {
         if (await apiService.checkFileExists(selectedLocation, date)) {
             if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?"))) return;
@@ -300,7 +303,7 @@ function collectReportEmployees() {
             const end = document.getElementById(`${id}_do`)?.value;
             const name = row.dataset.temporaryEmployee === 'true'
                 ? row.querySelector('.emp-name-input')?.value.trim()
-                : row.querySelector('.emp-name')?.textContent.trim();
+                : row.dataset.employeeId;
 
             return { name, start, end };
         })
@@ -324,7 +327,8 @@ async function initWorkerCalculator() {
             resHoursId: 'workerResHours',
             resMoneyId: 'workerResMoney',
             detailsBoxId: 'workerCalcDetails',
-            defaultRate: 30
+            defaultRate: 30,
+            employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog)
         });
 
         const now = new Date();

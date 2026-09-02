@@ -8,6 +8,7 @@ export function createAdminListsPage(config) {
 
     const getAllData = () => config.getAllData() || [];
     const getCatalog = () => config.getProductCatalog();
+    const getEmployeeCatalog = () => config.getEmployeeCatalog?.();
     const container = () => document.getElementById('adminListsContent');
     const locationSelect = () => document.getElementById('listLocationFilter');
     const searchInput = () => document.getElementById('listSearchInput');
@@ -142,7 +143,7 @@ export function createAdminListsPage(config) {
     function renderListPreview(report) {
         if (!report) return '';
 
-        const text = buildReportText(report, getCatalog());
+        const text = buildReportText(report, getCatalog(), getEmployeeCatalog());
 
         return `
             <div class="admin-list-preview__head">
@@ -160,7 +161,7 @@ export function createAdminListsPage(config) {
     }
 
     async function copyReportText(report, button) {
-        const text = buildReportText(report, getCatalog());
+        const text = buildReportText(report, getCatalog(), getEmployeeCatalog());
 
         try {
             await navigator.clipboard.writeText(text);

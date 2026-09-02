@@ -33,7 +33,7 @@ export function parseLocalDateInput(value) {
 
 export function calculateHours(timeStr) {
     if (!timeStr) return 0;
-    const normalizedTime = timeStr.replace('–', '-');
+    const normalizedTime = timeStr.replace('–', '-').replace(',', '-');
     if (!normalizedTime.includes('-')) return 0;
     const [start, end] = normalizedTime.split('-').map(t => t.trim());
     const [h1, m1] = start.split(':').map(Number);

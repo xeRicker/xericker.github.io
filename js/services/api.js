@@ -167,6 +167,42 @@ class ApiService {
         return reports.filter(report => monthKeys.has(this.getMonthKeyFromDateString(report?.date)));
     }
 
+    async fetchEmployees() {
+        const path = 'database/employees.json';
+        try {
+            const staticResponse = await fetch(`${path}?v=${Date.now()}`);
+            if (staticResponse.ok) return await staticResponse.json();
+            if (this.hasGithubToken()) {
+                const response = await this.fetchGithub(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers }, path);
+                if (response.ok) {
+                    const file = await response.json();
+                    return file.content ? JSON.parse(decodeURIComponent(escape(atob(file.content)))) : null;
+                }
+            }
+            if (isLocalhost()) {
+                const response = await fetch(`${path}?v=${Date.now()}`);
+                return response.ok ? response.json() : null;
+            }
+        } catch (error) { console.warn('Employees config unavailable, falling back to defaults.', error); }
+        return null;
+    }
+
+    async saveEmployees(data) {
+        const filePath = 'database/employees.json';
+        if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update employees catalog');
+        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Local employees save failed.');
+        throw new Error('GitHub token is not configured');
+    }
+
+    async saveGithubConfig(filePath, data, message) {
+        const url = `${this.baseUrl}${filePath}`;
+        let sha;
+        try { const response = await fetch(url, { headers: this.headers }); if (response.ok) sha = (await response.json()).sha; } catch {}
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        const response = await this.fetchGithub(url, { method: 'PUT', headers: this.headers, body: JSON.stringify({ message, content, sha }) }, filePath);
+        if (!response.ok) throw await this.createGithubApiError(response, filePath);
+    }
+
     getRecentAvailableMonthKeys(files, monthCount) {
         return new Set(Array.from(new Set(files
             .map(file => this.getMonthKeyFromFileName(file.name))

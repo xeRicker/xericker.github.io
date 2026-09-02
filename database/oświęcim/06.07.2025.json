@@ -2,8 +2,8 @@
   "location": "Oświęcim",
   "date": "06.07.2025",
   "employees": {
-    "Paweł": "14:00 – 21:30",
-    "Natalia": "14:00 – 21:30"
+    "pawel.komendera": "14:00,21:30",
+    "natalia.duraj": "14:00,21:30"
   },
   "products": {
     "Sałata": 1,

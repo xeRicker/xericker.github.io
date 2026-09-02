@@ -19,10 +19,10 @@ const CATEGORY_SYMBOLS = {
 export const mainRender = {
     renderEmployees(container, list, colors, presets) {
         container.innerHTML = [
-            ...list.map((name, i) => this.renderEmployeeRow({
-                id: name.toLowerCase(),
-                name,
-                color: colors[name] || '#ccc',
+            ...list.map((employee, i) => this.renderEmployeeRow({
+                id: employee.id,
+                name: employee.shortName,
+                color: employee.color || Object.values(colors)[i % Object.values(colors).length] || 'var(--primary-soft)',
                 presets,
                 delay: i * 0.05
             })),

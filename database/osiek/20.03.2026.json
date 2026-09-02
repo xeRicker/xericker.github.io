@@ -4,8 +4,8 @@
   "revenue": 1630,
   "cardRevenue": 1265,
   "employees": {
-    "Radek": "15:00 – 21:00",
-    "Tomek": "12:00 – 21:00"
+    "radek.komendera": "15:00,21:00",
+    "tomek.katański": "12:00,21:00"
   },
   "products": {
     "Mięso: Duże": 1,

@@ -2,8 +2,8 @@
   "location": "Oświęcim",
   "date": "04.07.2025",
   "employees": {
-    "Sebastian": "12:00 – 22:00",
-    "Kacper": "16:00 – 22:00"
+    "sebastian.mąsior": "12:00,22:00",
+    "kacper.jarnot": "16:00,22:00"
   },
   "products": {
     "Sałata": 1,

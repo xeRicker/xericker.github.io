@@ -72,10 +72,6 @@
             <span class="material-symbols-rounded" aria-hidden="true">payments</span>
             Utargi
         </button>
-        <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
-            <span class="material-symbols-rounded" aria-hidden="true">badge</span>
-            Wynagrodzenia
-        </button>
         <button class="admin-page-tab" type="button" data-admin-tab="monthlyReport" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">query_stats</span>
             PORÓWNANIE
@@ -87,6 +83,14 @@
         <button class="admin-page-tab" type="button" data-admin-tab="lists" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">content_paste</span>
             Listy
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="employees" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">groups</span>
+            Ekipa
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">badge</span>
+            Wynagrodzenia
         </button>
     </div>
 
@@ -234,6 +238,7 @@
     </div>
 
     <div id="adminProductsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="products" hidden></div>
+    <div id="adminEmployeesPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="employees" hidden></div>
 
     <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
@@ -287,6 +292,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=71"></script>
+<script type="module" src="js/admin.js?v=72"></script>
 </body>
 </html>

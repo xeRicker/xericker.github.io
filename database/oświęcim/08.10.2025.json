@@ -3,8 +3,8 @@
   "date": "08.10.2025",
   "last_updated_at": "2025-10-08T19:10:44.379Z",
   "employees": {
-    "Radek": "12:00 – 17:30",
-    "Kacper": "17:30 – 21:30"
+    "radek.komendera": "12:00,17:30",
+    "kacper.jarnot": "17:30,21:30"
   },
   "products": {
     "Sałata": 1,

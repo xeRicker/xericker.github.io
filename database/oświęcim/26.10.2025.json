@@ -3,8 +3,8 @@
   "date": "26.10.2025",
   "last_updated_at": "2025-10-26T20:04:05.337Z",
   "employees": {
-    "Paweł": "14:00 – 21:00",
-    "Natalia": "14:00 – 21:00"
+    "pawel.komendera": "14:00,21:00",
+    "natalia.duraj": "14:00,21:00"
   },
   "products": {
     "Sałata": 1,

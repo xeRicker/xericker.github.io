@@ -1,10 +1,12 @@
-export function buildReportText(report, catalog) {
+import { getEmployeeDisplayName } from './employees.js?v=64';
+
+export function buildReportText(report, catalog, employeeCatalog) {
     if (!report) return '';
 
     const lines = [`📋 ${report.location} ${report.date}`];
 
     Object.entries(report.employees || {}).forEach(([name, time]) => {
-        if (name && time) lines.push(`• ${name}: ${time}`);
+        if (name && time) lines.push(`• ${getEmployeeDisplayName(name, employeeCatalog)}: ${time.replace(',', ' – ')}`);
     });
 
     const productsText = buildProductsText(report.products || {}, catalog);

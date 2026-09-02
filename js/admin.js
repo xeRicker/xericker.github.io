@@ -8,6 +8,8 @@ import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMateri
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=67';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { cardClass } from './ui/components/Card.js';
+import { getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
+import { adminEmployees } from './ui/adminEmployees.js?v=64';
 
 const PASSWORD = "1232123";
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
@@ -36,6 +38,7 @@ let loadedMonthCount = 0;
 let availableMonthCount = 0;
 let monthlyReportCharts = [];
 let monthlyReportGenerated = false;
+let employeeCatalog = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     setAdminScrollLocked(true);
@@ -61,10 +64,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setupAdminPages();
         productCatalog = getActiveProductCatalog(await loadProductCatalog());
+        employeeCatalog = await loadEmployeeCatalog();
         await adminProducts.init(document.getElementById('adminProductsPage'));
+        await adminEmployees.init(document.getElementById('adminEmployeesPage'));
         adminListsPage = createAdminListsPage({
             getAllData: () => allData,
             getProductCatalog: () => productCatalog,
+            getEmployeeCatalog: () => employeeCatalog,
             buildSymbolIcon: (...args) => adminRender.buildSymbolIcon(...args)
         });
 
@@ -277,6 +283,7 @@ async function switchAdminPage(pageName) {
     const currentTab = document.querySelector('.admin-page-tab.is-active')?.dataset.adminTab;
     if (currentTab === pageName) return;
     if (currentTab === 'products' && !(await adminProducts.confirmDiscardChanges())) return;
+    if (currentTab === 'employees' && !(await adminEmployees.confirmDiscardChanges())) return;
 
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         const active = tab.dataset.adminTab === pageName;
@@ -1222,7 +1229,8 @@ function initCalculator() {
         resHoursId: 'resHours',
         resMoneyId: 'resMoney',
         detailsBoxId: 'calcDetails',
-        defaultRate: 30
+        defaultRate: 30,
+        employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog)
     });
 
     payrollCalculator.refresh();

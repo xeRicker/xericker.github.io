@@ -16,7 +16,8 @@ export function setupPayrollCalculator(config) {
         resHoursId,
         resMoneyId,
         detailsBoxId,
-        defaultRate = 30
+        defaultRate = 30,
+        employeeLabel = name => name
     } = config;
 
     const select = document.getElementById(employeeSelectId);
@@ -96,7 +97,7 @@ export function setupPayrollCalculator(config) {
             '<option value="" disabled selected>Wybierz Pracownika</option>',
             ...Array.from(employees)
                 .sort((left, right) => left.localeCompare(right, 'pl'))
-                .map(name => `<option value="${name}">${name}</option>`)
+                .map(name => `<option value="${name}">${employeeLabel(name)}</option>`)
         ].join('');
 
         if (previousValue && employees.has(previousValue)) {

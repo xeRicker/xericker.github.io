@@ -4,8 +4,8 @@
   "revenue": 3011,
   "last_updated_at": "2026-01-03T20:08:54.801Z",
   "employees": {
-    "Sebastian": "12:00 – 21:30",
-    "Kacper": "14:30 – 21:30"
+    "sebastian.mąsior": "12:00,21:30",
+    "kacper.jarnot": "14:30,21:30"
   },
   "products": {
     "Drwal: Kotlet Serowy": 1,

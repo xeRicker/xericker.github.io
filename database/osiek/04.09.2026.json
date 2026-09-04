@@ -1,0 +1,19 @@
+{
+  "location": "Osiek",
+  "date": "04.09.2026",
+  "revenue": 757,
+  "cardRevenue": 515,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "12:00,20:30"
+  },
+  "products": {
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1,
+    "Opakowania na frytki": 1
+  }
+}

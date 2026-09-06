@@ -1,0 +1,28 @@
+{
+  "location": "Osiek",
+  "date": "06.09.2026",
+  "revenue": 2274,
+  "cardRevenue": 1384,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki": 0,
+    "Sriracha": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1
+  }
+}

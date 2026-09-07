@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "07.09.2026",
+  "revenue": 1187,
+  "cardRevenue": 790,
+  "glovoRevenue": 92,
+  "employees": {
+    "kacper.jarnot": "12:00,21:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Saszetki: Ketchup": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 10,20": 1
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "location": "Oświęcim",
+  "date": "08.09.2026",
+  "revenue": 1408,
+  "cardRevenue": 562,
+  "glovoRevenue": 249,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Pepsi": 1,
+    "Pepsi Max": 1,
+    "Mirinda": 1,
+    "Lipton": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 10,20": 1
+  }
+}

@@ -1,0 +1,207 @@
+/* =================================
+   Notices — jeden system komunikatów
+   =================================
+   Jeden wygląd dla każdego komunikatu w aplikacji: inline (błąd formularza,
+   stan danych, wynik operacji) i w dialogu. Każdy wariant ma ikonę Material
+   Symbols, ten sam promień, padding i typografię; różni się wyłącznie kolorem
+   semantycznym. */
+
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    /* Mniejszy padding u góry niż u dołu: treść (ikona wyższa od wiersza tekstu)
+       jest optycznie wyrównana w kontenerze, zamiast siedzieć przy górnej krawędzi. */
+    padding: 10px 14px 13px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.notice__icon {
+    flex: 0 0 auto;
+    color: var(--text-muted);
+    font-size: 18px;
+    line-height: 1;
+    /* Glif Material Symbols siedzi wyżej niż jego box, więc box dostaje 2px zapasu. */
+    margin-top: 2px;
+}
+
+.notice__body {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.notice__title {
+    color: inherit;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.notice__text { min-width: 0; }
+
+/* --- Warianty semantyczne --- */
+
+.notice--info {
+    border-color: color-mix(in srgb, var(--app-info) 34%, var(--border-color));
+    background: color-mix(in srgb, var(--app-info-bg) 78%, var(--surface-raised));
+    color: var(--text-secondary);
+}
+.notice--info .notice__icon { color: var(--app-info); }
+
+.notice--success {
+    border-color: color-mix(in srgb, var(--success-color) 38%, var(--border-color));
+    background: color-mix(in srgb, var(--app-success-bg) 78%, var(--surface-raised));
+    color: var(--text-secondary);
+}
+.notice--success .notice__icon { color: var(--success-color); }
+
+.notice--danger {
+    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
+    background: color-mix(in srgb, var(--app-danger-bg) 78%, var(--surface-raised));
+    color: var(--danger-color);
+}
+.notice--danger .notice__icon { color: var(--danger-color); }
+.notice--danger .notice__text { color: var(--danger-color); }
+
+.notice--warning {
+    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
+    background: color-mix(in srgb, var(--glovo-dark) 82%, var(--surface-raised));
+    color: var(--text-secondary);
+}
+.notice--warning .notice__icon { color: var(--glovo-color); }
+
+/* Neutralny: brak danych, stan pusty, informacja bez ładunku emocjonalnego. */
+.notice--muted {
+    border-color: var(--border-color);
+    background: var(--surface-raised);
+    color: var(--text-muted);
+}
+.notice--muted .notice__icon { color: var(--text-muted); }
+
+/* Ładowanie: akcent marki + pasek postępu. */
+.notice--loading {
+    border-color: color-mix(in srgb, var(--primary-color) 32%, var(--border-color));
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+}
+.notice--loading .notice__icon { color: var(--primary-color); }
+
+/* --- Warianty rozmiaru --- */
+
+.notice--sm {
+    padding: 7px 10px 9px;
+    font-size: 12px;
+    gap: 8px;
+}
+.notice--sm .notice__icon { font-size: 16px; }
+
+.notice--lg {
+    padding: 14px 16px 17px;
+    gap: 12px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+.notice--lg .notice__icon { font-size: 22px; }
+
+/* --- Komunikat w dialogu --- */
+
+.notice--dialog {
+    margin: -4px 0 16px;
+}
+
+/* --- Pasek postępu dla stanu ładowania --- */
+
+.notice__bar {
+    flex: 1 1 120px;
+    max-width: 220px;
+    align-self: center;
+    height: 5px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--border-color);
+}
+.notice__bar i {
+    display: block;
+    width: 42%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary-color);
+    animation: notice-loading 1.2s ease-in-out infinite;
+}
+.notice--loading .notice__icon { animation: notice-spin 1s linear infinite; }
+
+@keyframes notice-loading {
+    0% { transform: translateX(-120%); }
+    100% { transform: translateX(340%); }
+}
+@keyframes notice-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notice__bar i,
+    .notice--loading .notice__icon { animation: none; }
+}
+
+/* --- Komunikat na całą stronę (np. panel niedostępny) --- */
+
+.status-card {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    width: min(34rem, calc(100vw - 32px));
+    padding: var(--space-7);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-color);
+    box-shadow: var(--shadow-overlay);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.status-card--danger {
+    border-color: color-mix(in srgb, var(--danger-color) 42%, var(--border-color));
+}
+
+.status-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    font-size: 28px;
+    line-height: 1;
+}
+.status-card--danger .status-card__icon {
+    border-color: color-mix(in srgb, var(--danger-color) 42%, var(--border-color));
+    background: var(--app-danger-bg);
+    color: var(--danger-color);
+}
+
+.status-card__title {
+    margin: var(--space-2) 0 0;
+    color: var(--text-primary);
+    font: 700 20px/1.25 var(--font-heading);
+}
+
+.status-card__text { margin: 0; }
+
+.status-card__code {
+    margin: 0;
+    color: var(--danger-color);
+    font-family: var(--font-heading);
+    font-size: 13px;
+}

@@ -22,6 +22,7 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 ├── AGENTS.md
 ├── index.html
 ├── admin.html
+├── robots.txt
 ├── style.css
 ├── dev-server.js
 ├── css/
@@ -31,8 +32,11 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │   ├── generator.css
 │   ├── admin.css
 │   ├── admin-products-lists.css
+│   ├── admin-employees.css
 │   ├── feedback.css
-│   ├── components/custom-controls.css
+│   ├── components/
+│   │   ├── custom-controls.css
+│   │   └── notice.css
 │   └── theme/
 │       ├── palette.css
 │       └── atlassian-overrides.css
@@ -46,6 +50,7 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │   ├── services/
 │   │   ├── analytics.js
 │   │   ├── api.js
+│   │   ├── auth.js
 │   │   ├── products.js
 │   │   ├── reportDates.js
 │   │   ├── reportFormatter.js
@@ -60,7 +65,9 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │       ├── mainRender.js
 │       ├── payrollCalculator.js
 │       ├── shared.js
-│       └── components/customControls.js
+│       └── components/
+│           ├── customControls.js
+│           └── notice.js
 └── database/
     ├── products.json
     ├── default.json
@@ -76,8 +83,10 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 - `js/ui/adminRender.js`: summaries, charts, tables, heatmap, tooltips.
 - `js/ui/payrollCalculator.js`: shared hours calculator for the main page and admin.
 - `js/ui/components/customControls.js`: custom `select`, `date`, `time`, and dialog controls. Do not use `alert`, `confirm`, `prompt`, or native pickers as UI.
+- `js/ui/components/notice.js` + `css/components/notice.css`: the single message system. Every user-facing message (inline notice, dialog notice, page-level status card) uses `.notice--<variant>` with `info`, `success`, `danger`, `warning`, `muted`, or `loading`; icons and colors come from the variant. Add new messages through `noticeService.render()` or `dialogService.alert/success/error/warning`, never as a bespoke styled element.
 - `js/services/reportDates.js`: shared report date parsing, report keys, date sorting.
 - `js/services/api.js`: read/write through the GitHub API or local dev server.
+- `js/services/auth.js`: admin password check. Keep only the PBKDF2 salt and digest in the source; never put the plaintext password back.
 - `js/services/analytics.js`: daily report aggregation and statistics.
 
 ## Design Direction
@@ -163,3 +172,5 @@ The server handles static files and local JSON writes. The site can open without
 - Teams in `js/config/data.js` are fixed, but the generator allows adding a temporary employee for the current report. That employee is not saved to `localStorage` and disappears after reload/reset.
 - Locations may include Polish characters, for example `Oświęcim`. Do not normalize them aggressively without checking paths in `database/`.
 - Do not change the JSON data structure without updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel.
+- Generator form state in `localStorage` (`burbone_state`) expires at the end of the local calendar day, so a list started in the evening survives closing the browser and resets the next day.
+- The site is meant to stay out of search results: `robots.txt` disallows everything and both pages carry `<meta name="robots" content="noindex, ...">`. GitHub Pages cannot send custom headers, so an `X-Robots-Tag` would only be possible behind a proxy/CDN.

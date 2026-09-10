@@ -59,7 +59,6 @@ body {
 .chart-controls button,
 .sheet-btn,
 .icon-button,
-.btn-qty,
 .point-pill,
 .employee-loc-pill,
 .calc-breakdown-pill,
@@ -81,8 +80,7 @@ body {
 .view-btn:hover,
 .week-tab:hover,
 .chart-controls button:hover,
-.sheet-btn:hover,
-.btn-qty:hover {
+.sheet-btn:hover {
     background: var(--surface-active);
     border-color: var(--border-focused);
     color: var(--text-primary);
@@ -114,7 +112,6 @@ select,
 .time-inputs input,
 .calc-input,
 .rate-input-wrapper,
-.counter-wrapper,
 .qty-display {
     background: var(--surface-raised);
     border-color: var(--border-color);
@@ -137,28 +134,46 @@ select,
 
 .counter-wrapper {
     background: var(--brand-primary-subtler);
-    border-color: rgba(212, 82, 26, 0.28);
+    border-color: color-mix(in srgb, var(--primary-color) 26%, var(--border-color));
 }
 
 .product-card.active .counter-wrapper {
     background: var(--brand-primary-subtle);
-    border-color: rgba(212, 82, 26, 0.42);
+    border-color: color-mix(in srgb, var(--primary-color) 42%, var(--border-color));
 }
 
 input:focus,
 select:focus,
+.calc-input:focus,
+.rate-input-wrapper:focus-within {
+    outline: none;
+}
+
+/* One focus ring per field: the visible control is its wrapper, so a nested
+   input never draws a second border or glow on top of the wrapper's. */
+.input-group,
+.calc-input,
+.rate-input-wrapper,
+.qty-display {
+    box-shadow: none;
+}
 .input-group:focus-within,
 .calc-input:focus,
-.rate-input-wrapper:focus-within,
+.rate-input-wrapper:focus-within {
+    box-shadow: var(--focus-ring);
+}
 .qty-display:focus {
-    border-color: var(--border-focused);
-    box-shadow: 0 0 0 2px var(--border-focused);
     outline: none;
+    box-shadow: none;
+}
+.input-group input:focus,
+.input-group input:focus-visible {
+    border-color: transparent;
+    box-shadow: none;
 }
 
 .section-card h2,
 .revenue-field label,
-.currency-symbol,
 .section-heading p,
 .summary-box small,
 .panel-heading p,
@@ -180,7 +195,6 @@ select:focus,
     border-color: color-mix(in srgb, var(--primary-color) 44%, var(--border-color));
 }
 
-.revenue-note--accent,
 .location-stat--glovo {
     background: var(--glovo-soft) !important;
     border-color: color-mix(in srgb, var(--glovo-color) 38%, var(--border-color)) !important;
@@ -200,13 +214,11 @@ select:focus,
     box-shadow: 0 0 0 1px rgba(122, 184, 255, 0.16) inset, 0 16px 38px rgba(42, 134, 255, 0.18) !important;
 }
 
-.revenue-note,
 .location-stats div,
 .calc-breakdown-report,
 .point-pill,
 .employee-loc-pill,
 .calc-breakdown-pill,
-.counter-wrapper,
 .tt-day {
     background: var(--surface-raised);
     border-color: var(--border-color);
@@ -232,8 +244,13 @@ select:focus,
 }
 
 .toggle-indicator {
-    border-color: var(--app-border-strong);
+    border-color: color-mix(in srgb, var(--text-muted) 62%, var(--border-color));
     border-radius: var(--radius-sm);
+}
+
+.product-card:not(.active):hover .toggle-indicator,
+.product-card:not(.active):active .toggle-indicator {
+    border-color: var(--border-focused);
 }
 
 .product-card.active .toggle-indicator {
@@ -244,7 +261,6 @@ select:focus,
 
 .btn-plus,
 .calc-res-item p.money,
-.revenue-note--success,
 .alert-badge--success {
     color: var(--success-color);
 }
@@ -260,7 +276,6 @@ select:focus,
 .btn-minus,
 .reset-button,
 .cancel-btn,
-.revenue-note--danger,
 .alert-badge--danger {
     color: var(--danger-color);
 }
@@ -465,7 +480,6 @@ tbody tr:hover td,
 .location-stats span,
 .location-foot span,
 .calc-input-group label,
-.calc-res-item h4,
 .calc-breakdown-label,
 .calc-breakdown-pill,
 .loc-text {
@@ -576,7 +590,6 @@ tbody tr:hover td,
 .employee-loc-pill,
 .calc-breakdown-pill,
 .location-stats div,
-.revenue-note,
 .weather-card-empty,
 .weather-card--muted,
 .tt-day {
@@ -606,7 +619,6 @@ tbody tr:hover td,
     color: var(--primary-hover);
 }
 
-.revenue-note--success,
 .alert-badge--success,
 .state-switch.is-on {
     background: color-mix(in srgb, var(--success-color) 16%, var(--surface-raised));
@@ -614,7 +626,6 @@ tbody tr:hover td,
     color: var(--success-color);
 }
 
-.revenue-note--danger,
 .alert-badge--danger,
 .state-switch.is-off,
 .cancel-btn {
@@ -623,7 +634,6 @@ tbody tr:hover td,
     color: var(--danger-color);
 }
 
-.revenue-note--accent,
 .alert-badge--warning,
 .location-stat--glovo,
 .summary-icon-badge--glovo {
@@ -801,6 +811,9 @@ a:focus-visible,
     outline: none;
     box-shadow: var(--focus-ring);
 }
+
+/* Jedna hierarchia nagłówków: brand w tym samym stopniu na obu powierzchniach. */
+.header-bar h1 { font-size: 24px; line-height: 1.25; }
 
 .btn-admin,
 .btn-back,

@@ -1,16 +1,17 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=60';
+import { mainRender } from './ui/mainRender.js?v=61';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js?v=63';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=60';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=70';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { getActiveEmployees, getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
 import { buildReportText } from './services/reportFormatter.js';
 import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=60';
+import { noticeService } from './ui/components/notice.js?v=1';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -20,6 +21,13 @@ let productCatalog = null;
 let temporaryEmployeeCounter = 0;
 let burgerConfiguratorReady = false;
 let employeeCatalog = null;
+
+// Stany danych kalkulatora wynagrodzeń mapowane na warianty komunikatu.
+const WORKER_STATUS_VARIANTS = {
+    loading: 'loading',
+    ready: 'success',
+    error: 'danger'
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
@@ -97,7 +105,7 @@ async function initBurgerConfigurator() {
         burgerConfiguratorReady = true;
     } catch (error) {
         console.error(error);
-        await dialogService.alert('Nie udało się wczytać danych burgerów z database/burgers.json.', 'Błąd konfiguracji');
+        await dialogService.error('Nie udało się wczytać danych burgerów z database/burgers.json.', 'Błąd konfiguracji');
     }
 }
 
@@ -249,7 +257,7 @@ async function generateReport() {
 
     if(rev === 0 && !(await dialogService.confirm("Utarg wynosi 0. Kontynuować?", "Pusty utarg"))) return;
     if (cash < 0) {
-        await dialogService.alert("Karty i Glovo nie mogą być większe niż utarg lokalu.", "Błąd danych");
+        await dialogService.warning("Karty i Glovo nie mogą być większe niż utarg lokalu.", "Błąd danych");
         return;
     }
 
@@ -359,7 +367,9 @@ function setWorkerCalculatorEnabled(enabled) {
 function setWorkerDataStatus(message, state) {
     const status = document.getElementById('workerDataStatus');
     if (!status) return;
-    status.textContent = message;
-    status.hidden = !message;
-    status.className = `revenue-note worker-data-status revenue-note--${state}`;
+    noticeService.render(status, {
+        variant: WORKER_STATUS_VARIANTS[state] || 'info',
+        text: message,
+        showBar: state === 'loading'
+    });
 }

@@ -1,0 +1,3 @@
+# Burbone — serwis wewnętrzny. Nie indeksować.
+User-agent: *
+Disallow: /

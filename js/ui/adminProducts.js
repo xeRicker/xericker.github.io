@@ -1,7 +1,7 @@
 import { apiService } from '../services/api.js?v=63';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=60';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=60';
+import { dialogService } from './components/customControls.js?v=70';
 import { cardClass } from './components/Card.js';
 
 const ICON_OPTIONS = [
@@ -229,10 +229,10 @@ class AdminProducts {
             await apiService.saveProducts(this.catalog);
             this.savedSnapshot = this.serializeCatalog();
             this.isDirty = false;
-            await dialogService.alert('Katalog produktów został zapisany.', 'Zapisano');
+            await dialogService.success('Katalog produktów został zapisany.', 'Zapisano');
         } catch (error) {
             console.error(error);
-            await dialogService.alert(`Nie udało się zapisać katalogu produktów. ${error.message}`, 'Błąd zapisu');
+            await dialogService.error(`Nie udało się zapisać katalogu produktów. ${error.message}`, 'Błąd zapisu');
         } finally {
             this.render();
         }

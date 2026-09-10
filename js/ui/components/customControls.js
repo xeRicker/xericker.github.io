@@ -92,8 +92,14 @@ function positionPopover(wrapper, popover) {
     const left = Math.min(Math.max(rect.left, viewportGap), window.innerWidth - desiredWidth - viewportGap);
     const spaceBelow = window.innerHeight - rect.bottom - viewportGap;
     const spaceAbove = rect.top - viewportGap;
-    const openUp = spaceBelow < 220 && spaceAbove > spaceBelow;
-    const maxHeight = Math.max(180, Math.min(360, (openUp ? spaceAbove : spaceBelow) - 8));
+    // How much room this popover wants before it has to scroll. The calendar is
+    // tall enough to be cut off if it always opens downwards, so it gets a real
+    // measurement and flips up whenever the space below cannot hold it.
+    const preferredHeight = getPreferredPopoverHeight(wrapper, popover);
+
+    const openUp = spaceBelow < preferredHeight + 8 && spaceAbove > spaceBelow;
+    const available = (openUp ? spaceAbove : spaceBelow) - 8;
+    const maxHeight = Math.max(180, Math.min(preferredHeight, available));
 
     popover.classList.add('is-floating');
     popover.style.width = `${desiredWidth}px`;
@@ -108,6 +114,28 @@ function positionPopover(wrapper, popover) {
         popover.style.top = `${rect.bottom + window.scrollY + 6}px`;
         popover.style.bottom = 'auto';
     }
+}
+
+/**
+ * Height the popover needs before it would have to scroll. Each control type
+ * declares its own expectation so the flip decision can account for it: a
+ * calendar cut off mid-month is worse than opening upwards.
+ */
+function getPreferredPopoverHeight(wrapper, popover) {
+    if (popover.classList.contains('custom-calendar')) {
+        return measureCalendarHeight(popover);
+    }
+    if (popover.classList.contains('custom-time__popover')) return 320;
+    if (popover.classList.contains('custom-preset__popover')) return 260;
+    return Math.min(popover.scrollHeight || 0, 300) || 220;
+}
+
+function measureCalendarHeight(popover) {
+    const current = popover.style.maxHeight;
+    popover.style.maxHeight = 'none';
+    const measured = popover.offsetHeight;
+    popover.style.maxHeight = current;
+    return measured || 380;
 }
 
 function getPopoverWidth(rect, popover, viewportGap) {
@@ -154,6 +182,19 @@ function resetPopoverPosition(popover) {
     }
 }
 
+/**
+ * The visible control is a generated button, so the native <label for="...">
+ * would otherwise leave it without an accessible name. Copy the label text onto
+ * the button, which also keeps the control usable when a visible field label is
+ * dropped as redundant with its section heading.
+ */
+function applyLabelAsAccessibleName(control, button) {
+    const id = control.id;
+    const label = id ? document.querySelector(`label[for="${id}"]`) : null;
+    const text = (label?.textContent || control.getAttribute('aria-label') || '').trim();
+    if (text) button.setAttribute('aria-label', text);
+}
+
 function enhanceSelect(select) {
     if (enhancedControls.has(select)) return;
     removeExistingCustomControl(select);
@@ -164,6 +205,7 @@ function enhanceSelect(select) {
     button.type = 'button';
     button.className = 'custom-control__button';
     button.setAttribute('aria-haspopup', 'listbox');
+    applyLabelAsAccessibleName(select, button);
     const value = document.createElement('span');
     value.className = 'custom-control__value';
     const chevron = document.createElement('span');
@@ -281,6 +323,7 @@ function enhanceDateInput(input) {
     const wrapper = document.createElement('div');
     wrapper.className = 'custom-control custom-date';
     const button = buildControlButton('calendar_month');
+    applyLabelAsAccessibleName(input, button);
     const value = button.querySelector('.custom-control__value');
     const popover = document.createElement('div');
     popover.className = 'custom-control__popover custom-calendar';
@@ -323,6 +366,7 @@ function enhanceTimeInput(input) {
     const wrapper = document.createElement('div');
     wrapper.className = 'custom-control custom-time';
     const button = buildControlButton('schedule');
+    applyLabelAsAccessibleName(input, button);
     const value = button.querySelector('.custom-control__value');
     const popover = document.createElement('div');
     popover.className = 'custom-control__popover custom-time__popover';
@@ -458,8 +502,29 @@ function formatHoursMarker(value) {
 }
 
 export const dialogService = {
-    alert(message, title = 'Komunikat') {
-        return openDialog({ title, message, actions: [{ label: 'OK', value: true, primary: true }] });
+    /**
+     * @param {string} message   Treść komunikatu.
+     * @param {string} [title]
+     * @param {{variant?: 'info'|'success'|'danger'|'warning'|'muted', detail?: string}} [options]
+     *   Wariant dobiera ikonę i kolor panelu komunikatu. Gdy `detail` jest podany,
+     *   pojawia się panel z ikoną pod treścią — ten sam, co komunikaty inline.
+     */
+    alert(message, title = 'Komunikat', options = {}) {
+        return openDialog({
+            title,
+            message,
+            notice: options.detail ? { variant: options.variant || 'info', text: options.detail } : null,
+            actions: [{ label: 'OK', value: true, primary: true }]
+        });
+    },
+    success(message, title = 'Gotowe', options = {}) {
+        return this.alert(message, title, { ...options, variant: 'success' });
+    },
+    error(message, title = 'Błąd', options = {}) {
+        return this.alert(message, title, { ...options, variant: 'danger' });
+    },
+    warning(message, title = 'Uwaga', options = {}) {
+        return this.alert(message, title, { ...options, variant: 'warning' });
     },
     confirm(message, title = 'Potwierdź') {
         return openDialog({
@@ -475,12 +540,17 @@ export const dialogService = {
         return openDialog({
             title,
             message,
+            notice: options.notice,
+            size: options.size,
             input: {
                 type: options.type || 'text',
                 value: options.value || '',
-                inputmode: options.inputmode || (options.type === 'password' ? 'numeric' : undefined),
+                // Hasła nie wymuszają klawiatury numerycznej: hasło może zawierać litery.
+                inputmode: options.inputmode,
                 autocomplete: options.autocomplete || 'off',
-                autoSubmit: options.autoSubmit
+                autoSubmit: options.autoSubmit,
+                label: options.label,
+                action: options.action
             },
             actions: [
                 { label: 'Anuluj', value: null },
@@ -490,17 +560,72 @@ export const dialogService = {
     }
 };
 
+const NOTICE_ICONS = {
+    info: 'info',
+    success: 'check_circle',
+    danger: 'error',
+    warning: 'warning',
+    muted: 'info',
+    loading: 'progress_activity'
+};
+
+// Jeden wygląd komunikatu w dialogu: kolor i ikona wg wariantu, ten sam co inline.
+function buildDialogNotice(notice) {
+    const variant = NOTICE_ICONS[notice.variant] ? notice.variant : 'info';
+    return `
+        <div class="notice notice--${variant} notice--dialog" role="alert">
+            <span class="notice__icon material-symbols-rounded" aria-hidden="true">${NOTICE_ICONS[variant]}</span>
+            <div class="notice__body"><span class="notice__text">${notice.text}</span></div>
+        </div>
+    `;
+}
+
+function buildDialogField(input) {
+    const attributes = [
+        'class="custom-dialog__input"',
+        `type="${input.type}"`,
+        `value="${input.value}"`,
+        input.inputmode ? `inputmode="${input.inputmode}"` : '',
+        input.inputmode === 'numeric' ? ' pattern="[0-9]*"' : '',
+        input.autocomplete ? ` autocomplete="${input.autocomplete}"` : ''
+    ].filter(Boolean).join(' ');
+
+    if (!input.action) return `<input ${attributes}>`;
+
+    return `
+        <div class="custom-dialog__field">
+            ${input.label ? `<label for="customDialogInput">${input.label}</label>` : ''}
+            <div class="custom-dialog__field-row">
+                <input ${attributes} id="customDialogInput">
+                <button type="button" class="custom-dialog__field-action" aria-label="${input.action.label}">
+                    <span class="material-symbols-rounded" aria-hidden="true">${input.action.icon}</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
 function openDialog(config) {
     const layer = ensureDialogLayer();
     const dialog = layer.querySelector('.custom-dialog');
+    const notice = config.notice?.text ? config.notice : null;
+    const input = config.input;
+    const variant = notice ? (NOTICE_ICONS[notice.variant] ? notice.variant : 'info') : null;
+    dialog.classList.toggle('custom-dialog--wide', Boolean(input?.action));
+    dialog.classList.toggle('custom-dialog--prominent', config.size === 'prominent');
+    if (variant) dialog.classList.add(`custom-dialog--${variant}`);
+    else dialog.classList.remove('custom-dialog--info', 'custom-dialog--success', 'custom-dialog--danger', 'custom-dialog--warning', 'custom-dialog--muted', 'custom-dialog--loading');
     dialog.innerHTML = `
         <h3>${config.title}</h3>
         <p>${config.message}</p>
-        ${config.input ? `<input class="custom-dialog__input" type="${config.input.type}" value="${config.input.value}"${config.input.inputmode ? ` inputmode="${config.input.inputmode}"` : ''}${config.input.inputmode === 'numeric' ? ' pattern="[0-9]*"' : ''}${config.input.autocomplete ? ` autocomplete="${config.input.autocomplete}"` : ''}>` : ''}
+        ${input ? buildDialogField(input) : ''}
+        ${notice ? buildDialogNotice(notice) : ''}
         <div class="custom-dialog__actions"></div>
     `;
 
     const actions = dialog.querySelector('.custom-dialog__actions');
+    const field = dialog.querySelector('.custom-dialog__input');
+    if (notice) field?.setAttribute('aria-invalid', 'true');
     layer.classList.add('is-visible');
 
     return new Promise(resolve => {
@@ -516,7 +641,7 @@ function openDialog(config) {
             button.textContent = action.label;
             button.addEventListener('click', () => {
                 if (action.value === 'input') {
-                    finish(dialog.querySelector('.custom-dialog__input')?.value ?? '');
+                    finish(field?.value ?? '');
                     return;
                 }
                 finish(action.value);
@@ -524,20 +649,33 @@ function openDialog(config) {
             actions.appendChild(button);
         });
 
-        const input = dialog.querySelector('.custom-dialog__input');
-        if (input) {
-            input.focus({ preventScroll: true });
-            requestAnimationFrame(() => {
-                input.focus({ preventScroll: true });
-                input.select?.();
+        const fieldAction = dialog.querySelector('.custom-dialog__field-action');
+        if (fieldAction && field) {
+            fieldAction.addEventListener('click', () => {
+                const revealed = field.type === 'text';
+                field.type = revealed ? 'password' : 'text';
+                fieldAction.setAttribute('aria-label', revealed ? input.action.label : input.action.labelActive);
+                fieldAction.querySelector('.material-symbols-rounded').textContent =
+                    revealed ? input.action.icon : input.action.iconActive;
+                fieldAction.classList.toggle('is-revealed', !revealed);
+                field.focus({ preventScroll: true });
             });
-            input.addEventListener('input', () => {
-                if (typeof config.input.autoSubmit === 'function' && config.input.autoSubmit(input.value)) {
-                    finish(input.value);
+        }
+
+        if (field) {
+            field.focus({ preventScroll: true });
+            requestAnimationFrame(() => {
+                field.focus({ preventScroll: true });
+                field.select?.();
+            });
+            field.addEventListener('input', () => {
+                if (field.value !== '') field.removeAttribute('aria-invalid');
+                if (typeof input.autoSubmit === 'function' && input.autoSubmit(field.value)) {
+                    finish(field.value);
                 }
             });
-            input.addEventListener('keydown', event => {
-                if (event.key === 'Enter') finish(input.value);
+            field.addEventListener('keydown', event => {
+                if (event.key === 'Enter') finish(field.value);
             });
         } else {
             actions.querySelector('.custom-dialog__button--primary')?.focus();

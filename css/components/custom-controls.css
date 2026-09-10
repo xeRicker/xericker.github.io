@@ -283,13 +283,96 @@
     font: inherit;
 }
 
+/* Pole z akcją (np. pokaż hasło): input i przycisk tworzą jeden kontrolkę. */
+.custom-dialog__field {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.custom-dialog__field > label {
+    color: var(--text-secondary);
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.custom-dialog__field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.custom-dialog__field-row .custom-dialog__input {
+    margin-bottom: 0;
+    min-width: 0;
+}
+.custom-dialog__field-action {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+.custom-dialog__field-action:hover {
+    border-color: var(--border-focused);
+    color: var(--text-primary);
+}
+.custom-dialog__field-action.is-revealed {
+    border-color: var(--border-focused);
+    background: var(--surface-active);
+    color: var(--primary-color);
+}
+.custom-dialog__field-action .material-symbols-rounded { font-size: 20px; }
+
+/* Pole z akcją potrzebuje więcej miejsca niż jednopolowe okno. */
+.custom-dialog--wide { width: min(460px, 100%); }
+
+/* Ekran logowania: wyższa hierarchia i pełniejsza szerokość, zwłaszcza na mobile. */
+.custom-dialog--prominent h3 { font-size: 24px; }
+.custom-dialog--prominent > p { font-size: 14px; }
+.custom-dialog--prominent.custom-dialog--wide { width: min(520px, 100%); }
+.custom-dialog--prominent .custom-dialog__input {
+    font-size: 18px;
+    padding: 14px;
+}
+
+/* Nagłówek dziedziczy wagę komunikatu, więc błąd czyta się jak błąd. */
+.custom-dialog--danger h3 { color: var(--danger-color); }
+.custom-dialog--success h3 { color: var(--success-color); }
+
+@media (max-width: 600px) {
+    .custom-dialog-layer { padding: 14px; }
+    .custom-dialog {
+        width: 100%;
+        padding: 22px 20px;
+    }
+    .custom-dialog--prominent {
+        width: 100%;
+        padding: 26px 22px 22px;
+    }
+    .custom-dialog--prominent h3 { font-size: 26px; }
+    .custom-dialog--prominent .custom-dialog__input { font-size: 20px; padding: 16px 14px; }
+    .custom-dialog--prominent .custom-dialog__field-action { width: 52px; height: 52px; }
+    .custom-dialog--prominent .custom-dialog__field-action .material-symbols-rounded { font-size: 22px; }
+    .custom-dialog__actions .custom-dialog__button { flex: 1 1 auto; min-height: 50px; font-size: 15px; }
+}
+
+.custom-dialog input[aria-invalid] {
+    border-color: var(--danger-color);
+}
+
 .custom-dialog__actions {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     flex-wrap: wrap;
 }
-
 .custom-dialog__button {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);

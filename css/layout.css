@@ -76,8 +76,7 @@
 .primary-fab svg,
 .icon-button svg,
 .sheet-btn svg,
-.view-btn svg,
-.calc-icon {
+.view-btn svg {
     display: block;
     flex: 0 0 auto;
 }
@@ -107,8 +106,7 @@
 
 .section-card h2,
 .card--section h2 { font-size: 18px; margin-bottom: 16px; color: var(--text-secondary); }
-.section-card h2,
-.calc-res-item h4 {
+.section-card h2 {
     display: flex;
     align-items: center;
 }

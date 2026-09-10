@@ -41,7 +41,7 @@ html, body {
 /* Global Typography Rules */
 h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); margin: 0; letter-spacing: 0; }
 button, .btn, label, th, .sheet-btn, .filter-label, .week-tab, .summary-kicker, .section-heading h3, .table-head h3, .calc-input-group label { font-family: var(--font-heading); letter-spacing: 0; }
-input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-heading p, .summary-box small, .revenue-note, .cell-secondary { font-family: var(--font-body); }
+input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-heading p, .summary-box small, .cell-secondary { font-family: var(--font-body); }
 
 /* Shared utilities used by static markup and rendered components. */
 .u-muted { color: var(--text-secondary); }

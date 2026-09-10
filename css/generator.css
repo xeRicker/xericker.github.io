@@ -22,38 +22,6 @@
     display: inline-flex;
     align-items: center;
 }
-.revenue-note {
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid #333;
-    background: #151515;
-    color: #9b9b9b;
-    font-size: 13px;
-    line-height: 1.35;
-    font-family: var(--font-body);
-}
-
-.revenue-note--accent {
-    color: #ffeb97;
-    border-color: rgba(242, 204, 56, 0.45);
-    background: rgba(242, 204, 56, 0.1);
-}
-
-.revenue-note--success {
-    color: var(--success-color);
-    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
-    background: color-mix(in srgb, var(--success-color) 12%, var(--surface-raised));
-}
-
-.revenue-note--danger {
-    color: var(--danger-color);
-    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
-    background: color-mix(in srgb, var(--danger-color) 12%, var(--surface-raised));
-}
-
 .worker-data-status {
     margin: 0 0 var(--space-4);
 }
@@ -74,44 +42,53 @@
     cursor: not-allowed;
 }
 
-.revenue-note--loading {
-    color: var(--text-secondary);
-    border-color: var(--border-focused);
-    background: var(--surface-raised);
-}
-
-.revenue-note--error {
-    color: var(--danger-color);
-    border-color: color-mix(in srgb, var(--danger-color) 44%, var(--border-color));
-    background: var(--app-danger-bg);
-}
-
 .input-group {
     display: flex;
     align-items: center;
     background: var(--surface-raised);
     border-radius: var(--radius-sm);
-    padding: 4px 16px;
+    padding: 4px 14px;
     border: 1px solid var(--border-color);
-    transition: border-color 0.3s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-.input-group:focus-within { border-color: var(--primary-color); }
+/* The wrapper carries the field border and the focus ring; the inner input stays bare. */
+.input-group:focus-within {
+    border-color: color-mix(in srgb, var(--primary-color) 58%, var(--border-color));
+    box-shadow: var(--focus-ring);
+}
 .input-group--glovo:focus-within {
-    border-color: var(--glovo-color);
-    box-shadow: 0 0 0 1px rgba(242, 204, 56, 0.18);
+    border-color: color-mix(in srgb, var(--glovo-color) 52%, var(--border-color));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--glovo-color) 28%, transparent);
 }
-.currency-symbol { font-size: 18px; color: var(--text-muted); font-weight: bold; font-family: var(--font-body); }
+.currency-symbol {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    font-family: var(--font-heading);
+}
 
 .input-group input,
 input[type="number"] {
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     background: transparent;
     border: none;
+    border-radius: 0;
     color: var(--text-primary);
     font-size: 22px;
-    padding: 12px;
+    line-height: 1.2;
+    padding: 8px 4px 8px 12px;
     font-weight: 500;
     text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+/* The wrapper owns the focus ring here, so the inner input must not add its own. */
+.input-group input:focus,
+.input-group input:focus-visible {
+    border-color: transparent;
+    box-shadow: none;
 }
 input:focus { outline: none; }
 
@@ -325,74 +302,95 @@ input:focus { outline: none; }
 .controls {
     flex-shrink: 0;
     display: flex;
+    align-items: center;
     justify-content: flex-end;
 }
 
+/* Toggle products: one opt-in box that reads as a control in both states. */
 .toggle-indicator {
-    width: 24px; height: 24px;
-    border: 2px solid var(--text-muted);
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    margin-right: 10px;
-    transition: all 0.2s;
+    width: 26px; height: 26px;
+    border: 1px solid color-mix(in srgb, var(--text-muted) 62%, var(--border-color));
+    border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+    color: transparent;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-left: 12px;
+    transition: background-color 0.18s, border-color 0.18s, color 0.18s;
+}
+.check-icon {
+    width: 16px;
+    height: 16px;
+    display: block;
 }
 .product-card.active .toggle-indicator {
     background: var(--success-color);
     border-color: var(--success-color);
-    color: white;
+    color: var(--app-text-inverse);
 }
-.check-icon {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    line-height: 1;
-    transform: translateY(-1px);
+.product-card:not(.active):hover .toggle-indicator { border-color: var(--border-focused); }
+.product-card:not(.active):active .toggle-indicator {
+    border-color: var(--border-focused);
+    background: var(--primary-soft);
 }
-.product-card.active .check-icon { display: inline-flex; }
+@media (hover: none) {
+    /* Touch devices keep the resting border; the press state carries the feedback. */
+    .product-card:not(.active):hover .toggle-indicator {
+        border-color: color-mix(in srgb, var(--text-muted) 62%, var(--border-color));
+    }
+}
 
+/* Quantity products: one grouped stepper with round targets and a live value. */
 .counter-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--brand-primary-subtler);
-    border: 1px solid rgba(212, 82, 26, 0.28);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 26%, var(--border-color));
     border-radius: var(--radius-pill);
     padding: 3px;
-    width: 130px;
-    height: 44px;
+    gap: 2px;
+    width: 148px;
+    height: 48px;
+    min-height: 48px;
 }
 
 .btn-qty {
-    width: 38px; height: 38px;
-    border-radius: 50%;
+    width: 40px; height: 40px;
+    min-height: 40px;
     border: none;
-    background: var(--surface-active);
-    color: var(--text-primary);
-    font-size: 20px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 19px;
+    line-height: 1;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     touch-action: manipulation;
     font-family: var(--font-heading);
+    transition: background-color 0.15s, color 0.15s;
 }
-.btn-qty:active { background: var(--primary-color); color: white; }
+.btn-qty:hover:not(:disabled) { background: var(--surface-active); }
+.btn-qty:active:not(:disabled) { background: var(--primary-color); color: var(--app-text-inverse); }
+.btn-qty:disabled { color: var(--text-muted); cursor: not-allowed; }
 .btn-plus { color: var(--success-color); }
 .btn-minus { color: var(--danger-color); }
 
 .qty-display {
     flex: 1;
+    min-width: 0;
     text-align: center;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-variant-numeric: tabular-nums;
     border: none;
     background: transparent;
     pointer-events: auto;
     padding: 0;
     margin: 0;
-    width: 100%;
     outline: none;
 }
 .qty-display:focus { color: var(--primary-color); }

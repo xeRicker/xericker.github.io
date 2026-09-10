@@ -2,7 +2,7 @@ import { apiService } from '../services/api.js?v=64';
 import { createId } from '../services/products.js?v=60';
 import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=64';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=60';
+import { dialogService } from './components/customControls.js?v=70';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }
@@ -57,7 +57,7 @@ class AdminEmployees {
         const firstName = String(data.get('firstName')).trim();
         const lastName = String(data.get('lastName')).trim();
         const id = `${firstName}.${lastName}`.toLocaleLowerCase('pl-PL').replace(/\s+/g, '-');
-        if (this.catalog.employees.some(employee => employee.id === id)) return dialogService.alert('Ta osoba jest już na liście.', 'Duplikat osoby');
+        if (this.catalog.employees.some(employee => employee.id === id)) return dialogService.warning('Ta osoba jest już na liście.', 'Duplikat osoby');
         this.catalog.employees.push({ id: id || createId('employee'), firstName, lastName, shortName: `${firstName} ${lastName[0]}.`, enabled: true, order: this.catalog.employees.length });
         this.markDirty(); this.render();
     }
@@ -92,8 +92,8 @@ class AdminEmployees {
         if (!this.isDirty) return;
         const button = this.container.querySelector('#saveEmployeesBtn');
         button.disabled = true; button.classList.add('is-saving');
-        try { this.catalog.updatedAt = new Date().toISOString(); await apiService.saveEmployees(this.catalog); this.savedSnapshot = this.serialize(); this.isDirty = false; await dialogService.alert('Lista ekipy została zapisana.', 'Zapisano'); }
-        catch (error) { await dialogService.alert(`Nie udało się zapisać ekipy. ${error.message}`, 'Błąd zapisu'); }
+        try { this.catalog.updatedAt = new Date().toISOString(); await apiService.saveEmployees(this.catalog); this.savedSnapshot = this.serialize(); this.isDirty = false; await dialogService.success('Lista ekipy została zapisana.', 'Zapisano'); }
+        catch (error) { await dialogService.error(`Nie udało się zapisać ekipy. ${error.message}`, 'Błąd zapisu'); }
         this.render();
     }
 }

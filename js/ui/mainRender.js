@@ -110,7 +110,9 @@ export const mainRender = {
                         <div class="${cardClass('product', 'product-card animate-stagger type-toggle')}" data-name="${name}" style="animation-delay:${delay}s">
                             <div class="product-name">${name}</div>
                             <div class="controls">
-                                <div class="toggle-indicator"><span class="check-icon material-symbols-rounded" aria-hidden="true">check</span></div>
+                                <span class="toggle-indicator">
+                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </span>
                                 <input type="checkbox" id="checkbox-${name}" data-name="${name}" style="display:none">
                             </div>
                         </div>`;

@@ -5,13 +5,21 @@ import { adminProducts } from './ui/adminProducts.js?v=60';
 import { createAdminListsPage } from './ui/adminLists.js?v=60';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=67';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=70';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { cardClass } from './ui/components/Card.js';
 import { getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
 import { adminEmployees } from './ui/adminEmployees.js?v=64';
+import { authService } from './services/auth.js?v=1';
+import { noticeService } from './ui/components/notice.js?v=1';
 
-const PASSWORD = "1232123";
+const MONTHLY_STATUS_VARIANTS = {
+    loading: 'loading',
+    ready: 'success',
+    error: 'danger',
+    empty: 'warning'
+};
+
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
 const ADMIN_FORCE_LOGIN_STORAGE_KEY = 'burbone-admin-force-login';
 const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
@@ -45,13 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         if ((!isLocalhost() || isAdminLogoutRequested()) && !(await hasValidAdminAccess())) {
             document.body.style.display = 'block';
-            const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
-                type: 'password',
-                inputmode: 'numeric',
-                autocomplete: 'current-password',
-                autoSubmit: value => value === PASSWORD
-            });
-            if (pass !== PASSWORD) return location.href = "index.html";
+            if (!(await requestAdminAccess())) return location.href = "index.html";
             saveAdminAccess();
         }
         document.body.style.display = 'block';
@@ -82,6 +84,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         showAdminUnavailable(error);
     }
 });
+
+/**
+ * Keeps asking for the password until it matches or the user cancels.
+ * A wrong password reopens the dialog with an inline notice instead of
+ * dropping the user out of the panel.
+ */
+async function requestAdminAccess() {
+    let notice;
+    for (;;) {
+        const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
+            type: 'password',
+            autocomplete: 'current-password',
+            size: 'prominent',
+            label: 'Hasło administratora',
+            notice,
+            value: '',
+            action: {
+                label: 'Pokaż hasło',
+                labelActive: 'Ukryj hasło',
+                icon: 'visibility',
+                iconActive: 'visibility_off'
+            }
+        });
+        if (pass === null) return false;
+        if (await authService.verifyPassword(pass)) return true;
+        notice = { variant: 'danger', text: 'Nieprawidłowe hasło. Spróbuj ponownie.' };
+    }
+}
 
 async function hasValidAdminAccess() {
     try {
@@ -114,12 +144,12 @@ function showAdminUnavailable(error) {
     const details = error?.message || 'Nie udało się pobrać danych z GitHub.';
     loader.classList.remove('hidden');
     loader.innerHTML = `
-        <div class="loader-content loader-content--error" role="alert">
-            ${renderMaterialIcon('cloud_off', 'loader-error-icon')}
-            <h1>Panel jest obecnie niedostępny</h1>
-            <p>Nie udało się załadować danych.</p>
-            <p class="loader-error-code">Kod błędu: ${escapeHtml(code)}</p>
-            <p class="loader-error-details">${escapeHtml(details)}</p>
+        <div class="status-card status-card--danger" role="alert">
+            ${renderMaterialIcon('cloud_off', 'status-card__icon')}
+            <h1 class="status-card__title">Panel jest obecnie niedostępny</h1>
+            <p class="status-card__text">Nie udało się załadować danych.</p>
+            <p class="status-card__code">Kod błędu: ${escapeHtml(code)}</p>
+            <p class="status-card__text">${escapeHtml(details)}</p>
         </div>
     `;
 }
@@ -1098,14 +1128,11 @@ function destroyMonthlyReportCharts() {
 function setMonthlyReportStatus(message, state) {
     const status = document.getElementById('monthlyReportStatus');
     if (!status) return;
-    status.className = `monthly-report-status monthly-report-status--${state}`;
-    if (!message) {
-        status.innerHTML = '';
-        return;
-    }
-    status.innerHTML = state === 'loading'
-        ? `<span class="material-symbols-rounded" aria-hidden="true">progress_activity</span><span>${message}</span><span class="monthly-report-status__bar"><i></i></span>`
-        : `<span class="material-symbols-rounded" aria-hidden="true">${state === 'error' ? 'error' : 'info'}</span><span>${message}</span>`;
+    noticeService.render(status, {
+        variant: MONTHLY_STATUS_VARIANTS[state] || 'info',
+        text: message,
+        showBar: state === 'loading'
+    });
 }
 
 function getReportMonthPair(referenceDate = new Date()) {

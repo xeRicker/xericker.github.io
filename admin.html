@@ -2,9 +2,11 @@
 <html lang="pl" data-color-mode="dark" data-theme="dark:dark spacing:spacing shape:shape typography:typography">
 <head>
     <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=69">
+    <link rel="stylesheet" href="style.css?v=76">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -163,12 +165,12 @@
     <div class="card card--chart chart-card animate-enter delay-3 calc-card u-card-spacing" data-admin-page="payroll" hidden>
         <div class="chart-header">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">calculate</span> KALKULATOR WYPŁATY</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">badge</span> PRACOWNIK</h3>
             </div>
         </div>
         <div class="calc-grid">
             <div class="calc-input-group">
-                <label for="calcEmployee">Pracownik</label>
+                <label for="calcEmployee">Wybierz pracownika</label>
                 <select id="calcEmployee" class="calc-input"></select>
             </div>
             <div class="calc-input-group">
@@ -212,7 +214,7 @@
 
 
     <div id="monthlyReportPage" class="monthly-report-page animate-enter delay-3" data-admin-page="monthlyReport" hidden>
-        <div id="monthlyReportStatus" class="monthly-report-status"></div>
+        <div id="monthlyReportStatus" class="notice" hidden></div>
         <div id="monthlyReportContent" class="monthly-report-content"></div>
     </div>
 
@@ -292,6 +294,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=72"></script>
+<script type="module" src="js/admin.js?v=75"></script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "10.09.2026",
+  "revenue": 1020,
+  "cardRevenue": 611,
+  "glovoRevenue": 107,
+  "employees": {
+    "kacper.jarnot": "12:00,21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Bułki": 10,
+    "Cebula prażona": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania na frytki": 1,
+    "Rękawiczki": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

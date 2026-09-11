@@ -1,0 +1,29 @@
+{
+  "location": "Oświęcim",
+  "date": "11.09.2026",
+  "revenue": 1468,
+  "cardRevenue": 560,
+  "glovoRevenue": 483,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Szmaty": 1
+  }
+}

@@ -10,6 +10,7 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 - JavaScript: ES modules without a bundler
 - CSS: imported through `style.css`
 - Data: JSON files in `database/<location>/<dd.mm.yyyy>.json`
+- Catalogs: `database/locations.json` (points), `database/employees.json` (team), `database/products.json` (products)
 - Charts: Chart.js from CDN on the admin page
 - Icons: Google Material Symbols Rounded
 - Design tokens: local Atlassian token set in `css/atlassian-tokens.css`
@@ -30,9 +31,11 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │   ├── base.css
 │   ├── layout.css
 │   ├── generator.css
+│   ├── burgers.css
 │   ├── admin.css
 │   ├── admin-products-lists.css
 │   ├── admin-employees.css
+│   ├── admin-locations.css
 │   ├── feedback.css
 │   ├── components/
 │   │   ├── custom-controls.css
@@ -51,6 +54,8 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │   │   ├── analytics.js
 │   │   ├── api.js
 │   │   ├── auth.js
+│   │   ├── employees.js
+│   │   ├── locations.js
 │   │   ├── products.js
 │   │   ├── reportDates.js
 │   │   ├── reportFormatter.js
@@ -59,35 +64,45 @@ Static Burbone app for generating daily operations lists and an admin dashboard 
 │   │   ├── trivia.js
 │   │   └── weather.js
 │   └── ui/
+│       ├── adminEmployees.js
 │       ├── adminLists.js
+│       ├── adminLocations.js
 │       ├── adminProducts.js
 │       ├── adminRender.js
+│       ├── burgerConfigurator.js
 │       ├── mainRender.js
 │       ├── payrollCalculator.js
 │       ├── shared.js
 │       └── components/
+│           ├── Card.js
 │           ├── customControls.js
 │           └── notice.js
 └── database/
+    ├── locations.json
+    ├── employees.json
     ├── products.json
-    ├── default.json
+    ├── burgers.json
     └── <location>/*.json
 ```
 
 ## Responsibilities
 
 - `js/main.js`: report generator logic, generator/employees tabs, one-shift temporary employee, persistent form state.
-- `js/admin.js`: admin dashboard controller, filters, admin tabs, revenue view, calculator.
+- `js/admin.js`: admin dashboard controller, filters, admin tabs, revenue view, calculator, point-catalog mapping of loaded reports. Keeps `sourceData` (raw reports), `allData` (without archived points, feeds Listy) and `statsData` (points included in statistics, feeds every calculation).
 - `js/ui/adminLists.js`: saved lists view, filtering, report preview, report copying.
 - `js/ui/adminProducts.js`: product catalog editing, ordering, types, active state, saving.
+- `js/ui/adminEmployees.js`: team catalog editing (add, rename, visibility, remove).
+- `js/ui/adminLocations.js`: point catalog editing (add, rename, generator visibility, statistics switch, archive/restore), including the folder that keeps the archive in place.
 - `js/ui/adminRender.js`: summaries, charts, tables, heatmap, tooltips.
-- `js/ui/payrollCalculator.js`: shared hours calculator for the main page and admin.
-- `js/ui/components/customControls.js`: custom `select`, `date`, `time`, and dialog controls. Do not use `alert`, `confirm`, `prompt`, or native pickers as UI.
+- `js/ui/payrollCalculator.js`: shared hours calculator for the main page and admin. Rate and date fields stay disabled until an employee is chosen, and EKIPA-hidden people are not listed.
+- `js/ui/components/customControls.js`: custom `select`, `date`, `time`, and dialog controls. Do not use `alert`, `confirm`, `prompt`, or native pickers as UI. It mirrors the native `disabled` state onto the visible control.
 - `js/ui/components/notice.js` + `css/components/notice.css`: the single message system. Every user-facing message (inline notice, dialog notice, page-level status card) uses `.notice--<variant>` with `info`, `success`, `danger`, `warning`, `muted`, or `loading`; icons and colors come from the variant. Add new messages through `noticeService.render()` or `dialogService.alert/success/error/warning`, never as a bespoke styled element.
 - `js/services/reportDates.js`: shared report date parsing, report keys, date sorting.
-- `js/services/api.js`: read/write through the GitHub API or local dev server.
+- `js/services/api.js`: read/write through the GitHub API or local dev server. Report paths use the point folder from the catalog.
+- `js/services/locations.js`: point catalog model — normalizing, matching report names to points (name, folder, aliases), generator visibility, statistics switch, panel filters.
+- `js/services/employees.js`: team catalog model — normalizing, resolving report names to people, visibility checks.
 - `js/services/auth.js`: admin password check. Keep only the PBKDF2 salt and digest in the source; never put the plaintext password back.
-- `js/services/analytics.js`: daily report aggregation and statistics.
+- `js/services/analytics.js`: daily report aggregation and statistics. Per-point keys are derived from the point name, so a new point needs no code change.
 
 ## Design Direction
 
@@ -170,6 +185,9 @@ The server handles static files and local JSON writes. The site can open without
 - Before adding shared logic, check `js/services/` and `js/ui/components/`.
 - Report data dates use `dd.mm.yyyy`; UI form dates use ISO `yyyy-mm-dd`.
 - Teams in `js/config/data.js` are fixed, but the generator allows adding a temporary employee for the current report. That employee is not saved to `localStorage` and disappears after reload/reset.
+- Points come from `database/locations.json`, not from code. A point has a mutable `name` and an immutable `path` (the folder in `database/`), plus `aliases` that keep old report names attached to the same point after a rename. The generator, the point filter in Listy and every statistic resolve report names through this catalog, so renaming or adding a point needs no code change.
+- Point switches are independent: `enabled: false` hides the point only from the generator's point picker (its data still counts in statistics and stays in saved lists), `stats: false` keeps it in the generator and in Listy but drops it from every calculation (dashboard, comparison, hours table, payroll calculator — `statsData` in `admin.js`). `deleted: true` archives the point: out of both, while all its JSON files stay in `database/<path>/` untouched. Restoring brings back the previous switch values.
+- Catalog edits are re-derived from the raw reports (`sourceData`) on every save, so archiving and restoring a point does not lose the loaded data.
 - Locations may include Polish characters, for example `Oświęcim`. Do not normalize them aggressively without checking paths in `database/`.
 - Do not change the JSON data structure without updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel.
 - Generator form state in `localStorage` (`burbone_state`) expires at the end of the local calendar day, so a list started in the evening survives closing the browser and resets the next day.

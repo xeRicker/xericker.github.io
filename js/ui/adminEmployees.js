@@ -1,8 +1,8 @@
-import { apiService } from '../services/api.js?v=64';
+import { apiService } from '../services/api.js?v=65';
 import { createId } from '../services/products.js?v=60';
-import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=64';
+import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=65';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=70';
+import { dialogService } from './components/customControls.js?v=71';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }

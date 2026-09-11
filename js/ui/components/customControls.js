@@ -223,6 +223,10 @@ function enhanceSelect(select) {
     const render = () => {
         const selected = select.selectedOptions[0];
         value.textContent = selected?.textContent || 'Wybierz';
+        // Natywny select jest ukryty, więc stan `disabled` musi przejąć widoczny
+        // przycisk — inaczej dałoby się kliknąć pole, które jest wyłączone.
+        button.disabled = select.disabled;
+        wrapper.classList.toggle('is-disabled', select.disabled);
         menu.innerHTML = '';
         Array.from(select.options).filter(option => !option.disabled).forEach(option => {
             const item = document.createElement('button');
@@ -245,6 +249,7 @@ function enhanceSelect(select) {
     };
 
     button.addEventListener('click', () => {
+        if (select.disabled) return;
         toggleControl(wrapper, menu);
     });
     select.addEventListener('change', render);
@@ -335,6 +340,8 @@ function enhanceDateInput(input) {
 
     const render = () => {
         value.textContent = formatDateLabel(input.value);
+        button.disabled = input.disabled;
+        wrapper.classList.toggle('is-disabled', input.disabled);
         renderCalendar(popover, viewDate, input.value, input._customDateMarkers || {}, selectedValue => {
             input.value = selectedValue;
             input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -349,6 +356,7 @@ function enhanceDateInput(input) {
     };
 
     button.addEventListener('click', () => {
+        if (input.disabled) return;
         if (input.value) viewDate = parseIsoDate(input.value);
         toggleControl(wrapper, popover);
         render();

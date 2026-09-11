@@ -15,9 +15,18 @@ class ApiService {
         return Boolean(GITHUB_CONFIG.TOKEN && GITHUB_CONFIG.TOKEN !== '__GH_TOKEN__');
     }
 
-    async checkFileExists(location, date) {
+    /**
+     * Folder punktu pochodzi z katalogu punktów, więc zmiana nazwy punktu nie
+     * przenosi archiwum. Gdy katalog nie zna punktu, zostaje dawny schemat.
+     */
+    getLocationFolder(data, folder) {
+        return folder || String(data?.location || '').toLowerCase();
+    }
+
+    async checkFileExists(location, date, folder) {
+        const directory = this.getLocationFolder({ location }, folder);
         if (isLocalhost()) {
-            const localPath = `database/${location.toLowerCase()}/${date}.json`;
+            const localPath = `database/${directory}/${date}.json`;
             try {
                 const response = await fetch(localPath, { method: 'HEAD' });
                 return response.ok;
@@ -25,19 +34,20 @@ class ApiService {
                 return false;
             }
         }
-        const url = `${this.baseUrl}database/${location.toLowerCase()}/${date}.json`;
-        const response = await this.fetchGithub(url, { method: 'GET', headers: this.headers }, `database/${location.toLowerCase()}/${date}.json`);
+        const url = `${this.baseUrl}database/${directory}/${date}.json`;
+        const response = await this.fetchGithub(url, { method: 'GET', headers: this.headers }, `database/${directory}/${date}.json`);
         if (response.status === 404) return false;
-        if (!response.ok) throw await this.createGithubApiError(response, `database/${location.toLowerCase()}/${date}.json`);
+        if (!response.ok) throw await this.createGithubApiError(response, `database/${directory}/${date}.json`);
         return true;
     }
 
-    async saveReport(data) {
+    async saveReport(data, folder) {
+        const directory = this.getLocationFolder(data, folder);
         if (isLocalhost()) {
-            await this.saveLocalJson(`database/${data.location.toLowerCase()}/${data.date}.json`, data, 'Local report save failed.');
+            await this.saveLocalJson(`database/${directory}/${data.date}.json`, data, 'Local report save failed.');
             return;
         }
-        const filePath = `database/${data.location.toLowerCase()}/${data.date}.json`;
+        const filePath = `database/${directory}/${data.date}.json`;
         const url = `${this.baseUrl}${filePath}`;
 
         let sha;
@@ -191,6 +201,33 @@ class ApiService {
         const filePath = 'database/employees.json';
         if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update employees catalog');
         if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Local employees save failed.');
+        throw new Error('GitHub token is not configured');
+    }
+
+    async fetchLocations() {
+        const path = 'database/locations.json';
+        try {
+            const staticResponse = await fetch(`${path}?v=${Date.now()}`);
+            if (staticResponse.ok) return await staticResponse.json();
+            if (this.hasGithubToken()) {
+                const response = await this.fetchGithub(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers }, path);
+                if (response.ok) {
+                    const file = await response.json();
+                    return file.content ? JSON.parse(decodeURIComponent(escape(atob(file.content)))) : null;
+                }
+            }
+            if (isLocalhost()) {
+                const response = await fetch(`${path}?v=${Date.now()}`);
+                return response.ok ? response.json() : null;
+            }
+        } catch (error) { console.warn('Locations config unavailable, falling back to defaults.', error); }
+        return null;
+    }
+
+    async saveLocations(data) {
+        const filePath = 'database/locations.json';
+        if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update locations catalog');
+        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Local locations save failed.');
         throw new Error('GitHub token is not configured');
     }
 

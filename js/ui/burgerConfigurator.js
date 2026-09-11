@@ -1,4 +1,4 @@
-import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=70';
+import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=71';
 
 const BURGER_DATA_URL = 'database/burgers.json?v=60';
 
@@ -63,6 +63,8 @@ export async function setupBurgerConfigurator(root) {
     render();
 
     function render() {
+        updateRangeProgress(fatRetention);
+        updateRangeProgress(oilAbsorption);
         updateDonenessLabel(donenessLabel, Number(fatRetention.value));
         updateOilAbsorptionLabel(oilAbsorptionLabel, Number(oilAbsorption.value));
         renderIngredientList(list, products, beefConfig, state.items, Number(fatRetention.value), Number(oilAbsorption.value));
@@ -73,6 +75,15 @@ export async function setupBurgerConfigurator(root) {
         renderDetails(details, sortedRows);
         refreshCustomControls(root);
     }
+}
+
+/** Kolor wypełnienia toru suwaka wynika z wartości, więc liczy go JS. */
+function updateRangeProgress(input) {
+    const min = Number(input.min) || 0;
+    const max = Number(input.max) || 100;
+    const value = Number(input.value) || 0;
+    const percent = max === min ? 0 : ((value - min) / (max - min)) * 100;
+    input.style.setProperty('--burger-range-progress', `${percent}%`);
 }
 
 async function loadBurgerConfig() {

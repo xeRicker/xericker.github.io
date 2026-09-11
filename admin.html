@@ -6,7 +6,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=76">
+    <link rel="stylesheet" href="style.css?v=79">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -89,6 +89,10 @@
         <button class="admin-page-tab" type="button" data-admin-tab="employees" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">groups</span>
             Ekipa
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="locations" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">near_me</span>
+            Punkty
         </button>
         <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">badge</span>
@@ -241,6 +245,7 @@
 
     <div id="adminProductsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="products" hidden></div>
     <div id="adminEmployeesPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="employees" hidden></div>
+    <div id="adminLocationsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="locations" hidden></div>
 
     <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
@@ -294,6 +299,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=75"></script>
+<script type="module" src="js/admin.js?v=79"></script>
 </body>
 </html>

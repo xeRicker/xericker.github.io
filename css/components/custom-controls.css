@@ -40,6 +40,19 @@
     box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
+/* Wyłączona kontrolka: brak reakcji na hover i wyraźnie słabsza hierarchia. */
+.custom-control.is-disabled .custom-control__button,
+.custom-control__button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.custom-control.is-disabled .custom-control__button:hover,
+.custom-control__button:disabled:hover {
+    border-color: var(--border-color);
+    background: var(--surface-raised);
+}
+
 .custom-control__value {
     overflow: hidden;
     text-overflow: ellipsis;

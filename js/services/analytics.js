@@ -1,6 +1,7 @@
 import { calculateHours } from '../utils.js';
 import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './revenue.js';
 import { parseReportDate } from './reportDates.js';
+import { slugifyLocation } from './locations.js?v=66';
 
 export class AnalyticsService {
     processReports(reports) {
@@ -16,16 +17,11 @@ export class AnalyticsService {
                     dateObj,
                     timestamp: dateObj.getTime(),
                     dayOfWeek: dateObj.toLocaleDateString('pl-PL', { weekday: 'long' }),
-                    oswiecim: 0, osiek: 0, total: 0,
-                    wilamowice: 0,
-                    oswiecimCard: 0, osiekCard: 0, cardTotal: 0,
-                    wilamowiceCard: 0,
-                    oswiecimCash: 0, osiekCash: 0, cashTotal: 0,
-                    wilamowiceCash: 0,
-                    oswiecimGlovo: 0, osiekGlovo: 0, glovoTotal: 0,
-                    wilamowiceGlovo: 0,
-                    oswiecimGlovoNet: 0, osiekGlovoNet: 0, glovoNetTotal: 0,
-                    wilamowiceGlovoNet: 0,
+                    total: 0,
+                    cardTotal: 0,
+                    cashTotal: 0,
+                    glovoTotal: 0,
+                    glovoNetTotal: 0,
                     cashDeskTotal: 0,
                     locations: {},
                     rawReports: []
@@ -65,6 +61,15 @@ export class AnalyticsService {
             locationEntry.reports.push(r);
 
             if (locationKey) {
+                // Klucze per punkt (np. `oswiecim`, `oswiecimCard`) powstają z nazwy
+                // punktu, więc nowy punkt w katalogu działa bez zmian w kodzie.
+                if (!(locationKey in entry)) {
+                    entry[locationKey] = 0;
+                    entry[`${locationKey}Card`] = 0;
+                    entry[`${locationKey}Cash`] = 0;
+                    entry[`${locationKey}Glovo`] = 0;
+                    entry[`${locationKey}GlovoNet`] = 0;
+                }
                 entry[locationKey] += rev;
                 entry[`${locationKey}Card`] += card;
                 entry[`${locationKey}Cash`] += cash;
@@ -105,10 +110,7 @@ export class AnalyticsService {
     }
 
     getLocationKey(location) {
-        if (location === 'Oświęcim') return 'oswiecim';
-        if (location === 'Osiek') return 'osiek';
-        if (location === 'Wilamowice') return 'wilamowice';
-        return '';
+        return slugifyLocation(location);
     }
 }
 

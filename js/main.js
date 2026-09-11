@@ -1,16 +1,17 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=61';
+import { mainRender } from './ui/mainRender.js?v=62';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js?v=63';
+import { apiService } from './services/api.js?v=65';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=70';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=61';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=71';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
-import { getActiveEmployees, getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
+import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=65';
+import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=66';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=60';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=61';
 import { noticeService } from './ui/components/notice.js?v=1';
 
 let selectedLocation = null;
@@ -21,6 +22,7 @@ let productCatalog = null;
 let temporaryEmployeeCounter = 0;
 let burgerConfiguratorReady = false;
 let employeeCatalog = null;
+let locationCatalog = null;
 
 // Stany danych kalkulatora wynagrodzeń mapowane na warianty komunikatu.
 const WORKER_STATUS_VARIANTS = {
@@ -32,8 +34,10 @@ const WORKER_STATUS_VARIANTS = {
 document.addEventListener('DOMContentLoaded', async () => {
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     employeeCatalog = await loadEmployeeCatalog();
+    locationCatalog = await loadLocationCatalog();
     mainRender.renderEmployees(document.getElementById('employees'), getActiveEmployees(employeeCatalog), EMPLOYEE_COLORS, TIME_PRESETS);
     mainRender.renderProducts(document.getElementById('products'), productCatalog);
+    mainRender.renderLocations(document.getElementById('locationOptions'), getSelectableLocations(locationCatalog));
     enhanceCustomControls();
     restoreState();
     setupEvents();
@@ -51,13 +55,28 @@ function setupEvents() {
     document.getElementById('glovoRevenueInput').addEventListener('input', saveState);
 
     document.querySelector('.reset-button').addEventListener('click', resetAll);
-    document.getElementById('copyButton').addEventListener('click', () => uiShared.showModal('locationSheet'));
-    document.querySelectorAll('.location-button').forEach(b => b.addEventListener('click', e => {
-        selectedLocation = e.currentTarget.dataset.location;
-        generateReport();
-    }));
+    document.getElementById('copyButton').addEventListener('click', openLocationSheet);
+    document.getElementById('locationOptions').addEventListener('click', handleLocationChoice);
     document.getElementById('locationOverlay').addEventListener('click', uiShared.closeModals);
     document.querySelector('[data-close-location-overlay]')?.addEventListener('click', uiShared.closeModals);
+}
+
+async function openLocationSheet() {
+    const locations = getSelectableLocations(locationCatalog);
+    if (!locations.length) {
+        await dialogService.warning('Brak punktów z włączoną widocznością. Dodaj punkt w panelu admina (zakładka PUNKTY).', 'Nie ma punktu do wyboru');
+        return;
+    }
+    uiShared.showModal('locationSheet');
+}
+
+function handleLocationChoice(event) {
+    const button = event.target.closest('.location-button');
+    if (!button) return;
+    const location = getSelectableLocations(locationCatalog).find(item => item.path === button.dataset.locationPath);
+    if (!location) return;
+    selectedLocation = location;
+    generateReport();
 }
 
 function setupTabs() {
@@ -262,7 +281,7 @@ async function generateReport() {
     }
 
     const data = {
-        location: selectedLocation,
+        location: selectedLocation.name,
         date,
         revenue: rev,
         cardRevenue: card,
@@ -291,11 +310,11 @@ async function generateReport() {
 
     const reportText = buildReportText(data, productCatalog, employeeCatalog);
     try {
-        if (await apiService.checkFileExists(selectedLocation, date)) {
+        if (await apiService.checkFileExists(selectedLocation.name, date, selectedLocation.path)) {
             if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?"))) return;
         }
 
-        await apiService.saveReport(data);
+        await apiService.saveReport(data, selectedLocation.path);
         uiShared.showSuccess(reportText);
     } catch (error) {
         console.error('Report was not saved to GitHub.', error);
@@ -336,7 +355,8 @@ async function initWorkerCalculator() {
             resMoneyId: 'workerResMoney',
             detailsBoxId: 'workerCalcDetails',
             defaultRate: 30,
-            employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog)
+            employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog),
+            isEmployeeAvailable: name => isEmployeeVisible(name, employeeCatalog)
         });
 
         const now = new Date();

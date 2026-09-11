@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "updatedAt": null,
+  "locations": [
+    {
+      "name": "Oświęcim",
+      "path": "oświęcim",
+      "aliases": [],
+      "enabled": true,
+      "stats": true,
+      "deleted": false,
+      "order": 0
+    },
+    {
+      "name": "Osiek",
+      "path": "osiek",
+      "aliases": [],
+      "enabled": true,
+      "stats": true,
+      "deleted": false,
+      "order": 1
+    },
+    {
+      "name": "Wilamowice",
+      "path": "wilamowice",
+      "aliases": [],
+      "enabled": false,
+      "stats": true,
+      "deleted": false,
+      "order": 2
+    }
+  ]
+}

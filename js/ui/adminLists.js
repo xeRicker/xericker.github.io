@@ -1,5 +1,6 @@
 import { buildReportText } from '../services/reportFormatter.js';
 import { getReportKey, getReportTimestamp } from '../services/reportDates.js';
+import { getPanelLocations } from '../services/locations.js?v=66';
 import { escapeHtml, fallbackCopyToClipboard } from '../utils.js';
 import { cardClass } from './components/Card.js';
 
@@ -38,13 +39,27 @@ export function createAdminListsPage(config) {
 
     function populateLocationFilter() {
         const select = locationSelect();
-        const locations = Array.from(new Set(getAllData().map(report => report.location).filter(Boolean)))
-            .sort((a, b) => a.localeCompare(b, 'pl'));
+        if (!select) return;
+        const current = select.value;
+        // Punkty pochodzą z katalogu (kolejność z panelu), a nie z samych danych,
+        // żeby lista filtrów była taka sama jak kolejność punktów w adminie.
+        const fromCatalog = getPanelLocations(config.getLocationCatalog?.()).map(location => location.name);
+        const fromData = getAllData().map(report => report.location).filter(Boolean);
+        const locations = Array.from(new Set([...fromCatalog, ...fromData]))
+            .sort((a, b) => {
+                const indexA = fromCatalog.indexOf(a);
+                const indexB = fromCatalog.indexOf(b);
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                if (indexA !== -1) return -1;
+                if (indexB !== -1) return 1;
+                return a.localeCompare(b, 'pl');
+            });
 
         select.innerHTML = [
             '<option value="all">Wszystkie punkty</option>',
             ...locations.map(location => `<option value="${escapeHtml(location)}">${escapeHtml(location)}</option>`)
         ].join('');
+        if (locations.includes(current)) select.value = current;
     }
 
     function setupListeners() {

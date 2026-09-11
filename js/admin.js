@@ -1,15 +1,17 @@
-import { apiService } from './services/api.js?v=63';
+import { apiService } from './services/api.js?v=65';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=60';
 import { adminProducts } from './ui/adminProducts.js?v=60';
-import { createAdminListsPage } from './ui/adminLists.js?v=60';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=60';
+import { createAdminListsPage } from './ui/adminLists.js?v=62';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=61';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=70';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=71';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { cardClass } from './ui/components/Card.js';
-import { getEmployeeDisplayName, loadEmployeeCatalog } from './services/employees.js?v=64';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=65';
 import { adminEmployees } from './ui/adminEmployees.js?v=64';
+import { adminLocations } from './ui/adminLocations.js?v=66';
+import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=66';
 import { authService } from './services/auth.js?v=1';
 import { noticeService } from './ui/components/notice.js?v=1';
 
@@ -28,6 +30,8 @@ const DEFAULT_DATA_MONTHS = 1;
 const PAYROLL_RATE = 30;
 
 let allData = [];
+let sourceData = [];
+let statsData = [];
 let processedData = [];
 let currentData = [];
 let currentWeeks = [];
@@ -47,6 +51,8 @@ let availableMonthCount = 0;
 let monthlyReportCharts = [];
 let monthlyReportGenerated = false;
 let employeeCatalog = null;
+let locationCatalog = null;
+let locationResolver = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     setAdminScrollLocked(true);
@@ -58,8 +64,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         document.body.style.display = 'block';
 
-        allData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS, onMeta: updateDataLoadInfo });
-        if (!allData.length) {
+        const rawData = await apiService.fetchAllData({ recentMonths: DEFAULT_DATA_MONTHS, onMeta: updateDataLoadInfo });
+        if (!rawData.length) {
             showAdminUnavailable(new Error('GitHub nie zawiera raportów w wybranym zakresie.'));
             return;
         }
@@ -67,16 +73,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupAdminPages();
         productCatalog = getActiveProductCatalog(await loadProductCatalog());
         employeeCatalog = await loadEmployeeCatalog();
+        locationCatalog = await loadLocationCatalog();
+        locationResolver = createLocationResolver(locationCatalog);
+
+        // Katalog punktów tłumaczy nazwy z historycznych list na bieżące nazwy
+        // punktów, wycina archiwum i punkty pomijane w statystykach.
+        sourceData = rawData;
+        allData = applyLocationCatalog(sourceData);
+        statsData = applyStatisticsFilter(allData);
+        if (!allData.length) {
+            showAdminUnavailable(new Error('Wszystkie punkty z wybranego zakresu są w archiwum.'));
+            return;
+        }
+
         await adminProducts.init(document.getElementById('adminProductsPage'));
         await adminEmployees.init(document.getElementById('adminEmployeesPage'));
+        adminLocations.onSaved = catalog => {
+            // Po zapisie katalogu widoki liczymy od nowa z surowych raportów, żeby
+            // zmiana nazwy, przełączniki i archiwum działały bez przeładowania
+            // strony — i żeby przywrócenie punktu odzyskało jego dane.
+            locationCatalog = catalog;
+            locationResolver = createLocationResolver(locationCatalog);
+            applyLoadedData(sourceData);
+        };
+        await adminLocations.init(document.getElementById('adminLocationsPage'));
         adminListsPage = createAdminListsPage({
             getAllData: () => allData,
             getProductCatalog: () => productCatalog,
             getEmployeeCatalog: () => employeeCatalog,
+            getLocationCatalog: () => locationCatalog,
             buildSymbolIcon: (...args) => adminRender.buildSymbolIcon(...args)
         });
 
-        processedData = analytics.processReports(allData);
+        processedData = analytics.processReports(statsData);
         adminListsPage.init();
         initUI(processedData);
     } catch (error) {
@@ -84,6 +113,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         showAdminUnavailable(error);
     }
 });
+
+/** Nazwy punktów z raportów sprowadza do katalogu i pomija punkty usunięte. */
+function applyLocationCatalog(reports) {
+    if (!locationResolver) return reports;
+    return reports
+        .filter(report => !locationResolver.isArchived(report.location))
+        .map(report => {
+            const name = locationResolver.nameFor(report.location);
+            return name === report.location ? report : { ...report, location: name };
+        });
+}
+
+/**
+ * Zbiór do obliczeń: punkty pomijane w statystykach zostają w zapisanych
+ * listach, ale nie wchodzą do utargów, godzin ani kalkulatora wypłat.
+ */
+function applyStatisticsFilter(reports) {
+    if (!locationResolver) return reports;
+    return reports.filter(report => locationResolver.inStatistics(report.location));
+}
 
 /**
  * Keeps asking for the password until it matches or the user cancels.
@@ -280,8 +329,10 @@ function setDataLoadStatus(message, state) {
 function applyLoadedData(data) {
     const activeMonth = document.getElementById('monthFilter')?.value || '';
 
-    allData = data;
-    processedData = analytics.processReports(allData);
+    sourceData = data;
+    allData = applyLocationCatalog(sourceData);
+    statsData = applyStatisticsFilter(allData);
+    processedData = analytics.processReports(statsData);
     currentData = [];
     currentWeeks = [];
     activeWeekKey = 'all';
@@ -314,6 +365,7 @@ async function switchAdminPage(pageName) {
     if (currentTab === pageName) return;
     if (currentTab === 'products' && !(await adminProducts.confirmDiscardChanges())) return;
     if (currentTab === 'employees' && !(await adminEmployees.confirmDiscardChanges())) return;
+    if (currentTab === 'locations' && !(await adminLocations.confirmDiscardChanges())) return;
 
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         const active = tab.dataset.adminTab === pageName;
@@ -328,6 +380,8 @@ async function switchAdminPage(pageName) {
     if (pageName === 'monthlyReport' && !monthlyReportGenerated) {
         await generateMonthlyReport();
     }
+
+    if (pageName === 'lists') adminListsPage?.refresh();
 }
 
 function hideGlobalLoader() {
@@ -417,18 +471,22 @@ function createWeekTab(key, label) {
 function setupListeners() {
     document.getElementById('monthFilter')?.addEventListener('change', () => handleMonthChange(processedData));
 
-    document.querySelectorAll('.chart-btn').forEach(button => {
+    // Tylko kontrolki wykresu zmieniają typ wykresu. Klasa `.chart-btn` służy też
+    // jako wygląd przycisków „Dodaj” w panelach, więc selektor musi być węższy.
+    const chartTypeButtons = document.querySelectorAll('.chart-controls .chart-btn');
+    chartTypeButtons.forEach(button => {
         button.onclick = event => {
-            document.querySelectorAll('.chart-btn').forEach(node => node.classList.remove('active'));
+            chartTypeButtons.forEach(node => node.classList.remove('active'));
             event.currentTarget.classList.add('active');
             chartType = event.currentTarget.dataset.type;
             updateView();
         };
     });
 
-    document.querySelectorAll('.view-btn').forEach(button => {
+    const viewModeButtons = document.querySelectorAll('.view-toggle .view-btn');
+    viewModeButtons.forEach(button => {
         button.onclick = event => {
-            document.querySelectorAll('.view-btn').forEach(node => node.classList.remove('active'));
+            viewModeButtons.forEach(node => node.classList.remove('active'));
             event.currentTarget.classList.add('active');
             viewMode = event.currentTarget.dataset.view;
             updateView();
@@ -513,7 +571,9 @@ function updateView() {
             getRenderOptions()
         );
         adminRender.renderHeatmap(document.getElementById('heatmapContainer'), currentViewData, year, month, getRenderOptions());
-        const employeeStats = analytics.calculateEmployeeStats(currentViewData).sort(compareEmployees);
+        const employeeStats = analytics.calculateEmployeeStats(currentViewData)
+            .filter(employee => isEmployeeVisible(employee.name, employeeCatalog))
+            .sort(compareEmployees);
         adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), employeeStats);
     }
 
@@ -1247,7 +1307,7 @@ function compareEmployees(a, b) {
 
 function initCalculator() {
     payrollCalculator = setupPayrollCalculator({
-        getReports: () => allData,
+        getReports: () => statsData,
         employeeSelectId: 'calcEmployee',
         rateInputId: 'calcRate',
         dateFromId: 'calcDateFrom',
@@ -1257,7 +1317,8 @@ function initCalculator() {
         resMoneyId: 'resMoney',
         detailsBoxId: 'calcDetails',
         defaultRate: 30,
-        employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog)
+        employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog),
+        isEmployeeAvailable: name => isEmployeeVisible(name, employeeCatalog)
     });
 
     payrollCalculator.refresh();

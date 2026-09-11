@@ -1114,6 +1114,13 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .rate-input-wrapper input { border: none; padding: 10px 0; background: transparent; text-align: left; width: 100%; color: var(--text-primary); font-size: 16px; }
 .rate-input-wrapper span { color: var(--primary-color); font-weight: bold; font-size: 14px; margin-left: 8px; font-family: var(--font-heading); }
 
+/* Pola zależne od wyboru pracownika: bez wybranej osoby są nieaktywne. */
+.calc-input-group.is-disabled label { color: var(--text-muted); }
+.calc-input-group.is-disabled .rate-input-wrapper,
+.calc-input-group.is-disabled .calc-input { opacity: .55; }
+.calc-input-group.is-disabled .rate-input-wrapper { cursor: not-allowed; }
+.calc-input-group.is-disabled .rate-input-wrapper input { cursor: not-allowed; }
+
 .calc-result-box { background: var(--surface-raised); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
 /* Ikona i etykieta tworzą jeden wiersz: ikona ma własny box o rozmiarze glifu,
    inaczej glif 24px wychodzi poza box i nachodzi na tekst. */

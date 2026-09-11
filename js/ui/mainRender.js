@@ -82,8 +82,24 @@ export const mainRender = {
         return container.querySelector(`[data-employee-id="${employee.id}"]`);
     },
 
-    renderProducts(container, catalog) {
-        let idx = 0;
+    /**
+     * Lista punktów w arkuszu „SKOPIUJ LISTĘ” pochodzi z katalogu punktów,
+     * więc dodanie punktu w panelu admina wystarcza — bez zmian w kodzie.
+     */
+    renderLocations(container, locations = []) {
+        if (!container) return;
+        if (!locations.length) {
+            container.innerHTML = '<div class="location-empty">Brak punktów z włączoną widocznością. Dodaj punkt w panelu admina.</div>';
+            return;
+        }
+
+        container.innerHTML = locations.map((location, index) => `
+            <button class="sheet-btn location-button animate-stagger" type="button" data-location-path="${escapeHtml(location.path)}" style="animation-delay:${index * 0.04}s">
+                ${renderMaterialIcon('near_me', 'loc-icon')} ${escapeHtml(location.name).toUpperCase()}
+            </button>`).join('');
+    },
+
+    renderProducts(container, catalog) {        let idx = 0;
         const categories = Array.isArray(catalog?.categories)
             ? catalog.categories.map((category = {}) => ({
                 ...category,

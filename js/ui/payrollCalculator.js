@@ -1,6 +1,6 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
-import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=70';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=71';
 import { cardClass } from './components/Card.js';
 
 const DEFAULT_MONTH_HOURS = 160;
@@ -17,7 +17,8 @@ export function setupPayrollCalculator(config) {
         resMoneyId,
         detailsBoxId,
         defaultRate = 30,
-        employeeLabel = name => name
+        employeeLabel = name => name,
+        isEmployeeAvailable = () => true
     } = config;
 
     const select = document.getElementById(employeeSelectId);
@@ -29,9 +30,26 @@ export function setupPayrollCalculator(config) {
 
     let initialized = false;
 
+    const scope = () => select.closest('.calc-card, .worker-card, .section-card') || document;
+
+    /**
+     * Stawka i zakres dat nie mają sensu bez pracownika, więc są nieaktywne,
+     * dopóki ktoś nie wybierze osoby. Stan musi trafić też na podmienione
+     * kontrolki (`customControls`), bo to one przyjmują kliknięcia.
+     */
+    const syncEmployeeFields = () => {
+        const enabled = Boolean(select.value);
+        [rateInput, dateFromInput, dateToInput].forEach(field => {
+            field.disabled = !enabled;
+            field.closest('.calc-input-group')?.classList.toggle('is-disabled', !enabled);
+        });
+        refreshCustomControls(scope());
+    };
+
     const recalc = () => {
         const reports = getReports() || [];
         const name = select.value;
+        syncEmployeeFields();
         syncCalendarMarkers(reports, name);
 
         if (!name) {
@@ -89,7 +107,10 @@ export function setupPayrollCalculator(config) {
         const employees = new Set();
         reports.forEach(report => {
             if (!report.employees) return;
-            Object.keys(report.employees).forEach(name => employees.add(name));
+            Object.keys(report.employees).forEach(name => {
+                // Osoba ukryta w EKIPIE nie pojawia się na liście do wyboru.
+                if (isEmployeeAvailable(name)) employees.add(name);
+            });
         });
 
         const previousValue = select.value;
@@ -103,9 +124,9 @@ export function setupPayrollCalculator(config) {
         if (previousValue && employees.has(previousValue)) {
             select.value = previousValue;
         }
-        const scope = select.closest('.calc-card, .worker-card, .section-card') || document;
-        enhanceCustomControls(scope);
-        refreshCustomControls(scope);
+        enhanceCustomControls(scope());
+        refreshCustomControls(scope());
+        syncEmployeeFields();
     };
 
     const setRate = value => {
@@ -115,7 +136,7 @@ export function setupPayrollCalculator(config) {
     const setDateRange = (from, to) => {
         dateFromInput.value = from;
         dateToInput.value = to;
-        refreshCustomControls(dateFromInput.closest('.calc-card, .worker-card, .section-card') || document);
+        refreshCustomControls(scope());
         recalc();
     };
 

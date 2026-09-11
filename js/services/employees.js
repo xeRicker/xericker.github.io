@@ -1,4 +1,4 @@
-import { apiService } from './api.js?v=64';
+import { apiService } from './api.js?v=65';
 
 export const DEFAULT_EMPLOYEES = [
     ['pawel.komendera', 'Paweł', 'Komendera'],
@@ -35,6 +35,40 @@ export function normalizeEmployeeCatalog(input) {
 
 export function getActiveEmployees(catalog) {
     return normalizeEmployeeCatalog(catalog).employees.filter(employee => employee.enabled);
+}
+
+/**
+ * Raporty zapisują osobę raz jako identyfikator (`pawel.komendera`), a raz jako
+ * samo imię z legacy list, więc dopasowanie musi być odporne na oba zapisy.
+ */
+function normalizeEmployeeKey(value) {
+    return String(value ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[łŁ]/g, 'l')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+}
+
+export function resolveEmployee(rawName, catalog) {
+    const key = normalizeEmployeeKey(rawName);
+    if (!key) return null;
+    const employees = normalizeEmployeeCatalog(catalog).employees;
+    return employees.find(employee => normalizeEmployeeKey(employee.id) === key)
+        || employees.find(employee => normalizeEmployeeKey(`${employee.firstName} ${employee.lastName}`) === key)
+        || employees.find(employee => normalizeEmployeeKey(employee.shortName) === key)
+        || employees.find(employee => normalizeEmployeeKey(employee.firstName) === key)
+        || null;
+}
+
+/**
+ * Osoba ukryta w EKIPIE nie pojawia się na listach pracowników (kalulator
+ * wynagrodzeń, tabela godzin), ale jej historyczne godziny zostają w danych.
+ * Nazwy spoza katalogu (np. jednorazowy pracownik) nie są ukrywane.
+ */
+export function isEmployeeVisible(rawName, catalog) {
+    return resolveEmployee(rawName, catalog)?.enabled !== false;
 }
 
 export function getEmployeeDisplayName(id, catalog) {

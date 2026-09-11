@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-11T08:33:52.859Z",
+  "updatedAt": "2026-09-11T11:25:23.687Z",
   "locations": [
     {
       "name": "Oświęcim",
@@ -33,10 +33,10 @@
       "name": "Kęty",
       "path": "kety",
       "aliases": [],
-      "enabled": true,
+      "enabled": false,
+      "stats": false,
       "deleted": false,
-      "order": 3,
-      "stats": true
+      "order": 3
     }
   ]
 }

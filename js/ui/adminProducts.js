@@ -1,7 +1,7 @@
-import { apiService } from '../services/api.js?v=65';
+import { apiService } from '../services/api.js?v=66';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=60';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=71';
+import { dialogService } from './components/customControls.js?v=72';
 import { cardClass } from './components/Card.js';
 
 const ICON_OPTIONS = [

@@ -34,9 +34,9 @@
       "path": "kety",
       "aliases": [],
       "enabled": true,
+      "stats": true,
       "deleted": false,
-      "order": 3,
-      "stats": true
+      "order": 3
     }
   ]
 }

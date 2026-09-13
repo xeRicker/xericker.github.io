@@ -23,6 +23,9 @@
     height: 1em;
     line-height: 1;
     vertical-align: middle;
+    /* Nazwa bez ligatury (np. literówka w ikonie) renderuje się jako tekst
+       i wychodziła poza swój box, rozjeżdżając przycisk. */
+    overflow: hidden;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

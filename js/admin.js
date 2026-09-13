@@ -1,18 +1,18 @@
-import { apiService } from './services/api.js?v=65';
+import { apiService } from './services/api.js?v=66';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=60';
-import { adminProducts } from './ui/adminProducts.js?v=60';
+import { adminProducts } from './ui/adminProducts.js?v=61';
 import { createAdminListsPage } from './ui/adminLists.js?v=62';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=61';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=62';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=71';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { cardClass } from './ui/components/Card.js';
 import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=65';
-import { adminEmployees } from './ui/adminEmployees.js?v=64';
-import { adminLocations } from './ui/adminLocations.js?v=66';
+import { adminEmployees } from './ui/adminEmployees.js?v=66';
+import { adminLocations } from './ui/adminLocations.js?v=69';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=66';
-import { authService } from './services/auth.js?v=1';
+import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
 import { noticeService } from './ui/components/notice.js?v=1';
 
 const MONTHLY_STATUS_VARIANTS = {
@@ -22,9 +22,6 @@ const MONTHLY_STATUS_VARIANTS = {
     empty: 'warning'
 };
 
-const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
-const ADMIN_FORCE_LOGIN_STORAGE_KEY = 'burbone-admin-force-login';
-const ADMIN_AUTH_DURATION_MS = 24 * 60 * 60 * 1000;
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 1;
 const PAYROLL_RATE = 30;
@@ -132,56 +129,6 @@ function applyLocationCatalog(reports) {
 function applyStatisticsFilter(reports) {
     if (!locationResolver) return reports;
     return reports.filter(report => locationResolver.inStatistics(report.location));
-}
-
-/**
- * Keeps asking for the password until it matches or the user cancels.
- * A wrong password reopens the dialog with an inline notice instead of
- * dropping the user out of the panel.
- */
-async function requestAdminAccess() {
-    let notice;
-    for (;;) {
-        const pass = await dialogService.prompt("Podaj hasło administratora.", "Burbone Admin", {
-            type: 'password',
-            autocomplete: 'current-password',
-            size: 'prominent',
-            label: 'Hasło administratora',
-            notice,
-            value: '',
-            action: {
-                label: 'Pokaż hasło',
-                labelActive: 'Ukryj hasło',
-                icon: 'visibility',
-                iconActive: 'visibility_off'
-            }
-        });
-        if (pass === null) return false;
-        if (await authService.verifyPassword(pass)) return true;
-        notice = { variant: 'danger', text: 'Nieprawidłowe hasło. Spróbuj ponownie.' };
-    }
-}
-
-async function hasValidAdminAccess() {
-    try {
-        const access = JSON.parse(localStorage.getItem(ADMIN_AUTH_STORAGE_KEY));
-        if (Number.isFinite(access?.expiresAt) && access.expiresAt > Date.now()) return true;
-        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
-    } catch {
-        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
-    }
-    return false;
-}
-
-function saveAdminAccess() {
-    try {
-        localStorage.setItem(ADMIN_AUTH_STORAGE_KEY, JSON.stringify({
-            expiresAt: Date.now() + ADMIN_AUTH_DURATION_MS
-        }));
-        localStorage.removeItem(ADMIN_FORCE_LOGIN_STORAGE_KEY);
-    } catch (error) {
-        console.warn('Nie udało się zapamiętać dostępu do panelu admina.', error);
-    }
 }
 
 function showAdminUnavailable(error) {
@@ -303,14 +250,6 @@ function setLoadAllButtonState(button, label, busy, done = false) {
         <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Dane załadowane' ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
-}
-
-function isAdminLogoutRequested() {
-    try {
-        return localStorage.getItem(ADMIN_FORCE_LOGIN_STORAGE_KEY) === '1';
-    } catch {
-        return false;
-    }
 }
 
 function formatDataLoadError(error) {
@@ -545,12 +484,7 @@ function setupListeners() {
 }
 
 function logoutAdmin() {
-    try {
-        localStorage.removeItem(ADMIN_AUTH_STORAGE_KEY);
-        if (isLocalhost()) localStorage.setItem(ADMIN_FORCE_LOGIN_STORAGE_KEY, '1');
-    } catch (error) {
-        console.warn('Nie udało się usunąć zapisanego dostępu do panelu admina.', error);
-    }
+    clearAdminAccess();
     window.location.href = 'index.html';
 }
 

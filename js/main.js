@@ -2,16 +2,17 @@ import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
 import { mainRender } from './ui/mainRender.js?v=62';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js?v=65';
+import { apiService } from './services/api.js?v=66';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=61';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=71';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=62';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
 import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=65';
 import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=66';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=61';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=62';
+import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
 import { noticeService } from './ui/components/notice.js?v=1';
 
 let selectedLocation = null;
@@ -32,6 +33,9 @@ const WORKER_STATUS_VARIANTS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Brama admina podpinamy przed pobieraniem katalogów: kliknięcie ADMIN ma
+    // zostać przechwycone nawet wtedy, gdy dane jeszcze się ładują.
+    setupAdminEntry();
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     employeeCatalog = await loadEmployeeCatalog();
     locationCatalog = await loadLocationCatalog();
@@ -77,6 +81,27 @@ function handleLocationChoice(event) {
     if (!location) return;
     selectedLocation = location;
     generateReport();
+}
+
+/**
+ * ADMIN prowadzi do panelu, ale o hasło pytamy już tutaj. Nawigacja na nową
+ * stronę gubi gest użytkownika, a bez niego telefon nie otwiera klawiatury —
+ * dlatego okno z hasłem startuje w tym samym kliknięciu i dopiero po
+ * poprawnym haśle przechodzimy do panelu.
+ */
+function setupAdminEntry() {
+    const adminLink = document.querySelector('.btn-admin');
+    if (!adminLink) return;
+
+    adminLink.addEventListener('click', async event => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (!needsAdminAccess()) return;
+
+        event.preventDefault();
+        if (!(await requestAdminAccess())) return;
+        saveAdminAccess();
+        window.location.href = adminLink.href;
+    });
 }
 
 function setupTabs() {

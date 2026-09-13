@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=65';
+import { apiService } from '../services/api.js?v=66';
 import {
     loadLocationCatalog,
     normalizeLocationCatalog,
@@ -6,7 +6,7 @@ import {
     slugifyLocation
 } from '../services/locations.js?v=66';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=71';
+import { dialogService } from './components/customControls.js?v=72';
 
 class AdminLocations {
     constructor() {
@@ -16,11 +16,13 @@ class AdminLocations {
         this.isDirty = false;
         this.autoFolder = true;
         this.onSaved = null;
+        this.loadedUpdatedAt = null;
     }
 
     async init(container) {
         this.container = container;
         this.catalog = await loadLocationCatalog();
+        this.loadedUpdatedAt = this.catalog.updatedAt || null;
         this.savedSnapshot = this.serialize();
         this.render();
         this.container.addEventListener('click', event => this.handleClick(event));
@@ -96,7 +98,9 @@ class AdminLocations {
                     ${this.renderSwitch({
                         action: 'toggle-statistics',
                         on: location.stats,
-                        icon: location.stats ? 'monitoring' : 'monitoring_off',
+                        // `monitoring_off` nie istnieje w Material Symbols — nazwa
+                        // bez ligatury renderuje się jako nachodzący tekst.
+                        icon: location.stats ? 'monitoring' : 'do_not_disturb_on',
                         label: 'Statystyki',
                         title: location.stats
                             ? 'Uwzględniany w statystykach — kliknij, żeby pomijać punkt w obliczeniach'
@@ -225,20 +229,66 @@ class AdminLocations {
 
     async save() {
         if (!this.isDirty) return;
+
+        if (await this.hasExternalChanges()) {
+            const overwrite = await dialogService.confirm(
+                'Katalog punktów został zmieniony poza tą kartą (np. w innym oknie). Nadpisać tamtą wersję?',
+                'Katalog zmienił się w międzyczasie'
+            );
+            if (!overwrite) {
+                // Wczytujemy rzeczywisty stan, żeby panel pokazywał prawdę.
+                this.catalog = await loadLocationCatalog();
+                this.loadedUpdatedAt = this.catalog.updatedAt || null;
+                this.savedSnapshot = this.serialize();
+                this.isDirty = false;
+                this.render();
+                return;
+            }
+        }
+
         const button = this.container.querySelector('#saveLocationsBtn');
         button.disabled = true;
         button.classList.add('is-saving');
+        this.catalog.updatedAt = new Date().toISOString();
+
         try {
-            this.catalog.updatedAt = new Date().toISOString();
             await apiService.saveLocations(this.catalog);
-            this.savedSnapshot = this.serialize();
-            this.isDirty = false;
-            await dialogService.success('Katalog punktów został zapisany.', 'Zapisano');
+        } catch (error) {
+            console.error(error);
+            await dialogService.error(error.message, 'Błąd zapisu punktów');
+            this.render();
+            return;
+        }
+
+        this.loadedUpdatedAt = this.catalog.updatedAt;
+        this.savedSnapshot = this.serialize();
+        this.isDirty = false;
+        this.render();
+        await dialogService.success('Katalog punktów został zapisany.', 'Zapisano');
+
+        // Odświeżenie widoków jest osobnym krokiem: gdyby się nie udało, zapis
+        // i tak jest już wykonany i komunikat nie może mówić o błędzie zapisu.
+        try {
             this.onSaved?.(this.catalog);
         } catch (error) {
-            await dialogService.error(`Nie udało się zapisać punktów. ${error.message}`, 'Błąd zapisu');
+            console.error('Katalog punktów zapisany, ale nie udało się odświeżyć widoków.', error);
+            await dialogService.warning('Katalog został zapisany, ale nie udało się odświeżyć widoków. Odśwież stronę.', 'Zapisano z ostrzeżeniem');
         }
-        this.render();
+    }
+
+    /**
+     * Zapis nadpisuje cały plik, więc praca z dwóch kart kończyła się cofnięciem
+     * zmian. `updatedAt` jest znacznikiem, czy katalog zmienił się poza tą kartą.
+     */
+    async hasExternalChanges() {
+        if (!this.loadedUpdatedAt) return false;
+        try {
+            const fresh = await loadLocationCatalog();
+            return Boolean(fresh.updatedAt) && fresh.updatedAt !== this.loadedUpdatedAt;
+        } catch (error) {
+            console.warn('Nie udało się sprawdzić wersji katalogu punktów.', error);
+            return false;
+        }
     }
 }
 

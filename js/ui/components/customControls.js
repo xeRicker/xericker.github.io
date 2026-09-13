@@ -553,10 +553,13 @@ export const dialogService = {
             input: {
                 type: options.type || 'text',
                 value: options.value || '',
-                // Hasła nie wymuszają klawiatury numerycznej: hasło może zawierać litery.
+                // Rodzaj klawiatury ustawia wywołujący: hasło administratora jest
+                // numeryczne, więc dostaje inputmode 'numeric', ale pole tekstowe
+                // nadal może prosić o pełną klawiaturę.
                 inputmode: options.inputmode,
                 autocomplete: options.autocomplete || 'off',
                 autoSubmit: options.autoSubmit,
+                autoSubmitDelay: options.autoSubmitDelay,
                 label: options.label,
                 action: options.action
             },
@@ -637,7 +640,12 @@ function openDialog(config) {
     layer.classList.add('is-visible');
 
     return new Promise(resolve => {
+        let settled = false;
+        let autoSubmitTimer = null;
         const finish = value => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(autoSubmitTimer);
             layer.classList.remove('is-visible');
             resolve(value);
         };
@@ -670,6 +678,11 @@ function openDialog(config) {
             });
         }
 
+        const clearDialogNotice = () => {
+            dialog.querySelector('.notice--dialog')?.remove();
+            if (variant) dialog.classList.remove(`custom-dialog--${variant}`);
+        };
+
         if (field) {
             field.focus({ preventScroll: true });
             requestAnimationFrame(() => {
@@ -678,9 +691,23 @@ function openDialog(config) {
             });
             field.addEventListener('input', () => {
                 if (field.value !== '') field.removeAttribute('aria-invalid');
-                if (typeof input.autoSubmit === 'function' && input.autoSubmit(field.value)) {
-                    finish(field.value);
-                }
+                clearDialogNotice();
+                if (typeof input.autoSubmit !== 'function') return;
+                clearTimeout(autoSubmitTimer);
+                const checkedValue = field.value;
+                if (!checkedValue) return;
+                // Weryfikacja bywa asynchroniczna (np. PBKDF2 hasła), więc wynik
+                // liczy się tylko wtedy, gdy pole nadal ma tę samą wartość —
+                // spóźnione sprawdzenie nie może zamknąć dialogu po dalszym pisaniu.
+                autoSubmitTimer = setTimeout(async () => {
+                    let accepted = false;
+                    try {
+                        accepted = await input.autoSubmit(checkedValue);
+                    } catch (error) {
+                        console.error('Nie udało się sprawdzić wpisanej wartości.', error);
+                    }
+                    if (accepted && field.value === checkedValue) finish(field.value);
+                }, Number(input.autoSubmitDelay) || 0);
             });
             field.addEventListener('keydown', event => {
                 if (event.key === 'Enter') finish(field.value);

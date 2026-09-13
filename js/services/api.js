@@ -139,14 +139,36 @@ class ApiService {
     }
 
     async saveLocalJson(filePath, data, message) {
-        const res = await fetch(filePath, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data, null, 2)
-        });
+        let response;
+        try {
+            response = await fetch(filePath, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data, null, 2)
+            });
+        } catch (error) {
+            throw new Error(`${message} Serwer nie przyjął zapisu ${filePath}. Zapis lokalny działa tylko przez \`node dev-server.js\`.`);
+        }
 
-        if (!res.ok) {
-            throw new Error(message);
+        if (!response.ok) {
+            throw new Error(`${message} Serwer odpowiedział HTTP ${response.status} na zapis ${filePath}. Zapis lokalny działa tylko przez \`node dev-server.js\`.`);
+        }
+
+        await this.verifyLocalSave(filePath, data, message);
+    }
+
+    /**
+     * Potwierdzenie, że plik naprawdę zawiera to, co wysłaliśmy. Bez tego
+     * nieudany zapis wyglądał jak sukces i zmiany znikały po odświeżeniu.
+     */
+    async verifyLocalSave(filePath, data, message) {
+        const response = await fetch(`${filePath}?v=${Date.now()}`);
+        if (!response.ok) {
+            throw new Error(`${message} Nie można potwierdzić zapisu ${filePath} (HTTP ${response.status}).`);
+        }
+        const saved = await response.json().catch(() => null);
+        if (JSON.stringify(saved) !== JSON.stringify(data)) {
+            throw new Error(`${message} Plik ${filePath} nie zawiera danych, które zostały wysłane.`);
         }
     }
 
@@ -178,57 +200,53 @@ class ApiService {
     }
 
     async fetchEmployees() {
-        const path = 'database/employees.json';
+        return this.fetchRootCatalog('database/employees.json', 'Employees');
+    }
+
+    async fetchLocations() {
+        return this.fetchRootCatalog('database/locations.json', 'Locations');
+    }
+
+    /**
+     * Katalogi w `database/` czytamy najpierw przez API GitHuba, a dopiero potem
+     * ze statycznego pliku. GitHub Pages potrafi jeszcze serwować poprzednie
+     * wdrożenie, więc po zapisie statyczny plik bywał starszy od zapisanej wersji.
+     */
+    async fetchRootCatalog(path, label) {
         try {
-            const staticResponse = await fetch(`${path}?v=${Date.now()}`);
-            if (staticResponse.ok) return await staticResponse.json();
             if (this.hasGithubToken()) {
                 const response = await this.fetchGithub(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers }, path);
                 if (response.ok) {
                     const file = await response.json();
-                    return file.content ? JSON.parse(decodeURIComponent(escape(atob(file.content)))) : null;
+                    if (file.content) return JSON.parse(decodeURIComponent(escape(atob(file.content))));
                 }
             }
+
+            const staticResponse = await fetch(`${path}?v=${Date.now()}`);
+            if (staticResponse.ok) return await staticResponse.json();
+
             if (isLocalhost()) {
                 const response = await fetch(`${path}?v=${Date.now()}`);
                 return response.ok ? response.json() : null;
             }
-        } catch (error) { console.warn('Employees config unavailable, falling back to defaults.', error); }
+        } catch (error) {
+            console.warn(`${label} config unavailable, falling back to defaults.`, error);
+        }
         return null;
     }
 
     async saveEmployees(data) {
         const filePath = 'database/employees.json';
         if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update employees catalog');
-        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Local employees save failed.');
-        throw new Error('GitHub token is not configured');
-    }
-
-    async fetchLocations() {
-        const path = 'database/locations.json';
-        try {
-            const staticResponse = await fetch(`${path}?v=${Date.now()}`);
-            if (staticResponse.ok) return await staticResponse.json();
-            if (this.hasGithubToken()) {
-                const response = await this.fetchGithub(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers }, path);
-                if (response.ok) {
-                    const file = await response.json();
-                    return file.content ? JSON.parse(decodeURIComponent(escape(atob(file.content)))) : null;
-                }
-            }
-            if (isLocalhost()) {
-                const response = await fetch(`${path}?v=${Date.now()}`);
-                return response.ok ? response.json() : null;
-            }
-        } catch (error) { console.warn('Locations config unavailable, falling back to defaults.', error); }
-        return null;
+        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Nie udało się zapisać ekipy.');
+        throw new Error('Zapis do GitHuba nie jest skonfigurowany (brak tokenu).');
     }
 
     async saveLocations(data) {
         const filePath = 'database/locations.json';
         if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update locations catalog');
-        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Local locations save failed.');
-        throw new Error('GitHub token is not configured');
+        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Nie udało się zapisać punktów.');
+        throw new Error('Zapis do GitHuba nie jest skonfigurowany (brak tokenu).');
     }
 
     async saveGithubConfig(filePath, data, message) {
@@ -238,6 +256,25 @@ class ApiService {
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
         const response = await this.fetchGithub(url, { method: 'PUT', headers: this.headers, body: JSON.stringify({ message, content, sha }) }, filePath);
         if (!response.ok) throw await this.createGithubApiError(response, filePath);
+        await this.verifyGithubSave(response, filePath, data);
+    }
+
+    /**
+     * Odpowiedź API zawiera złozony plik, więc można potwierdzić, że w repo leży
+     * dokładnie to, co wysłaliśmy — a nie tylko że HTTP zwróciło 200.
+     */
+    async verifyGithubSave(response, filePath, data) {
+        let saved;
+        try {
+            const file = await response.json();
+            if (!file?.content) return;
+            saved = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+        } catch {
+            return;
+        }
+        if (JSON.stringify(saved) !== JSON.stringify(data)) {
+            throw new Error(`GitHub zapisał ${filePath}, ale zawartość pliku różni się od wysłanej.`);
+        }
     }
 
     getRecentAvailableMonthKeys(files, monthCount) {

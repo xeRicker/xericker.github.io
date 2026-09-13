@@ -1,6 +1,6 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
-import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=71';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=72';
 import { cardClass } from './components/Card.js';
 
 const DEFAULT_MONTH_HOURS = 160;

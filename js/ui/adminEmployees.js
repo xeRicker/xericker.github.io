@@ -1,8 +1,8 @@
-import { apiService } from '../services/api.js?v=65';
+import { apiService } from '../services/api.js?v=66';
 import { createId } from '../services/products.js?v=60';
 import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=65';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=71';
+import { dialogService } from './components/customControls.js?v=72';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }
@@ -93,7 +93,7 @@ class AdminEmployees {
         const button = this.container.querySelector('#saveEmployeesBtn');
         button.disabled = true; button.classList.add('is-saving');
         try { this.catalog.updatedAt = new Date().toISOString(); await apiService.saveEmployees(this.catalog); this.savedSnapshot = this.serialize(); this.isDirty = false; await dialogService.success('Lista ekipy została zapisana.', 'Zapisano'); }
-        catch (error) { await dialogService.error(`Nie udało się zapisać ekipy. ${error.message}`, 'Błąd zapisu'); }
+        catch (error) { await dialogService.error(error.message, 'Błąd zapisu ekipy'); }
         this.render();
     }
 }

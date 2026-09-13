@@ -1,6 +1,7 @@
 import { GITHUB_CONFIG } from '../config/config.js';
 import { isLocalhost } from '../utils.js';
-import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName } from './reportDates.js';
+import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName, getReportKey } from './reportDates.js';
+import { generateMockReports } from './mockData.js?v=1';
 
 class ApiService {
     constructor() {
@@ -366,25 +367,14 @@ class ApiService {
     async fetchAllData(options = {}) {
         const { recentMonths = null, onProgress = null, onMeta = null } = options;
         if (isLocalhost()) {
-            try {
-                const params = new URLSearchParams({ v: Date.now() });
-                const response = await fetch(`__local-data?${params.toString()}`);
-                if (response.ok) {
-                    const localData = await response.json();
-                    if (Array.isArray(localData) && localData.length) {
-                        const availableMonthKeys = new Set(localData.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean));
-                        const data = recentMonths ? this.filterReportsByRecentMonths(localData, recentMonths) : localData;
-                        this.reportMeta(onMeta, new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size, availableMonthKeys.size);
-                        this.reportProgress(onProgress, data.length, data.length);
-                        return data;
-                    }
-                }
-            } catch (error) {
-                console.warn('Local data endpoint unavailable, using mock data.', error);
-            }
-            const mockData = await this.getMockData();
-            const data = recentMonths ? this.filterReportsByRecentMonths(mockData, recentMonths) : mockData;
-            this.reportMeta(onMeta, new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size, new Set(mockData.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size);
+            const localData = await this.fetchLocalReports();
+            const merged = this.mergeLocalReports(localData, await this.getMockData());
+            const data = recentMonths ? this.filterReportsByRecentMonths(merged, recentMonths) : merged;
+            this.reportMeta(
+                onMeta,
+                new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size,
+                new Set(merged.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size
+            );
             this.reportProgress(onProgress, data.length, data.length);
             return data;
         }
@@ -424,53 +414,31 @@ class ApiService {
         return results;
     }
 
-    getMockData() {
-        const data = [];
-        const locs = ['Oświęcim', 'Osiek'];
-        const emps = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
-        const mockCatalog = ["Bułki", "Mięso: Duże", "Frytki", "Pepsi", "Folia", "Serwetki", "Torby: Duże", "Sos: Czosnek"];
-
-        const today = new Date();
-        const startDate = new Date(today.getFullYear(), today.getMonth() - 5, 1);
-        const endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        for (let d = new Date(startDate), i = 0; d <= endDate; d.setDate(d.getDate() + 1), i++) {
-            const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
-            const weekday = d.getDay();
-
-            locs.forEach((location, locationIndex) => {
-                const seed = i + (locationIndex * 7);
-                const revenue = 1250 + ((seed * 173) % 2800) + (weekday === 0 || weekday === 6 ? 650 : 0);
-                const employees = {};
-                const firstEmployee = emps[seed % emps.length];
-                const secondEmployee = emps[(seed + 3) % emps.length];
-                const firstStart = weekday === 0 ? '13:00' : '12:00';
-                const firstEnd = weekday === 5 || weekday === 6 ? '21:30' : '20:00';
-                const secondStart = weekday === 0 ? '14:00' : '16:00';
-                const secondEnd = weekday === 5 || weekday === 6 ? '22:00' : '20:30';
-
-                employees[firstEmployee] = `${firstStart}-${firstEnd}`;
-                employees[secondEmployee] = `${secondStart}-${secondEnd}`;
-
-                const products = mockCatalog.reduce((acc, name, productIndex) => {
-                    acc[name] = name === 'Bułki'
-                        ? 18 + ((seed + productIndex) % 34)
-                        : 1 + ((seed + productIndex) % 8);
-                    return acc;
-                }, {});
-
-                data.push({
-                    location,
-                    date: dateStr,
-                    revenue,
-                    cardRevenue: Math.round(revenue * (0.34 + ((seed % 8) / 100))),
-                    glovoRevenue: Math.round(revenue * (0.09 + ((seed % 6) / 100))),
-                    employees,
-                    products
-                });
-            });
+    async fetchLocalReports() {
+        try {
+            const response = await fetch(`__local-data?v=${Date.now()}`);
+            if (!response.ok) return [];
+            const data = await response.json();
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.warn('Local data endpoint unavailable, using generated data.', error);
+            return [];
         }
-        return Promise.resolve(data);
+    }
+
+    /** Real database files win; generated reports only fill missing location-days. */
+    mergeLocalReports(localReports, generatedReports) {
+        const taken = new Set(localReports.map(getReportKey));
+        return localReports.concat(generatedReports.filter(report => !taken.has(getReportKey(report))));
+    }
+
+    async getMockData() {
+        const [locations, employees, products] = await Promise.all([
+            this.fetchRootCatalog('database/locations.json', 'Locations'),
+            this.fetchRootCatalog('database/employees.json', 'Employees'),
+            this.fetchRootCatalog('database/products.json', 'Products')
+        ]);
+        return generateMockReports({ months: 3, locations, employees, products });
     }
 }
 

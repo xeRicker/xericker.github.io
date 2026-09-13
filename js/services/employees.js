@@ -1,4 +1,4 @@
-import { apiService } from './api.js?v=66';
+import { apiService } from './api.js?v=67';
 
 export const DEFAULT_EMPLOYEES = [
     ['pawel.komendera', 'Paweł', 'Komendera'],

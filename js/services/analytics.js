@@ -1,7 +1,7 @@
 import { calculateHours } from '../utils.js';
 import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './revenue.js';
 import { parseReportDate } from './reportDates.js';
-import { slugifyLocation } from './locations.js?v=66';
+import { slugifyLocation } from './locations.js?v=67';
 
 export class AnalyticsService {
     processReports(reports) {

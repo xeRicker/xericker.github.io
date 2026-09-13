@@ -36,7 +36,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `css/atlassian-tokens.css`, `css/theme/palette.css` — design tokens & active palette
 - `css/*.css`, `css/components/` — per-feature and shared styles
 - `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, locations, employees, products, analytics, revenue, reportDates, reportFormatter, storage, weather, trivia
+- `js/services/` — data models & I/O: api, auth, locations, employees, products, analytics, revenue, reportDates, reportFormatter, mockData, storage, weather, trivia
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
 - `database/` — catalogs + per-location report JSON
 
@@ -48,11 +48,13 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `ui/adminEmployees.js` — team catalog: add/rename/visibility/remove
 - `ui/adminLocations.js` — point catalog: add/rename/visibility/stats switch/archive-restore
 - `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips
-- `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded
+- `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded; exposes the last summary via `getSummary()` and an `onRecalc` callback
+- `ui/payslip.js` — admin Wynagrodzenia „PASEK”: draws the calculator summary to a branded PNG payslip (canvas) and opens it in a new tab; payment form/date come from the PASEK panel
 - `ui/components/customControls.js` — custom select/date/time/dialog; mirrors native `disabled` onto the visible control
 - `ui/components/notice.js` + `css/components/notice.css` — the only message system: `.notice--<info|success|danger|warning|muted|loading>` via `noticeService.render()` / `dialogService.*`
 - `services/reportDates.js` — report date parsing/keys/sorting
-- `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder
+- `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder; on localhost merges real `database/` reports with generated ones
+- `services/mockData.js` — localhost-only generator: the last 3 months of report-shaped data (revenue, shifts, products) built from the live catalogs, used to fill missing location-days
 - `services/locations.js` — point catalog: normalize, resolve report names → points (name/folder/aliases), visibility, stats switch, filters
 - `services/employees.js` — team catalog: normalize, resolve report names → people, visibility
 - `services/auth.js` — admin password check; only PBKDF2 salt+digest live in source, never the plaintext
@@ -107,4 +109,5 @@ Icons via `renderMaterialIcon()` — real ligature names only; a bad name render
 - Locations may contain Polish characters (e.g. `Oświęcim`) — don't normalize aggressively without checking `database/` paths.
 - Changing the JSON data shape requires updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel together.
 - Generator form state (`localStorage: burbone_state`) expires at local end-of-day — an evening list survives a browser close, resets the next day.
+- On localhost `fetchAllData` always merges real `database/` reports with generated data for the last 3 months (`services/mockData.js`); a real report for the same location+date wins. Prod (`GitHub Pages`) never generates.
 - Site is meant to stay unindexed: `robots.txt` disallows all, both pages carry `noindex`. GitHub Pages can't send custom headers, so `X-Robots-Tag` would need a proxy/CDN in front.

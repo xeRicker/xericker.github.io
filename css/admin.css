@@ -1158,6 +1158,14 @@ tbody tr:hover td { background: rgba(212, 82, 26, 0.04); }
 .calc-breakdown-table td { padding: 18px 20px; font-size: 14px; vertical-align: middle; font-variant-numeric: tabular-nums; }
 .calc-breakdown-table tbody tr:hover td { background: var(--surface-active); }
 
+.calc-payslip { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border-color); }
+.calc-payslip .calc-grid { margin-bottom: 16px; }
+.calc-payslip-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.calc-payslip .calc-payslip-btn { background: var(--primary-color); border-color: var(--primary-color); color: var(--app-text-inverse); }
+.calc-payslip .calc-payslip-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); color: var(--app-text-inverse); }
+.calc-payslip .calc-payslip-btn:disabled { opacity: .6; cursor: progress; }
+.calc-payslip-status { flex: 1 1 260px; }
+
 .loc-bar-container { display: flex; height: 6px; width: 100%; background: #333; border-radius: 3px; overflow: hidden; margin-top: 6px; }
 .loc-bar-segment { height: 100%; }
 .loc-text { font-size: 16px; color: #aaa; margin-bottom: 3px; display: block; }

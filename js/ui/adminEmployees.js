@@ -1,6 +1,6 @@
-import { apiService } from '../services/api.js?v=66';
-import { createId } from '../services/products.js?v=60';
-import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=65';
+import { apiService } from '../services/api.js?v=67';
+import { createId } from '../services/products.js?v=61';
+import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=66';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=72';
 

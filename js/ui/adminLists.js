@@ -1,6 +1,6 @@
 import { buildReportText } from '../services/reportFormatter.js';
 import { getReportKey, getReportTimestamp } from '../services/reportDates.js';
-import { getPanelLocations } from '../services/locations.js?v=66';
+import { getPanelLocations } from '../services/locations.js?v=67';
 import { escapeHtml, fallbackCopyToClipboard } from '../utils.js';
 import { cardClass } from './components/Card.js';
 

@@ -6,7 +6,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=81">
+    <link rel="stylesheet" href="style.css?v=82">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -212,6 +212,28 @@
                 <p id="resMoney" class="money">0 zł</p>
             </div>
         </div>
+        <div class="calc-payslip">
+            <div class="calc-grid">
+                <div class="calc-input-group">
+                    <label for="payslipPaymentForm">Forma wypłaty</label>
+                    <select id="payslipPaymentForm" class="calc-input" aria-label="Forma wypłaty">
+                        <option value="Przelew">Przelew</option>
+                        <option value="Gotówka">Gotówka</option>
+                    </select>
+                </div>
+                <div class="calc-input-group">
+                    <label for="payslipPaymentDate">Termin wypłaty</label>
+                    <input type="date" id="payslipPaymentDate" class="calc-input" aria-label="Termin wypłaty">
+                </div>
+            </div>
+            <div class="calc-payslip-actions">
+                <button id="calcPayslipBtn" class="btn-back calc-payslip-btn" type="button">
+                    <span class="material-symbols-rounded" aria-hidden="true">receipt_long</span>
+                    PASEK
+                </button>
+                <div id="payslipStatus" class="notice" hidden></div>
+            </div>
+        </div>
         <div id="calcDetails" class="u-detail-note"></div>
     </div>
 
@@ -299,6 +321,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=82"></script>
+<script type="module" src="js/admin.js?v=84"></script>
 </body>
 </html>

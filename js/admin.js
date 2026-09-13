@@ -1,17 +1,18 @@
-import { apiService } from './services/api.js?v=66';
+import { apiService } from './services/api.js?v=67';
 import { analytics } from './services/analytics.js';
 import { adminRender } from './ui/adminRender.js?v=60';
-import { adminProducts } from './ui/adminProducts.js?v=61';
-import { createAdminListsPage } from './ui/adminLists.js?v=62';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=62';
+import { adminProducts } from './ui/adminProducts.js?v=62';
+import { createAdminListsPage } from './ui/adminLists.js?v=63';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=64';
+import { setupPayslipGenerator } from './ui/payslip.js?v=2';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=60';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=61';
 import { cardClass } from './ui/components/Card.js';
-import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=65';
-import { adminEmployees } from './ui/adminEmployees.js?v=66';
-import { adminLocations } from './ui/adminLocations.js?v=69';
-import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=66';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=66';
+import { adminEmployees } from './ui/adminEmployees.js?v=67';
+import { adminLocations } from './ui/adminLocations.js?v=70';
+import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=67';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
 import { noticeService } from './ui/components/notice.js?v=1';
 
@@ -39,6 +40,7 @@ let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
 let employeeSort = { key: 'name', direction: 'asc' };
 let payrollCalculator = null;
+let payslipGenerator = null;
 let productCatalog = null;
 let adminListsPage = null;
 let isFullDataLoaded = false;
@@ -1252,8 +1254,24 @@ function initCalculator() {
         detailsBoxId: 'calcDetails',
         defaultRate: 30,
         employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog),
-        isEmployeeAvailable: name => isEmployeeVisible(name, employeeCatalog)
+        isEmployeeAvailable: name => isEmployeeVisible(name, employeeCatalog),
+        showLocationPills: false,
+        onRecalc: summary => payslipGenerator?.syncDefaults(summary)
     });
 
     payrollCalculator.refresh();
+
+    payslipGenerator = setupPayslipGenerator({
+        getSummary: () => payrollCalculator.getSummary(),
+        buttonId: 'calcPayslipBtn',
+        statusBoxId: 'payslipStatus',
+        paymentFormId: 'payslipPaymentForm',
+        paymentDateId: 'payslipPaymentDate',
+        logoUrl: 'favicon.png',
+        resolveEmployeeName: rawName => {
+            const employee = resolveEmployee(rawName, employeeCatalog);
+            return employee ? `${employee.firstName} ${employee.lastName}` : rawName;
+        }
+    });
+    payslipGenerator.syncDefaults(payrollCalculator.getSummary());
 }

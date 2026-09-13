@@ -1,10 +1,10 @@
-import { apiService } from '../services/api.js?v=66';
+import { apiService } from '../services/api.js?v=67';
 import {
     loadLocationCatalog,
     normalizeLocationCatalog,
     normalizeLocationKey,
     slugifyLocation
-} from '../services/locations.js?v=66';
+} from '../services/locations.js?v=67';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=72';
 

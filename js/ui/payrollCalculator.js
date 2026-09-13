@@ -3,7 +3,7 @@ import { reportDateToIso } from '../services/reportDates.js';
 import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=72';
 import { cardClass } from './components/Card.js';
 
-const DEFAULT_MONTH_HOURS = 160;
+export const DEFAULT_MONTH_HOURS = 160;
 
 export function setupPayrollCalculator(config) {
     const {
@@ -18,7 +18,9 @@ export function setupPayrollCalculator(config) {
         detailsBoxId,
         defaultRate = 30,
         employeeLabel = name => name,
-        isEmployeeAvailable = () => true
+        isEmployeeAvailable = () => true,
+        showLocationPills = true,
+        onRecalc = () => {}
     } = config;
 
     const select = document.getElementById(employeeSelectId);
@@ -29,6 +31,7 @@ export function setupPayrollCalculator(config) {
     const detailsBox = document.getElementById(detailsBoxId);
 
     let initialized = false;
+    let lastSummary = null;
 
     const scope = () => select.closest('.calc-card, .worker-card, .section-card') || document;
 
@@ -51,9 +54,11 @@ export function setupPayrollCalculator(config) {
         const name = select.value;
         syncEmployeeFields();
         syncCalendarMarkers(reports, name);
+        lastSummary = null;
 
         if (!name) {
             hideResults(resultBox, detailsBox);
+            onRecalc(lastSummary);
             return;
         }
 
@@ -63,6 +68,7 @@ export function setupPayrollCalculator(config) {
 
         if (!dateFrom || !dateTo) {
             hideResults(resultBox, detailsBox);
+            onRecalc(lastSummary);
             return;
         }
 
@@ -99,7 +105,20 @@ export function setupPayrollCalculator(config) {
 
         detailsBox.classList.remove('u-hidden');
         detailsBox.style.display = 'block';
-        detailsBox.innerHTML = buildDetailsHtml(breakdown, locationHours, totalHours, rate);
+        detailsBox.innerHTML = buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocationPills);
+
+        lastSummary = {
+            name,
+            rate,
+            dateFrom,
+            dateTo,
+            totalHours,
+            locationHours,
+            breakdown,
+            shiftCount: breakdown.length,
+            totalAmount: totalHours * rate
+        };
+        onRecalc(lastSummary);
     };
 
     const populateEmployees = () => {
@@ -161,7 +180,8 @@ export function setupPayrollCalculator(config) {
         refresh,
         recalc,
         setDateRange,
-        setRate
+        setRate,
+        getSummary: () => lastSummary
     };
 
     function syncCalendarMarkers(reports, name) {
@@ -177,7 +197,7 @@ function hideResults(resultBox, detailsBox) {
     detailsBox.style.display = 'none';
 }
 
-function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
+function buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocationPills) {
     const locationEntries = Object.entries(locationHours).sort((left, right) => right[1] - left[1]);
     const maxHours = locationEntries.length ? locationEntries[0][1] : 0;
     const shiftCount = breakdown.length;
@@ -229,7 +249,7 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate) {
             </div>
         </div>
 
-        <div class="calc-breakdown-pills">${summaryHtml}</div>
+        ${showLocationPills ? `<div class="calc-breakdown-pills">${summaryHtml}</div>` : ''}
 
         <section class="${cardClass('table', 'calc-breakdown-report')} ">
             <div class="table-head calc-breakdown-head">

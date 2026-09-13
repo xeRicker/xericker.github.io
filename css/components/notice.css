@@ -8,11 +8,14 @@
 
 .notice {
     display: flex;
-    align-items: flex-start;
+    /* Ikona komunikatu jest wyższa od wiersza tekstu, więc wyrównanie do góry
+       zostawiało tekst przy górnej krawędzi. Środek trzyma tekst i ikonę
+       dokładnie w połowie boxu — także w komunikatach na kilka linii. */
+    align-items: center;
     gap: 10px;
-    /* Mniejszy padding u góry niż u dołu: treść (ikona wyższa od wiersza tekstu)
-       jest optycznie wyrównana w kontenerze, zamiast siedzieć przy górnej krawędzi. */
-    padding: 10px 14px 13px;
+    /* Symetryczny padding: tyle samo powietrza u góry i u dołu. Wcześniej
+       większy dół przesuwał całą treść w górę. */
+    padding: 12px 14px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     background: var(--surface-raised);
@@ -26,10 +29,11 @@
 .notice__icon {
     flex: 0 0 auto;
     color: var(--text-muted);
+    /* Arkusz Material Symbols z Google Fonts ustawia na tej klasie font-size: 24px
+       i wygrywa kolejnością (ładuje się po style.css), więc realna wysokość ikony
+       to 24px — padding dobrany jest pod nią. */
     font-size: 18px;
     line-height: 1;
-    /* Glif Material Symbols siedzi wyżej niż jego box, więc box dostaje 2px zapasu. */
-    margin-top: 2px;
 }
 
 .notice__body {
@@ -98,14 +102,14 @@
 /* --- Warianty rozmiaru --- */
 
 .notice--sm {
-    padding: 7px 10px 9px;
+    padding: 8px 10px;
     font-size: 12px;
     gap: 8px;
 }
 .notice--sm .notice__icon { font-size: 16px; }
 
 .notice--lg {
-    padding: 14px 16px 17px;
+    padding: 15px 16px;
     gap: 12px;
     border-radius: var(--radius-md);
     font-size: 14px;

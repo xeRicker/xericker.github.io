@@ -1,24 +1,30 @@
 {
   "location": "Oświęcim",
   "date": "15.09.2026",
-  "revenue": 579,
-  "cardRevenue": 480,
-  "glovoRevenue": 0,
+  "revenue": 940,
+  "cardRevenue": 449,
+  "glovoRevenue": 227,
   "employees": {
-    "kacper.jarnot": "14:00,20:30"
+    "sebastian.mąsior": "12:00,21:30"
   },
   "products": {
+    "Mięso: Duże": 1,
     "Boczek": 1,
     "Sałata": 1,
-    "Ogórki": 2,
+    "Ogórki": 4,
+    "Cebula": 1,
+    "Halloumi": 1,
     "Frytki": 1,
-    "Bułki": 19,
+    "Bułki": 13,
     "Cebula prażona": 1,
-    "Sos: Carolina": 1,
-    "Sos: Czosnek": 1,
+    "Tabasco": 1,
+    "Przyprawa do grilla": 1,
     "Saszetki: Ketchup": 1,
     "Torby: Małe": 1,
-    "Folia": 1,
-    "Drobne: 10,20": 1
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Odtłuszczacz": 1
   }
 }

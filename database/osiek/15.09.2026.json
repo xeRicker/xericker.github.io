@@ -1,0 +1,24 @@
+{
+  "location": "Osiek",
+  "date": "15.09.2026",
+  "revenue": 579,
+  "cardRevenue": 480,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,20:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Frytki": 1,
+    "Bułki": 19,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Folia": 1,
+    "Drobne: 10,20": 1
+  }
+}

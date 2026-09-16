@@ -1,0 +1,17 @@
+{
+  "location": "Osiek",
+  "date": "16.09.2026",
+  "revenue": 629,
+  "cardRevenue": 454,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Pomidory": 1,
+    "Bułki": 0,
+    "Przyprawa do grilla": 1,
+    "Folia": 1
+  }
+}

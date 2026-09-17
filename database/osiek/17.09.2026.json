@@ -1,0 +1,19 @@
+{
+  "location": "Osiek",
+  "date": "17.09.2026",
+  "revenue": 537,
+  "cardRevenue": 409,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 21
+  }
+}

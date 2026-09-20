@@ -1,0 +1,35 @@
+{
+  "location": "Osiek",
+  "date": "20.09.2026",
+  "revenue": 945,
+  "cardRevenue": 380,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,20:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Halloumi": 1,
+    "Frytki": 2,
+    "Placki": 1,
+    "Bułki": 18,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Sweet Chilli": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

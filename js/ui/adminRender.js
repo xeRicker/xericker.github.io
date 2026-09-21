@@ -82,7 +82,34 @@ class AdminRender {
     }
 
     renderHeatmap(container, data, year, month, options) {
-        container.innerHTML = ['PONIEDZIAŁEK', 'WTOREK', 'ŚRODA', 'CZWARTEK', 'PIĄTEK', 'SOBOTA', 'NIEDZIELA']
+        container.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'heatmap-grid';
+        container.appendChild(grid);
+        this.renderHeatmapGrid(grid, data, year, month, options);
+    }
+
+    renderHeatmaps(container, data, months, options) {
+        container.innerHTML = '';
+        months.forEach(({ year, month, label }) => {
+            const block = document.createElement('div');
+            block.className = 'heatmap-month';
+
+            const title = document.createElement('h4');
+            title.className = 'heatmap-month-title';
+            title.textContent = label;
+
+            const grid = document.createElement('div');
+            grid.className = 'heatmap-grid';
+
+            block.append(title, grid);
+            container.appendChild(block);
+            this.renderHeatmapGrid(grid, data, year, month, options);
+        });
+    }
+
+    renderHeatmapGrid(grid, data, year, month, options) {
+        grid.innerHTML = ['PONIEDZIAŁEK', 'WTOREK', 'ŚRODA', 'CZWARTEK', 'PIĄTEK', 'SOBOTA', 'NIEDZIELA']
             .map(day => `<div class="heatmap-day-header">${day}</div>`)
             .join('');
 
@@ -92,7 +119,7 @@ class AdminRender {
         const startDay = new Date(yearNumber, monthNumber - 1, 1).getDay() || 7;
         const dataMap = new Map(data.map(day => [day.dateStr, day]));
         for (let offset = 1; offset < startDay; offset++) {
-            container.innerHTML += `<div class="heatmap-cell heatmap-empty"></div>`;
+            grid.insertAdjacentHTML('beforeend', `<div class="heatmap-cell heatmap-empty"></div>`);
         }
 
         for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber++) {
@@ -103,7 +130,7 @@ class AdminRender {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'heatmap-cell heatmap-empty';
                 emptyCell.innerHTML = `<span class="heatmap-date">${dayNumber}</span>`;
-                container.appendChild(emptyCell);
+                grid.appendChild(emptyCell);
                 continue;
             }
 
@@ -123,7 +150,7 @@ class AdminRender {
             cell.addEventListener('mouseenter', () => this.showTooltip(entry, options));
             cell.addEventListener('mousemove', event => this.moveTooltip(event));
             cell.addEventListener('mouseleave', () => this.hideTooltip());
-            container.appendChild(cell);
+            grid.appendChild(cell);
         }
     }
 

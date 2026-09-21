@@ -93,6 +93,7 @@
     .admin-container { padding: 0 14px 50px; margin-top: 24px; }
     .view-toggle { flex-wrap: wrap; }
     .heatmap-grid { gap: 8px; }
+    .heatmap-months { gap: 18px; }
     .heatmap-date { font-size: 18px; }
     .heatmap-val { font-size: 10px; white-space: nowrap; }
     th, td { padding: 14px 12px; }

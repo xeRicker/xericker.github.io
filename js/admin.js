@@ -1,6 +1,7 @@
 import { apiService } from './services/api.js?v=67';
 import { analytics } from './services/analytics.js';
-import { adminRender } from './ui/adminRender.js?v=60';
+import { reportDateToIso } from './services/reportDates.js';
+import { adminRender } from './ui/adminRender.js?v=61';
 import { adminProducts } from './ui/adminProducts.js?v=62';
 import { createAdminListsPage } from './ui/adminLists.js?v=63';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=64';
@@ -338,7 +339,7 @@ function populateMonthFilter(data) {
     const select = document.getElementById('monthFilter');
     const months = new Set(data.map(day => `${day.dateObj.getFullYear()}-${String(day.dateObj.getMonth() + 1).padStart(2, '0')}`));
 
-    select.innerHTML = Array.from(months)
+    const monthOptions = Array.from(months)
         .sort()
         .reverse()
         .map(value => {
@@ -347,17 +348,32 @@ function populateMonthFilter(data) {
                 .toLocaleString('pl-PL', { month: 'long' });
             const label = monthName.charAt(0).toUpperCase() + monthName.slice(1);
             return `<option value="${value}">${value} (${label})</option>`;
-        })
-        .join('');
+        });
+
+    select.innerHTML = [...monthOptions, '<option value="all">Wszystkie miesiące</option>'].join('');
 }
 
 function handleMonthChange(fullData) {
-    const [year, month] = document.getElementById('monthFilter').value.split('-');
-    currentData = analytics.filterByMonth(fullData, year, month);
+    const value = document.getElementById('monthFilter').value;
+    const isAllMonths = value === 'all';
+    const [year, month] = value.split('-');
 
-    buildWeekTabs(currentData);
+    currentData = isAllMonths
+        ? fullData
+        : analytics.filterByMonth(fullData, year, month);
+
+    buildWeekTabs(currentData, isAllMonths ? { label: 'CAŁY OKRES', showWeeks: false } : {});
     activeWeekKey = 'all';
     updateView();
+
+    if (isAllMonths) {
+        const newest = fullData[0];
+        const oldest = fullData[fullData.length - 1];
+        if (newest && oldest) {
+            payrollCalculator?.setDateRange(reportDateToIso(oldest.dateStr), reportDateToIso(newest.dateStr));
+        }
+        return;
+    }
 
     const lastDay = new Date(year, month, 0).getDate();
     payrollCalculator?.setDateRange(
@@ -366,14 +382,16 @@ function handleMonthChange(fullData) {
     );
 }
 
-function buildWeekTabs(data) {
+function buildWeekTabs(data, { label = 'CAŁY MIESIĄC', showWeeks = true } = {}) {
     const tabsContainer = document.getElementById('weekTabsContainer');
     tabsContainer.innerHTML = '';
     currentWeeks = [];
 
-    const allTab = createWeekTab('all', 'CAŁY MIESIĄC');
+    const allTab = createWeekTab('all', label);
     allTab.classList.add('active');
     tabsContainer.appendChild(allTab);
+
+    if (!showWeeks) return;
 
     const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
     let bucket = [];
@@ -492,7 +510,7 @@ function logoutAdmin() {
 
 function updateView() {
     const ctx = document.getElementById('revenueChart')?.getContext('2d');
-    const [year, month] = (document.getElementById('monthFilter')?.value || '').split('-');
+    const monthValue = document.getElementById('monthFilter')?.value || '';
     const baseData = getActiveWeekData();
 
     currentViewData = baseData;
@@ -506,7 +524,7 @@ function updateView() {
             currentViewData,
             getRenderOptions()
         );
-        adminRender.renderHeatmap(document.getElementById('heatmapContainer'), currentViewData, year, month, getRenderOptions());
+        renderHeatmapSection(currentViewData, monthValue);
         const employeeStats = analytics.calculateEmployeeStats(currentViewData)
             .filter(employee => isEmployeeVisible(employee.name, employeeCatalog))
             .sort(compareEmployees);
@@ -514,6 +532,24 @@ function updateView() {
     }
 
     renderRevenueTable();
+}
+
+function renderHeatmapSection(data, monthValue) {
+    const container = document.getElementById('heatmapContainer');
+    if (!container) return;
+
+    if (monthValue === 'all') {
+        const monthKeys = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort().reverse();
+        const months = monthKeys.map(key => {
+            const [year, month] = key.split('-');
+            return { year, month, label: formatMonthLabel(year, month) };
+        });
+        adminRender.renderHeatmaps(container, data, months, getRenderOptions());
+        return;
+    }
+
+    const [year, month] = monthValue.split('-');
+    adminRender.renderHeatmap(container, data, year, month, getRenderOptions());
 }
 
 function getActiveWeekData() {

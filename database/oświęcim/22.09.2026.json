@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "22.09.2026",
+  "revenue": 886,
+  "cardRevenue": 641,
+  "glovoRevenue": 92,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Jalapeno": 1,
+    "Halloumi": 1,
+    "Krążki": 1,
+    "Bułki": 8,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Saszetki: Ketchup": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Serwetki": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

@@ -9,6 +9,9 @@ const LOCATION_COLOR_TOKENS = [
     '--app-chart-5'
 ];
 
+const MOVING_AVERAGE_WINDOW = 7;
+const MOVING_AVERAGE_MIN_POINTS = 14;
+
 const getDesignToken = (name, fallback) => {
     const styles = getComputedStyle(document.documentElement);
     return styles.getPropertyValue(name).trim() || fallback;
@@ -25,8 +28,8 @@ class AdminRender {
 
     renderChart(ctx, data, type, options) {
         const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
-        const locations = this.getVisibleLocations(sorted);
         const labels = sorted.map(day => `${day.dateStr.slice(0, 5)} (${day.dayOfWeek.slice(0, 3)})`);
+        const chartMode = options.chartMode === 'split' ? 'split' : 'combined';
 
         if (this.chart) this.chart.destroy();
 
@@ -41,17 +44,9 @@ class AdminRender {
             type,
             data: {
                 labels,
-                datasets: locations.map((location, index) => ({
-                    label: this.buildDatasetLabel(location, options),
-                    data: sorted.map(day => this.getMetricValue(day.locations?.[location], options.viewMode)),
-                    backgroundColor: locationColors[index % locationColors.length],
-                    borderColor: locationColors[index % locationColors.length],
-                    borderWidth: 2,
-                    tension: 0.32,
-                    fill: false,
-                    pointRadius: type === 'line' ? 4 : 0,
-                    pointHoverRadius: 6
-                }))
+                datasets: chartMode === 'split'
+                    ? this.buildLocationDatasets(sorted, type, locationColors, options)
+                    : this.buildCombinedDatasets(sorted, type, locationColors, options)
             },
             options: {
                 responsive: true,
@@ -72,7 +67,7 @@ class AdminRender {
                         beginAtZero: true,
                         grid: { color: getDesignToken('--border-color', 'rgba(255, 244, 238, 0.14)') },
                         ticks: {
-                            callback: value => `${Math.round(value)} zł`
+                            callback: value => this.formatAxisMoney(value)
                         }
                     },
                     x: { grid: { display: false } }
@@ -81,31 +76,82 @@ class AdminRender {
         });
     }
 
-    renderHeatmap(container, data, year, month, options) {
+    buildLocationDatasets(sorted, type, locationColors, options) {
+        const locations = this.getVisibleLocations(sorted);
+        return locations.map((location, index) => ({
+            label: this.buildDatasetLabel(location, options),
+            locationKey: location,
+            data: sorted.map(day => this.getMetricValue(day.locations?.[location], options.viewMode)),
+            backgroundColor: locationColors[index % locationColors.length],
+            borderColor: locationColors[index % locationColors.length],
+            borderWidth: 2,
+            tension: 0.32,
+            fill: false,
+            pointRadius: type === 'line' ? 4 : 0,
+            pointHoverRadius: 6
+        }));
+    }
+
+    buildCombinedDatasets(sorted, type, locationColors, options) {
+        const values = sorted.map(day => this.getMetricValue(day, options.viewMode));
+        const datasets = [{
+            label: `ŁĄCZNY • ${this.getViewLabel(options.viewMode)}`,
+            data: values,
+            backgroundColor: locationColors[0],
+            borderColor: locationColors[0],
+            borderWidth: 2,
+            tension: 0.32,
+            fill: false,
+            pointRadius: type === 'line' ? 4 : 0,
+            pointHoverRadius: 6
+        }];
+
+        if (values.length >= MOVING_AVERAGE_MIN_POINTS) {
+            datasets.push({
+                type: 'line',
+                label: `ŚREDNIA ${MOVING_AVERAGE_WINDOW} DNI`,
+                data: this.movingAverage(values, MOVING_AVERAGE_WINDOW),
+                borderColor: getDesignToken('--text-muted', '#9a9a9a'),
+                borderDash: [6, 4],
+                borderWidth: 2,
+                tension: 0.32,
+                fill: false,
+                pointRadius: 0,
+                pointHoverRadius: 0
+            });
+        }
+
+        return datasets;
+    }
+
+    movingAverage(values, windowSize) {
+        return values.map((_, index) => {
+            const slice = values.slice(Math.max(0, index - windowSize + 1), index + 1);
+            return slice.reduce((sum, value) => sum + value, 0) / slice.length;
+        });
+    }
+
+    formatAxisMoney(value) {
+        const abs = Math.abs(value);
+        if (abs >= 1000000) return `${(value / 1000000).toFixed(1)} mln zł`;
+        if (abs >= 1000) return `${Math.round(value / 1000)} tys. zł`;
+        return `${Math.round(value)} zł`;
+    }
+
+    renderHeatmap(container, data, year, month, options, label = '') {
         container.innerHTML = '';
+
+        if (label) {
+            const title = document.createElement('h4');
+            title.className = 'heatmap-month-title';
+            title.textContent = label;
+            container.appendChild(title);
+        }
+
         const grid = document.createElement('div');
         grid.className = 'heatmap-grid';
         container.appendChild(grid);
         this.renderHeatmapGrid(grid, data, year, month, options);
-    }
-
-    renderHeatmaps(container, data, months, options) {
-        container.innerHTML = '';
-        months.forEach(({ year, month, label }) => {
-            const block = document.createElement('div');
-            block.className = 'heatmap-month';
-
-            const title = document.createElement('h4');
-            title.className = 'heatmap-month-title';
-            title.textContent = label;
-
-            const grid = document.createElement('div');
-            grid.className = 'heatmap-grid';
-
-            block.append(title, grid);
-            container.appendChild(block);
-            this.renderHeatmapGrid(grid, data, year, month, options);
-        });
     }
 
     renderHeatmapGrid(grid, data, year, month, options) {
@@ -169,25 +215,21 @@ class AdminRender {
         container.innerHTML = `
             <div class="${cardClass('summary', 'summary-box summary-box--primary')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('monitoring', 'summary-icon-badge--revenue')} Utarg</span>
-                <h3>Łączny</h3>
                 <p class="highlight">${formatMoney(total)}</p>
                 <small>${data.length} dni / średnio ${formatMoney(averageDay)}</small>
             </div>
             <div class="${cardClass('summary', 'summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('credit_card', 'summary-icon-badge--cards')} Karty</span>
-                <h3>Suma</h3>
                 <p>${formatMoney(cards)}</p>
                 <small>${this.formatPercent(cards, total)} całego utargu</small>
             </div>
             <div class="${cardClass('summary', 'summary-box summary-box--glovo')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Glovo</span>
-                <h3>Suma</h3>
                 <p>${formatMoney(glovoNet)}</p>
                 <small>Po prowizji Glovo</small>
             </div>
             <div class="${cardClass('summary', 'summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('savings', 'summary-icon-badge--cash')} Gotówka</span>
-                <h3>Suma</h3>
                 <p>${formatMoney(cashDesk)}</p>
                 <small>${this.formatPercent(cashDesk, total)} po odjęciu kart i Glovo</small>
             </div>
@@ -322,26 +364,7 @@ class AdminRender {
         const totalLabel = this.getViewLabel(options.viewMode);
         const locations = Object.values(data.locations || {}).sort((left, right) => right.total - left.total);
 
-        const shifts = [];
-        data.rawReports?.forEach(report => {
-            if (!report.employees) return;
-            Object.entries(report.employees).forEach(([name, time]) => shifts.push({ name, time, loc: report.location }));
-        });
-
-        const shiftsHtml = shifts.length
-            ? `
-                <div class="tt-divider"></div>
-                <div class="tt-label" style="margin-bottom:6px;">ZMIANY</div>
-                <div class="tt-shifts-list">
-                    ${shifts.map(shift => `
-                        <div class="tt-shift-item">
-                            <span class="tt-shift-name"><span class="tt-shift-dot"></span>${shift.name} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${shift.loc.slice(0, 3)})</span></span>
-                            <span class="tt-shift-time">${shift.time}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `
-            : `<div class="tt-divider"></div><div style="font-size:11px; color:var(--text-muted); font-style:italic;">Brak danych o zmianach</div>`;
+        const shiftsHtml = this.buildShiftsHtml(data.rawReports);
 
         return `
             <div class="tt-inner">
@@ -394,11 +417,92 @@ class AdminRender {
         `;
     }
 
+    buildShiftsHtml(reports) {
+        const shifts = [];
+        reports?.forEach(report => {
+            if (!report.employees) return;
+            Object.entries(report.employees).forEach(([name, time]) => shifts.push({ name, time, loc: report.location }));
+        });
+
+        if (!shifts.length) {
+            return `<div class="tt-divider"></div><div style="font-size:11px; color:var(--text-muted); font-style:italic;">Brak danych o zmianach</div>`;
+        }
+
+        return `
+            <div class="tt-divider"></div>
+            <div class="tt-label" style="margin-bottom:6px;">ZMIANY</div>
+            <div class="tt-shifts-list">
+                ${shifts.map(shift => `
+                    <div class="tt-shift-item">
+                        <span class="tt-shift-name"><span class="tt-shift-dot"></span>${shift.name} <span style="color:var(--text-muted); font-size:10px; margin-left:4px;">(${shift.loc.slice(0, 3)})</span></span>
+                        <span class="tt-shift-time">${shift.time}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    buildLocationTooltipHtml(day, location, options) {
+        const metricLabel = this.getViewLabel(options.viewMode);
+        const metricValue = this.getMetricValue(location, options.viewMode);
+        const reports = (day.rawReports || []).filter(report => report.location === location.name);
+
+        return `
+            <div class="tt-inner">
+                <div class="tt-header">
+                    <span>${day.dateStr}</span>
+                    <span class="tt-day">${day.dayOfWeek}</span>
+                </div>
+
+                <div class="tt-loc-col">
+                    <h5>${location.name}</h5>
+                    <div class="tt-big-row">
+                        <span class="tt-label">${metricLabel}</span>
+                        <span class="tt-value-main">${formatMoney(metricValue)}</span>
+                    </div>
+                    ${options.viewMode === 'total' ? '' : `
+                        <div class="tt-big-row">
+                            <span class="tt-label">UTARG</span>
+                            <span class="tt-value-sub">${formatMoney(location.total)}</span>
+                        </div>
+                    `}
+                    <div class="tt-big-row">
+                        <span class="tt-label">KARTY</span>
+                        <span class="tt-value-sub">${formatMoney(location.card)}</span>
+                    </div>
+                    <div class="tt-big-row">
+                        <span class="tt-label">GLOVO</span>
+                        <span class="tt-value-sub">${formatMoney(this.getMetricValue(location, 'glovo'))}</span>
+                    </div>
+                    <div class="tt-big-row">
+                        <span class="tt-label">GOTÓWKA</span>
+                        <span class="tt-value-sub">${formatMoney(location.cashDesk)}</span>
+                    </div>
+                </div>
+
+                ${this.buildShiftsHtml(reports)}
+            </div>
+        `;
+    }
+
     showTooltip(data, options) {
         const tooltip = document.getElementById('customTooltip');
         if (!tooltip) return;
         tooltip.style.display = 'block';
         tooltip.innerHTML = this.buildTooltipHtml(data, options);
+    }
+
+    showLocationTooltip(day, locationKey, options) {
+        const location = day.locations?.[locationKey];
+        if (!location) {
+            this.hideTooltip();
+            return;
+        }
+
+        const tooltip = document.getElementById('customTooltip');
+        if (!tooltip) return;
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = this.buildLocationTooltipHtml(day, location, options);
     }
 
     moveTooltip(event) {
@@ -466,7 +570,13 @@ class AdminRender {
         const entry = sortedData[point.dataIndex];
         if (!entry) return;
 
-        this.showTooltip(entry, options);
+        const locationKey = chart.data.datasets[point.datasetIndex]?.locationKey;
+        if (options.chartMode === 'split' && locationKey) {
+            this.showLocationTooltip(entry, locationKey, options);
+        } else {
+            this.showTooltip(entry, options);
+        }
+
         this.moveTooltip({
             clientX: chart.canvas.getBoundingClientRect().left + tooltip.caretX,
             clientY: chart.canvas.getBoundingClientRect().top + tooltip.caretY

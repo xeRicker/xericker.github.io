@@ -33,7 +33,8 @@ export function createAdminListsPage(config) {
         if (!select) return;
         const months = Array.from(new Set(getAllData().map(report => report.date?.slice(3)).filter(Boolean))).sort().reverse();
         const current = select.value;
-        select.innerHTML = ['<option value="all">Wszystkie miesiące</option>', ...months.map(month => `<option value="${month}">${month}</option>`)].join('');
+        const allOption = months.length > 1 ? '<option value="all">Wszystkie</option>' : '';
+        select.innerHTML = [...months.map(month => `<option value="${month}">${month}</option>`), allOption].join('');
         if (months.includes(current)) select.value = current;
     }
 

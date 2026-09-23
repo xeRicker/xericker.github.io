@@ -6,7 +6,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=82">
+    <link rel="stylesheet" href="style.css?v=83">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -47,7 +47,6 @@
         <div class="header-actions">
             <div class="admin-load-all-wrap" data-callout-anchor="load-all-data">
                 <label class="admin-load-range">
-                    <span>ZAKRES DANYCH</span>
                     <select id="loadDataRange" aria-label="Zakres danych do załadowania">
                         <option value="3">Ostatnie 3 miesiące</option>
                         <option value="6">Ostatnie 6 miesięcy</option>
@@ -143,11 +142,27 @@
         <div class="card card--chart chart-card chart-card--feature">
             <div class="chart-header">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> WIZUALIZACJA UTARGU</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> WIZUALIZACJA</h3>
                 </div>
                 <div class="chart-controls">
-                    <button class="chart-btn active" data-type="bar">Słupkowy</button>
-                    <button class="chart-btn" data-type="line">Liniowy</button>
+                    <div class="chart-control-group" role="group" aria-label="Tryb wyświetlania">
+                        <button class="chart-btn active" data-display="combined" type="button">Łączny</button>
+                        <button class="chart-btn" data-display="split" type="button" title="Podział na punkty">Punkty</button>
+                    </div>
+                    <div class="chart-control-group" role="group" aria-label="Typ wykresu">
+                        <button class="chart-btn active" data-type="bar" type="button">Słupkowy</button>
+                        <button class="chart-btn" data-type="line" type="button">Liniowy</button>
+                    </div>
+                    <div id="chartRangeControls" class="chart-range" hidden>
+                        <label class="chart-range__field">
+                            <span>OD</span>
+                            <select id="chartRangeFrom" aria-label="Początek okresu wykresu"></select>
+                        </label>
+                        <label class="chart-range__field">
+                            <span>DO</span>
+                            <select id="chartRangeTo" aria-label="Koniec okresu wykresu"></select>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="chart-wrapper">
@@ -161,9 +176,10 @@
 
         <div class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="revenue">
             <div class="section-heading section-heading--stack">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> MAPA CIEPLNA</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> KALENDARZ</h3>
             </div>
             <div id="heatmapContainer" class="heatmap-months"></div>
+            <div id="heatmapPager" class="admin-pager" hidden></div>
         </div>
 
     <div class="card card--chart chart-card animate-enter delay-3 calc-card u-card-spacing" data-admin-page="payroll" hidden>
@@ -298,7 +314,7 @@
     <div class="card card--table table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> LISTA DZIENNA</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> DZIENNY KALENDARZ</h3>
             </div>
         </div>
         <div id="loading" class="daily-report-loading"><span class="material-symbols-rounded" aria-hidden="true">progress_activity</span> ŁADOWANIE DANYCH...</div>
@@ -311,16 +327,17 @@
                     <th data-sort="cardTotal">Karty</th>
                     <th data-sort="glovoDisplay">Glovo</th>
                     <th data-sort="cashDeskTotal">Gotówka</th>
-                    <th data-sort="total">Utarg dnia</th>
+                    <th data-sort="total">Utarg</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
+        <div id="revenueTablePager" class="admin-pager" hidden></div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=85"></script>
+<script type="module" src="js/admin.js?v=86"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 import { apiService } from './services/api.js?v=67';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=61';
+import { adminRender } from './ui/adminRender.js?v=62';
 import { adminProducts } from './ui/adminProducts.js?v=62';
-import { createAdminListsPage } from './ui/adminLists.js?v=63';
+import { createAdminListsPage } from './ui/adminLists.js?v=64';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=64';
 import { setupPayslipGenerator } from './ui/payslip.js?v=2';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
@@ -27,6 +27,8 @@ const MONTHLY_STATUS_VARIANTS = {
 const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 1;
 const PAYROLL_RATE = 30;
+const REVENUE_PAGE_SIZE = 14;
+const HEATMAP_MONTHS_PER_PAGE = 1;
 
 let allData = [];
 let sourceData = [];
@@ -35,8 +37,12 @@ let processedData = [];
 let currentData = [];
 let currentWeeks = [];
 let chartType = 'bar';
+let chartDisplayMode = 'combined';
+let chartRange = { from: '', to: '' };
 let viewMode = 'total';
 let currentViewData = [];
+let revenuePage = 0;
+let heatmapPage = 0;
 let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
 let employeeSort = { key: 'name', direction: 'asc' };
@@ -337,20 +343,17 @@ function hideGlobalLoader() {
 
 function populateMonthFilter(data) {
     const select = document.getElementById('monthFilter');
-    const months = new Set(data.map(day => `${day.dateObj.getFullYear()}-${String(day.dateObj.getMonth() + 1).padStart(2, '0')}`));
+    const months = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort().reverse();
 
-    const monthOptions = Array.from(months)
-        .sort()
-        .reverse()
-        .map(value => {
-            const [year, month] = value.split('-');
-            const monthName = new Date(year, month - 1, 1)
-                .toLocaleString('pl-PL', { month: 'long' });
-            const label = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-            return `<option value="${value}">${value} (${label})</option>`;
-        });
+    const monthOptions = months.map(value => {
+        const [year, month] = value.split('-');
+        const monthName = new Date(year, month - 1, 1).toLocaleString('pl-PL', { month: 'long' });
+        const label = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+        return `<option value="${value}">${value} (${label})</option>`;
+    });
 
-    select.innerHTML = [...monthOptions, '<option value="all">Wszystkie miesiące</option>'].join('');
+    const allOption = months.length > 1 ? '<option value="all">Wszystkie</option>' : '';
+    select.innerHTML = [...monthOptions, allOption].join('');
 }
 
 function handleMonthChange(fullData) {
@@ -362,6 +365,9 @@ function handleMonthChange(fullData) {
         ? fullData
         : analytics.filterByMonth(fullData, year, month);
 
+    revenuePage = 0;
+    heatmapPage = 0;
+    populateChartRange(currentData);
     buildWeekTabs(currentData, isAllMonths ? { label: 'CAŁY OKRES', showWeeks: false } : {});
     activeWeekKey = 'all';
     updateView();
@@ -422,6 +428,8 @@ function createWeekTab(key, label) {
         document.querySelectorAll('.week-tab').forEach(node => node.classList.remove('active'));
         event.currentTarget.classList.add('active');
         activeWeekKey = key;
+        revenuePage = 0;
+        heatmapPage = 0;
         updateView();
     };
     return tab;
@@ -432,14 +440,46 @@ function setupListeners() {
 
     // Tylko kontrolki wykresu zmieniają typ wykresu. Klasa `.chart-btn` służy też
     // jako wygląd przycisków „Dodaj” w panelach, więc selektor musi być węższy.
-    const chartTypeButtons = document.querySelectorAll('.chart-controls .chart-btn');
+    const chartTypeButtons = document.querySelectorAll('.chart-controls [data-type]');
     chartTypeButtons.forEach(button => {
         button.onclick = event => {
             chartTypeButtons.forEach(node => node.classList.remove('active'));
             event.currentTarget.classList.add('active');
             chartType = event.currentTarget.dataset.type;
-            updateView();
+            updateChart();
         };
+    });
+
+    const chartDisplayButtons = document.querySelectorAll('.chart-controls [data-display]');
+    chartDisplayButtons.forEach(button => {
+        button.onclick = event => {
+            chartDisplayButtons.forEach(node => node.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            chartDisplayMode = event.currentTarget.dataset.display;
+            updateChart();
+        };
+    });
+
+    document.getElementById('chartRangeFrom')?.addEventListener('change', event => {
+        chartRange.from = event.target.value;
+        if (chartRange.from > chartRange.to) {
+            chartRange.to = chartRange.from;
+            const toSelect = document.getElementById('chartRangeTo');
+            if (toSelect) toSelect.value = chartRange.to;
+            refreshCustomControls();
+        }
+        updateChart();
+    });
+
+    document.getElementById('chartRangeTo')?.addEventListener('change', event => {
+        chartRange.to = event.target.value;
+        if (chartRange.to < chartRange.from) {
+            chartRange.from = chartRange.to;
+            const fromSelect = document.getElementById('chartRangeFrom');
+            if (fromSelect) fromSelect.value = chartRange.from;
+            refreshCustomControls();
+        }
+        updateChart();
     });
 
     const viewModeButtons = document.querySelectorAll('.view-toggle .view-btn');
@@ -457,6 +497,7 @@ function setupListeners() {
             const key = th.dataset.sort;
             revenueSort.direction = revenueSort.key === key && revenueSort.direction === 'asc' ? 'desc' : 'asc';
             revenueSort.key = key;
+            revenuePage = 0;
             renderRevenueTable();
         });
     });
@@ -518,7 +559,7 @@ function updateView() {
     if (ctx) {
         adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
         adminRender.renderInsights(document.getElementById('insightsSection'), currentViewData, getRenderOptions());
-        adminRender.renderChart(ctx, currentViewData, chartType, getRenderOptions());
+        adminRender.renderChart(ctx, getChartData(), chartType, getRenderOptions());
         adminRender.renderLocationPerformance(
             document.getElementById('locationPerformanceSection'),
             currentViewData,
@@ -534,22 +575,113 @@ function updateView() {
     renderRevenueTable();
 }
 
-function renderHeatmapSection(data, monthValue) {
-    const container = document.getElementById('heatmapContainer');
-    if (!container) return;
+function updateChart() {
+    const ctx = document.getElementById('revenueChart')?.getContext('2d');
+    if (!ctx) return;
+    adminRender.renderChart(ctx, getChartData(), chartType, getRenderOptions());
+}
 
-    if (monthValue === 'all') {
-        const monthKeys = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort().reverse();
-        const months = monthKeys.map(key => {
-            const [year, month] = key.split('-');
-            return { year, month, label: formatMonthLabel(year, month) };
-        });
-        adminRender.renderHeatmaps(container, data, months, getRenderOptions());
+function getChartData() {
+    const { from, to } = chartRange;
+    if (!from && !to) return currentViewData;
+    return currentViewData.filter(day => {
+        const key = getMonthKey(day.dateObj);
+        return (!from || key >= from) && (!to || key <= to);
+    });
+}
+
+function populateChartRange(data) {
+    const wrapper = document.getElementById('chartRangeControls');
+    const fromSelect = document.getElementById('chartRangeFrom');
+    const toSelect = document.getElementById('chartRangeTo');
+    if (!wrapper || !fromSelect || !toSelect) return;
+
+    const keys = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort();
+    if (keys.length <= 1) {
+        wrapper.hidden = true;
+        chartRange = { from: keys[0] || '', to: keys[0] || '' };
         return;
     }
 
-    const [year, month] = monthValue.split('-');
-    adminRender.renderHeatmap(container, data, year, month, getRenderOptions());
+    const options = keys.map(key => {
+        const [year, month] = key.split('-');
+        return `<option value="${key}">${formatMonthLabel(year, month)}</option>`;
+    }).join('');
+
+    wrapper.hidden = false;
+    fromSelect.innerHTML = options;
+    toSelect.innerHTML = options;
+    chartRange.from = keys[0];
+    chartRange.to = keys[keys.length - 1];
+    fromSelect.value = chartRange.from;
+    toSelect.value = chartRange.to;
+    refreshCustomControls();
+}
+
+function renderHeatmapSection(data, monthValue) {
+    const container = document.getElementById('heatmapContainer');
+    const pager = document.getElementById('heatmapPager');
+    if (!container) return;
+
+    if (monthValue !== 'all') {
+        heatmapPage = 0;
+        if (pager) {
+            pager.hidden = true;
+            pager.innerHTML = '';
+        }
+        const [year, month] = monthValue.split('-');
+        adminRender.renderHeatmap(container, data, year, month, getRenderOptions());
+        return;
+    }
+
+    const monthKeys = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort().reverse();
+    const totalPages = Math.max(1, Math.ceil(monthKeys.length / HEATMAP_MONTHS_PER_PAGE));
+    heatmapPage = Math.min(heatmapPage, totalPages - 1);
+    const pageKeys = monthKeys.slice(heatmapPage * HEATMAP_MONTHS_PER_PAGE, (heatmapPage + 1) * HEATMAP_MONTHS_PER_PAGE);
+    const pageKey = pageKeys[0];
+    if (!pageKey) {
+        container.innerHTML = '';
+        if (pager) pager.hidden = true;
+        return;
+    }
+
+    const [year, month] = pageKey.split('-');
+    adminRender.renderHeatmap(container, data, year, month, getRenderOptions(), formatMonthLabel(year, month));
+    renderPager(pager, {
+        page: heatmapPage,
+        totalPages,
+        label: `${heatmapPage + 1} / ${totalPages}`,
+        onPrev: () => {
+            heatmapPage -= 1;
+            renderHeatmapSection(data, monthValue);
+        },
+        onNext: () => {
+            heatmapPage += 1;
+            renderHeatmapSection(data, monthValue);
+        }
+    });
+}
+
+function renderPager(container, { page, totalPages, label, onPrev, onNext }) {
+    if (!container) return;
+    if (totalPages <= 1) {
+        container.hidden = true;
+        container.innerHTML = '';
+        return;
+    }
+
+    container.hidden = false;
+    container.innerHTML = `
+        <button class="admin-pager__btn" type="button" data-pager="prev" ${page === 0 ? 'disabled' : ''} aria-label="Poprzednia strona">${renderMaterialIcon('chevron_left')}</button>
+        <span class="admin-pager__label">${escapeHtml(label)}</span>
+        <button class="admin-pager__btn" type="button" data-pager="next" ${page >= totalPages - 1 ? 'disabled' : ''} aria-label="Następna strona">${renderMaterialIcon('chevron_right')}</button>
+    `;
+    container.querySelector('[data-pager="prev"]')?.addEventListener('click', () => {
+        if (page > 0) onPrev();
+    });
+    container.querySelector('[data-pager="next"]')?.addEventListener('click', () => {
+        if (page < totalPages - 1) onNext();
+    });
 }
 
 function getActiveWeekData() {
@@ -559,7 +691,28 @@ function getActiveWeekData() {
 
 function renderRevenueTable() {
     const sorted = [...currentViewData].sort((a, b) => compareRevenueRows(a, b, revenueSort));
-    adminRender.renderTable(document.querySelector('#revenueTable tbody'), sorted, getRenderOptions());
+    const pager = document.getElementById('revenueTablePager');
+    const isAllMonths = (document.getElementById('monthFilter')?.value || '') === 'all';
+    const totalPages = isAllMonths ? Math.max(1, Math.ceil(sorted.length / REVENUE_PAGE_SIZE)) : 1;
+    revenuePage = Math.min(revenuePage, totalPages - 1);
+    const pageRows = isAllMonths
+        ? sorted.slice(revenuePage * REVENUE_PAGE_SIZE, (revenuePage + 1) * REVENUE_PAGE_SIZE)
+        : sorted;
+
+    adminRender.renderTable(document.querySelector('#revenueTable tbody'), pageRows, getRenderOptions());
+    renderPager(pager, {
+        page: revenuePage,
+        totalPages,
+        label: `Strona ${revenuePage + 1} z ${totalPages}`,
+        onPrev: () => {
+            revenuePage -= 1;
+            renderRevenueTable();
+        },
+        onNext: () => {
+            revenuePage += 1;
+            renderRevenueTable();
+        }
+    });
 }
 
 async function generateMonthlyReport(options = {}) {
@@ -1259,7 +1412,8 @@ function compareRevenueRows(a, b, sort) {
 
 function getRenderOptions() {
     return {
-        viewMode
+        viewMode,
+        chartMode: chartDisplayMode
     };
 }
 

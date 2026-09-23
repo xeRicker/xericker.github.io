@@ -647,8 +647,37 @@ select:focus { border-color: var(--primary-color); }
     font-size: 20px;
     line-height: 1;
 }
+.chart-controls { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 .chart-controls button { background: transparent; border: 1px solid #444; color: var(--text-secondary); padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: var(--font-heading); text-transform: uppercase; font-size: 13px; }
 .chart-controls button.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+.chart-control-group { display: inline-flex; gap: 6px; }
+.chart-range { display: inline-flex; align-items: flex-end; gap: 8px; margin-left: 4px; }
+.chart-range[hidden] { display: none; }
+.chart-range__field { display: inline-flex; flex-direction: column; gap: 2px; }
+.chart-range__field > span { color: var(--text-muted); font: 700 9px/1.2 var(--font-heading); letter-spacing: .06em; text-transform: uppercase; }
+.chart-range .custom-control { width: 132px; }
+.chart-range .custom-control__button { min-height: 34px; padding: 6px 10px; font-size: 12px; }
+.chart-range .custom-control__chevron { font-size: 16px; }
+
+.admin-pager { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 18px 24px 4px; flex-wrap: wrap; }
+.table-card .admin-pager { padding: 16px 24px; border-top: 1px solid var(--border-color); }
+.admin-pager__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color .2s, border-color .2s, background-color .2s;
+}
+.admin-pager__btn .material-symbols-rounded { font-size: 20px; }
+.admin-pager__btn:hover:not(:disabled) { color: var(--text-primary); border-color: var(--border-focused); background: var(--surface-overlay); }
+.admin-pager__btn:disabled { opacity: .4; cursor: default; }
+.admin-pager__label { min-width: 150px; text-align: center; color: var(--text-secondary); font: 700 12px/1.2 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; }
 
 .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
 .heatmap-months { display: grid; gap: 28px; }

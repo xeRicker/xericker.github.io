@@ -36,7 +36,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `css/atlassian-tokens.css`, `css/theme/palette.css` — design tokens & active palette
 - `css/*.css`, `css/components/` — per-feature and shared styles
 - `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, locations, employees, products, analytics, revenue, reportDates, reportFormatter, mockData, storage, weather, trivia
+- `js/services/` — data models & I/O: api, auth, locations, employees, products, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage, weather, trivia
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
 - `database/` — catalogs + per-location report JSON
 
@@ -53,7 +53,8 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `ui/components/customControls.js` — custom select/date/time/dialog; mirrors native `disabled` onto the visible control
 - `ui/components/notice.js` + `css/components/notice.css` — the only message system: `.notice--<info|success|danger|warning|muted|loading>` via `noticeService.render()` / `dialogService.*`
 - `services/reportDates.js` — report date parsing/keys/sorting
-- `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder; on localhost merges real `database/` reports with generated ones
+- `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder; bulk report fetches run at higher concurrency and go through `reportCache`; on localhost merges real `database/` reports with generated ones
+- `services/reportCache.js` — IndexedDB cache of report JSON keyed by Git blob SHA, so bulk month loads download only new/changed files; oldest entries pruned past 4000
 - `services/mockData.js` — localhost-only generator: the last 3 months of report-shaped data (revenue, shifts, products) built from the live catalogs, used to fill missing location-days
 - `services/locations.js` — point catalog: normalize, resolve report names → points (name/folder/aliases), visibility, stats switch, filters
 - `services/employees.js` — team catalog: normalize, resolve report names → people, visibility

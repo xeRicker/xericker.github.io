@@ -2,6 +2,9 @@ import { GITHUB_CONFIG } from '../config/config.js';
 import { isLocalhost } from '../utils.js';
 import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName, getReportKey } from './reportDates.js';
 import { generateMockReports } from './mockData.js?v=1';
+import { reportCache } from './reportCache.js?v=1';
+
+const FILE_FETCH_CONCURRENCY = 10;
 
 class ApiService {
     constructor() {
@@ -400,16 +403,27 @@ class ApiService {
         let loaded = 0;
         this.reportProgress(onProgress, loaded, files.length);
 
-        const results = await this.mapWithConcurrency(files, 3, async f => {
+        const cached = await reportCache.getMany(files.map(f => f.sha));
+        const fresh = [];
+        const results = await this.mapWithConcurrency(files, FILE_FETCH_CONCURRENCY, async f => {
+            if (f.sha && cached.has(f.sha)) {
+                loaded += 1;
+                this.reportProgress(onProgress, loaded, files.length);
+                return cached.get(f.sha);
+            }
+
             try {
                 const response = await this.fetchGithub(f.download_url, {}, f.path || f.name);
                 if (!response.ok) throw await this.createGithubApiError(response, f.path || f.name);
-                return await response.json();
+                const data = await response.json();
+                if (f.sha) fresh.push({ sha: f.sha, data });
+                return data;
             } finally {
                 loaded += 1;
                 this.reportProgress(onProgress, loaded, files.length);
             }
         });
+        await reportCache.putMany(fresh);
 
         return results;
     }

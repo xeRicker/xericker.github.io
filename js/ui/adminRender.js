@@ -1,5 +1,6 @@
-import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
+import { calculateHours, escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { cardClass } from './components/Card.js';
+import { resolveEmployee } from '../services/employees.js';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',
@@ -30,6 +31,7 @@ class AdminRender {
         const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
         const labels = sorted.map(day => `${day.dateStr.slice(0, 5)} (${day.dayOfWeek.slice(0, 3)})`);
         const chartMode = options.chartMode === 'split' ? 'split' : 'combined';
+        const showHours = Boolean(options.showHours);
 
         if (this.chart) this.chart.destroy();
 
@@ -40,14 +42,35 @@ class AdminRender {
         Chart.defaults.font.family = getDesignToken('--font-body', 'sans-serif');
         Chart.defaults.color = getDesignToken('--text-secondary', '#C8BAB3');
 
+        const dayContext = this.buildDayContext(sorted);
+        const datasets = chartMode === 'split'
+            ? this.buildLocationDatasets(sorted, type, locationColors, options)
+            : this.buildCombinedDatasets(sorted, type, locationColors, options);
+        if (showHours) datasets.push(this.buildHoursDataset(sorted, type));
+
+        const scales = {
+            y: {
+                beginAtZero: true,
+                grid: { color: getDesignToken('--border-color', 'rgba(255, 244, 238, 0.14)') },
+                ticks: {
+                    callback: value => this.formatAxisMoney(value)
+                }
+            },
+            x: { grid: { display: false } }
+        };
+        if (showHours) {
+            scales.y1 = {
+                position: 'right',
+                beginAtZero: true,
+                grid: { display: false },
+                ticks: { callback: value => `${Math.round(value)} h` }
+            };
+        }
+
         this.chart = new Chart(ctx, {
             type,
-            data: {
-                labels,
-                datasets: chartMode === 'split'
-                    ? this.buildLocationDatasets(sorted, type, locationColors, options)
-                    : this.buildCombinedDatasets(sorted, type, locationColors, options)
-            },
+            data: { labels, datasets },
+            plugins: [this.buildDayContextPlugin(sorted, dayContext)],
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -62,18 +85,96 @@ class AdminRender {
                         external: context => this.handleChartTooltip(context, options, sorted)
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: getDesignToken('--border-color', 'rgba(255, 244, 238, 0.14)') },
-                        ticks: {
-                            callback: value => this.formatAxisMoney(value)
-                        }
-                    },
-                    x: { grid: { display: false } }
-                }
+                scales
             }
         });
+    }
+
+    buildDayContext(sorted) {
+        const eventsByDate = this.getEventsByDate(sorted.map(day => day.dateObj));
+        return sorted.map(day => {
+            const events = eventsByDate.get(day.dateStr) || [];
+            const dayOff = events.find(event => event.type === 'Dzień wolny od pracy');
+            return {
+                isWeekend: day.dayOfWeek === 'sobota' || day.dayOfWeek === 'niedziela',
+                isDayOff: Boolean(dayOff),
+                holiday: dayOff?.name || '',
+                events
+            };
+        });
+    }
+
+    buildDayContextPlugin(sorted, context) {
+        const primary = getDesignToken('--primary-color', '#D4521A');
+        const muted = getDesignToken('--text-muted', '#94847C');
+        return {
+            id: 'dayContext',
+            beforeDatasetsDraw: chart => {
+                const { ctx, chartArea, scales } = chart;
+                if (!chartArea || !scales.x) return;
+                const step = scales.x.width / sorted.length;
+                context.forEach((info, index) => {
+                    if (!info.isDayOff && !info.isWeekend) return;
+                    const center = scales.x.getPixelForValue(index);
+                    ctx.save();
+                    ctx.globalAlpha = info.isDayOff ? 0.16 : 0.05;
+                    ctx.fillStyle = info.isDayOff ? primary : muted;
+                    ctx.fillRect(center - step / 2, chartArea.top, step, chartArea.bottom - chartArea.top);
+                    ctx.restore();
+                });
+            }
+        };
+    }
+
+    buildHoursDataset(sorted, type) {
+        const info = getDesignToken('--app-info', '#7AB8FF');
+        return {
+            type: 'line',
+            label: 'ROBOCZOGODZINY',
+            yAxisID: 'y1',
+            data: sorted.map(day => this.getDayHours(day)),
+            borderColor: info,
+            backgroundColor: info,
+            borderWidth: 2,
+            borderDash: [2, 3],
+            tension: 0.32,
+            fill: false,
+            pointRadius: type === 'line' ? 3 : 0,
+            pointHoverRadius: 5
+        };
+    }
+
+    getDayHours(day) {
+        let hours = 0;
+        (day.rawReports || []).forEach(report => {
+            Object.values(report.employees || {}).forEach(time => {
+                hours += calculateHours(time);
+            });
+        });
+        return Number(hours.toFixed(2));
+    }
+
+    getEventsByDate(dates) {
+        const years = new Set(dates.filter(Boolean).map(date => date.getFullYear()));
+        const map = new Map();
+        years.forEach(year => {
+            this.getCalendarEvents(year).forEach(event => {
+                const key = this.formatDate(event.date);
+                if (!map.has(key)) map.set(key, []);
+                map.get(key).push(event);
+            });
+        });
+        return map;
+    }
+
+    getDayContext(dateObj, dayOfWeek) {
+        const events = dateObj ? this.getEventsByDate([dateObj]).get(this.formatDate(dateObj)) || [] : [];
+        const dayOff = events.find(event => event.type === 'Dzień wolny od pracy');
+        return {
+            events,
+            dayOff,
+            isWeekend: dayOfWeek === 'sobota' || dayOfWeek === 'niedziela'
+        };
     }
 
     buildLocationDatasets(sorted, type, locationColors, options) {
@@ -181,6 +282,7 @@ class AdminRender {
             }
 
             const value = this.getMetricValue(entry, options.viewMode);
+            const workers = this.getDayWorkers(entry, options.employeeCatalog);
             const cell = document.createElement('div');
             cell.className = 'heatmap-cell';
             const level = value >= 3000 ? 'extra' : value >= 2000 ? 'super' : value >= 1000 ? 'ok' : 'low';
@@ -188,9 +290,14 @@ class AdminRender {
             cell.dataset.heatLevel = level;
             cell.dataset.heatValue = Math.round(value);
 
+            const workersHtml = workers.length
+                ? `<span class="heatmap-workers">${workers.slice(0, 4).map(worker => `<b>${escapeHtml(worker)}</b>`).join('')}${workers.length > 4 ? `<b class="heatmap-workers__more">+${workers.length - 4}</b>` : ''}</span>`
+                : '';
+
             cell.innerHTML = `
                 <span class="heatmap-date">${dayNumber}</span>
                 <span class="heatmap-val">${Math.round(value)} zł</span>
+                ${workersHtml}
             `;
 
             cell.addEventListener('mouseenter', () => this.showTooltip(entry, options));
@@ -198,6 +305,30 @@ class AdminRender {
             cell.addEventListener('mouseleave', () => this.hideTooltip());
             grid.appendChild(cell);
         }
+    }
+
+    getDayWorkers(entry, catalog) {
+        const names = new Set();
+        (entry.rawReports || []).forEach(report => {
+            Object.keys(report.employees || {}).forEach(name => names.add(name));
+        });
+        const seen = new Set();
+        const initials = [];
+        names.forEach(name => {
+            const value = this.getInitials(name, catalog);
+            if (!value || seen.has(value)) return;
+            seen.add(value);
+            initials.push(value);
+        });
+        return initials.sort();
+    }
+
+    getInitials(name, catalog) {
+        const employee = resolveEmployee(name, catalog);
+        if (employee) return `${employee.firstName[0] || ''}${employee.lastName[0] || ''}`.toUpperCase();
+        const parts = String(name).replace(/[._\-]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+        return String(name).slice(0, 2).toUpperCase();
     }
 
     renderSummary(container, data, options) {
@@ -211,6 +342,7 @@ class AdminRender {
         const glovoNet = data.reduce((sum, day) => sum + day.glovoNetTotal, 0);
         const cashDesk = data.reduce((sum, day) => sum + day.cashDeskTotal, 0);
         const averageDay = total / data.length;
+        const weekEvents = this.getWeekEvents(data);
 
         container.innerHTML = `
             <div class="${cardClass('summary', 'summary-box summary-box--primary')} ">
@@ -233,36 +365,47 @@ class AdminRender {
                 <p>${formatMoney(cashDesk)}</p>
                 <small>${this.formatPercent(cashDesk, total)} po odjęciu kart i Glovo</small>
             </div>
+            ${this.buildWeekEventsTile(weekEvents)}
+        `;
+
+        this.bindWeekEvents(container, weekEvents);
+    }
+
+    buildDayContextHtml(day) {
+        const context = this.getDayContext(day.dateObj, day.dayOfWeek);
+        if (context.dayOff) {
+            return `<div class="tt-context tt-context--holiday">${renderMaterialIcon('celebration')} ${escapeHtml(context.dayOff.name)} · dzień wolny</div>`;
+        }
+        if (context.events.length) {
+            return `<div class="tt-context">${renderMaterialIcon('event')} ${escapeHtml(context.events[0].name)}</div>`;
+        }
+        if (context.isWeekend) {
+            return `<div class="tt-context">${renderMaterialIcon('weekend')} Weekend</div>`;
+        }
+        return '';
+    }
+
+    buildWeekEventsTile(weekEvents) {
+        const leadEvent = weekEvents[0];
+        const countLabel = weekEvents.length
+            ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}`
+            : 'Brak wydarzeń';
+
+        return `
+            <div class="${cardClass('summary', `summary-box summary-box--events ${weekEvents.length ? 'has-events' : 'is-calm'}`)}" data-week-events="true" data-callout-anchor="week-events">
+                <span class="summary-kicker">${this.buildSymbolIcon(weekEvents.length ? 'celebration' : 'event_available', 'summary-icon-badge--event')} Kalendarz tygodnia</span>
+                <p class="summary-box__event-title">${leadEvent ? escapeHtml(leadEvent.name) : 'Spokojny tydzień'}</p>
+                <small>${leadEvent ? `${escapeHtml(leadEvent.dateStr)} · ${countLabel}` : 'Brak świąt i wydarzeń w tym tygodniu'}</small>
+            </div>
         `;
     }
 
-    renderInsights(container, data, options) {
-        if (!data.length) {
-            container.innerHTML = '';
-            return;
-        }
-
-        const weekEvents = this.getWeekEvents(data);
-        const leadEvent = weekEvents[0];
-
-        container.innerHTML = `
-            <div class="week-events-note ${weekEvents.length ? 'has-events' : 'is-empty'}" data-week-events="true" data-callout-anchor="week-events">
-                <span class="week-events-note__icon">${this.buildSymbolIcon(weekEvents.length ? 'celebration' : 'event_available', 'summary-icon-badge--event')}</span>
-                <div class="week-events-note__content">
-                    <span class="week-events-note__eyebrow">Kalendarz tygodnia</span>
-                    <strong>${weekEvents.length ? `${weekEvents.length} ${this.formatEventCount(weekEvents.length)}` : 'Spokojny tydzień'}</strong>
-                    <p>${leadEvent ? `${escapeHtml(leadEvent.dateStr)} · ${escapeHtml(leadEvent.name)}` : 'Brak świąt i wydarzeń wpływających na ten okres'}</p>
-                </div>
-                <span class="material-symbols-rounded week-events-note__arrow" aria-hidden="true">chevron_right</span>
-            </div>
-        `;
-
+    bindWeekEvents(container, weekEvents) {
         const eventCard = container.querySelector('[data-week-events="true"]');
-        if (eventCard) {
-            eventCard.addEventListener('mouseenter', () => this.showEventsTooltip(weekEvents));
-            eventCard.addEventListener('mousemove', event => this.moveTooltip(event));
-            eventCard.addEventListener('mouseleave', () => this.hideTooltip());
-        }
+        if (!eventCard) return;
+        eventCard.addEventListener('mouseenter', () => this.showEventsTooltip(weekEvents));
+        eventCard.addEventListener('mousemove', event => this.moveTooltip(event));
+        eventCard.addEventListener('mouseleave', () => this.hideTooltip());
     }
 
     renderLocationPerformance(container, data, options) {
@@ -275,10 +418,7 @@ class AdminRender {
         container.innerHTML = aggregated.map((location, index) => `
             <div class="${cardClass('location', `location-card ${index === 0 ? 'location-card--lead' : ''}`)}">
                 <div class="location-card-head">
-                    <div>
-                        <span class="summary-kicker">${this.buildSymbolIcon('place')} Punkt</span>
-                        <h3>${location.name}</h3>
-                    </div>
+                    <h3 class="location-card-title">${this.buildSymbolIcon('place')} ${escapeHtml(location.name)}</h3>
                     <span class="location-rank">#${index + 1}</span>
                 </div>
                 <div class="location-total">${formatMoney(location.total)}</div>
@@ -297,7 +437,7 @@ class AdminRender {
             const locationRows = Object.values(day.locations || {})
                 .sort((left, right) => right.total - left.total)
                 .map(location => `
-                    <div class="point-pill">
+                    <div class="point-pill point-pill--compact">
                         <span class="point-pill__name">${location.name}</span>
                         <strong>${formatMoney(location.total)}</strong>
                     </div>
@@ -306,11 +446,11 @@ class AdminRender {
 
             return `
                 <tr>
-                    <td>
+                    <td class="revenue-day-cell">
                         <div class="cell-primary">${this.capitalize(day.dayOfWeek)}</div>
                         <div class="cell-secondary">${day.dateStr}</div>
                     </td>
-                    <td><div class="point-pill-list point-pill-list--stack">${locationRows}</div></td>
+                    <td><div class="point-pill-list point-pill-list--compact">${locationRows}</div></td>
                     <td class="val-cell">${formatMoney(day.cardTotal)}</td>
                     <td class="val-cell">${formatMoney(this.getGlovoDisplayValue(day))}</td>
                     <td class="val-cell cash-cell">${formatMoney(day.cashDeskTotal)}</td>
@@ -372,6 +512,8 @@ class AdminRender {
                     <span>${data.dateStr}</span>
                     <span class="tt-day">${data.dayOfWeek}</span>
                 </div>
+
+                ${this.buildDayContextHtml(data)}
 
                 <div class="tt-main-stats">
                     <div class="tt-big-row">
@@ -713,6 +855,8 @@ class AdminRender {
         return [
             { date: new Date(year, 0, 1), name: 'Nowy Rok', type: 'Dzień wolny od pracy' },
             { date: new Date(year, 0, 6), name: 'Trzech Króli', type: 'Dzień wolny od pracy' },
+            { date: easter, name: 'Wielkanoc', type: 'Dzień wolny od pracy' },
+            { date: this.addDays(easter, 1), name: 'Poniedziałek Wielkanocny', type: 'Dzień wolny od pracy' },
             { date: new Date(year, 1, 14), name: 'Walentynki', type: 'Wydarzenie' },
             { date: fatThursday, name: 'Tłusty Czwartek', type: 'Wydarzenie' },
             { date: new Date(year, 2, 8), name: 'Dzień Kobiet', type: 'Wydarzenie' },
@@ -720,6 +864,7 @@ class AdminRender {
             { date: new Date(year, 4, 3), name: 'Święto Konstytucji 3 Maja', type: 'Dzień wolny od pracy' },
             { date: new Date(year, 4, 26), name: 'Dzień Matki', type: 'Wydarzenie' },
             { date: new Date(year, 5, 1), name: 'Dzień Dziecka', type: 'Wydarzenie' },
+            { date: this.addDays(easter, 49), name: 'Zielone Świątki', type: 'Dzień wolny od pracy' },
             { date: corpusChristi, name: 'Boże Ciało', type: 'Dzień wolny od pracy' },
             { date: new Date(year, 5, 23), name: 'Dzień Ojca', type: 'Wydarzenie' },
             { date: new Date(year, 7, 15), name: 'Wniebowzięcie NMP', type: 'Dzień wolny od pracy' },

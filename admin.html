@@ -6,7 +6,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=83">
+    <link rel="stylesheet" href="style.css?v=84">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -119,9 +119,6 @@
         </div>
     </div>
     <div id="summarySection" class="summary animate-enter delay-2" data-admin-page="revenue"></div>
-    <div id="insightsSection" class="insight-grid animate-enter delay-2" data-admin-page="revenue"></div>
-
- 
 
     <div class="view-toggle animate-enter delay-2" data-admin-page="revenue">
         <button class="view-btn active" data-view="total">
@@ -152,6 +149,9 @@
                     <div class="chart-control-group" role="group" aria-label="Typ wykresu">
                         <button class="chart-btn active" data-type="bar" type="button">Słupkowy</button>
                         <button class="chart-btn" data-type="line" type="button">Liniowy</button>
+                    </div>
+                    <div class="chart-control-group" role="group" aria-label="Nakładka kontekstu">
+                        <button class="chart-btn" data-context="hours" type="button" title="Nakładka roboczogodzin z list">Godziny</button>
                     </div>
                     <div id="chartRangeControls" class="chart-range" hidden>
                         <label class="chart-range__field">
@@ -338,6 +338,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=86"></script>
+<script type="module" src="js/admin.js?v=87"></script>
 </body>
 </html>

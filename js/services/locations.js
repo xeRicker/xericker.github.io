@@ -1,4 +1,4 @@
-import { apiService } from './api.js?v=67';
+import { apiService } from './api.js?v=68';
 
 /**
  * Punkt (lokal) to pozycja katalogu, a nie stała w kodzie. Katalog trzyma

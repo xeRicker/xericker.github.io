@@ -1,19 +1,19 @@
-import { apiService } from './services/api.js?v=67';
+import { apiService } from './services/api.js?v=68';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=62';
-import { adminProducts } from './ui/adminProducts.js?v=62';
+import { adminRender } from './ui/adminRender.js?v=63';
+import { adminProducts } from './ui/adminProducts.js?v=63';
 import { createAdminListsPage } from './ui/adminLists.js?v=64';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=64';
 import { setupPayslipGenerator } from './ui/payslip.js?v=2';
 import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=61';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=62';
 import { cardClass } from './ui/components/Card.js';
-import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=66';
-import { adminEmployees } from './ui/adminEmployees.js?v=67';
-import { adminLocations } from './ui/adminLocations.js?v=70';
-import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=67';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=67';
+import { adminEmployees } from './ui/adminEmployees.js?v=68';
+import { adminLocations } from './ui/adminLocations.js?v=71';
+import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=68';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
 import { noticeService } from './ui/components/notice.js?v=1';
 
@@ -38,6 +38,7 @@ let currentData = [];
 let currentWeeks = [];
 let chartType = 'bar';
 let chartDisplayMode = 'combined';
+let showHours = false;
 let chartRange = { from: '', to: '' };
 let viewMode = 'total';
 let currentViewData = [];
@@ -460,6 +461,15 @@ function setupListeners() {
         };
     });
 
+    document.querySelectorAll('.chart-controls [data-context]').forEach(button => {
+        button.onclick = event => {
+            const target = event.currentTarget;
+            target.classList.toggle('active');
+            showHours = target.classList.contains('active');
+            updateChart();
+        };
+    });
+
     document.getElementById('chartRangeFrom')?.addEventListener('change', event => {
         chartRange.from = event.target.value;
         if (chartRange.from > chartRange.to) {
@@ -558,7 +568,6 @@ function updateView() {
 
     if (ctx) {
         adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
-        adminRender.renderInsights(document.getElementById('insightsSection'), currentViewData, getRenderOptions());
         adminRender.renderChart(ctx, getChartData(), chartType, getRenderOptions());
         adminRender.renderLocationPerformance(
             document.getElementById('locationPerformanceSection'),
@@ -1413,7 +1422,9 @@ function compareRevenueRows(a, b, sort) {
 function getRenderOptions() {
     return {
         viewMode,
-        chartMode: chartDisplayMode
+        chartMode: chartDisplayMode,
+        showHours,
+        employeeCatalog
     };
 }
 

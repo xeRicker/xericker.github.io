@@ -8,18 +8,24 @@
 .payments-reminder__tile.is-negative strong { color: var(--danger-color); }
 .payments-reminder__tile.is-watch strong { color: var(--glovo-color); }
 .payments-reminder__tile.is-positive strong { color: var(--success-color); }
-.payments-reminder__list { display: grid; gap: 8px; }
-.payments-reminder__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--surface-raised); }
-.payments-reminder__info { display: grid; gap: 2px; min-width: 0; }
-.payments-reminder__info strong { color: var(--text-primary); overflow-wrap: anywhere; }
-.payments-reminder__info span { color: var(--text-secondary); font-size: 12px; }
-.payments-reminder__row em { font-size: 15px; }
+.payments-reminder__table th { padding: 10px 12px; background: transparent; cursor: default; }
+.payments-reminder__table td { padding: 12px; }
+.payments-reminder__table tbody tr:last-child td { border-bottom: 0; }
+.payments-reminder__name { display: grid; gap: 2px; min-width: 0; }
+.payments-reminder__amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.payments-reminder__amount-col { text-align: right; }
+.section-heading h3 .material-symbols-rounded.is-alert { color: var(--danger-color); }
 .payments-reminder__empty { color: var(--text-muted); font-size: 13px; }
 .payments-reminder__more { justify-self: start; }
 .payments-reminder__state { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; }
 .payments-reminder__state .material-symbols-rounded { font-size: 20px; }
 .payments-reminder__state--ok { color: var(--success-color); border-color: color-mix(in srgb, var(--success-color) 38%, var(--border-color)); background: var(--app-success-bg); }
-.payments-reminder__state--calm { color: var(--text-secondary); }
+.chart-card.payments-reminder--positive {
+    border-color: color-mix(in srgb, var(--success-color) 34%, var(--border-color));
+    background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--success-color) 10%, transparent), transparent 38%),
+        var(--surface-color);
+}
 
 .payments-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
 .payment-tile { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); }
@@ -44,7 +50,8 @@
 .payment-row__title { display: grid; gap: 2px; min-width: 0; }
 .payment-row__title strong { color: var(--text-primary); }
 .payment-row__title span { color: var(--text-secondary); font-size: 12px; }
-.payment-badge { padding: 3px 9px; border-radius: var(--radius-pill); font: 700 10px/1.5 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-secondary); white-space: nowrap; }
+.payment-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--radius-pill); font: 700 10px/1.5 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-secondary); white-space: nowrap; }
+.payment-badge .material-symbols-rounded { font-size: 14px; }
 .payment-badge.is-negative { background: var(--app-danger-bg); color: var(--danger-color); }
 .payment-badge.is-positive { background: var(--app-success-bg); color: var(--success-color); }
 .payment-badge.is-watch { background: color-mix(in srgb, var(--glovo-color) 16%, transparent); color: var(--glovo-color); }

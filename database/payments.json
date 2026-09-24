@@ -7,7 +7,7 @@
       "title": "Mięso",
       "kind": "dostawca",
       "contractor": "Specfood",
-      "amountTotal": 1500,
+      "amountTotal": 29000,
       "dueDate": "2026-09-04",
       "recurrence": "one-time",
       "note": "",

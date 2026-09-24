@@ -1,19 +1,33 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-24T23:43:39.115Z",
+  "updatedAt": "2026-09-24T23:58:21.087Z",
   "items": [
     {
       "id": "item-mug6gubx-6gg3g5",
       "title": "Mięso",
       "kind": "dostawca",
       "contractor": "Specfood",
-      "amountTotal": 29000,
+      "amountTotal": 1500,
       "dueDate": "2026-09-04",
       "recurrence": "one-time",
       "note": "",
-      "archived": false,
+      "archived": true,
       "createdAt": "2026-09-24T23:43:22.509Z",
       "order": 0,
+      "payments": []
+    },
+    {
+      "id": "item-mug702jv-pqa665",
+      "title": "Wszyscy",
+      "kind": "dlug",
+      "contractor": "",
+      "amountTotal": 160000,
+      "dueDate": "2026-09-01",
+      "recurrence": "one-time",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-09-24T23:58:19.627Z",
+      "order": 1,
       "payments": []
     }
   ]

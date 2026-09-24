@@ -1,5 +1,20 @@
 {
   "version": 1,
-  "updatedAt": null,
-  "items": []
+  "updatedAt": "2026-09-24T23:43:39.115Z",
+  "items": [
+    {
+      "id": "item-mug6gubx-6gg3g5",
+      "title": "Mięso",
+      "kind": "dostawca",
+      "contractor": "Specfood",
+      "amountTotal": 1500,
+      "dueDate": "2026-09-04",
+      "recurrence": "one-time",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-09-24T23:43:22.509Z",
+      "order": 0,
+      "payments": []
+    }
+  ]
 }

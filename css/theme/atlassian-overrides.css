@@ -25,7 +25,6 @@ body {
 .calc-result-box,
 .calc-breakdown-card,
 .calc-breakdown-report,
-.weather-card,
 #customTooltip {
     background: var(--surface-color);
     border-color: var(--border-color);
@@ -64,9 +63,7 @@ body {
 .calc-breakdown-pill,
 .filter-chip,
 .toggle-pill,
-.alert-badge,
-.weather-card-empty,
-.weather-card--muted {
+.alert-badge {
     background: var(--surface-active);
     border-color: var(--border-color);
     color: var(--text-primary);
@@ -432,13 +429,6 @@ tbody tr:hover td,
     color: var(--text-muted);
 }
 
-.weather-card--sun { background: linear-gradient(145deg, var(--glovo-dark), var(--surface-color)); }
-.weather-card--cloud { background: linear-gradient(145deg, var(--surface-active), var(--surface-color)); }
-.weather-card--rain { background: linear-gradient(145deg, var(--app-info-bg), var(--surface-color)); }
-.weather-card--snow { background: linear-gradient(145deg, var(--app-info-bg), var(--surface-color)); }
-.weather-card--storm { background: linear-gradient(145deg, var(--primary-soft), var(--surface-color)); }
-.weather-card--wind { background: linear-gradient(145deg, var(--app-info-bg), var(--surface-color)); }
-
 #customTooltip {
     background: var(--surface-overlay);
     border-left-color: var(--primary-color);
@@ -463,8 +453,6 @@ tbody tr:hover td,
 .drag-handle,
 .product-icon-dialog p,
 .product-icon-option,
-.weather-card-empty,
-.weather-card--muted,
 .tt-day,
 .tt-label,
 .tt-shift-time,
@@ -590,8 +578,6 @@ tbody tr:hover td,
 .employee-loc-pill,
 .calc-breakdown-pill,
 .location-stats div,
-.weather-card-empty,
-.weather-card--muted,
 .tt-day {
     background: var(--surface-raised);
     border-color: var(--border-color);
@@ -694,21 +680,6 @@ tbody tr:hover td,
     background: var(--danger-color);
 }
 
-.weather-icon,
-.weather-card-copy strong,
-.weather-card-metrics span {
-    color: var(--text-primary);
-}
-
-.weather-card-kicker {
-    color: var(--text-secondary);
-    letter-spacing: 0;
-}
-
-.weather-card-metrics span {
-    background: var(--surface-active);
-}
-
 .tt-header,
 .tt-divider,
 .tt-shift-item {
@@ -725,8 +696,7 @@ tbody tr:hover td,
 .insight-label,
 .alert-badge,
 .calc-breakdown-label,
-.product-icon-dialog h3,
-.weather-card-copy strong {
+.product-icon-dialog h3 {
     letter-spacing: 0;
 }
 
@@ -760,7 +730,6 @@ tbody tr:hover td,
 .product-card,
 .employee-row,
 .calc-result-box,
-.weather-card,
 .admin-category-card,
 .admin-list-preview,
 .admin-list-empty {

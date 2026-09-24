@@ -1,6 +1,6 @@
 const CARD_VARIANTS = new Set([
     'section', 'chart', 'table', 'summary', 'insight',
-    'location', 'product', 'employee-row', 'weather'
+    'location', 'product', 'employee-row'
 ]);
 
 export function cardClass(variant = 'section', additionalClass = '') {

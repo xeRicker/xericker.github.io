@@ -8,54 +8,54 @@ web
 
 ## Users
 
-Głównymi użytkownikami są pracownicy burgerowni oraz osoby zarządzające lokalami. Pracownik korzysta z aplikacji podczas przygotowywania lub zamykania zmiany, aby uzupełnić dane i wygenerować codzienną listę operacyjną. Osoba zarządzająca korzysta z panelu administracyjnego do przeglądania utargu, godzin pracy, produktów i zapisanych raportów.
+The main users are burger restaurant employees and the people managing the venues. An employee uses the app while preparing or closing a shift to enter data and generate the daily operational list. A manager uses the admin panel to review revenue, working hours, products, and saved reports.
 
 ## Product Purpose
 
-Burbone pomaga prowadzić codzienne operacje burgerowni: tworzyć dzienne listy na podstawie aktualnych danych, zapisywać je oraz analizować wyniki lokali. Sukces oznacza szybkie wygenerowanie poprawnej listy przez pracownika i czytelny, praktyczny podgląd danych dla osoby zarządzającej.
+Burbone helps run the daily operations of a burger restaurant: create daily lists from current data, save them, and analyze venue results. Success means an employee quickly generating a correct list and a manager getting a clear, practical view of the data.
 
 ## Positioning
 
-Produkt łączy generator codziennych list operacyjnych z panelem administracyjnym obejmującym utarg, godziny pracowników, katalog produktów i zapisane raporty. To jedno narzędzie dla pracy na zmianie i późniejszej kontroli wyników.
+The product combines a generator of daily operational lists with an admin panel covering revenue, employee hours, the product catalog, and saved reports. It is one tool for shift work and for later review of the results.
 
 ## Operating Context
 
-System jest używany w lokalach burgerowni, w toku codziennych zmian i pracy administracyjnej. Pracownicy wprowadzają dane dotyczące utargu, zespołu, burgerów i składników, a następnie kopiują lub zapisują listę. Administracja przegląda dane według lokalizacji i zakresów dat oraz korzysta z raportów i kalkulatora wypłat.
+The system is used at burger restaurant venues, during daily shifts and administrative work. Employees enter data about revenue, the team, burgers, and ingredients, then copy or save the list. Administration reviews data by location and date range and uses reports and the payslip calculator.
 
 ## Capabilities and Constraints
 
-- Interfejs i treści użytkowe są w języku polskim.
-- Aplikacja jest statyczną stroną webową opartą o HTML, CSS i moduły JavaScript bez bundlera.
-- Główne powierzchnie to generator `index.html` i panel administracyjny `admin.html`.
-- Dane raportów używają formatu daty `dd.mm.yyyy`, a daty formularzy formatu ISO `yyyy-mm-dd`.
-- Aplikacja działa na GitHub Pages; lokalny serwer deweloperski obsługuje zapisy JSON metodą `PUT`.
-- Należy zachować istniejące funkcje, strukturę danych, lokalizacje, formaty raportów i działanie obecnych kontrolek.
-- Generator może obsługiwać tymczasowego pracownika jednej zmiany; nie jest on zapisywany trwale.
-- Interfejs powinien pozostać użyteczny na ekranach desktopowych i mobilnych.
+- The interface and user-facing content are in Polish.
+- The app is a static web page built on HTML, CSS, and JavaScript modules with no bundler.
+- The main surfaces are the generator `index.html` and the admin panel `admin.html`.
+- Report data uses the `dd.mm.yyyy` date format, and form dates use the ISO `yyyy-mm-dd` format.
+- The app runs on GitHub Pages; a local dev server handles JSON `PUT` writes.
+- Existing features, data structure, locations, report formats, and the behavior of current controls must be preserved.
+- The generator can handle a temporary one-shift employee; that employee is not persisted.
+- The interface should remain usable on desktop and mobile screens.
 
 ## Brand Commitments
 
-- Nazwa produktu: Burbone.
-- Obecna paleta marki i aliasy kolorów w `css/theme/palette.css` są wiążące.
-- Interfejs ma zachować spokojny, użytkowy charakter ciemnego dashboardu w stylu Atlassian, dostosowanego do ciepłej palety marki.
-- Należy używać istniejącego systemu typografii, tokenów i ikon Material Symbols.
+- Product name: Burbone.
+- The current brand palette and color aliases in `css/theme/palette.css` are binding.
+- The interface must keep its calm, utilitarian character: an Atlassian-style dark dashboard tailored to the warm brand palette.
+- Use the existing typography system, tokens, and Material Symbols icons.
 
 ## Evidence on Hand
 
-- Obecny generator i panel administracyjny: `index.html`, `admin.html`.
-- Istniejące moduły JavaScript, style i tokeny w katalogach `js/` i `css/`.
-- Dane produktów i raportów w katalogu `database/`.
-- Lokalny serwer deweloperski: `dev-server.js`.
-- Brak potwierdzonych zewnętrznych referencji, testimoniali i materiałów marketingowych; nie należy ich tworzyć bez zgody.
+- The current generator and admin panel: `index.html`, `admin.html`.
+- Existing JavaScript modules, styles, and tokens in the `js/` and `css/` directories.
+- Product and report data in the `database/` directory.
+- Local dev server: `dev-server.js`.
+- No confirmed external references, testimonials, or marketing materials; do not create them without approval.
 
 ## Product Principles
 
-- Codzienna praca na zmianie ma być szybka i bezbłędna.
-- Dane operacyjne powinny być czytelne bez dodatkowej interpretacji.
-- Generator i administracja mają tworzyć jeden spójny przepływ pracy.
-- Zmiany wizualne nie mogą naruszać istniejących funkcji ani danych.
-- Interfejs powinien wspierać pracę zarówno na komputerze, jak i na telefonie.
+- Daily shift work must be fast and error-free.
+- Operational data should be readable without extra interpretation.
+- The generator and administration should form one coherent workflow.
+- Visual changes must not break existing features or data.
+- The interface should support work on both a computer and a phone.
 
 ## Accessibility & Inclusion
 
-Produkt powinien zachować dostępne etykiety kontrolek, logiczną obsługę klawiaturą, czytelny kontrast i responsywny układ. Szczegółowe potrzeby użytkowników nie zostały jeszcze potwierdzone.
+The product should keep accessible control labels, logical keyboard support, readable contrast, and a responsive layout. Detailed user needs have not yet been confirmed.

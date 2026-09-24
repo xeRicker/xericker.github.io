@@ -386,8 +386,7 @@ select:focus { border-color: var(--primary-color); }
 .insight-card strong,
 .location-total,
 .cell-primary,
-.alert-badge,
-.weather-card-metrics span {
+.alert-badge {
     font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
 }

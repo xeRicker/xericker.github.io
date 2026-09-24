@@ -1,7 +1,7 @@
 # Agent Instructions
 
 ## Setup
-- No install step confirmed — static HTML/ES modules, no bundler, no `package.json` dependencies referenced in this file. <!-- TODO: sprawdź czy `node dev-server.js` wymaga `npm install` -->
+- No install step confirmed — static HTML/ES modules, no bundler, no `package.json` dependencies referenced in this file. <!-- TODO: check whether `node dev-server.js` requires `npm install` -->
 - Run locally: `node dev-server.js` — serves static files and handles local JSON `PUT` writes under `database/`. Without it the site still opens but saves fail.
 
 ## Test
@@ -10,7 +10,7 @@
 - Check mobile viewport on any CSS change — admin has dense grids and fixed row actions.
 
 ## Deploy
-- Prod is GitHub Pages, static, no PUT. Code changes ship by pushing to the branch Pages serves. <!-- TODO: sprawdź nazwę brancha (main / gh-pages) -->
+- Prod is GitHub Pages, static, no PUT. Code changes ship by pushing to the branch Pages serves. <!-- TODO: check the branch name (main / gh-pages) -->
 - Catalog/report JSON writes in prod go through `services/api.js` via the GitHub API (commits files directly) — no separate deploy step for those.
 - The GitHub API token used by `services/api.js` comes from the runtime/session — never hardcode, log, or print it.
 
@@ -33,10 +33,10 @@ Static HTML (`index.html`, `admin.html`) + ES modules, no bundler. CSS via `styl
 
 ## Layout
 List the repo and grep actual usage before writing code — don't trust a hardcoded tree, a remembered file layout, or a memorized library API/version; verify against what's actually imported/called here. Stable shape:
-- `css/atlassian-tokens.css`, `css/theme/palette.css` — design tokens & active palette
+- `css/theme/palette.css` — design tokens & active palette
 - `css/*.css`, `css/components/` — per-feature and shared styles
 - `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, locations, employees, products, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage, weather, trivia
+- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
 - `database/` — catalogs + per-location report JSON
 
@@ -78,8 +78,6 @@ Colors — always via variables:
 Typography — existing stacks only:
 - `--font-body` — body text, inputs, table cells, descriptions, report content
 - `--font-heading` — headings, labels, buttons, tabs, table headers, compact controls
-- `--ds-font-family-code` — code-like values only
-- `--ds-font-heading-*` / `--ds-font-body(-small)` / `--ds-font-metric-*` — full Atlassian text styles when a complete size/weight/line-height token is needed
 - Letter spacing `0` unless matching an existing uppercase label pattern. Fixed sizes — handle overflow via wrapping/layout, not shrinking text.
 
 Icons via `renderMaterialIcon()` — real ligature names only; a bad name renders as overlapping text, since `.material-symbols-rounded` clips via `overflow: hidden` rather than breaking layout.

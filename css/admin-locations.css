@@ -86,7 +86,7 @@
 
 .admin-location-row .admin-product-main code {
     color: var(--text-muted);
-    font-family: var(--ds-font-family-code);
+    font-family: var(--font-body);
     font-size: 12px;
 }
 

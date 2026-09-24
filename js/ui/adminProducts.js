@@ -53,7 +53,6 @@ class AdminProducts {
             <div class="admin-products-head">
                 <div class="section-heading">
                     <h3><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span> PRODUKTY</h3>
-                    <p>Kategorie i aktywne produkty z tej listy są używane przez generator list.</p>
                 </div>
                 <button id="saveProductsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span>

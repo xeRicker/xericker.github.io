@@ -1,8 +1,8 @@
 import { apiService } from './services/api.js?v=69';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=66';
-import { adminProducts } from './ui/adminProducts.js?v=64';
+import { adminRender } from './ui/adminRender.js?v=67';
+import { adminProducts } from './ui/adminProducts.js?v=65';
 import { createAdminListsPage } from './ui/adminLists.js?v=65';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=65';
 import { setupPayslipGenerator } from './ui/payslip.js?v=2';
@@ -10,9 +10,9 @@ import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=62';
 import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=67';
-import { adminEmployees } from './ui/adminEmployees.js?v=69';
+import { adminEmployees } from './ui/adminEmployees.js?v=70';
 import { adminLocations } from './ui/adminLocations.js?v=73';
-import { adminPayments } from './ui/adminPayments.js?v=1';
+import { adminPayments } from './ui/adminPayments.js?v=2';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=68';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=1';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
@@ -558,7 +558,7 @@ function updateView() {
 function renderPaymentsReminder() {
     const container = document.getElementById('paymentsReminderSection');
     if (!container) return;
-    if (!paymentsCatalog || !paymentsCatalog.items.length) {
+    if (!paymentsCatalog) {
         container.innerHTML = '';
         return;
     }
@@ -568,7 +568,12 @@ function renderPaymentsReminder() {
     const upcoming = getUpcomingPayments(views, 14).slice(0, 5);
     const revenueTotal = currentViewData.reduce((sum, day) => sum + day.total, 0);
 
-    adminRender.renderPaymentsReminder(container, { summary, upcoming, revenueTotal });
+    adminRender.renderPaymentsReminder(container, {
+        summary,
+        upcoming,
+        revenueTotal,
+        itemCount: paymentsCatalog.items.length
+    });
     container.querySelector('[data-open-payments]')?.addEventListener('click', () => switchAdminPage('payments'));
 }
 

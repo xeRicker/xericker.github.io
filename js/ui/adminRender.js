@@ -404,8 +404,35 @@ class AdminRender {
         return `Podobny poziom co tydzień ${week.index}.`;
     }
 
-    renderPaymentsReminder(container, { summary, upcoming, revenueTotal }) {
+    renderPaymentsReminder(container, { summary, upcoming, revenueTotal, itemCount }) {
         if (!container) return;
+        const heading = `<h3>${renderMaterialIcon('receipt_long')} OPŁATY</h3>`;
+        const more = '<button class="btn-back payments-reminder__more" type="button" data-open-payments>ZOBACZ WSZYSTKIE</button>';
+        const hasItems = itemCount > 0 || summary.openCount > 0 || summary.paidThisMonth > 0;
+
+        if (!hasItems) {
+            container.innerHTML = `
+                <div class="${cardClass('chart', 'chart-card payments-reminder')}">
+                    <div class="section-heading">${heading}<p>Brak zapisanych zobowiązań.</p></div>
+                    <div class="payments-reminder__state payments-reminder__state--calm">${renderMaterialIcon('event_available')} Dodaj opłaty w zakładce OPŁATY, żeby widzieć tutaj terminy i kwoty.</div>
+                    ${more}
+                </div>
+            `;
+            return;
+        }
+
+        if (summary.openCount === 0) {
+            const paidText = summary.paidThisMonth > 0 ? ` W tym miesiącu zapłacono ${formatMoney(summary.paidThisMonth)}.` : '';
+            container.innerHTML = `
+                <div class="${cardClass('chart', 'chart-card payments-reminder')}">
+                    <div class="section-heading">${heading}<p>Wszystkie zobowiązania rozliczone.</p></div>
+                    <div class="payments-reminder__state payments-reminder__state--ok">${renderMaterialIcon('task_alt')} Wszystko zapłacone — brak otwartych zobowiązań.${escapeHtml(paidText)}</div>
+                    ${more}
+                </div>
+            `;
+            return;
+        }
+
         const share = revenueTotal > 0 ? (summary.left / revenueTotal) * 100 : null;
         const shareText = share === null
             ? 'Brak utargu w wybranym okresie do porównania z zobowiązaniami.'
@@ -414,10 +441,7 @@ class AdminRender {
 
         container.innerHTML = `
             <div class="${cardClass('chart', 'chart-card payments-reminder')}">
-                <div class="section-heading">
-                    <h3>${renderMaterialIcon('notification_important')} OPŁATY</h3>
-                    <p>${escapeHtml(shareText)}</p>
-                </div>
+                <div class="section-heading">${heading}<p>${escapeHtml(shareText)}</p></div>
                 <div class="payments-reminder__grid">
                     ${this.buildReminderTile('Przeterminowane', summary.overdueAmount, `${summary.overdueCount} ${plural(summary.overdueCount, 'pozycja', 'pozycje', 'pozycji')}`, 'is-negative')}
                     ${this.buildReminderTile('Do 7 dni', summary.dueSoonAmount, `${summary.dueSoonCount} ${plural(summary.dueSoonCount, 'pozycja', 'pozycje', 'pozycji')}`, 'is-watch')}
@@ -426,7 +450,7 @@ class AdminRender {
                 <div class="payments-reminder__list">
                     ${upcoming.length ? upcoming.map(view => this.buildReminderRow(view)).join('') : '<div class="payments-reminder__empty">Brak płatności w najbliższych 14 dniach.</div>'}
                 </div>
-                <button class="btn-back payments-reminder__more" type="button" data-open-payments>ZOBACZ WSZYSTKIE</button>
+                ${more}
             </div>
         `;
     }
@@ -447,10 +471,13 @@ class AdminRender {
             : view.daysLeft < 0
                 ? `${Math.abs(view.daysLeft)} dni po terminie`
                 : view.daysLeft === 0 ? 'Dziś' : `za ${view.daysLeft} dni`;
+        const dueTone = view.daysLeft !== null && view.daysLeft < 0 ? 'is-negative' : '';
         return `
             <div class="payments-reminder__row">
-                <strong>${escapeHtml(view.title)}</strong>
-                <span>${escapeHtml(due)}</span>
+                <div class="payments-reminder__info">
+                    <strong>${escapeHtml(view.title)}</strong>
+                    <span class="${dueTone}">${escapeHtml(due)}</span>
+                </div>
                 <em>${formatMoney(view.amountLeft)}</em>
             </div>
         `;

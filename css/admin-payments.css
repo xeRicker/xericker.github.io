@@ -10,11 +10,16 @@
 .payments-reminder__tile.is-positive strong { color: var(--success-color); }
 .payments-reminder__list { display: grid; gap: 8px; }
 .payments-reminder__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--surface-raised); }
-.payments-reminder__row strong { color: var(--text-primary); overflow-wrap: anywhere; }
-.payments-reminder__row span { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
-.payments-reminder__row em { color: var(--text-primary); font-style: normal; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.payments-reminder__info { display: grid; gap: 2px; min-width: 0; }
+.payments-reminder__info strong { color: var(--text-primary); overflow-wrap: anywhere; }
+.payments-reminder__info span { color: var(--text-secondary); font-size: 12px; }
+.payments-reminder__row em { font-size: 15px; }
 .payments-reminder__empty { color: var(--text-muted); font-size: 13px; }
 .payments-reminder__more { justify-self: start; }
+.payments-reminder__state { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 14px; }
+.payments-reminder__state .material-symbols-rounded { font-size: 20px; }
+.payments-reminder__state--ok { color: var(--success-color); border-color: color-mix(in srgb, var(--success-color) 38%, var(--border-color)); background: var(--app-success-bg); }
+.payments-reminder__state--calm { color: var(--text-secondary); }
 
 .payments-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
 .payment-tile { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); }
@@ -31,7 +36,7 @@
 .payments-field--wide { grid-column: span 2; }
 .payments-add-btn { min-height: var(--control-height); white-space: nowrap; }
 
-.payments-toolbar { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 10px; align-items: end; margin-bottom: 16px; }
+.payments-toolbar { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 10px; align-items: end; margin: 4px 0 16px; padding-top: 18px; border-top: 1px solid var(--border-color); }
 .payments-list { display: grid; gap: 10px; }
 .payment-row { display: grid; gap: 8px; padding: 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); }
 .payment-row.is-archived { opacity: .7; border-style: dashed; }

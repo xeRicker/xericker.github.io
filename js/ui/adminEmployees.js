@@ -22,7 +22,6 @@ class AdminEmployees {
             <div class="admin-products-head">
                 <div class="section-heading">
                     <h3><span class="material-symbols-rounded" aria-hidden="true">groups</span> EKIPA</h3>
-                    <p>Aktywne osoby są widoczne na stronie głównej podczas tworzenia listy.</p>
                 </div>
                 <button id="saveEmployeesBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz
@@ -41,7 +40,7 @@ class AdminEmployees {
     renderEmployee(employee) {
         return `<div class="admin-employee-row ${employee.enabled ? '' : 'is-disabled'}" data-employee-id="${escapeHtml(employee.id)}">
             <div class="admin-employee-avatar">${escapeHtml(employee.firstName[0])}</div>
-            <div class="admin-product-main"><strong>${escapeHtml(employee.firstName)} ${escapeHtml(employee.lastName)}</strong><span>${employee.enabled ? 'Widoczny w generatorze' : 'Ukryty w generatorze'} · ${escapeHtml(employee.id)}</span></div>
+            <div class="admin-product-main"><strong>${escapeHtml(employee.firstName)} ${escapeHtml(employee.lastName)}</strong></div>
             <div class="admin-row-actions">
                 <button class="state-switch ${employee.enabled ? 'is-on' : 'is-off'}" type="button" data-action="toggle" title="Włącz/wyłącz widoczność">${renderMaterialIcon(employee.enabled ? 'visibility' : 'visibility_off')}</button>
                 <button class="icon-action" type="button" data-action="edit" title="Edytuj osobę">${renderMaterialIcon('edit')}</button>

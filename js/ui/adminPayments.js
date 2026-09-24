@@ -128,7 +128,7 @@ class AdminPayments {
                 </label>
                 <label class="payments-field">
                     <span>KONTRAHENT</span>
-                    <input name="contractor" class="calc-input" placeholder="opcjonalnie" aria-label="Kontrahent">
+                    <input name="contractor" class="calc-input" placeholder="OPCJONALNIE" aria-label="Kontrahent">
                 </label>
                 <button class="chart-btn active payments-add-btn" type="submit">+ Zobowiązanie</button>
             </form>

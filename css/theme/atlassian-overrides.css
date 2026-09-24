@@ -830,55 +830,6 @@ a:focus-visible,
     .header-bar { gap: var(--space-3); }
 }
 
-/* Monthly report: decision-first reading order. */
-.monthly-assessment {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-5) var(--space-6);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--surface-raised);
-}
-.monthly-assessment > .material-symbols-rounded { font-size: 24px; color: var(--success-color); }
-.monthly-coach-avatar { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex: 0 0 42px; border: 0; border-radius: 0; background: transparent; color: var(--primary-color) !important; font-size: 24px !important; }
-.monthly-coach-name { display: block; margin-bottom: 3px; color: var(--primary-color); font: 700 10px/1.2 var(--font-heading); letter-spacing: .08em; text-transform: uppercase; }
-.monthly-assessment--watch { border-color: color-mix(in srgb, var(--glovo-color) 40%, var(--border-color)); }
-.monthly-assessment--watch > .material-symbols-rounded { color: var(--glovo-color); }
-.monthly-assessment--negative { border-color: color-mix(in srgb, var(--danger-color) 40%, var(--border-color)); }
-.monthly-assessment--negative > .material-symbols-rounded { color: var(--danger-color); }
-.monthly-assessment strong { display: block; font: 700 16px/1.3 var(--font-heading); color: var(--text-primary); }
-.monthly-assessment p { margin: 4px 0 0; color: var(--text-secondary); line-height: 1.45; }
-.monthly-command-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
-.monthly-decision-metric { min-width: 0; padding: var(--space-4); }
-.monthly-decision-metric p { margin: 12px 0 6px; color: var(--text-primary); font: 700 clamp(21px, 2.6vw, 30px)/1.1 var(--font-heading); font-variant-numeric: tabular-nums; }
-.monthly-decision-metric small { display: block; font: 700 12px/1.35 var(--font-heading); }
-.monthly-decision-metric__hint { display: block; margin-top: 8px; color: var(--text-muted); font-size: 12px; line-height: 1.35; }
-.monthly-decision-metric__hint .material-symbols-rounded { margin-right: 4px; color: var(--primary-color); font-size: 14px; vertical-align: -3px; }
-.monthly-report-grid--decision { align-items: stretch; }
-.monthly-report-grid--details { align-items: start; }
-.monthly-location-list,
-.monthly-focus-list { display: grid; gap: 10px; margin-top: 18px; }
-.monthly-location-row,
-.monthly-focus-list > div { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--surface-raised); }
-.monthly-location-row > div,
-.monthly-focus-list > div { min-width: 0; }
-.monthly-location-row strong,
-.monthly-focus-list span { display: block; color: var(--text-primary); font-family: var(--font-heading); }
-.monthly-location-row span,
-.monthly-focus-list strong { display: block; margin-top: 3px; color: var(--text-secondary); font-size: 12px; }
-.monthly-location-row em,
-.monthly-focus-list em { flex: 0 0 auto; font: 700 12px/1.3 var(--font-heading); font-style: normal; text-align: right; }
-.monthly-focus-list strong { color: var(--text-primary); font-size: 14px; text-align: right; }
-.monthly-focus-list strong em { display: block; margin-top: 3px; font-size: 11px; font-weight: 500; }
-.monthly-next-steps__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: 18px; }
-.monthly-next-steps__grid > div { padding: var(--space-4); border-left: 3px solid var(--primary-color); background: var(--surface-raised); }
-.monthly-next-steps__grid span { color: var(--primary-color); font: 700 12px/1 var(--font-heading); }
-.monthly-next-steps__grid strong { display: block; margin-top: 10px; color: var(--text-primary); line-height: 1.35; }
-.monthly-next-steps__grid p { margin: 6px 0 0; color: var(--text-muted); font-size: 12px; line-height: 1.4; }
-@media (max-width: 850px) { .monthly-command-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) { .monthly-command-grid { grid-template-columns: 1fr; } .monthly-location-row, .monthly-focus-list > div { align-items: flex-start; } }
-
 /* Stronger panel headings: icon and title are one readable unit. */
 .section-card h2,
 .section-heading h3,
@@ -983,10 +934,6 @@ a:focus-visible,
 
 /* Lists: clear hierarchy, contained controls and a stable mobile stack. */
 .admin-lists-head { display: grid; gap: var(--space-5); margin-bottom: var(--space-6); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-color); }
-.admin-lists-intro { display: flex; align-items: center; gap: var(--space-3); }
-.admin-lists-intro > .material-symbols-rounded { width: 38px; height: 38px; color: var(--primary-color); background: transparent; font-size: 23px; }
-.admin-lists-intro h3 { margin: 0; color: var(--text-primary); font: 700 18px/1.25 var(--font-heading); }
-.admin-lists-intro p { margin: 4px 0 0; color: var(--text-secondary); font-size: 13px; }
 .admin-lists-filters { display: grid; grid-template-columns: minmax(150px, .8fr) minmax(150px, .8fr) minmax(230px, 1.4fr); gap: var(--space-3); width: 100%; }
 .admin-filter-field { display: grid; gap: 6px; min-width: 0; }
 .admin-filter-field > span { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .08em; }
@@ -996,7 +943,7 @@ a:focus-visible,
 .admin-list-panel .admin-category-title h4 { font-size: 15px; }
 .admin-list-preview { background: linear-gradient(145deg, color-mix(in srgb, var(--primary-color) 8%, var(--surface-color)), var(--surface-color)); }
 .admin-list-preview__head { background: transparent; }
-@media (max-width: 760px) { .admin-lists-filters { grid-template-columns: 1fr; } .admin-lists-intro { align-items: flex-start; } .admin-list-items { max-height: none; } }
+@media (max-width: 760px) { .admin-lists-filters { grid-template-columns: 1fr; } .admin-list-items { max-height: none; } }
 
 /* Żadna ikona nie dostaje własnego kółka ani kafelka. */
 .summary-icon-badge,
@@ -1006,8 +953,7 @@ a:focus-visible,
 .summary-icon-badge--cash,
 .summary-icon-badge--event,
 .category-icon,
-.success-icon-wrapper,
-.monthly-coach-avatar {
+.success-icon-wrapper {
     background: transparent !important;
     border-color: transparent !important;
 }

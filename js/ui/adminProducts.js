@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=68';
+import { apiService } from '../services/api.js?v=69';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=61';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=72';
@@ -67,7 +67,7 @@ class AdminProducts {
                 <button class="icon-picker-button" type="button" data-action="pick-category-icon">
                     <span class="material-symbols-rounded" aria-hidden="true">category</span>
                 </button>
-                <button class="chart-btn active" type="submit">Dodaj</button>
+                <button class="chart-btn active" type="submit">+ Kategoria</button>
             </form>
 
             <div class="admin-category-list">
@@ -112,7 +112,7 @@ class AdminProducts {
                         <option value="quantity">Ilość +/-</option>
                         <option value="toggle">Przełącznik</option>
                     </select>
-                    <button class="chart-btn" type="submit">Dodaj</button>
+                    <button class="chart-btn" type="submit">+ Produkt</button>
                 </form>
 
                 <div class="admin-product-list" data-category-id="${category.id}">

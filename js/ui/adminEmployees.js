@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=68';
+import { apiService } from '../services/api.js?v=69';
 import { createId } from '../services/products.js?v=61';
 import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=66';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
@@ -31,7 +31,7 @@ class AdminEmployees {
             <form class="employee-add-form" data-action="add-employee">
                 <input name="firstName" class="calc-input" placeholder="Imię" required>
                 <input name="lastName" class="calc-input" placeholder="Nazwisko" required>
-                <button class="chart-btn active" type="submit"><span class="material-symbols-rounded" aria-hidden="true">person_add</span> Dodaj osobę</button>
+                <button class="chart-btn active" type="submit">+ Osoba</button>
             </form>
             <div class="admin-employee-list">
                 ${employees.map(employee => this.renderEmployee(employee)).join('') || '<div class="empty-products">Brak osób w ekipie.</div>'}

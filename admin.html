@@ -6,7 +6,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=84">
+    <link rel="stylesheet" href="style.css?v=87">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
 </head>
 <body class="admin-page">
@@ -56,7 +56,7 @@
                 </label>
                 <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
-                ZAŁADUJ DANE
+                ZAŁADUJ
                 </button>
                 <span id="dataLoadInfo" class="admin-load-info" role="status">Załadowane: — / dostępne: — miesięcy</span>
                 <span id="dataLoadStatus" class="admin-load-status" role="alert" hidden></span>
@@ -73,9 +73,9 @@
             <span class="material-symbols-rounded" aria-hidden="true">payments</span>
             Utargi
         </button>
-        <button class="admin-page-tab" type="button" data-admin-tab="monthlyReport" role="tab" aria-selected="false">
-            <span class="material-symbols-rounded" aria-hidden="true">query_stats</span>
-            PORÓWNANIE
+        <button class="admin-page-tab" type="button" data-admin-tab="payments" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">receipt_long</span>
+            Opłaty
         </button>
         <button class="admin-page-tab" type="button" data-admin-tab="products" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>
@@ -118,6 +118,8 @@
             <div id="weekTabsContainer" class="week-tabs"></div>
         </div>
     </div>
+    <div id="paymentsReminderSection" class="payments-reminder-wrap animate-enter delay-2" data-admin-page="revenue"></div>
+    <div id="weeklyOverviewSection" class="weekly-overview animate-enter delay-2" data-admin-page="revenue"></div>
     <div id="summarySection" class="summary animate-enter delay-2" data-admin-page="revenue"></div>
 
     <div class="view-toggle animate-enter delay-2" data-admin-page="revenue">
@@ -142,17 +144,20 @@
                     <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> WIZUALIZACJA</h3>
                 </div>
                 <div class="chart-controls">
-                    <div class="chart-control-group" role="group" aria-label="Tryb wyświetlania">
-                        <button class="chart-btn active" data-display="combined" type="button">Łączny</button>
-                        <button class="chart-btn" data-display="split" type="button" title="Podział na punkty">Punkty</button>
-                    </div>
-                    <div class="chart-control-group" role="group" aria-label="Typ wykresu">
-                        <button class="chart-btn active" data-type="bar" type="button">Słupkowy</button>
-                        <button class="chart-btn" data-type="line" type="button">Liniowy</button>
-                    </div>
-                    <div class="chart-control-group" role="group" aria-label="Nakładka kontekstu">
-                        <button class="chart-btn" data-context="hours" type="button" title="Nakładka roboczogodzin z list">Godziny</button>
-                    </div>
+                    <label class="chart-control-field">
+                        <span>POKAZUJ</span>
+                        <select id="chartDisplaySelect" aria-label="Zakres danych na wykresie">
+                            <option value="combined">Cała firma razem</option>
+                            <option value="split">Osobno każdy punkt</option>
+                        </select>
+                    </label>
+                    <label class="chart-control-field">
+                        <span>TYP WYKRESU</span>
+                        <select id="chartTypeSelect" aria-label="Typ wykresu">
+                            <option value="bar">Słupki</option>
+                            <option value="line">Linia</option>
+                        </select>
+                    </label>
                     <div id="chartRangeControls" class="chart-range" hidden>
                         <label class="chart-range__field">
                             <span>OD</span>
@@ -228,42 +233,13 @@
                 <p id="resMoney" class="money">0 zł</p>
             </div>
         </div>
-        <div class="calc-payslip">
-            <div class="calc-grid">
-                <div class="calc-input-group">
-                    <label for="payslipPaymentForm">Forma wypłaty</label>
-                    <select id="payslipPaymentForm" class="calc-input" aria-label="Forma wypłaty">
-                        <option value="Przelew">Przelew</option>
-                        <option value="Gotówka">Gotówka</option>
-                    </select>
-                </div>
-                <div class="calc-input-group">
-                    <label for="payslipPaymentDate">Termin wypłaty</label>
-                    <input type="date" id="payslipPaymentDate" class="calc-input" aria-label="Termin wypłaty">
-                </div>
-            </div>
-            <div class="calc-payslip-actions">
-                <button id="calcPayslipBtn" class="btn-back calc-payslip-btn" type="button">
-                    <span class="material-symbols-rounded" aria-hidden="true">receipt_long</span>
-                    PASEK
-                </button>
-                <div id="payslipStatus" class="notice" hidden></div>
-            </div>
-        </div>
         <div id="calcDetails" class="u-detail-note"></div>
-    </div>
-
-
-
-    <div id="monthlyReportPage" class="monthly-report-page animate-enter delay-3" data-admin-page="monthlyReport" hidden>
-        <div id="monthlyReportStatus" class="notice" hidden></div>
-        <div id="monthlyReportContent" class="monthly-report-content"></div>
     </div>
 
     <div class="card card--table table-card animate-enter delay-3 u-card-spacing" data-admin-page="payroll" hidden>
         <div class="table-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">schedule</span> GODZINY PRACY</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">schedule</span> GODZINY</h3>
             </div>
         </div>
         <div class="table-responsive">
@@ -284,14 +260,12 @@
     <div id="adminProductsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="products" hidden></div>
     <div id="adminEmployeesPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="employees" hidden></div>
     <div id="adminLocationsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="locations" hidden></div>
+    <div id="adminPaymentsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="payments" hidden></div>
 
     <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
-            <div class="admin-lists-intro">
-                <span class="material-symbols-rounded" aria-hidden="true">folder_copy</span>
-                <div>
-                    <h3>ZAPISANE LISTY</h3>
-                </div>
+            <div class="section-heading">
+                <h3><span class="material-symbols-rounded" aria-hidden="true">folder_copy</span> LISTY</h3>
             </div>
             <div class="admin-lists-filters">
                 <label class="admin-filter-field">
@@ -314,7 +288,7 @@
     <div class="card card--table table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> DZIENNY KALENDARZ</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> LISTA</h3>
             </div>
         </div>
         <div id="loading" class="daily-report-loading"><span class="material-symbols-rounded" aria-hidden="true">progress_activity</span> ŁADOWANIE DANYCH...</div>
@@ -338,6 +312,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=87"></script>
+<script type="module" src="js/admin.js?v=90"></script>
 </body>
 </html>

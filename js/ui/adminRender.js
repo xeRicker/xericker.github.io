@@ -1,4 +1,4 @@
-import { calculateHours, escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
+import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { cardClass } from './components/Card.js';
 import { resolveEmployee } from '../services/employees.js';
 
@@ -12,6 +12,14 @@ const LOCATION_COLOR_TOKENS = [
 
 const MOVING_AVERAGE_WINDOW = 7;
 const MOVING_AVERAGE_MIN_POINTS = 14;
+
+const plural = (count, one, few, many) => {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (count === 1) return one;
+    if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return few;
+    return many;
+};
 
 const getDesignToken = (name, fallback) => {
     const styles = getComputedStyle(document.documentElement);
@@ -31,7 +39,6 @@ class AdminRender {
         const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
         const labels = sorted.map(day => `${day.dateStr.slice(0, 5)} (${day.dayOfWeek.slice(0, 3)})`);
         const chartMode = options.chartMode === 'split' ? 'split' : 'combined';
-        const showHours = Boolean(options.showHours);
 
         if (this.chart) this.chart.destroy();
 
@@ -46,8 +53,6 @@ class AdminRender {
         const datasets = chartMode === 'split'
             ? this.buildLocationDatasets(sorted, type, locationColors, options)
             : this.buildCombinedDatasets(sorted, type, locationColors, options);
-        if (showHours) datasets.push(this.buildHoursDataset(sorted, type));
-
         const scales = {
             y: {
                 beginAtZero: true,
@@ -58,15 +63,6 @@ class AdminRender {
             },
             x: { grid: { display: false } }
         };
-        if (showHours) {
-            scales.y1 = {
-                position: 'right',
-                beginAtZero: true,
-                grid: { display: false },
-                ticks: { callback: value => `${Math.round(value)} h` }
-            };
-        }
-
         this.chart = new Chart(ctx, {
             type,
             data: { labels, datasets },
@@ -124,34 +120,6 @@ class AdminRender {
                 });
             }
         };
-    }
-
-    buildHoursDataset(sorted, type) {
-        const info = getDesignToken('--app-info', '#7AB8FF');
-        return {
-            type: 'line',
-            label: 'ROBOCZOGODZINY',
-            yAxisID: 'y1',
-            data: sorted.map(day => this.getDayHours(day)),
-            borderColor: info,
-            backgroundColor: info,
-            borderWidth: 2,
-            borderDash: [2, 3],
-            tension: 0.32,
-            fill: false,
-            pointRadius: type === 'line' ? 3 : 0,
-            pointHoverRadius: 5
-        };
-    }
-
-    getDayHours(day) {
-        let hours = 0;
-        (day.rawReports || []).forEach(report => {
-            Object.values(report.employees || {}).forEach(time => {
-                hours += calculateHours(time);
-            });
-        });
-        return Number(hours.toFixed(2));
     }
 
     getEventsByDate(dates) {
@@ -369,6 +337,123 @@ class AdminRender {
         `;
 
         this.bindWeekEvents(container, weekEvents);
+    }
+
+    renderWeeklyOverview(container, weeks, activeKey, viewMode) {
+        if (!weeks.length) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const metric = viewMode === 'total' ? '' : ` · ${this.getViewLabel(viewMode)}`;
+        container.innerHTML = `
+            <div class="${cardClass('chart', 'chart-card weekly-overview-card')}">
+                <div class="section-heading">
+                    <h3>${renderMaterialIcon('calendar_view_week')} TYGODNIE${metric}</h3>
+                    <p>${escapeHtml(this.buildWeeklySummary(weeks))}</p>
+                </div>
+                <div class="weekly-grid">
+                    ${weeks.map(week => this.buildWeeklyCard(week, activeKey)).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    buildWeeklySummary(weeks) {
+        const compared = weeks.filter(week => week.deltaPercent !== null);
+        if (!compared.length) return 'Miesiąc obejmuje tylko jeden tydzień.';
+        const improving = compared.filter(week => week.deltaPercent > 0.5).length;
+        const best = weeks.find(week => week.isBest);
+        const leader = best ? ` Najmocniejszy był tydzień ${best.index + 1}.` : '';
+        return `${improving} z ${compared.length} tygodni wypadło lepiej niż poprzedni.${leader}`;
+    }
+
+    buildWeeklyCard(week, activeKey) {
+        const delta = week.deltaPercent;
+        const tone = delta === null ? 'is-neutral' : delta > 0.5 ? 'is-positive' : delta < -0.5 ? 'is-negative' : 'is-neutral';
+        const deltaText = delta === null
+            ? 'Pierwszy tydzień'
+            : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}% vs tydzień ${week.index}`;
+        const flags = [
+            week.isCurrent ? '<span class="weekly-flag weekly-flag--current">Bieżący</span>' : '',
+            week.isBest ? '<span class="weekly-flag weekly-flag--best">Najlepszy</span>' : '',
+            week.days < 5 ? `<span class="weekly-flag">${week.days} dni</span>` : ''
+        ].filter(Boolean).join('');
+        const isActive = String(week.key) === String(activeKey);
+
+        return `
+            <button type="button" class="weekly-card ${isActive ? 'is-active' : ''}" data-week-key="${escapeHtml(week.key)}">
+                <span class="weekly-card__head">
+                    <span class="weekly-card__label">TYDZIEŃ ${week.index + 1}</span>
+                    <span class="weekly-card__range">${escapeHtml(week.start)}–${escapeHtml(week.end)}</span>
+                </span>
+                <span class="weekly-card__flags">${flags}</span>
+                <strong class="weekly-card__total">${formatMoney(week.total)}</strong>
+                <span class="weekly-card__avg">średnio ${formatMoney(week.averageDay)} / dzień</span>
+                <span class="weekly-card__delta ${tone}">${escapeHtml(deltaText)}</span>
+                <span class="weekly-card__verdict">${escapeHtml(this.buildWeeklyVerdict(week))}</span>
+            </button>
+        `;
+    }
+
+    buildWeeklyVerdict(week) {
+        if (week.deltaPercent === null) return 'Początek miesiąca.';
+        const magnitude = Math.abs(week.deltaPercent).toFixed(1);
+        if (week.deltaPercent > 0.5) return `Lepszy od tygodnia ${week.index} o ${magnitude}%.`;
+        if (week.deltaPercent < -0.5) return `Słabszy od tygodnia ${week.index} o ${magnitude}%.`;
+        return `Podobny poziom co tydzień ${week.index}.`;
+    }
+
+    renderPaymentsReminder(container, { summary, upcoming, revenueTotal }) {
+        if (!container) return;
+        const share = revenueTotal > 0 ? (summary.left / revenueTotal) * 100 : null;
+        const shareText = share === null
+            ? 'Brak utargu w wybranym okresie do porównania z zobowiązaniami.'
+            : `Otwarte zobowiązania to ${share.toFixed(1)}% utargu tego okresu.`;
+        const shareTone = summary.overdueCount ? 'is-negative' : share !== null && share > 60 ? 'is-watch' : 'is-positive';
+
+        container.innerHTML = `
+            <div class="${cardClass('chart', 'chart-card payments-reminder')}">
+                <div class="section-heading">
+                    <h3>${renderMaterialIcon('notification_important')} OPŁATY</h3>
+                    <p>${escapeHtml(shareText)}</p>
+                </div>
+                <div class="payments-reminder__grid">
+                    ${this.buildReminderTile('Przeterminowane', summary.overdueAmount, `${summary.overdueCount} ${plural(summary.overdueCount, 'pozycja', 'pozycje', 'pozycji')}`, 'is-negative')}
+                    ${this.buildReminderTile('Do 7 dni', summary.dueSoonAmount, `${summary.dueSoonCount} ${plural(summary.dueSoonCount, 'pozycja', 'pozycje', 'pozycji')}`, 'is-watch')}
+                    ${this.buildReminderTile('Pozostało ogółem', summary.left, `${summary.openCount} ${plural(summary.openCount, 'otwarta', 'otwarte', 'otwartych')}`, shareTone)}
+                </div>
+                <div class="payments-reminder__list">
+                    ${upcoming.length ? upcoming.map(view => this.buildReminderRow(view)).join('') : '<div class="payments-reminder__empty">Brak płatności w najbliższych 14 dniach.</div>'}
+                </div>
+                <button class="btn-back payments-reminder__more" type="button" data-open-payments>ZOBACZ WSZYSTKIE</button>
+            </div>
+        `;
+    }
+
+    buildReminderTile(label, value, hint, tone) {
+        return `
+            <div class="payments-reminder__tile ${tone}">
+                <span>${escapeHtml(label)}</span>
+                <strong>${formatMoney(value)}</strong>
+                <span>${escapeHtml(hint)}</span>
+            </div>
+        `;
+    }
+
+    buildReminderRow(view) {
+        const due = view.daysLeft === null
+            ? 'Bez terminu'
+            : view.daysLeft < 0
+                ? `${Math.abs(view.daysLeft)} dni po terminie`
+                : view.daysLeft === 0 ? 'Dziś' : `za ${view.daysLeft} dni`;
+        return `
+            <div class="payments-reminder__row">
+                <strong>${escapeHtml(view.title)}</strong>
+                <span>${escapeHtml(due)}</span>
+                <em>${formatMoney(view.amountLeft)}</em>
+            </div>
+        `;
     }
 
     buildDayContextHtml(day) {

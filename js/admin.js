@@ -1,32 +1,23 @@
-import { apiService } from './services/api.js?v=68';
+import { apiService } from './services/api.js?v=69';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=63';
-import { adminProducts } from './ui/adminProducts.js?v=63';
-import { createAdminListsPage } from './ui/adminLists.js?v=64';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=64';
+import { adminRender } from './ui/adminRender.js?v=66';
+import { adminProducts } from './ui/adminProducts.js?v=64';
+import { createAdminListsPage } from './ui/adminLists.js?v=65';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=65';
 import { setupPayslipGenerator } from './ui/payslip.js?v=2';
-import { escapeHtml, formatMoney, isLocalhost, parseLocalDateInput, renderMaterialIcon } from './utils.js';
+import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=62';
-import { cardClass } from './ui/components/Card.js';
 import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=67';
-import { adminEmployees } from './ui/adminEmployees.js?v=68';
-import { adminLocations } from './ui/adminLocations.js?v=71';
+import { adminEmployees } from './ui/adminEmployees.js?v=69';
+import { adminLocations } from './ui/adminLocations.js?v=73';
+import { adminPayments } from './ui/adminPayments.js?v=1';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=68';
+import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=1';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
-import { noticeService } from './ui/components/notice.js?v=1';
 
-const MONTHLY_STATUS_VARIANTS = {
-    loading: 'loading',
-    ready: 'success',
-    error: 'danger',
-    empty: 'warning'
-};
-
-const WEEKDAYS = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela'];
 const DEFAULT_DATA_MONTHS = 1;
-const PAYROLL_RATE = 30;
 const REVENUE_PAGE_SIZE = 14;
 const HEATMAP_MONTHS_PER_PAGE = 1;
 
@@ -38,7 +29,6 @@ let currentData = [];
 let currentWeeks = [];
 let chartType = 'bar';
 let chartDisplayMode = 'combined';
-let showHours = false;
 let chartRange = { from: '', to: '' };
 let viewMode = 'total';
 let currentViewData = [];
@@ -55,11 +45,10 @@ let isFullDataLoaded = false;
 let isLoadingFullData = false;
 let loadedMonthCount = 0;
 let availableMonthCount = 0;
-let monthlyReportCharts = [];
-let monthlyReportGenerated = false;
 let employeeCatalog = null;
 let locationCatalog = null;
 let locationResolver = null;
+let paymentsCatalog = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     setAdminScrollLocked(true);
@@ -104,6 +93,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             applyLoadedData(sourceData);
         };
         await adminLocations.init(document.getElementById('adminLocationsPage'));
+        adminPayments.onSaved = catalog => {
+            paymentsCatalog = catalog;
+            updateView();
+        };
+        await adminPayments.init(document.getElementById('adminPaymentsPage'));
+        paymentsCatalog = adminPayments.getCatalog();
         adminListsPage = createAdminListsPage({
             getAllData: () => allData,
             getProductCatalog: () => productCatalog,
@@ -296,7 +291,6 @@ function applyLoadedData(data) {
     }
 
     payrollCalculator?.refresh();
-    if (monthlyReportGenerated) generateMonthlyReport({ skipFetch: true });
 }
 
 function restoreMonthSelection(value) {
@@ -315,6 +309,7 @@ async function switchAdminPage(pageName) {
     if (currentTab === 'products' && !(await adminProducts.confirmDiscardChanges())) return;
     if (currentTab === 'employees' && !(await adminEmployees.confirmDiscardChanges())) return;
     if (currentTab === 'locations' && !(await adminLocations.confirmDiscardChanges())) return;
+    if (currentTab === 'payments' && !(await adminPayments.confirmDiscardChanges())) return;
 
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         const active = tab.dataset.adminTab === pageName;
@@ -325,10 +320,6 @@ async function switchAdminPage(pageName) {
     document.querySelectorAll('[data-admin-page]').forEach(section => {
         section.hidden = section.dataset.adminPage !== pageName;
     });
-
-    if (pageName === 'monthlyReport' && !monthlyReportGenerated) {
-        await generateMonthlyReport();
-    }
 
     if (pageName === 'lists') adminListsPage?.refresh();
 }
@@ -394,10 +385,7 @@ function buildWeekTabs(data, { label = 'CAŁY MIESIĄC', showWeeks = true } = {}
     tabsContainer.innerHTML = '';
     currentWeeks = [];
 
-    const allTab = createWeekTab('all', label);
-    allTab.classList.add('active');
-    tabsContainer.appendChild(allTab);
-
+    tabsContainer.appendChild(createWeekTab('all', label, true));
     if (!showWeeks) return;
 
     const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
@@ -420,54 +408,35 @@ function buildWeekTabs(data, { label = 'CAŁY MIESIĄC', showWeeks = true } = {}
     });
 }
 
-function createWeekTab(key, label) {
+function createWeekTab(key, label, isActive = false) {
     const tab = document.createElement('div');
     tab.className = 'week-tab';
+    tab.classList.toggle('active', isActive);
     tab.dataset.week = key;
     tab.innerText = label;
-    tab.onclick = event => {
-        document.querySelectorAll('.week-tab').forEach(node => node.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        activeWeekKey = key;
-        revenuePage = 0;
-        heatmapPage = 0;
-        updateView();
-    };
+    tab.onclick = () => selectWeek(key);
     return tab;
+}
+
+function selectWeek(key) {
+    activeWeekKey = key;
+    document.querySelectorAll('.week-tab').forEach(node => node.classList.toggle('active', node.dataset.week === key));
+    revenuePage = 0;
+    heatmapPage = 0;
+    updateView();
 }
 
 function setupListeners() {
     document.getElementById('monthFilter')?.addEventListener('change', () => handleMonthChange(processedData));
 
-    // Tylko kontrolki wykresu zmieniają typ wykresu. Klasa `.chart-btn` służy też
-    // jako wygląd przycisków „Dodaj” w panelach, więc selektor musi być węższy.
-    const chartTypeButtons = document.querySelectorAll('.chart-controls [data-type]');
-    chartTypeButtons.forEach(button => {
-        button.onclick = event => {
-            chartTypeButtons.forEach(node => node.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            chartType = event.currentTarget.dataset.type;
-            updateChart();
-        };
+    document.getElementById('chartTypeSelect')?.addEventListener('change', event => {
+        chartType = event.target.value;
+        updateChart();
     });
 
-    const chartDisplayButtons = document.querySelectorAll('.chart-controls [data-display]');
-    chartDisplayButtons.forEach(button => {
-        button.onclick = event => {
-            chartDisplayButtons.forEach(node => node.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            chartDisplayMode = event.currentTarget.dataset.display;
-            updateChart();
-        };
-    });
-
-    document.querySelectorAll('.chart-controls [data-context]').forEach(button => {
-        button.onclick = event => {
-            const target = event.currentTarget;
-            target.classList.toggle('active');
-            showHours = target.classList.contains('active');
-            updateChart();
-        };
+    document.getElementById('chartDisplaySelect')?.addEventListener('change', event => {
+        chartDisplayMode = event.target.value;
+        updateChart();
     });
 
     document.getElementById('chartRangeFrom')?.addEventListener('change', event => {
@@ -581,7 +550,78 @@ function updateView() {
         adminRender.renderEmployeeTable(document.querySelector('#employeeTable tbody'), employeeStats);
     }
 
+    renderPaymentsReminder();
+    renderWeeklyOverview();
     renderRevenueTable();
+}
+
+function renderPaymentsReminder() {
+    const container = document.getElementById('paymentsReminderSection');
+    if (!container) return;
+    if (!paymentsCatalog || !paymentsCatalog.items.length) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const views = getPaymentViews(paymentsCatalog);
+    const summary = summarizePayments(views);
+    const upcoming = getUpcomingPayments(views, 14).slice(0, 5);
+    const revenueTotal = currentViewData.reduce((sum, day) => sum + day.total, 0);
+
+    adminRender.renderPaymentsReminder(container, { summary, upcoming, revenueTotal });
+    container.querySelector('[data-open-payments]')?.addEventListener('click', () => switchAdminPage('payments'));
+}
+
+function renderWeeklyOverview() {
+    const container = document.getElementById('weeklyOverviewSection');
+    if (!container) return;
+    if (!currentWeeks.length) {
+        container.innerHTML = '';
+        return;
+    }
+    adminRender.renderWeeklyOverview(container, buildWeekSummaries(), activeWeekKey, viewMode);
+    container.querySelectorAll('[data-week-key]').forEach(card => {
+        card.addEventListener('click', () => selectWeek(card.dataset.weekKey));
+    });
+}
+
+function getWeekMetric(day) {
+    if (viewMode === 'cards') return day.cardTotal;
+    if (viewMode === 'glovo') return day.glovoNetTotal;
+    return day.total;
+}
+
+function buildWeekSummaries() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const weeks = currentWeeks.map((days, index) => {
+        const total = days.reduce((sum, day) => sum + getWeekMetric(day), 0);
+        return {
+            key: String(index),
+            index,
+            days: days.length,
+            total,
+            averageDay: days.length ? total / days.length : 0,
+            start: days[0]?.dateStr.slice(0, 5) || '',
+            end: days[days.length - 1]?.dateStr.slice(0, 5) || '',
+            isCurrent: days.some(day => day.dateObj.getTime() === today.getTime())
+        };
+    });
+
+    weeks.forEach((week, index) => {
+        const previous = weeks[index - 1];
+        week.deltaPercent = previous && previous.averageDay
+            ? ((week.averageDay - previous.averageDay) / previous.averageDay) * 100
+            : null;
+    });
+
+    const comparable = weeks.filter(week => week.days >= 5);
+    const pool = comparable.length ? comparable : weeks;
+    const best = pool.reduce((leader, week) => (!leader || week.averageDay > leader.averageDay ? week : leader), null);
+    if (best && weeks.length > 1) best.isBest = true;
+
+    return weeks;
 }
 
 function updateChart() {
@@ -724,218 +764,6 @@ function renderRevenueTable() {
     });
 }
 
-async function generateMonthlyReport(options = {}) {
-    const { skipFetch = false } = options;
-    const status = document.getElementById('monthlyReportStatus');
-    const content = document.getElementById('monthlyReportContent');
-    const button = document.getElementById('generateMonthlyReportBtn');
-    if (!status || !content) return;
-
-    setMonthlyReportStatus('Przygotowuję listę miesięczną...', 'loading');
-    if (button) button.disabled = true;
-
-    try {
-        if (!skipFetch) await ensureMonthlyReportData();
-
-        const report = buildMonthlyReport(processedData);
-        if (!report.current.days.length || !report.previous.days.length) {
-            destroyMonthlyReportCharts();
-            content.innerHTML = '';
-            setMonthlyReportStatus('Brakuje danych z jednego z porównywanych miesięcy.', 'empty');
-            return;
-        }
-
-        renderMonthlyReport(report);
-        monthlyReportGenerated = true;
-        setMonthlyReportStatus('', 'ready');
-    } catch (error) {
-        console.error(error);
-        setMonthlyReportStatus('Nie udało się wygenerować listy.', 'error');
-    } finally {
-        if (button) button.disabled = false;
-    }
-}
-
-async function ensureMonthlyReportData() {
-    const { current, previous } = getReportMonthPair();
-    const monthKeys = new Set(processedData.map(day => getMonthKey(day.dateObj)));
-    if (monthKeys.has(current.key) && monthKeys.has(previous.key)) return;
-
-    const button = document.getElementById('loadAllDataBtn');
-    isLoadingFullData = true;
-    setLoadAllButtonState(button, 'Pobieranie 0%', true);
-    setMonthlyReportStatus('Pobieram dane, żeby porównać dwa zamknięte miesiące...', 'loading');
-
-    try {
-        const comparisonData = await apiService.fetchAllData({
-            recentMonths: 2,
-            onMeta: updateDataLoadInfo,
-            onProgress: progress => setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true)
-        });
-
-        if (!comparisonData.length) throw new Error('No reports available');
-        applyLoadedData(comparisonData);
-        setLoadAllButtonState(button, 'Dane załadowane', false);
-    } finally {
-        isLoadingFullData = false;
-    }
-}
-
-function buildMonthlyReport(data) {
-    const pair = getReportMonthPair();
-    const currentDays = analytics.filterByMonth(data, pair.current.year, pair.current.month);
-    const previousDays = analytics.filterByMonth(data, pair.previous.year, pair.previous.month);
-
-    const current = summarizeMonth(pair.current, currentDays);
-    const previous = summarizeMonth(pair.previous, previousDays);
-    const employeeRows = mergeNamedRows(current.employees, previous.employees, 'hours')
-        .sort((left, right) => right.current - left.current)
-        .slice(0, 12);
-    const productRows = mergeNamedRows(current.products, previous.products, 'quantity')
-        .sort((left, right) => right.current - left.current)
-        .slice(0, 12);
-
-    return { current, previous, employeeRows, productRows };
-}
-
-function summarizeMonth(month, days) {
-    const total = days.reduce((sum, day) => sum + day.total, 0);
-    const card = days.reduce((sum, day) => sum + day.cardTotal, 0);
-    const glovo = days.reduce((sum, day) => sum + day.glovoNetTotal, 0);
-    const cashDesk = days.reduce((sum, day) => sum + day.cashDeskTotal, 0);
-    const employees = analytics.calculateEmployeeStats(days)
-        .map(employee => ({
-            ...employee,
-            payroll: employee.hours * PAYROLL_RATE
-        }));
-    const products = aggregateProducts(days);
-    const locations = adminRender.aggregateLocations(days);
-    const bestDay = [...days].sort((left, right) => right.total - left.total)[0];
-    const worstDay = [...days].sort((left, right) => left.total - right.total)[0];
-
-    return {
-        ...month,
-        days,
-        label: formatMonthLabel(month.year, month.month),
-        total,
-        card,
-        glovo,
-        cashDesk,
-        averageDay: days.length ? total / days.length : 0,
-        employees,
-        products,
-        locations,
-        bestDay,
-        worstDay
-    };
-}
-
-function aggregateProducts(days) {
-    const map = new Map();
-    days.forEach(day => {
-        day.rawReports?.forEach(report => {
-            Object.entries(report.products || {}).forEach(([name, value]) => {
-                const quantity = Number(value) || 0;
-                if (!quantity) return;
-                map.set(name, (map.get(name) || 0) + quantity);
-            });
-        });
-    });
-
-    return Array.from(map.entries())
-        .map(([name, quantity]) => ({ name, quantity }))
-        .sort((left, right) => right.quantity - left.quantity);
-}
-
-function mergeNamedRows(currentRows, previousRows, valueKey) {
-    const names = new Set([...currentRows.map(row => row.name), ...previousRows.map(row => row.name)]);
-    return Array.from(names).map(name => {
-        const current = currentRows.find(row => row.name === name);
-        const previous = previousRows.find(row => row.name === name);
-        const currentValue = current?.[valueKey] || 0;
-        const previousValue = previous?.[valueKey] || 0;
-        return {
-            name,
-            current: currentValue,
-            previous: previousValue,
-            delta: currentValue - previousValue,
-            currentRow: current,
-            previousRow: previous
-        };
-    });
-}
-
-function renderMonthlyReport(report) {
-    const content = document.getElementById('monthlyReportContent');
-    if (!content) return;
-
-    destroyMonthlyReportCharts();
-    const current = report.current;
-    const previous = report.previous;
-    const currentHours = getEmployeeHoursTotal(current);
-    const currentPayroll = getPayrollTotal(current);
-    const revenuePerHour = getRevenuePerHour(current);
-    const payrollShare = getPayrollShare(current);
-    const totalDelta = current.total - previous.total;
-    const hoursDelta = currentHours - getEmployeeHoursTotal(previous);
-    const currentLeader = current.locations[0];
-    const assessment = totalDelta > 0 && (hoursDelta <= 0 || revenuePerHour >= getRevenuePerHour(previous))
-        ? { tone: 'positive', title: 'Miesiąc wygląda zdrowo', text: 'Sprzedaż rośnie bez proporcjonalnego zwiększania obciążenia zespołu.' }
-        : totalDelta > 0
-            ? { tone: 'watch', title: 'Sprzedaż rośnie, ale pilnuj kosztu pracy', text: 'Wynik jest lepszy, jednak warto sprawdzić, czy dodatkowe godziny dają odpowiedni zwrot.' }
-            : { tone: 'negative', title: 'Potrzebna jest szybka reakcja', text: 'Wynik spadł względem poprzedniego miesiąca. Najpierw sprawdź punkty i dni z największą różnicą.' };
-
-    content.innerHTML = `
-        <div class="monthly-report-range">
-            <span>${renderMaterialIcon('calendar_month', 'summary-icon-badge')} RAPORT ZARZĄDCZY</span>
-            <strong>${escapeHtml(current.label)}</strong>
-            <p>Porównanie z ${escapeHtml(previous.label)} pokazuje, co realnie zmieniło się w firmie.</p>
-        </div>
-
-        <div class="monthly-assessment monthly-assessment--${assessment.tone}">
-            <div><strong>${assessment.title}</strong><p>${assessment.text}</p></div>
-        </div>
-
-        <div class="monthly-command-grid">
-            ${renderDecisionMetric('Utarg netto', formatMoney(current.total), totalDelta, true, getDecisionHint('revenue', totalDelta))}
-            ${renderDecisionMetric('Średnio dziennie', formatMoney(current.averageDay), current.averageDay - previous.averageDay, true, getDecisionHint('average', current.averageDay - previous.averageDay))}
-            ${renderDecisionMetric('Utarg / godzina', formatMoney(revenuePerHour), revenuePerHour - getRevenuePerHour(previous), true, getDecisionHint('hour', revenuePerHour - getRevenuePerHour(previous)))}
-            ${renderDecisionMetric('Udział wypłat', `${payrollShare.toFixed(1)}%`, payrollShare - getPayrollShare(previous), false, getDecisionHint('payroll', payrollShare - getPayrollShare(previous)))}
-        </div>
-
-        <div class="monthly-report-grid monthly-report-grid--decision">
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-                <div class="section-heading"><h3>Jak radzą sobie punkty</h3><p>Ranking według średniego dziennego utargu — łatwiej porównać punkty o różnej liczbie dni.</p></div>
-                <div class="monthly-location-list">
-                    ${current.locations.map(location => {
-                        const old = previous.locations.find(item => item.name === location.name);
-                        const delta = location.avgDay - (old?.avgDay || 0);
-                        return `<div class="monthly-location-row"><div><strong>${escapeHtml(location.name)}</strong><span>${formatMoney(location.avgDay)} średnio / dzień</span></div><em class="${getDeltaClass(delta)}">${formatSignedValue(delta, true)} / ${old ? formatPercentDelta(location.avgDay, old.avgDay) : 'nowy'}</em></div>`;
-                    }).join('')}
-                </div>
-            </div>
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-                <div class="section-heading"><h3>Zespół i obciążenie</h3><p>Najważniejsze informacje o czasie pracy i koszcie zespołu.</p></div>
-                <div class="monthly-focus-list">
-                    <div><span>Przepracowane godziny</span><strong>${currentHours.toFixed(1)} h <em class="${getDeltaClass(hoursDelta)}">${formatSignedValue(hoursDelta, false, ' h')}</em></strong></div>
-                    <div><span>Szacowany koszt wypłat</span><strong>${formatMoney(currentPayroll)} <em class="is-neutral">stawka 30 PLN</em></strong></div>
-                    <div><span>Najmocniejszy punkt</span><strong>${currentLeader ? escapeHtml(currentLeader.name) : '-'} <em class="is-neutral">${currentLeader ? formatMoney(currentLeader.avgDay) + ' / dzień' : ''}</em></strong></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="monthly-report-grid monthly-report-grid--details">
-            ${renderMonthlyHighlights(report)}
-            ${renderMonthlyEfficiencyPanel(report)}
-        </div>
-
-        <div class="monthly-report-grid monthly-report-grid--details">
-            ${renderMonthlyPayrollTable(report)}
-            ${renderMonthlyProductTable(report)}
-        </div>
-    `;
-}
-
 function updateDataLoadInfo(meta) {
     loadedMonthCount = meta?.loadedMonths || 0;
     availableMonthCount = meta?.availableMonths || 0;
@@ -957,395 +785,8 @@ function updateLoadButtonLabel() {
     button.classList.remove('is-loaded', 'is-clean');
     button.innerHTML = `
         <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
-        ZAŁADUJ DANE
+        ZAŁADUJ
     `;
-}
-
-function renderDecisionMetric(label, value, delta, money, description) {
-    const lowerIsBetter = label === 'Udział wypłat';
-    return `<div class="${cardClass('summary', 'summary-box monthly-decision-metric')}"><span class="summary-kicker">${escapeHtml(label)}</span><p>${escapeHtml(value)}</p><small class="${getDeltaClass(delta, lowerIsBetter)}">${formatSignedValue(delta, money)} względem poprzedniego miesiąca</small><span class="monthly-decision-metric__hint"><span class="material-symbols-rounded" aria-hidden="true">chat_bubble</span>${escapeHtml(description)}</span></div>`;
-}
-
-function getDecisionHint(type, delta) {
-    if (type === 'payroll') {
-        if (delta < -0.4) return 'Koszt zespołu spadł względem utargu — to dobry sygnał, o ile nie ucierpiała obsada.';
-        if (delta > 0.4) return 'Wypłaty zajmują większą część utargu. Sprawdź, czy dodatkowe godziny przełożyły się na sprzedaż.';
-        return 'Udział wypłat jest stabilny. Na ten moment koszty pracy są pod kontrolą.';
-    }
-    if (delta > 0) return type === 'hour'
-        ? 'Każda godzina zespołu przyniosła więcej utargu — grafik pracuje efektywniej.'
-        : type === 'average'
-            ? 'Typowy dzień był mocniejszy, więc wynik nie opiera się wyłącznie na jednym rekordzie.'
-            : 'Firma zrobiła więcej niż wcześniej. Warto sprawdzić, który punkt napędził wzrost.';
-    if (delta < 0) return type === 'hour'
-        ? 'Godzina pracy daje mniej utargu. To pierwszy kandydat do przeglądu grafików i słabszych dni.'
-        : type === 'average'
-            ? 'Słabszy był przeciętny dzień. Poszukaj powtarzalnego problemu, nie tylko najsłabszej daty.'
-            : 'Łączny wynik spadł. Zacznij od punktu z największym spadkiem średniej dziennej.';
-    return 'Wynik jest stabilny. Najwięcej powie porównanie z kolejnym miesiącem.';
-}
-
-function renderMonthlyKpi(label, current, previous, icon, money = false) {
-    const delta = current - previous;
-    const deltaClass = getDeltaClass(delta);
-    const display = money ? formatMoney(current) : current.toFixed(1);
-    return `
-        <div class="${cardClass('summary', 'summary-box monthly-kpi')} ">
-            <span class="summary-kicker">${renderMaterialIcon(icon, 'summary-icon-badge')} ${escapeHtml(label)}</span>
-            <p>${display}</p>
-            <small><span class="monthly-delta ${deltaClass}">${formatSignedValue(delta, money)}</span> / ${formatPercentDelta(current, previous)}</small>
-        </div>
-    `;
-}
-
-function renderMonthlyHighlights(report) {
-    const currentLeader = report.current.employees[0];
-    const previousLeader = report.previous.employees[0];
-    return `
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-            <div class="section-heading">
-                <h3>Najważniejsze sygnały</h3>
-            </div>
-            <div class="monthly-highlight-list">
-                ${renderHighlight('Najlepszy dzień', report.current.bestDay ? `${report.current.bestDay.dateStr} / ${formatMoney(report.current.bestDay.total)}` : '-')}
-                ${renderHighlight('Najsłabszy dzień', report.current.worstDay ? `${report.current.worstDay.dateStr} / ${formatMoney(report.current.worstDay.total)}` : '-')}
-                ${renderHighlight('Najwięcej godzin', currentLeader ? `${currentLeader.name} / ${currentLeader.hours.toFixed(1)} h` : '-')}
-                ${renderHighlight('Lider poprzednio', previousLeader ? `${previousLeader.name} / ${previousLeader.hours.toFixed(1)} h` : '-')}
-            </div>
-        </div>
-    `;
-}
-
-function renderMonthlyEfficiencyPanel(report) {
-    const currentPayrollShare = getPayrollShare(report.current);
-    const previousPayrollShare = getPayrollShare(report.previous);
-    const currentHours = getEmployeeHoursTotal(report.current);
-    const previousHours = getEmployeeHoursTotal(report.previous);
-    const currentProductUnits = getProductUnitsTotal(report.current);
-    const previousProductUnits = getProductUnitsTotal(report.previous);
-    const currentProductsPerHour = getProductsPerHour(report.current);
-    const previousProductsPerHour = getProductsPerHour(report.previous);
-    const currentDailyLaborCost = getDailyLaborCost(report.current);
-    const previousDailyLaborCost = getDailyLaborCost(report.previous);
-    const currentBestLocation = report.current.locations[0];
-    const previousBestLocation = report.previous.locations.find(location => location.name === currentBestLocation?.name);
-
-    return `
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-            <div class="section-heading">
-                <h3>Efektywność operacyjna</h3>
-                <p>Wskaźniki pokazujące, czy sprzedaż rosła szybciej niż czas pracy i koszty zmian.</p>
-            </div>
-            <div class="monthly-efficiency-grid">
-                ${renderEfficiencyCard(
-                    'Utarg / roboczogodzina',
-                    formatMoney(getRevenuePerHour(report.current)),
-                    getRevenuePerHour(report.current) - getRevenuePerHour(report.previous),
-                    true,
-                    'Ile utargu przypada na jedną przepracowaną godzinę. Wyżej oznacza, że zespół robi większy obrót tym samym czasem pracy.'
-                )}
-                ${renderEfficiencyCard(
-                    'Udział wypłat w utargu',
-                    `${currentPayrollShare.toFixed(1)}%`,
-                    currentPayrollShare - previousPayrollShare,
-                    false,
-                    'Szacowany koszt wypłat przy stawce 30 jako procent utargu. Niżej jest lepiej, bo mniej obrotu idzie na godziny pracy.',
-                    ' pp',
-                    true
-                )}
-                ${renderEfficiencyCard(
-                    'Średni koszt zmian / dzień',
-                    formatMoney(currentDailyLaborCost),
-                    currentDailyLaborCost - previousDailyLaborCost,
-                    true,
-                    'Średnia dzienna kwota wypłat w analizowanym miesiącu. Pomaga sprawdzić, czy grafiki nie urosły szybciej niż sprzedaż.',
-                    '',
-                    true
-                )}
-                ${renderEfficiencyCard(
-                    'Przepracowane godziny',
-                    `${currentHours.toFixed(1)} h`,
-                    currentHours - previousHours,
-                    false,
-                    'Suma godzin wpisanych na listach. Warto porównać tę zmianę ze zmianą utargu.',
-                    ' h'
-                )}
-                ${renderEfficiencyCard(
-                    'Produkty / roboczogodzina',
-                    `${currentProductsPerHour.toFixed(1)} szt.`,
-                    currentProductsPerHour - previousProductsPerHour,
-                    false,
-                    'Ile pozycji z list produktów przypada na jedną godzinę pracy. To przybliżony wskaźnik obciążenia operacyjnego.',
-                    ' szt.'
-                )}
-                ${renderEfficiencyCard(
-                    currentBestLocation ? `Najmocniejszy punkt: ${currentBestLocation.name}` : 'Najmocniejszy punkt',
-                    currentBestLocation ? formatMoney(currentBestLocation.avgDay) : '-',
-                    (currentBestLocation?.avgDay || 0) - (previousBestLocation?.avgDay || 0),
-                    true,
-                    'Średni dzienny utarg najlepszego punktu w nowszym miesiącu w porównaniu do tego samego punktu wcześniej.'
-                )}
-            </div>
-        </div>
-    `;
-}
-
-function renderEfficiencyCard(label, value, delta, money, description, suffix = '', lowerIsBetter = false) {
-    return `
-        <div class="monthly-efficiency-card">
-            <div class="monthly-efficiency-card__head">
-                <span>${escapeHtml(label)}</span>
-                <em class="${getDeltaClass(delta, lowerIsBetter)}">${formatSignedValue(delta, money, suffix)}</em>
-            </div>
-            <strong>${escapeHtml(value)}</strong>
-            <p>${escapeHtml(description)}</p>
-        </div>
-    `;
-}
-
-function renderHighlight(label, value) {
-    return `
-        <div class="monthly-highlight">
-            <span>${escapeHtml(label)}</span>
-            <strong>${escapeHtml(value)}</strong>
-        </div>
-    `;
-}
-
-function renderMonthlyLocationTable(report) {
-    const rows = mergeNamedRows(report.current.locations, report.previous.locations, 'total')
-        .sort((left, right) => right.current - left.current);
-    return `
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-            <div class="section-heading">
-                <h3>Punkty</h3>
-            </div>
-            <div class="monthly-mini-table">
-                ${rows.map(row => renderMetricRow(row.name, formatMoney(row.current), row.delta, true)).join('')}
-            </div>
-        </div>
-    `;
-}
-
-function renderMonthlyPayrollTable(report) {
-    return `
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-            <div class="section-heading">
-                <h3>Pracownicy i wypłaty</h3>
-            </div>
-            <div class="monthly-mini-table">
-                ${report.employeeRows.map(row => {
-                    const payroll = (row.currentRow?.payroll || 0);
-                    return renderMetricRow(row.name, `${row.current.toFixed(1)} h / ${formatMoney(payroll)}`, row.delta, false, ' h');
-                }).join('')}
-            </div>
-        </div>
-    `;
-}
-
-function renderMonthlyProductTable(report) {
-    return `
-            <div class="${cardClass('chart', 'chart-card monthly-report-panel')}">
-            <div class="section-heading">
-                <h3>Produkty</h3>
-            </div>
-            <div class="monthly-mini-table monthly-mini-table--products">
-                ${report.productRows.map(row => renderMetricRow(row.name, `${Math.round(row.current)} szt.`, row.delta, false, ' szt.')).join('')}
-            </div>
-        </div>
-    `;
-}
-
-function renderMetricRow(name, value, delta, money, suffix = '') {
-    return `
-        <div class="monthly-metric-row">
-            <span>${escapeHtml(name)}</span>
-            <strong>${escapeHtml(value)}</strong>
-            <em class="${getDeltaClass(delta)}">${formatSignedValue(delta, money, suffix)}</em>
-        </div>
-    `;
-}
-
-function renderMonthlyCharts(report) {
-    const styles = getComputedStyle(document.documentElement);
-    const primary = styles.getPropertyValue('--primary-color').trim();
-    const success = styles.getPropertyValue('--success-color').trim();
-    const info = styles.getPropertyValue('--app-info').trim();
-    const warning = styles.getPropertyValue('--glovo-color').trim();
-    const muted = styles.getPropertyValue('--text-muted').trim();
-    Chart.defaults.font.family = styles.getPropertyValue('--font-body').trim() || 'sans-serif';
-    Chart.defaults.color = styles.getPropertyValue('--text-secondary').trim() || '#C8BAB3';
-
-    const dayLabels = buildDayLabels(report);
-    monthlyReportCharts.push(new Chart(document.getElementById('monthlyRevenueChart'), {
-        type: 'line',
-        data: {
-            labels: dayLabels,
-            datasets: [
-                buildMonthlyLineDataset(report.previous, dayLabels, info, 'total'),
-                buildMonthlyLineDataset(report.current, dayLabels, primary, 'total')
-            ]
-        },
-        options: buildMonthlyChartOptions()
-    }));
-
-    monthlyReportCharts.push(new Chart(document.getElementById('monthlyChannelsChart'), {
-        type: 'bar',
-        data: {
-            labels: ['Karty', 'Gotówka'],
-            datasets: [
-                {
-                    label: report.previous.label,
-                    data: [report.previous.card, report.previous.cashDesk],
-                    backgroundColor: info
-                },
-                {
-                    label: report.current.label,
-                    data: [report.current.card, report.current.cashDesk],
-                    backgroundColor: primary
-                }
-            ]
-        },
-        options: buildMonthlyChartOptions()
-    }));
-
-    monthlyReportCharts.push(new Chart(document.getElementById('monthlyGlovoChart'), {
-        type: 'line',
-        data: {
-            labels: dayLabels,
-            datasets: [
-                buildMonthlyLineDataset(report.previous, dayLabels, muted, 'glovo'),
-                buildMonthlyLineDataset(report.current, dayLabels, warning, 'glovo')
-            ]
-        },
-        options: buildMonthlyChartOptions()
-    }));
-
-    monthlyReportCharts.push(new Chart(document.getElementById('monthlyProductsChart'), {
-        type: 'bar',
-        data: {
-            labels: report.productRows.slice(0, 8).map(row => row.name),
-            datasets: [
-                {
-                    label: report.previous.label,
-                    data: report.productRows.slice(0, 8).map(row => row.previous),
-                    backgroundColor: info
-                },
-                {
-                    label: report.current.label,
-                    data: report.productRows.slice(0, 8).map(row => row.current),
-                    backgroundColor: success
-                }
-            ]
-        },
-        options: {
-            ...buildMonthlyChartOptions(),
-            plugins: {
-                legend: {
-                    labels: {
-                        font: { family: styles.getPropertyValue('--font-heading').trim() || 'sans-serif' }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: context => `${context.dataset.label}: ${Math.round(context.raw || 0)} szt.`
-                    }
-                }
-            },
-            indexAxis: 'y',
-            scales: {
-                x: { beginAtZero: true, grid: { color: muted } },
-                y: { grid: { display: false } }
-            }
-        }
-    }));
-}
-
-function buildMonthlyLineDataset(month, labels, color, metric) {
-    const map = new Map(month.days.map(day => [day.dateObj.getDate(), getMonthlyDayMetric(day, metric)]));
-    return {
-        label: month.label,
-        data: labels.map(day => map.get(Number(day)) || null),
-        borderColor: color,
-        backgroundColor: color,
-        borderWidth: 3,
-        tension: 0.32,
-        pointRadius: 3,
-        spanGaps: true
-    };
-}
-
-function getMonthlyDayMetric(day, metric) {
-    if (metric === 'glovo') return day.glovoNetTotal || 0;
-    return day.total || 0;
-}
-
-function buildMonthlyChartOptions() {
-    const styles = getComputedStyle(document.documentElement);
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                labels: {
-                    font: { family: styles.getPropertyValue('--font-heading').trim() || 'sans-serif' }
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label: context => `${context.dataset.label}: ${formatMoney(context.raw || 0)}`
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: { color: styles.getPropertyValue('--border-color').trim() },
-                ticks: { callback: value => `${Math.round(value)} zł` }
-            },
-            x: { grid: { display: false } }
-        }
-    };
-}
-
-function buildDayLabels(report) {
-    const currentDays = new Date(report.current.year, report.current.month, 0).getDate();
-    const previousDays = new Date(report.previous.year, report.previous.month, 0).getDate();
-    return Array.from({ length: Math.max(currentDays, previousDays) }, (_, index) => String(index + 1));
-}
-
-function destroyMonthlyReportCharts() {
-    monthlyReportCharts.forEach(chart => chart.destroy());
-    monthlyReportCharts = [];
-}
-
-function setMonthlyReportStatus(message, state) {
-    const status = document.getElementById('monthlyReportStatus');
-    if (!status) return;
-    noticeService.render(status, {
-        variant: MONTHLY_STATUS_VARIANTS[state] || 'info',
-        text: message,
-        showBar: state === 'loading'
-    });
-}
-
-function getReportMonthPair(referenceDate = new Date()) {
-    const currentDate = new Date(referenceDate.getFullYear(), referenceDate.getMonth() - 1, 1);
-    const previousDate = new Date(referenceDate.getFullYear(), referenceDate.getMonth() - 2, 1);
-    return {
-        current: toMonthMeta(currentDate),
-        previous: toMonthMeta(previousDate)
-    };
-}
-
-function toMonthMeta(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    return {
-        year,
-        month,
-        key: `${year}-${String(month).padStart(2, '0')}`
-    };
 }
 
 function getMonthKey(date) {
@@ -1356,54 +797,6 @@ function formatMonthLabel(year, month) {
     const date = new Date(year, month - 1, 1);
     const label = date.toLocaleString('pl-PL', { month: 'long', year: 'numeric' });
     return label.charAt(0).toUpperCase() + label.slice(1);
-}
-
-function getPayrollTotal(month) {
-    return month.employees.reduce((sum, employee) => sum + employee.payroll, 0);
-}
-
-function getEmployeeHoursTotal(month) {
-    return month.employees.reduce((sum, employee) => sum + employee.hours, 0);
-}
-
-function getRevenuePerHour(month) {
-    const hours = getEmployeeHoursTotal(month);
-    return hours ? month.total / hours : 0;
-}
-
-function getProductsPerHour(month) {
-    const hours = getEmployeeHoursTotal(month);
-    return hours ? getProductUnitsTotal(month) / hours : 0;
-}
-
-function getPayrollShare(month) {
-    return month.total ? (getPayrollTotal(month) / month.total) * 100 : 0;
-}
-
-function getDailyLaborCost(month) {
-    return month.days.length ? getPayrollTotal(month) / month.days.length : 0;
-}
-
-function getProductUnitsTotal(month) {
-    return month.products.reduce((sum, product) => sum + product.quantity, 0);
-}
-
-function formatSignedValue(value, money, suffix = '') {
-    const sign = value > 0 ? '+' : '';
-    if (money) return `${sign}${formatMoney(value)}`;
-    return `${sign}${value.toFixed(1)}${suffix}`;
-}
-
-function formatPercentDelta(current, previous) {
-    if (!previous) return current ? '+100.0%' : '0.0%';
-    const value = ((current - previous) / previous) * 100;
-    return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
-}
-
-function getDeltaClass(value, lowerIsBetter = false) {
-    if (value > 0) return lowerIsBetter ? 'is-negative' : 'is-positive';
-    if (value < 0) return lowerIsBetter ? 'is-positive' : 'is-negative';
-    return 'is-neutral';
 }
 
 function compareRevenueRows(a, b, sort) {
@@ -1423,7 +816,6 @@ function getRenderOptions() {
     return {
         viewMode,
         chartMode: chartDisplayMode,
-        showHours,
         employeeCatalog
     };
 }

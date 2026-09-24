@@ -254,7 +254,7 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocati
         <section class="${cardClass('table', 'calc-breakdown-report')} ">
             <div class="table-head calc-breakdown-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> PODSUMOWANIE WYPŁATY</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> PODSUMOWANIE</h3>
                     <p>${shiftCount} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</p>
                 </div>
             </div>

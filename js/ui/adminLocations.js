@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=68';
+import { apiService } from '../services/api.js?v=69';
 import {
     loadLocationCatalog,
     normalizeLocationCatalog,
@@ -27,7 +27,6 @@ class AdminLocations {
         this.render();
         this.container.addEventListener('click', event => this.handleClick(event));
         this.container.addEventListener('submit', event => this.handleSubmit(event));
-        this.container.addEventListener('input', event => this.handleInput(event));
     }
 
     render() {
@@ -39,7 +38,6 @@ class AdminLocations {
             <div class="admin-products-head">
                 <div class="section-heading">
                     <h3><span class="material-symbols-rounded" aria-hidden="true">near_me</span> PUNKTY</h3>
-                    <p>Widoczność w generatorze decyduje, czy punkt można wybrać przy tworzeniu listy. Uwzględnienie w statystykach decyduje, czy jego dane liczą się w utargach, godzinach i wypłatach. Archiwum wyłącza jedno i drugie, a dane zostają w bazie.</p>
                 </div>
                 <button id="saveLocationsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz
@@ -47,10 +45,8 @@ class AdminLocations {
             </div>
             <form class="location-add-form" data-action="add-location">
                 <input name="name" class="calc-input" placeholder="Nazwa punktu, np. Kęty" required>
-                <input name="path" class="calc-input" placeholder="Folder w bazie, np. kety" data-auto-folder="true" required>
-                <button class="chart-btn active" type="submit"><span class="material-symbols-rounded" aria-hidden="true">add_location_alt</span> Dodaj punkt</button>
+                <button class="chart-btn active" type="submit">+ Punkt</button>
             </form>
-            <p class="location-add-hint">${renderMaterialIcon('info', 'location-add-hint__icon')} Folder to miejsce w <code>database/</code>, w którym leżą listy punktu. Zmiana nazwy punktu nie przenosi folderu — dzięki temu archiwum zostaje pod tą samą nazwą.</p>
             <div class="admin-location-list">
                 ${active.map(location => this.renderLocation(location)).join('') || '<div class="empty-products">Brak punktów w katalogu.</div>'}
             </div>
@@ -119,28 +115,15 @@ class AdminLocations {
         </button>`;
     }
 
-    handleInput(event) {
-        const form = event.target.closest('form[data-action="add-location"]');
-        if (!form) return;
-        const nameInput = form.querySelector('input[name="name"]');
-        const pathInput = form.querySelector('input[name="path"]');
-        // Dopóki człowiek sam nie poprawi folderu, podpowiadamy go z nazwy punktu.
-        if (event.target === pathInput) {
-            pathInput.dataset.autoFolder = 'false';
-            return;
-        }
-        if (event.target === nameInput && pathInput.dataset.autoFolder !== 'false') {
-            pathInput.value = slugifyLocation(nameInput.value);
-        }
-    }
-
     async handleSubmit(event) {
         if (event.target.dataset.action !== 'add-location') return;
         event.preventDefault();
         const data = new FormData(event.target);
         const name = String(data.get('name')).trim();
-        const path = String(data.get('path')).trim();
-        if (!name || !path) return;
+        const path = slugifyLocation(name);
+        if (!name || !path) {
+            return dialogService.warning('Nie udało się utworzyć folderu z tej nazwy. Użyj liter lub cyfr.', 'Nieprawidłowa nazwa punktu');
+        }
 
         if (this.findConflict(name, path)) {
             return dialogService.warning('Taki punkt (nazwa albo folder) już istnieje w katalogu.', 'Duplikat punktu');

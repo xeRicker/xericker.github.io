@@ -109,13 +109,6 @@ export function createAdminListsPage(config) {
 
         container().innerHTML = `
             <section class="${cardClass('summary', 'admin-category-card admin-list-panel')} ">
-                <div class="admin-category-head">
-                    <div class="admin-category-title">
-                        <div>
-                            <h4><span class="material-symbols-rounded" aria-hidden="true">content_paste</span> ZAPISANE LISTY</h4>
-                        </div>
-                    </div>
-                </div>
                 <div class="admin-product-list admin-list-items">
                     ${reports.map(report => renderListItem(report, selectedListKey)).join('')}
                 </div>

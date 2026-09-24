@@ -1,0 +1,29 @@
+{
+  "location": "Osiek",
+  "date": "24.09.2026",
+  "revenue": 397,
+  "cardRevenue": 124,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Bułki": 9,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Sos: Pojemniki": 1,
+    "Sos: Pokrywki": 1,
+    "Opakowania na frytki": 1,
+    "Folia": 1,
+    "Serwetki": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

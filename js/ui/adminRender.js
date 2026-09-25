@@ -381,6 +381,7 @@ class AdminRender {
             : `${delta > 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')}% średniej vs tydzień ${week.index}`;
         const flags = [
             week.isCurrent ? '<span class="weekly-flag weekly-flag--current">Bieżący</span>' : '',
+            week.isTopRevenue ? '<span class="weekly-flag weekly-flag--top">Najlepszy tydzień</span>' : '',
             week.isBest ? '<span class="weekly-flag weekly-flag--best">Najwyższa średnia</span>' : '',
             week.isWorst ? '<span class="weekly-flag weekly-flag--worst">Najniższa średnia</span>' : ''
         ].filter(Boolean).join('');

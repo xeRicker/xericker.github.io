@@ -42,7 +42,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `css/theme/palette.css` — design tokens & active palette
 - `css/*.css`, `css/components/` — per-feature and shared styles
 - `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
+- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
 - `database/` — catalogs + per-location report JSON
 
@@ -54,6 +54,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `ui/adminEmployees.js` — team catalog: add/rename/visibility/remove
 - `ui/adminLocations.js` — point catalog: add/rename/visibility/stats switch/archive-restore; `database/` folder slug is generated from the name (`slugifyLocation`), not typed by hand
 - `ui/adminPayments.js` — payments catalog: obligations/debts, kinds, due dates, recurrence, partial payments, archive; dirty-state save like the other catalogs
+- `ui/adminMarketing.js` + `services/marketing.js` + `config/marketing.js` — Marketing tab: assembles Facebook/Instagram post drafts from `database/burgers.json` presets (auto description), locations, Glovo or a promo; brand phones/hours live in the config. Copy-only, nothing is saved
 - `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips, weekly overview, payments reminder for the Utargi page
 - `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded; exposes the last summary via `getSummary()` and an `onRecalc` callback
 - `ui/payslip.js` — admin Wynagrodzenia „PASEK”: draws the calculator summary to a branded PNG payslip (canvas) and opens it in a new tab; the PASEK panel is currently removed from `admin.html`, so `setupPayslipGenerator` returns a no-op until the panel returns
@@ -130,6 +131,7 @@ Icons via `renderMaterialIcon()` — real ligature names only; a bad name render
 - Payments live in `database/payments.json` (new catalog; `{ version, updatedAt, items[] }`). Item: mutable `title`, `kind`, `contractor`, `amountTotal`, `dueDate` (ISO), `recurrence`, `note`, `archived`, plus `payments[]` partial payments `{ id, date, amount, note }`. Status and remaining amount are derived in `services/payments.js`, never stored. `PAYMENT_KINDS` entries carry an `icon` (Material Symbols ligature) rendered in the obligation list and the kind select. The Utargi page shows a reminder panel with overdue/due-soon totals and open obligations as a share of the selected period's utarg.
 - Generator form state (`localStorage: burbone_state`) expires at local end-of-day — an evening list survives a browser close, resets the next day.
 - On localhost `fetchAllData` always merges real `database/` reports with generated data for the last 3 months (`services/mockData.js`); a real report for the same location+date wins. Prod (`GitHub Pages`) never generates.
+- Marketing posts are generated in the browser and copied to the clipboard — no catalog, no persistence. Brand data (locations, phones, opening hours, base hashtags, Glovo availability) lives in `js/config/marketing.js`; burger presets come from `database/burgers.json`.
 - Site is meant to stay unindexed: `robots.txt` disallows all, both pages carry `noindex`. GitHub Pages can't send custom headers, so `X-Robots-Tag` would need a proxy/CDN in front.
 
 ## Failure Log

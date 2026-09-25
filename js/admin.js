@@ -13,6 +13,7 @@ import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolve
 import { adminEmployees } from './ui/adminEmployees.js?v=171';
 import { adminLocations } from './ui/adminLocations.js?v=174';
 import { adminPayments } from './ui/adminPayments.js?v=103';
+import { adminMarketing } from './ui/adminMarketing.js?v=2';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=168';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=102';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
@@ -99,6 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
         await adminPayments.init(document.getElementById('adminPaymentsPage'));
         paymentsCatalog = adminPayments.getCatalog();
+        await adminMarketing.init(document.getElementById('adminMarketingPage'));
         adminListsPage = createAdminListsPage({
             getAllData: () => allData,
             getProductCatalog: () => productCatalog,

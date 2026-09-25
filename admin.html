@@ -7,7 +7,7 @@
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=192">
+    <link rel="stylesheet" href="style.css?v=194">
 </head>
 <body class="admin-page">
 
@@ -96,6 +96,10 @@
         <button class="admin-page-tab" type="button" data-admin-tab="payroll" role="tab" aria-selected="false">
             <span class="material-symbols-rounded" aria-hidden="true">badge</span>
             Wynagrodzenia
+        </button>
+        <button class="admin-page-tab" type="button" data-admin-tab="marketing" role="tab" aria-selected="false">
+            <span class="material-symbols-rounded" aria-hidden="true">campaign</span>
+            Marketing
         </button>
     </div>
 
@@ -261,6 +265,7 @@
     <div id="adminEmployeesPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="employees" hidden></div>
     <div id="adminLocationsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="locations" hidden></div>
     <div id="adminPaymentsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="payments" hidden></div>
+    <div id="adminMarketingPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="marketing" hidden></div>
 
     <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
@@ -312,6 +317,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=194"></script>
+<script type="module" src="js/admin.js?v=196"></script>
 </body>
 </html>

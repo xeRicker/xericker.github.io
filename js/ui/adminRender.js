@@ -347,6 +347,7 @@ class AdminRender {
         }
 
         const metric = viewMode === 'total' ? '' : ` · ${this.getViewLabel(viewMode)}`;
+        const monthTotal = weeks.reduce((sum, week) => sum + week.total, 0);
         container.innerHTML = `
             <div class="${cardClass('chart', 'chart-card weekly-overview-card')}">
                 <div class="section-heading">
@@ -354,7 +355,7 @@ class AdminRender {
                     <p>${escapeHtml(this.buildWeeklySummary(weeks))}</p>
                 </div>
                 <div class="weekly-grid">
-                    ${weeks.map(week => this.buildWeeklyCard(week, activeKey)).join('')}
+                    ${weeks.map(week => this.buildWeeklyCard(week, activeKey, monthTotal)).join('')}
                 </div>
             </div>
         `;
@@ -372,39 +373,35 @@ class AdminRender {
         return `${trend}${leader}`;
     }
 
-    buildWeeklyCard(week, activeKey) {
+    buildWeeklyCard(week, activeKey, monthTotal) {
         const delta = week.deltaPercent;
         const tone = delta === null ? 'is-neutral' : delta > 0.5 ? 'is-positive' : delta < -0.5 ? 'is-negative' : 'is-neutral';
         const deltaText = delta === null
-            ? 'Pierwszy tydzień'
-            : `${delta > 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')}% średniej dziennej vs tydzień ${week.index}`;
+            ? ''
+            : `${delta > 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')}% średniej vs tydzień ${week.index}`;
         const flags = [
             week.isCurrent ? '<span class="weekly-flag weekly-flag--current">Bieżący</span>' : '',
-            week.isBest ? '<span class="weekly-flag weekly-flag--best">Najwyższa średnia</span>' : ''
+            week.isBest ? '<span class="weekly-flag weekly-flag--best">Najwyższa średnia</span>' : '',
+            week.isWorst ? '<span class="weekly-flag weekly-flag--worst">Najniższa średnia</span>' : ''
         ].filter(Boolean).join('');
         const isActive = String(week.key) === String(activeKey);
         const days = `${week.days} ${week.days === 1 ? 'dzień' : 'dni'}`;
+        const progress = Math.min(100, Math.round((week.days / 7) * 100));
+        const share = monthTotal ? Math.round((week.total / monthTotal) * 100) : 0;
 
         return `
-            <button type="button" class="weekly-card ${isActive ? 'is-active' : ''}" data-week-key="${escapeHtml(week.key)}">
+            <button type="button" class="weekly-card ${isActive ? 'is-active' : ''} ${week.isBest ? 'is-best' : ''}" data-week-key="${escapeHtml(week.key)}">
                 <span class="weekly-card__head">
                     <span class="weekly-card__label">Tydzień ${week.index + 1}</span>
                     <span class="weekly-card__range">${escapeHtml(week.start)}–${escapeHtml(week.end)} · ${days}</span>
                 </span>
                 <span class="weekly-card__flags">${flags}</span>
                 <strong class="weekly-card__total">${formatMoney(week.total)}</strong>
-                <span class="weekly-card__avg">średnio ${formatMoney(week.averageDay)} / dzień</span>
-                <span class="weekly-card__delta ${tone}">${escapeHtml(deltaText)}</span>
-                <span class="weekly-card__verdict">${escapeHtml(this.buildWeeklyVerdict(week))}</span>
+                <span class="weekly-card__avg">średnio ${formatMoney(week.averageDay)} / dzień · ${share}% miesiąca</span>
+                ${delta === null ? '' : `<span class="weekly-card__delta ${tone}">${escapeHtml(deltaText)}</span>`}
+                <span class="weekly-card__bar" aria-hidden="true"><i style="width:${progress}%"></i></span>
             </button>
         `;
-    }
-
-    buildWeeklyVerdict(week) {
-        if (week.deltaPercent === null) return 'Początek miesiąca.';
-        if (week.deltaPercent > 0.5) return `Wyższa średnia dzienna niż w tygodniu ${week.index}.`;
-        if (week.deltaPercent < -0.5) return `Niższa średnia dzienna niż w tygodniu ${week.index}.`;
-        return `Średnia dzienna na podobnym poziomie co tydzień ${week.index}.`;
     }
 
     renderPaymentsReminder(container, { summary, upcoming, revenueTotal, itemCount }) {

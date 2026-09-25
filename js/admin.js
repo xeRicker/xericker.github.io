@@ -1,7 +1,7 @@
 import { apiService } from './services/api.js?v=169';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=171';
+import { adminRender } from './ui/adminRender.js?v=173';
 import { adminProducts } from './ui/adminProducts.js?v=166';
 import { createAdminListsPage } from './ui/adminLists.js?v=165';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';
@@ -627,6 +627,12 @@ function buildWeekSummaries() {
     const pool = comparable.length ? comparable : weeks;
     const best = pool.reduce((leader, week) => (!leader || week.averageDay > leader.averageDay ? week : leader), null);
     if (best && weeks.length > 1) best.isBest = true;
+
+    const scored = pool.filter(week => !week.isCurrent);
+    if (scored.length > 1) {
+        const worst = scored.reduce((laggard, week) => (week.averageDay < laggard.averageDay ? week : laggard), scored[0]);
+        if (worst !== best) worst.isWorst = true;
+    }
 
     return weeks;
 }

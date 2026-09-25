@@ -1,9 +1,12 @@
+import { normalizeVariant, noticeHtml } from './notice.js?v=101';
+
 const enhancedControls = new WeakMap();
 let controlsBootstrapped = false;
 let activeFloatingControl = null;
 
 const pad = value => String(value).padStart(2, '0');
-const weekDays = ['Pn', 'Wt', 'Sr', 'Cz', 'Pt', 'So', 'Nd'];
+const weekDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'];
+const NOTICE_VARIANTS = ['info', 'success', 'danger', 'warning', 'muted', 'loading'];
 
 export function enhanceCustomControls(root = document) {
     if (!controlsBootstrapped) {
@@ -571,24 +574,9 @@ export const dialogService = {
     }
 };
 
-const NOTICE_ICONS = {
-    info: 'info',
-    success: 'check_circle',
-    danger: 'error',
-    warning: 'warning',
-    muted: 'info',
-    loading: 'progress_activity'
-};
-
-// Jeden wygląd komunikatu w dialogu: kolor i ikona wg wariantu, ten sam co inline.
 function buildDialogNotice(notice) {
-    const variant = NOTICE_ICONS[notice.variant] ? notice.variant : 'info';
-    return `
-        <div class="notice notice--${variant} notice--dialog" role="alert">
-            <span class="notice__icon material-symbols-rounded" aria-hidden="true">${NOTICE_ICONS[variant]}</span>
-            <div class="notice__body"><span class="notice__text">${notice.text}</span></div>
-        </div>
-    `;
+    const variant = normalizeVariant(notice.variant);
+    return `<div class="notice notice--${variant} notice--dialog" role="alert">${noticeHtml({ variant, text: notice.text })}</div>`;
 }
 
 function buildDialogField(input) {
@@ -621,11 +609,11 @@ function openDialog(config) {
     const dialog = layer.querySelector('.custom-dialog');
     const notice = config.notice?.text ? config.notice : null;
     const input = config.input;
-    const variant = notice ? (NOTICE_ICONS[notice.variant] ? notice.variant : 'info') : null;
+    const variant = notice ? normalizeVariant(notice.variant) : null;
     dialog.classList.toggle('custom-dialog--wide', Boolean(input?.action));
     dialog.classList.toggle('custom-dialog--prominent', config.size === 'prominent');
     if (variant) dialog.classList.add(`custom-dialog--${variant}`);
-    else dialog.classList.remove('custom-dialog--info', 'custom-dialog--success', 'custom-dialog--danger', 'custom-dialog--warning', 'custom-dialog--muted', 'custom-dialog--loading');
+    else dialog.classList.remove(...NOTICE_VARIANTS.map(name => `custom-dialog--${name}`));
     dialog.innerHTML = `
         <h3>${config.title}</h3>
         <p>${config.message}</p>

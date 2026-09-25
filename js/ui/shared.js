@@ -30,17 +30,17 @@ export const uiShared = {
 
         icon.style.color = getDesignToken('--brand-primary', '#D4521A');
         icon.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">content_copy</span>';
-        title.innerText = saveFailed ? 'LISTA NIE ZOSTAŁA WYSŁANA' : 'LISTA GOTOWA!';
+        title.innerText = saveFailed ? 'Lista nie została wysłana' : 'Lista gotowa!';
         message.innerText = saveFailed
             ? `GitHub nie zapisał listy. Możesz mimo to ją skopiować. ${saveError.message || ''}`
             : 'Kliknij poniżej, aby skopiować i wklej na Messengerze.';
-        btn.innerText = "SKOPIUJ LISTĘ";
+        btn.innerText = "Skopiuj listę";
         btn.style.background = "";
 
         btn.onclick = () => {
             navigator.clipboard.writeText(text).catch(() => fallbackCopyToClipboard(text));
-            btn.innerText = "SKOPIOWANO!";
-            title.innerText = 'LISTA SKOPIOWANA';
+            btn.innerText = "Skopiowano!";
+            title.innerText = 'Lista skopiowana';
             if (saveFailed) message.innerText = 'Lista została skopiowana, ale nie została wysłana do GitHub. Spróbuj zapisać ją później.';
             btn.style.background = getDesignToken('--success-color', '#7DCE82');
             icon.style.color = getDesignToken('--success-color', '#7DCE82');

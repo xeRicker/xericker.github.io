@@ -1,9 +1,7 @@
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { cardClass } from './components/Card.js';
 import { resolveEmployee } from '../services/employees.js';
-import { PAYMENT_STATUSES, formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=1';
-
-const REMINDER_STATUS_ICONS = { overdue: 'warning', partial: 'pending', due: 'schedule', paid: 'task_alt' };
+import { formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=101';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',
@@ -167,7 +165,7 @@ class AdminRender {
     buildCombinedDatasets(sorted, type, locationColors, options) {
         const values = sorted.map(day => this.getMetricValue(day, options.viewMode));
         const datasets = [{
-            label: `ŁĄCZNY • ${this.getViewLabel(options.viewMode)}`,
+            label: `Razem • ${this.getViewLabel(options.viewMode)}`,
             data: values,
             backgroundColor: locationColors[0],
             borderColor: locationColors[0],
@@ -181,7 +179,7 @@ class AdminRender {
         if (values.length >= MOVING_AVERAGE_MIN_POINTS) {
             datasets.push({
                 type: 'line',
-                label: `ŚREDNIA ${MOVING_AVERAGE_WINDOW} DNI`,
+                label: `Średnia ${MOVING_AVERAGE_WINDOW} dni`,
                 data: this.movingAverage(values, MOVING_AVERAGE_WINDOW),
                 borderColor: getDesignToken('--text-muted', '#9a9a9a'),
                 borderDash: [6, 4],
@@ -227,7 +225,7 @@ class AdminRender {
     }
 
     renderHeatmapGrid(grid, data, year, month, options) {
-        grid.innerHTML = ['PONIEDZIAŁEK', 'WTOREK', 'ŚRODA', 'CZWARTEK', 'PIĄTEK', 'SOBOTA', 'NIEDZIELA']
+        grid.innerHTML = ['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Nd']
             .map(day => `<div class="heatmap-day-header">${day}</div>`)
             .join('');
 
@@ -352,7 +350,7 @@ class AdminRender {
         container.innerHTML = `
             <div class="${cardClass('chart', 'chart-card weekly-overview-card')}">
                 <div class="section-heading">
-                    <h3>${renderMaterialIcon('calendar_view_week')} TYGODNIE${metric}</h3>
+                    <h3>${renderMaterialIcon('calendar_view_week')} Tygodnie${metric}</h3>
                     <p>${escapeHtml(this.buildWeeklySummary(weeks))}</p>
                 </div>
                 <div class="weekly-grid">
@@ -387,7 +385,7 @@ class AdminRender {
         return `
             <button type="button" class="weekly-card ${isActive ? 'is-active' : ''}" data-week-key="${escapeHtml(week.key)}">
                 <span class="weekly-card__head">
-                    <span class="weekly-card__label">TYDZIEŃ ${week.index + 1}</span>
+                    <span class="weekly-card__label">Tydzień ${week.index + 1}</span>
                     <span class="weekly-card__range">${escapeHtml(week.start)}–${escapeHtml(week.end)}</span>
                 </span>
                 <span class="weekly-card__flags">${flags}</span>
@@ -409,8 +407,8 @@ class AdminRender {
 
     renderPaymentsReminder(container, { summary, upcoming, revenueTotal, itemCount }) {
         if (!container) return;
-        const heading = `<h3>${renderMaterialIcon('receipt_long')} OPŁATY</h3>`;
-        const more = '<button class="btn-back payments-reminder__more" type="button" data-open-payments>ZOBACZ WSZYSTKIE</button>';
+        const heading = `<h3>${renderMaterialIcon('receipt_long')} Opłaty</h3>`;
+        const more = '<button class="btn-back payments-reminder__more" type="button" data-open-payments>Zobacz wszystkie</button>';
         const hasItems = itemCount > 0 || summary.openCount > 0 || summary.paidThisMonth > 0;
 
         if (!hasItems) {
@@ -418,7 +416,7 @@ class AdminRender {
                 <div class="${cardClass('chart', 'chart-card payments-reminder payments-reminder--positive')}">
                     <div class="section-heading">${heading}</div>
                     <div class="payments-reminder__state payments-reminder__state--ok">${renderMaterialIcon('task_alt')} Brak zobowiązań — wszystko pod kontrolą.</div>
-                    <button class="btn-back payments-reminder__more" type="button" data-open-payments>DODAJ</button>
+                    <button class="btn-back payments-reminder__more" type="button" data-open-payments>Dodaj opłatę</button>
                 </div>
             `;
             return;
@@ -442,12 +440,12 @@ class AdminRender {
             : `Otwarte zobowiązania to ${share.toFixed(1)}% utargu tego okresu.`;
         const shareTone = summary.overdueCount ? 'is-negative' : share !== null && share > 60 ? 'is-watch' : 'is-positive';
 
-        const openHeading = `<h3>${summary.overdueCount ? renderMaterialIcon('warning', 'is-alert') : renderMaterialIcon('receipt_long')} OPŁATY</h3>`;
+        const openHeading = `<h3>${summary.overdueCount ? renderMaterialIcon('warning', 'is-alert') : renderMaterialIcon('receipt_long')} Opłaty</h3>`;
         const rows = upcoming.length
             ? `<div class="payments-reminder__table table-responsive">
                     <table>
                         <thead>
-                            <tr><th>Zobowiązanie</th><th>Termin</th><th>Status</th><th class="payments-reminder__amount-col">Kwota</th></tr>
+                            <tr><th>Zobowiązanie</th><th class="payments-reminder__amount-col">Kwota</th><th>Termin płatności</th></tr>
                         </thead>
                         <tbody>${upcoming.map(view => this.buildReminderRow(view)).join('')}</tbody>
                     </table>
@@ -479,10 +477,9 @@ class AdminRender {
     }
 
     buildReminderRow(view) {
-        const status = PAYMENT_STATUSES[view.status] || PAYMENT_STATUSES.due;
-        const icon = REMINDER_STATUS_ICONS[view.status] || 'schedule';
-        const dueTone = view.daysLeft !== null && view.daysLeft < 0 ? 'is-negative' : '';
+        const dueTone = view.daysLeft === null || view.daysLeft > 7 ? '' : view.daysLeft < 0 ? 'is-negative' : 'is-watch';
         const subtitle = [getPaymentKindLabel(view.kind), view.contractor].filter(Boolean).join(' · ');
+        const due = view.dueDate ? `Termin: ${formatPaymentDate(view.dueDate)}` : 'Bez terminu';
         return `
             <tr>
                 <td>
@@ -491,19 +488,22 @@ class AdminRender {
                         <span class="cell-secondary">${escapeHtml(subtitle)}</span>
                     </div>
                 </td>
-                <td class="${dueTone}">${escapeHtml(this.buildReminderDue(view))}</td>
-                <td><span class="payment-badge ${status.tone}">${renderMaterialIcon(icon)} ${escapeHtml(status.label)}</span></td>
                 <td class="payments-reminder__amount">${formatMoney(view.amountLeft)}</td>
+                <td>
+                    <div class="payments-reminder__due ${dueTone}">
+                        <span class="cell-primary">${escapeHtml(this.buildReminderDue(view))}</span>
+                        <span class="cell-secondary">${escapeHtml(due)}</span>
+                    </div>
+                </td>
             </tr>
         `;
     }
 
     buildReminderDue(view) {
         if (!view.dueDateObj) return 'Bez terminu';
-        const date = formatPaymentDate(view.dueDate);
-        if (view.daysLeft === 0) return `dziś · ${date}`;
-        if (view.daysLeft < 0) return `${Math.abs(view.daysLeft)} dni po terminie · ${date}`;
-        return `za ${view.daysLeft} dni · ${date}`;
+        if (view.daysLeft === 0) return 'Dziś';
+        if (view.daysLeft < 0) return `${Math.abs(view.daysLeft)} dni po terminie`;
+        return `Za ${view.daysLeft} dni`;
     }
 
     buildDayContextHtml(day) {
@@ -657,20 +657,20 @@ class AdminRender {
                     </div>
                     ${options.viewMode === 'total' ? '' : `
                         <div class="tt-big-row">
-                            <span class="tt-label">UTARG</span>
+                            <span class="tt-label">Utarg</span>
                             <span class="tt-value-sub">${formatMoney(data.total)}</span>
                         </div>
                     `}
                     <div class="tt-big-row">
-                        <span class="tt-label">KARTY</span>
+                        <span class="tt-label">Karty</span>
                         <span class="tt-value-sub">${formatMoney(data.cardTotal)}</span>
                     </div>
                     <div class="tt-big-row">
-                        <span class="tt-label">GLOVO</span>
+                        <span class="tt-label">Glovo</span>
                         <span class="tt-value-sub">${formatMoney(this.getGlovoDisplayValue(data))}</span>
                     </div>
                     <div class="tt-big-row">
-                        <span class="tt-label">GOTÓWKA</span>
+                        <span class="tt-label">Gotówka</span>
                         <span class="tt-value-sub">${formatMoney(data.cashDeskTotal)}</span>
                     </div>
                 </div>
@@ -707,7 +707,7 @@ class AdminRender {
 
         return `
             <div class="tt-divider"></div>
-            <div class="tt-label" style="margin-bottom:6px;">ZMIANY</div>
+            <div class="tt-label" style="margin-bottom:6px;">Zmiany</div>
             <div class="tt-shifts-list">
                 ${shifts.map(shift => `
                     <div class="tt-shift-item">
@@ -739,20 +739,20 @@ class AdminRender {
                     </div>
                     ${options.viewMode === 'total' ? '' : `
                         <div class="tt-big-row">
-                            <span class="tt-label">UTARG</span>
+                            <span class="tt-label">Utarg</span>
                             <span class="tt-value-sub">${formatMoney(location.total)}</span>
                         </div>
                     `}
                     <div class="tt-big-row">
-                        <span class="tt-label">KARTY</span>
+                        <span class="tt-label">Karty</span>
                         <span class="tt-value-sub">${formatMoney(location.card)}</span>
                     </div>
                     <div class="tt-big-row">
-                        <span class="tt-label">GLOVO</span>
+                        <span class="tt-label">Glovo</span>
                         <span class="tt-value-sub">${formatMoney(this.getMetricValue(location, 'glovo'))}</span>
                     </div>
                     <div class="tt-big-row">
-                        <span class="tt-label">GOTÓWKA</span>
+                        <span class="tt-label">Gotówka</span>
                         <span class="tt-value-sub">${formatMoney(location.cashDesk)}</span>
                     </div>
                 </div>
@@ -917,17 +917,14 @@ class AdminRender {
     }
 
     buildDatasetLabel(location, options) {
-        if (options.viewMode === 'cards') return `${location.toUpperCase()} • KARTY`;
-        if (options.viewMode === 'glovo') return `${location.toUpperCase()} • GLOVO`;
-        if (options.viewMode === 'cash') return `${location.toUpperCase()} • GOTÓWKA`;
-        return `${location.toUpperCase()} • UTARG`;
+        return `${location} • ${this.getViewLabel(options.viewMode)}`;
     }
 
     getViewLabel(viewMode) {
-        if (viewMode === 'cards') return 'KARTY';
-        if (viewMode === 'glovo') return 'GLOVO';
-        if (viewMode === 'cash') return 'GOTÓWKA';
-        return 'UTARG';
+        if (viewMode === 'cards') return 'Karty';
+        if (viewMode === 'glovo') return 'Glovo';
+        if (viewMode === 'cash') return 'Gotówka';
+        return 'Utarg';
     }
 
     formatPercent(value, total) {

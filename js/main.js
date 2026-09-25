@@ -1,19 +1,19 @@
 import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=62';
+import { mainRender } from './ui/mainRender.js?v=162';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js?v=69';
+import { apiService } from './services/api.js?v=169';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=65';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=61';
-import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=66';
-import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=67';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=165';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=172';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=161';
+import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=166';
+import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=167';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=62';
-import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
-import { noticeService } from './ui/components/notice.js?v=1';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=162';
+import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=101';
+import { noticeService } from './ui/components/notice.js?v=101';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -68,7 +68,7 @@ function setupEvents() {
 async function openLocationSheet() {
     const locations = getSelectableLocations(locationCatalog);
     if (!locations.length) {
-        await dialogService.warning('Brak punktów z włączoną widocznością. Dodaj punkt w panelu admina (zakładka PUNKTY).', 'Nie ma punktu do wyboru');
+        await dialogService.warning('Brak punktów z włączoną widocznością. Dodaj punkt w panelu admina (zakładka Punkty).', 'Nie ma punktu do wyboru');
         return;
     }
     uiShared.showModal('locationSheet');

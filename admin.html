@@ -6,8 +6,8 @@
     <meta name="googlebot" content="noindex, nofollow">
     <title>Burbone Admin</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=90">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=191">
 </head>
 <body class="admin-page">
 
@@ -25,7 +25,7 @@
                 <span class="burger-layer burger-layer--bottom"></span>
             </div>
         </div>
-        <div class="loader-text">ŁADOWANIE DANYCH</div>
+        <div class="loader-text">Ładowanie danych</div>
         <div class="loader-subtext">Przygotowywanie list i statystyk...</div>
         <div class="loader-progress-track">
             <div class="loader-progress-bar"></div>
@@ -56,14 +56,14 @@
                 </label>
                 <button id="loadAllDataBtn" class="btn-back btn-back--ghost admin-load-all-btn" type="button">
                 <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
-                ZAŁADUJ
+                Załaduj dane
                 </button>
                 <span id="dataLoadInfo" class="admin-load-info" role="status">Załadowane: — / dostępne: — miesięcy</span>
                 <span id="dataLoadStatus" class="admin-load-status" role="alert" hidden></span>
             </div>
             <a href="index.html" id="adminBackBtn" class="btn-back">
                 <span class="material-symbols-rounded" aria-hidden="true">logout</span>
-                WYLOGUJ
+                Wyloguj
             </a>
         </div>
     </div>
@@ -103,7 +103,7 @@
         <div class="admin-period-month">
             <label for="monthFilter" class="period-label">
                 <span class="material-symbols-rounded" aria-hidden="true">calendar_month</span>
-                MIESIĄC
+                Miesiąc
             </label>
             <div class="admin-month-select">
                     <select id="monthFilter" aria-label="Miesiąc list"></select>
@@ -113,7 +113,7 @@
         <div class="admin-period-weeks">
             <span class="period-label">
                 <span class="material-symbols-rounded" aria-hidden="true">date_range</span>
-                TYDZIEŃ
+                Tydzień
             </span>
             <div id="weekTabsContainer" class="week-tabs"></div>
         </div>
@@ -125,15 +125,15 @@
     <div class="view-toggle animate-enter delay-2" data-admin-page="revenue">
         <button class="view-btn active" data-view="total">
             <span class="material-symbols-rounded" aria-hidden="true">add</span>
-            UTARG
+            Utarg
         </button>
         <button class="view-btn" data-view="cards">
             <span class="material-symbols-rounded" aria-hidden="true">credit_card</span>
-            KARTY
+            Karty
         </button>
         <button class="view-btn" data-view="glovo">
             <span class="material-symbols-rounded" aria-hidden="true">shopping_cart</span>
-            GLOVO
+            Glovo
         </button>
     </div>
 
@@ -141,18 +141,18 @@
         <div class="card card--chart chart-card chart-card--feature">
             <div class="chart-header">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> WIZUALIZACJA</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">monitoring</span> Wizualizacja</h3>
                 </div>
                 <div class="chart-controls">
                     <label class="chart-control-field">
-                        <span>POKAZUJ</span>
+                        <span>Pokazuj</span>
                         <select id="chartDisplaySelect" aria-label="Zakres danych na wykresie">
                             <option value="combined">Cała firma razem</option>
                             <option value="split">Osobno każdy punkt</option>
                         </select>
                     </label>
                     <label class="chart-control-field">
-                        <span>TYP WYKRESU</span>
+                        <span>Typ wykresu</span>
                         <select id="chartTypeSelect" aria-label="Typ wykresu">
                             <option value="bar">Słupki</option>
                             <option value="line">Linia</option>
@@ -160,11 +160,11 @@
                     </label>
                     <div id="chartRangeControls" class="chart-range" hidden>
                         <label class="chart-range__field">
-                            <span>OD</span>
+                            <span>Od</span>
                             <select id="chartRangeFrom" aria-label="Początek okresu wykresu"></select>
                         </label>
                         <label class="chart-range__field">
-                            <span>DO</span>
+                            <span>Do</span>
                             <select id="chartRangeTo" aria-label="Koniec okresu wykresu"></select>
                         </label>
                     </div>
@@ -181,7 +181,7 @@
 
         <div class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="revenue">
             <div class="section-heading section-heading--stack">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> KALENDARZ</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">calendar_view_month</span> Kalendarz</h3>
             </div>
             <div id="heatmapContainer" class="heatmap-months"></div>
             <div id="heatmapPager" class="admin-pager" hidden></div>
@@ -190,7 +190,7 @@
     <div class="card card--chart chart-card animate-enter delay-3 calc-card u-card-spacing" data-admin-page="payroll" hidden>
         <div class="chart-header">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">badge</span> PRACOWNIK</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">badge</span> Pracownik</h3>
             </div>
         </div>
         <div class="calc-grid">
@@ -221,14 +221,14 @@
             <div class="calc-res-item">
                 <h4>
                     <span class="calc-icon material-symbols-rounded" aria-hidden="true">schedule</span>
-                    GODZINY
+                    Godziny
                 </h4>
                 <p id="resHours">0 h</p>
             </div>
             <div class="calc-res-item">
                 <h4>
                     <span class="calc-icon material-symbols-rounded" aria-hidden="true">payments</span>
-                    WYPŁATA
+                    Wypłata
                 </h4>
                 <p id="resMoney" class="money">0 zł</p>
             </div>
@@ -239,7 +239,7 @@
     <div class="card card--table table-card animate-enter delay-3 u-card-spacing" data-admin-page="payroll" hidden>
         <div class="table-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">schedule</span> GODZINY</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">schedule</span> Godziny</h3>
             </div>
         </div>
         <div class="table-responsive">
@@ -265,19 +265,19 @@
     <div id="adminListsPage" class="card card--chart chart-card animate-enter delay-3 u-card-spacing" data-admin-page="lists" hidden>
         <div class="admin-lists-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">folder_copy</span> LISTY</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">folder_copy</span> Listy</h3>
             </div>
             <div class="admin-lists-filters">
                 <label class="admin-filter-field">
-                    <span>MIESIĄC</span>
+                    <span>Miesiąc</span>
                     <select id="listMonthFilter" class="calc-input" aria-label="Miesiąc list"></select>
                 </label>
                 <label class="admin-filter-field">
-                    <span>PUNKT</span>
+                    <span>Punkt</span>
                     <select id="listLocationFilter" class="calc-input" aria-label="Punkt listy"></select>
                 </label>
                 <label class="admin-filter-field admin-filter-field--search">
-                    <span>SZUKAJ</span>
+                    <span>Szukaj</span>
                     <input id="listSearchInput" type="search" class="calc-input" placeholder="Data, punkt lub liczba produktów" aria-label="Szukaj listy, daty lub punktu">
                 </label>
             </div>
@@ -288,10 +288,10 @@
     <div class="card card--table table-card animate-enter delay-3" data-admin-page="revenue">
         <div class="table-head">
             <div class="section-heading">
-                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> LISTA</h3>
+                <h3><span class="material-symbols-rounded" aria-hidden="true">today</span> Lista</h3>
             </div>
         </div>
-        <div id="loading" class="daily-report-loading"><span class="material-symbols-rounded" aria-hidden="true">progress_activity</span> ŁADOWANIE DANYCH...</div>
+        <div id="loading" class="daily-report-loading"><span class="material-symbols-rounded" aria-hidden="true">progress_activity</span> Ładowanie danych…</div>
         <div class="table-responsive">
             <table id="revenueTable" style="display:none;">
                 <thead>
@@ -312,6 +312,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=93"></script>
+<script type="module" src="js/admin.js?v=193"></script>
 </body>
 </html>

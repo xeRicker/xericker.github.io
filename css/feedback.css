@@ -166,9 +166,9 @@ input[type=number] {
 .burger-layer--top {
     height: 13px;
     width: 100%;
-    background: linear-gradient(180deg, #ff8a4c, var(--primary-color));
+    background: linear-gradient(180deg, var(--primary-hover), var(--primary-color));
     border-radius: 16px 16px 4px 4px;
-    box-shadow: 0 2px 8px rgba(212, 82, 26, 0.45);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary-color) 45%, transparent);
     animation-delay: 0s;
 }
 
@@ -176,7 +176,7 @@ input[type=number] {
     height: 6px;
     width: 88%;
     margin: 0 auto;
-    background: var(--success-color, #27AE60);
+    background: var(--success-color);
     border-radius: 3px;
     animation-delay: 0.1s;
 }
@@ -185,7 +185,7 @@ input[type=number] {
     height: 5px;
     width: 92%;
     margin: 0 auto;
-    background: var(--glovo-color, #f2cc38);
+    background: var(--glovo-color);
     border-radius: 2px;
     animation-delay: 0.2s;
     transform: rotate(-1.5deg);
@@ -195,7 +195,7 @@ input[type=number] {
     height: 10px;
     width: 94%;
     margin: 0 auto;
-    background: linear-gradient(180deg, #8B3A2B, #5C241B);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary-color) 42%, black), color-mix(in srgb, var(--primary-pressed) 46%, black));
     border-radius: 4px;
     animation-delay: 0.3s;
 }
@@ -214,7 +214,6 @@ input[type=number] {
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: 1.5px;
-    text-transform: uppercase;
     margin-bottom: 6px;
     animation: loader-text-shimmer 2s infinite ease-in-out;
 }
@@ -229,7 +228,7 @@ input[type=number] {
 .loader-progress-track {
     width: 130px;
     height: 3px;
-    background: rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
     border-radius: 999px;
     margin: 0 auto;
     overflow: hidden;
@@ -271,7 +270,7 @@ input[type=number] {
     }
     50% {
         opacity: 1;
-        color: #ffffff;
+        color: var(--text-primary);
     }
 }
 
@@ -286,8 +285,8 @@ input[type=number] {
 
 #customTooltip {
     position: absolute;
-    background: rgba(18, 18, 18, 0.98);
-    border: 1px solid #333;
+    background: color-mix(in srgb, var(--surface-color) 98%, transparent);
+    border: 1px solid var(--border-color);
     border-left: 4px solid var(--primary-color);
     box-shadow: 0 10px 40px rgba(0,0,0,0.8);
     padding: 0;
@@ -301,32 +300,32 @@ input[type=number] {
 .tt-inner { padding: 16px; }
 
 .tt-header {
-    font-size: 16px; color: #fff; margin-bottom: 12px;
-    border-bottom: 1px solid #333; padding-bottom: 8px;
+    font-size: 16px; color: var(--text-primary); margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
     display: flex; justify-content: space-between; align-items: center;
     font-family: var(--font-heading);
 }
-.tt-day { font-size: 16px; color: #888; font-weight: normal; background: #222; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+.tt-day { font-size: 16px; color: var(--text-muted); font-weight: normal; background: var(--surface-raised); padding: 2px 6px; border-radius: 4px; }
 
 .tt-main-stats { margin-bottom: 15px; }
 .tt-big-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
-.tt-label { font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; font-family: var(--font-heading); }
+.tt-label { font-size: 12px; color: var(--text-muted); font-weight: bold; font-family: var(--font-heading); }
 .tt-value-main { font-size: 20px; font-weight: 700; color: var(--primary-color); font-family: var(--font-body); }
-.tt-value-sub { font-size: 14px; color: #ccc; font-family: var(--font-body); }
+.tt-value-sub { font-size: 14px; color: var(--text-secondary); font-family: var(--font-body); }
 
-.tt-divider { height: 1px; background: #333; margin: 10px 0; }
+.tt-divider { height: 1px; background: var(--border-color); margin: 10px 0; }
 
 .tt-locations-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.tt-loc-col h5 { margin: 0 0 6px 0; font-size: 11px; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0; }
-.tt-loc-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; color: #bbb; }
-.tt-loc-row span:last-child { color: white; font-weight: 500; }
+.tt-loc-col h5 { margin: 0 0 6px 0; font-size: 11px; color: var(--primary-color); letter-spacing: 0; }
+.tt-loc-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; color: var(--text-secondary); }
+.tt-loc-row span:last-child { color: var(--text-primary); font-weight: 500; }
 
 .tt-shifts-list { margin-top: 5px; }
 .tt-shift-item {
     display: flex; justify-content: space-between; align-items: center;
-    font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #333;
+    font-size: 12px; padding: 4px 0; border-bottom: 1px dashed var(--border-color);
 }
 .tt-shift-item:last-child { border-bottom: none; }
-.tt-shift-name { color: #fff; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.tt-shift-name { color: var(--text-primary); font-weight: 500; display: flex; align-items: center; gap: 6px; }
 .tt-shift-dot { width: 6px; height: 6px; background: var(--primary-color); border-radius: 50%; display: inline-block; }
-.tt-shift-time { color: #888; font-family: var(--font-body); }
+.tt-shift-time { color: var(--text-muted); font-family: var(--font-body); }

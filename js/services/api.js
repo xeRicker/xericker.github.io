@@ -1,8 +1,8 @@
 import { GITHUB_CONFIG } from '../config/config.js';
 import { isLocalhost } from '../utils.js';
 import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName, getReportKey } from './reportDates.js';
-import { generateMockReports } from './mockData.js?v=1';
-import { reportCache } from './reportCache.js?v=1';
+import { generateMockReports } from './mockData.js?v=101';
+import { reportCache } from './reportCache.js?v=101';
 
 const FILE_FETCH_CONCURRENCY = 10;
 

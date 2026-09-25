@@ -1,21 +1,21 @@
-import { apiService } from './services/api.js?v=69';
+import { apiService } from './services/api.js?v=169';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=69';
-import { adminProducts } from './ui/adminProducts.js?v=65';
-import { createAdminListsPage } from './ui/adminLists.js?v=65';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=65';
-import { setupPayslipGenerator } from './ui/payslip.js?v=2';
+import { adminRender } from './ui/adminRender.js?v=169';
+import { adminProducts } from './ui/adminProducts.js?v=165';
+import { createAdminListsPage } from './ui/adminLists.js?v=165';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=165';
+import { setupPayslipGenerator } from './ui/payslip.js?v=102';
 import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=72';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=62';
-import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=67';
-import { adminEmployees } from './ui/adminEmployees.js?v=70';
-import { adminLocations } from './ui/adminLocations.js?v=73';
-import { adminPayments } from './ui/adminPayments.js?v=2';
-import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=68';
-import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=1';
-import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=1';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=172';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=162';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=167';
+import { adminEmployees } from './ui/adminEmployees.js?v=170';
+import { adminLocations } from './ui/adminLocations.js?v=173';
+import { adminPayments } from './ui/adminPayments.js?v=102';
+import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=168';
+import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=101';
+import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=101';
 
 const DEFAULT_DATA_MONTHS = 1;
 const REVENUE_PAGE_SIZE = 14;
@@ -201,7 +201,7 @@ async function loadFullDataInBackground() {
     if (!selectedRange && isFullDataLoaded) return;
     isLoadingFullData = true;
     setDataLoadStatus('', '');
-    setLoadAllButtonState(button, 'Pobieranie 0%', true);
+    setLoadAllButtonState(button, 'Pobieranie danych…', true);
     if (topProgressBar) {
         topProgressBar.hidden = false;
         topProgressBar.style.width = '5%';
@@ -212,7 +212,7 @@ async function loadFullDataInBackground() {
             recentMonths: selectedRange || null,
             onMeta: updateDataLoadInfo,
             onProgress: progress => {
-                setLoadAllButtonState(button, `Pobieranie ${progress.percent}%`, true);
+                setLoadAllButtonState(button, 'Pobieranie danych…', true);
                 if (topProgressBar) {
                     topProgressBar.style.width = `${Math.max(5, progress.percent)}%`;
                 }
@@ -229,7 +229,7 @@ async function loadFullDataInBackground() {
         if (topProgressBar) topProgressBar.style.width = '100%';
         isFullDataLoaded = !selectedRange || loadedMonthCount >= availableMonthCount;
         applyLoadedData(fullData);
-        setLoadAllButtonState(button, isFullDataLoaded ? 'Pobrano wszystko' : 'Dane załadowane', false, isFullDataLoaded);
+        setLoadAllButtonState(button, isFullDataLoaded ? 'Pobrano wszystko' : 'Pobrano dane', false, isFullDataLoaded);
     } catch (error) {
         console.error(error);
         setLoadAllButtonState(button, 'Błąd pobierania', false);
@@ -250,9 +250,9 @@ function setLoadAllButtonState(button, label, busy, done = false) {
     button.disabled = busy || done;
     button.classList.toggle('is-saving', busy);
     button.classList.toggle('is-clean', done);
-    button.classList.toggle('is-loaded', !busy && !done && label === 'Dane załadowane');
+    button.classList.toggle('is-loaded', !busy && !done && label === 'Pobrano dane');
     button.innerHTML = `
-        <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Dane załadowane' ? 'check' : 'database'}</span>
+        <span class="material-symbols-rounded admin-load-all-icon ${busy || done ? '' : 'is-attention'}" aria-hidden="true">${done || label === 'Pobrano dane' ? 'check' : 'database'}</span>
         ${escapeHtml(label)}
     `;
 }
@@ -360,7 +360,7 @@ function handleMonthChange(fullData) {
     revenuePage = 0;
     heatmapPage = 0;
     populateChartRange(currentData);
-    buildWeekTabs(currentData, isAllMonths ? { label: 'CAŁY OKRES', showWeeks: false } : {});
+    buildWeekTabs(currentData, isAllMonths ? { label: 'Cały okres', showWeeks: false } : {});
     activeWeekKey = 'all';
     updateView();
 
@@ -380,7 +380,7 @@ function handleMonthChange(fullData) {
     );
 }
 
-function buildWeekTabs(data, { label = 'CAŁY MIESIĄC', showWeeks = true } = {}) {
+function buildWeekTabs(data, { label = 'Cały miesiąc', showWeeks = true } = {}) {
     const tabsContainer = document.getElementById('weekTabsContainer');
     tabsContainer.innerHTML = '';
     currentWeeks = [];
@@ -790,7 +790,7 @@ function updateLoadButtonLabel() {
     button.classList.remove('is-loaded', 'is-clean');
     button.innerHTML = `
         <span class="material-symbols-rounded admin-load-all-icon is-attention" aria-hidden="true">database</span>
-        ZAŁADUJ
+        Załaduj dane
     `;
 }
 

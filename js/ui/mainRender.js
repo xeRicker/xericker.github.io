@@ -60,9 +60,9 @@ export const mainRender = {
         return `
             <button class="${cardClass('employee-row', 'employee-row employee-row--add animate-stagger')}" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
                 <div class="employee-info">
-                    <div class="avatar avatar--new">+</div>
+                    <div class="avatar avatar--new">${renderMaterialIcon('person_add')}</div>
                     <div class="emp-name">
-                        <span>NOWY</span>
+                        <span>Nowy</span>
                         <small>Dodaj jednorazowego pracownika</small>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ export const mainRender = {
 
         container.innerHTML = locations.map((location, index) => `
             <button class="sheet-btn location-button animate-stagger" type="button" data-location-path="${escapeHtml(location.path)}" style="animation-delay:${index * 0.04}s">
-                ${renderMaterialIcon('near_me', 'loc-icon')} ${escapeHtml(location.name).toUpperCase()}
+                ${renderMaterialIcon('near_me', 'loc-icon')} ${escapeHtml(location.name)}
             </button>`).join('');
     },
 
@@ -127,7 +127,7 @@ export const mainRender = {
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <span class="toggle-indicator">
-                                    <svg class="check-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    ${renderMaterialIcon('check')}
                                 </span>
                                 <input type="checkbox" id="checkbox-${name}" data-name="${name}" style="display:none">
                             </div>
@@ -138,9 +138,9 @@ export const mainRender = {
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="counter-wrapper">
-                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${name}">−</button>
+                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${name}">${renderMaterialIcon('remove')}</button>
                                     <input type="text" inputmode="numeric" id="input-${name}" class="qty-display" value="0" data-name="${name}">
-                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${name}">+</button>
+                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${name}">${renderMaterialIcon('add')}</button>
                                 </div>
                             </div>
                         </div>`;

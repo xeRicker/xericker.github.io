@@ -1,12 +1,12 @@
-import { apiService } from '../services/api.js?v=69';
+import { apiService } from '../services/api.js?v=169';
 import {
     loadLocationCatalog,
     normalizeLocationCatalog,
     normalizeLocationKey,
     slugifyLocation
-} from '../services/locations.js?v=67';
+} from '../services/locations.js?v=167';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=72';
+import { dialogService } from './components/customControls.js?v=172';
 
 class AdminLocations {
     constructor() {
@@ -37,7 +37,7 @@ class AdminLocations {
         this.container.innerHTML = `
             <div class="admin-products-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">near_me</span> PUNKTY</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">near_me</span> Punkty</h3>
                 </div>
                 <button id="saveLocationsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz
@@ -53,7 +53,7 @@ class AdminLocations {
             ${archived.length ? `
                 <div class="admin-location-archive">
                     <div class="section-heading section-heading--stack">
-                        <h4>${renderMaterialIcon('inventory_2')} ARCHIWUM</h4>
+                        <h4>${renderMaterialIcon('inventory_2')} Archiwum</h4>
                         <p>Punkty usunięte. Ich listy i dane w <code>database/</code> są nietknięte, ale nie pojawiają się już nigdzie w aplikacji.</p>
                     </div>
                     <div class="admin-location-list">

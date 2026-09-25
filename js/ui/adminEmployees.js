@@ -1,8 +1,8 @@
-import { apiService } from '../services/api.js?v=69';
-import { createId } from '../services/products.js?v=61';
-import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=66';
+import { apiService } from '../services/api.js?v=169';
+import { createId } from '../services/products.js?v=161';
+import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=166';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=72';
+import { dialogService } from './components/customControls.js?v=172';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }
@@ -21,7 +21,7 @@ class AdminEmployees {
         this.container.innerHTML = `
             <div class="admin-products-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">groups</span> EKIPA</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">groups</span> Ekipa</h3>
                 </div>
                 <button id="saveEmployeesBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz

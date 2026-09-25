@@ -1,6 +1,6 @@
 import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
-import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=72';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=172';
 import { cardClass } from './components/Card.js';
 
 export const DEFAULT_MONTH_HOURS = 160;
@@ -134,7 +134,7 @@ export function setupPayrollCalculator(config) {
 
         const previousValue = select.value;
         select.innerHTML = [
-            '<option value="" disabled selected>Wybierz Pracownika</option>',
+            '<option value="" disabled selected>Wybierz pracownika</option>',
             ...Array.from(employees)
                 .sort((left, right) => left.localeCompare(right, 'pl'))
                 .map(name => `<option value="${name}">${employeeLabel(name)}</option>`)
@@ -254,7 +254,7 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocati
         <section class="${cardClass('table', 'calc-breakdown-report')} ">
             <div class="table-head calc-breakdown-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> PODSUMOWANIE</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> Podsumowanie</h3>
                     <p>${shiftCount} dni / ${totalHours.toFixed(1)} h / ${formatMoney(totalHours * rate)}</p>
                 </div>
             </div>

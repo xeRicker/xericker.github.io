@@ -7,10 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Burbone</title>
   <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=79">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=180">
 </head>
 <body>
 
@@ -24,7 +24,7 @@
       <h1>BURBONE</h1>
     </div>
     <a href="admin.html" class="btn-admin">
-      ADMIN
+      Admin
       <span class="material-symbols-rounded" aria-hidden="true">vpn_key</span>
     </a>
   </div>
@@ -32,38 +32,38 @@
   <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki aplikacji">
     <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">
       <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
-      LISTA
+      Lista
     </button>
     <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">
       <span class="material-symbols-rounded" aria-hidden="true">lunch_dining</span>
-      BURGERY
+      Burgery
     </button>
     <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">
       <span class="material-symbols-rounded" aria-hidden="true">badge</span>
-      WYNAGRODZENIA
+      Wynagrodzenia
     </button>
   </div>
 
   <div id="generatorPanel" class="tab-panel is-active">
     <div class="card card--section section-card animate-stagger">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">payments</span> UTARG</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">payments</span> Utarg</h2>
       <div class="revenue-grid">
         <div class="revenue-field">
-          <label for="revenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> UTARG</label>
+          <label for="revenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">store</span> Utarg</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="revenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
-          <label for="cardRevenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> KARTY</label>
+          <label for="cardRevenueInput"><span class="field-icon material-symbols-rounded" aria-hidden="true">credit_card</span> Karty</label>
           <div class="input-group">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="cardRevenueInput" placeholder="0.00" inputmode="decimal">
           </div>
         </div>
         <div class="revenue-field">
-          <label for="glovoRevenueInput"><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> GLOVO</label>
+          <label for="glovoRevenueInput"><span class="field-icon field-icon--glovo material-symbols-rounded" aria-hidden="true">delivery_dining</span> Glovo</label>
           <div class="input-group input-group--glovo">
             <span class="currency-symbol">PLN</span>
             <input type="text" id="glovoRevenueInput" placeholder="0.00" inputmode="decimal">
@@ -73,7 +73,7 @@
     </div>
 
     <div class="card card--section section-card animate-stagger">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">groups</span> EKIPA</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">groups</span> Ekipa</h2>
       <div id="employees" class="employees-grid"></div>
     </div>
 
@@ -84,7 +84,7 @@
 
   <div id="burgersPanel" class="tab-panel">
     <div class="card card--section section-card burger-configurator animate-stagger">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">lunch_dining</span> BURGERY</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">lunch_dining</span> Burgery</h2>
 
       <div class="burger-control-grid">
         <div class="burger-field">
@@ -116,7 +116,7 @@
     </div>
 
     <div class="card card--section section-card burger-options animate-stagger">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">tune</span> OPCJE</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">tune</span> Opcje</h2>
 
       <div class="burger-option-grid">
         <div class="burger-range-control">
@@ -139,7 +139,7 @@
 
     <div class="card card--section section-card burger-builder animate-stagger">
       <div class="burger-section-head">
-        <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">inventory_2</span> SKŁADNIKI</h2>
+        <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">inventory_2</span> Składniki</h2>
         <button id="burgerReset" class="burger-secondary-action" type="button">
           <span class="material-symbols-rounded" aria-hidden="true">restart_alt</span>
           Wyczyść
@@ -167,7 +167,7 @@
     </div>
 
     <div class="card card--section section-card burger-summary-card animate-stagger">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">monitoring</span> MAKRO</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">monitoring</span> Makro</h2>
       <div id="burgerMacroSummary" class="burger-macro-grid"></div>
       <div id="burgerMacroDetails" class="burger-details-table"></div>
     </div>
@@ -175,7 +175,7 @@
 
   <div id="workersPanel" class="tab-panel">
     <div class="card card--section section-card calc-card animate-stagger worker-card">
-      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">schedule</span> PRACOWNIK</h2>
+      <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">schedule</span> Pracownik</h2>
       <p id="workerDataStatus" class="notice worker-data-status" hidden></p>
       <fieldset id="workerCalculatorControls" class="worker-calculator-controls" disabled>
         <div class="calc-grid">
@@ -207,14 +207,14 @@
         <div class="calc-res-item">
           <h4>
             <span class="calc-icon material-symbols-rounded" aria-hidden="true">schedule</span>
-            GODZINY
+            Godziny
           </h4>
           <p id="workerResHours">0 h</p>
         </div>
         <div class="calc-res-item">
           <h4>
             <span class="calc-icon material-symbols-rounded" aria-hidden="true">payments</span>
-            WYPŁATA
+            Wypłata
           </h4>
           <p id="workerResMoney" class="money">0 zł</p>
         </div>
@@ -231,7 +231,7 @@
     </button>
   </div>
   <button id="copyButton" class="primary-fab" type="button" aria-label="Generuj listę">
-    <span>SKOPIUJ LISTĘ</span>
+    <span>Skopiuj listę</span>
     <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
   </button>
 </div>
@@ -243,20 +243,20 @@
   <h3>Wybierz punkt</h3>
   <div class="sheet-actions">
     <div id="locationOptions" class="location-options"></div>
-    <button class="sheet-btn cancel-btn" type="button" data-close-location-overlay>ANULUJ</button>
+    <button class="sheet-btn cancel-btn" type="button" data-close-location-overlay>Anuluj</button>
   </div>
 </div>
 
 <div id="successSheet" class="bottom-sheet">
   <div class="sheet-handle"></div>
   <div class="success-icon-wrapper" id="successIcon"></div>
-  <h3 id="successTitle">LISTA GOTOWA!</h3>
+  <h3 id="successTitle">Lista gotowa!</h3>
   <p id="successMessage" class="success-msg">Kliknij poniżej, aby skopiować i wklej na Messengerze.</p>
   <div class="sheet-actions">
-    <button id="finalCopyBtn" class="sheet-btn success-close-btn">SKOPIUJ</button>
+    <button id="finalCopyBtn" class="sheet-btn success-close-btn">Skopiuj</button>
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=75"></script>
+<script type="module" src="js/main.js?v=175"></script>
 </body>
 </html>

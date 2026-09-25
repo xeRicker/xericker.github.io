@@ -3,7 +3,7 @@
 .payments-reminder { display: grid; gap: 16px; }
 .payments-reminder__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 .payments-reminder__tile { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); }
-.payments-reminder__tile span { color: var(--text-muted); font: 700 11px/1.2 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; }
+.payments-reminder__tile span { color: var(--text-muted); font: 700 11px/1.2 var(--font-heading); letter-spacing: .04em; }
 .payments-reminder__tile strong { color: var(--text-primary); font-size: 22px; font-variant-numeric: tabular-nums; }
 .payments-reminder__tile.is-negative strong { color: var(--danger-color); }
 .payments-reminder__tile.is-watch strong { color: var(--glovo-color); }
@@ -14,6 +14,12 @@
 .payments-reminder__name { display: grid; gap: 2px; min-width: 0; }
 .payments-reminder__amount { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
 .payments-reminder__amount-col { text-align: right; }
+.payments-reminder__due { display: grid; gap: 2px; white-space: nowrap; }
+.payments-reminder__due .cell-primary { font-weight: 600; }
+.payments-reminder__due.is-negative .cell-primary { color: var(--danger-color); }
+.payments-reminder__due.is-watch .cell-primary { color: var(--glovo-color); }
+.payment-due.is-negative { color: var(--danger-color); }
+.payment-due.is-watch { color: var(--glovo-color); }
 .section-heading h3 .material-symbols-rounded.is-alert { color: var(--danger-color); }
 .payments-reminder__empty { color: var(--text-muted); font-size: 13px; }
 .payments-reminder__more { justify-self: start; }
@@ -22,14 +28,13 @@
 .payments-reminder__state--ok { color: var(--success-color); border-color: color-mix(in srgb, var(--success-color) 38%, var(--border-color)); background: var(--app-success-bg); }
 .chart-card.payments-reminder--positive {
     border-color: color-mix(in srgb, var(--success-color) 34%, var(--border-color));
-    background:
-        radial-gradient(circle at top right, color-mix(in srgb, var(--success-color) 10%, transparent), transparent 38%),
+    background: radial-gradient(circle at top right, color-mix(in srgb, var(--success-color) 10%, transparent), transparent 38%),
         var(--surface-color);
 }
 
 .payments-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
 .payment-tile { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); }
-.payment-tile__label { color: var(--text-muted); font: 700 11px/1.2 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; }
+.payment-tile__label { color: var(--text-muted); font: 700 11px/1.2 var(--font-heading); letter-spacing: .04em; }
 .payment-tile__value { color: var(--text-primary); font-size: 24px; font-variant-numeric: tabular-nums; }
 .payment-tile__hint { color: var(--text-secondary); font-size: 12px; }
 .payment-tile.is-negative .payment-tile__value { color: var(--danger-color); }
@@ -38,7 +43,7 @@
 
 .payments-add-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin-bottom: 16px; }
 .payments-field { display: grid; gap: 4px; min-width: 0; }
-.payments-field > span { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; text-transform: uppercase; }
+.payments-field > span { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; }
 .payments-field--wide { grid-column: span 2; }
 .payments-add-btn { min-height: var(--control-height); white-space: nowrap; }
 
@@ -50,7 +55,7 @@
 .payment-row__title { display: grid; gap: 2px; min-width: 0; }
 .payment-row__title strong { color: var(--text-primary); }
 .payment-row__title span { color: var(--text-secondary); font-size: 12px; }
-.payment-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--radius-pill); font: 700 10px/1.5 var(--font-heading); text-transform: uppercase; letter-spacing: .04em; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-secondary); white-space: nowrap; }
+.payment-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--radius-pill); font: 700 10px/1.5 var(--font-heading); letter-spacing: .04em; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-secondary); white-space: nowrap; }
 .payment-badge .material-symbols-rounded { font-size: 14px; }
 .payment-badge.is-negative { background: var(--app-danger-bg); color: var(--danger-color); }
 .payment-badge.is-positive { background: var(--app-success-bg); color: var(--success-color); }

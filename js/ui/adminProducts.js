@@ -1,7 +1,7 @@
-import { apiService } from '../services/api.js?v=69';
-import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=61';
+import { apiService } from '../services/api.js?v=169';
+import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=161';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=72';
+import { dialogService } from './components/customControls.js?v=172';
 import { cardClass } from './components/Card.js';
 
 const ICON_OPTIONS = [
@@ -52,7 +52,7 @@ class AdminProducts {
         this.container.innerHTML = `
             <div class="admin-products-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span> PRODUKTY</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span> Produkty</h3>
                 </div>
                 <button id="saveProductsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span>

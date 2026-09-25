@@ -7,8 +7,8 @@
  * i przechodzimy do panelu, a admin.js tylko sprawdza ten zapis.
  */
 import { isLocalhost } from '../utils.js';
-import { authService } from './auth.js?v=1';
-import { dialogService } from '../ui/components/customControls.js?v=72';
+import { authService } from './auth.js?v=101';
+import { dialogService } from '../ui/components/customControls.js?v=172';
 
 const ADMIN_AUTH_STORAGE_KEY = 'burbone-admin-access';
 const ADMIN_FORCE_LOGIN_STORAGE_KEY = 'burbone-admin-force-login';

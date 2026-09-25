@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=69';
+import { apiService } from '../services/api.js?v=169';
 import {
     PAYMENT_FILTERS,
     PAYMENT_KINDS,
@@ -16,9 +16,9 @@ import {
     normalizePaymentsCatalog,
     summarizePayments,
     toIsoDate
-} from '../services/payments.js?v=1';
+} from '../services/payments.js?v=101';
 import { escapeHtml, formatMoney } from '../utils.js';
-import { dialogService, enhanceCustomControls } from './components/customControls.js?v=72';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=172';
 
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
@@ -65,7 +65,7 @@ class AdminPayments {
         this.container.innerHTML = `
             <div class="admin-products-head">
                 <div class="section-heading">
-                    <h3><span class="material-symbols-rounded" aria-hidden="true">receipt_long</span> OPŁATY</h3>
+                    <h3><span class="material-symbols-rounded" aria-hidden="true">receipt_long</span> Opłaty</h3>
                 </div>
                 <button id="savePaymentsBtn" class="btn-back admin-save-btn ${this.isDirty ? 'has-unsaved-changes' : 'is-clean'}" type="button" ${this.isDirty ? '' : 'disabled'}>
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz
@@ -107,30 +107,30 @@ class AdminPayments {
         return `
             <form class="payments-add-form" data-action="add-payment">
                 <label class="payments-field payments-field--wide">
-                    <span>NAZWA</span>
+                    <span>Nazwa</span>
                     <input name="title" class="calc-input" placeholder="np. ZUS luty" aria-label="Nazwa zobowiązania" required>
                 </label>
                 <label class="payments-field">
-                    <span>KWOTA</span>
+                    <span>Kwota</span>
                     <input name="amountTotal" class="calc-input" inputmode="decimal" placeholder="0,00" aria-label="Kwota zobowiązania" required>
                 </label>
                 <label class="payments-field">
-                    <span>TERMIN</span>
+                    <span>Termin</span>
                     <input type="date" name="dueDate" class="calc-input" aria-label="Termin płatności" required>
                 </label>
                 <label class="payments-field">
-                    <span>RODZAJ</span>
+                    <span>Rodzaj</span>
                     <select name="kind" class="calc-input" aria-label="Rodzaj opłaty">${kindOptions}</select>
                 </label>
                 <label class="payments-field">
-                    <span>CYKLICZNOŚĆ</span>
+                    <span>Cykliczność</span>
                     <select name="recurrence" class="calc-input" aria-label="Cykliczność opłaty">${recurrenceOptions}</select>
                 </label>
                 <label class="payments-field">
-                    <span>KONTRAHENT</span>
-                    <input name="contractor" class="calc-input" placeholder="OPCJONALNIE" aria-label="Kontrahent">
+                    <span>Kontrahent</span>
+                    <input name="contractor" class="calc-input" placeholder="Opcjonalnie" aria-label="Kontrahent">
                 </label>
-                <button class="chart-btn active payments-add-btn" type="submit">+ Zobowiązanie</button>
+                <button class="chart-btn active payments-add-btn" type="submit">+ Nowe zobowiązanie</button>
             </form>
         `;
     }
@@ -140,11 +140,11 @@ class AdminPayments {
         return `
             <div class="payments-toolbar">
                 <label class="payments-field">
-                    <span>STATUS</span>
+                    <span>Status</span>
                     <select id="paymentsStatusFilter" class="calc-input" aria-label="Filtr statusu opłat">${options}</select>
                 </label>
                 <label class="payments-field payments-field--wide">
-                    <span>SZUKAJ</span>
+                    <span>Szukaj</span>
                     <input id="paymentsSearchInput" type="search" class="calc-input" placeholder="Nazwa lub kontrahent" value="${escapeHtml(this.query)}" aria-label="Szukaj opłaty">
                 </label>
             </div>
@@ -180,11 +180,11 @@ class AdminPayments {
                 </div>
                 <div class="payment-row__money">
                     <strong>${formatMoney(view.amountLeft)}</strong>
-                    <span>pozostało z ${formatMoney(view.amountTotal)} · wpłacono ${formatMoney(view.amountPaid)}</span>
+                    <span>z ${formatMoney(view.amountTotal)}</span>
                 </div>
                 <div class="payment-progress" role="presentation"><span style="width:${progress}%"></span></div>
                 <div class="payment-row__meta">
-                    <span class="payment-due ${view.status === 'overdue' ? 'is-negative' : ''}">${escapeHtml(this.buildDueLabel(view))}</span>
+                    <span class="payment-due ${view.status === 'overdue' ? 'is-negative' : ''} ${view.status === 'partial' ? 'is-watch' : ''}">${escapeHtml(this.buildDueLabel(view))}</span>
                     ${view.recurrence !== 'one-time' ? `<span class="payment-recur">${escapeHtml(getPaymentRecurrenceLabel(view.recurrence))}</span>` : ''}
                 </div>
                 <div class="payment-row__actions">
@@ -203,9 +203,9 @@ class AdminPayments {
         if (!view.dueDateObj) return 'Bez terminu';
         const date = formatPaymentDate(view.dueDate);
         if (view.status === 'paid') return `Termin ${date}`;
-        if (view.daysLeft === 0) return `Termin dziś (${date})`;
-        if (view.daysLeft < 0) return `Po terminie ${Math.abs(view.daysLeft)} dni (${date})`;
-        return `Termin ${date} (za ${view.daysLeft} dni)`;
+        if (view.daysLeft < 0) return `Termin ${date} · ${Math.abs(view.daysLeft)} dni po terminie`;
+        if (view.daysLeft === 0) return `Termin ${date} · dziś`;
+        return `Termin ${date}`;
     }
 
     handleInput(event) {

@@ -179,7 +179,7 @@ input:focus { outline: none; }
         var(--surface-raised);
 }
 
-.avatar--new {
+.avatar.avatar--new {
     display: inline-flex;
     align-items: center;
     justify-content: center;

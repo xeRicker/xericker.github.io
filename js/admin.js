@@ -1,7 +1,7 @@
 import { apiService } from './services/api.js?v=169';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=170';
+import { adminRender } from './ui/adminRender.js?v=171';
 import { adminProducts } from './ui/adminProducts.js?v=166';
 import { createAdminListsPage } from './ui/adminLists.js?v=165';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';

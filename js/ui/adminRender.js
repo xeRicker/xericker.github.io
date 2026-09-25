@@ -365,8 +365,11 @@ class AdminRender {
         if (!compared.length) return 'Miesiąc obejmuje tylko jeden tydzień.';
         const improving = compared.filter(week => week.deltaPercent > 0.5).length;
         const best = weeks.find(week => week.isBest);
-        const leader = best ? ` Najmocniejszy był tydzień ${best.index + 1}.` : '';
-        return `${improving} z ${compared.length} tygodni wypadło lepiej niż poprzedni.${leader}`;
+        const trend = improving
+            ? `Wyższa średnia dzienna niż w poprzednim tygodniu w ${improving} z ${compared.length} przypadków.`
+            : 'Żaden tydzień nie miał wyższej średniej dziennej niż poprzedni.';
+        const leader = best ? ` Najwyższą średnią dzienną miał tydzień ${best.index + 1}.` : '';
+        return `${trend}${leader}`;
     }
 
     buildWeeklyCard(week, activeKey) {
@@ -374,19 +377,19 @@ class AdminRender {
         const tone = delta === null ? 'is-neutral' : delta > 0.5 ? 'is-positive' : delta < -0.5 ? 'is-negative' : 'is-neutral';
         const deltaText = delta === null
             ? 'Pierwszy tydzień'
-            : `${delta > 0 ? '+' : ''}${delta.toFixed(1)}% vs tydzień ${week.index}`;
+            : `${delta > 0 ? '+' : ''}${delta.toFixed(1).replace('.', ',')}% średniej dziennej vs tydzień ${week.index}`;
         const flags = [
             week.isCurrent ? '<span class="weekly-flag weekly-flag--current">Bieżący</span>' : '',
-            week.isBest ? '<span class="weekly-flag weekly-flag--best">Najlepszy</span>' : '',
-            week.days < 5 ? `<span class="weekly-flag">${week.days} dni</span>` : ''
+            week.isBest ? '<span class="weekly-flag weekly-flag--best">Najwyższa średnia</span>' : ''
         ].filter(Boolean).join('');
         const isActive = String(week.key) === String(activeKey);
+        const days = `${week.days} ${week.days === 1 ? 'dzień' : 'dni'}`;
 
         return `
             <button type="button" class="weekly-card ${isActive ? 'is-active' : ''}" data-week-key="${escapeHtml(week.key)}">
                 <span class="weekly-card__head">
                     <span class="weekly-card__label">Tydzień ${week.index + 1}</span>
-                    <span class="weekly-card__range">${escapeHtml(week.start)}–${escapeHtml(week.end)}</span>
+                    <span class="weekly-card__range">${escapeHtml(week.start)}–${escapeHtml(week.end)} · ${days}</span>
                 </span>
                 <span class="weekly-card__flags">${flags}</span>
                 <strong class="weekly-card__total">${formatMoney(week.total)}</strong>
@@ -399,10 +402,9 @@ class AdminRender {
 
     buildWeeklyVerdict(week) {
         if (week.deltaPercent === null) return 'Początek miesiąca.';
-        const magnitude = Math.abs(week.deltaPercent).toFixed(1);
-        if (week.deltaPercent > 0.5) return `Lepszy od tygodnia ${week.index} o ${magnitude}%.`;
-        if (week.deltaPercent < -0.5) return `Słabszy od tygodnia ${week.index} o ${magnitude}%.`;
-        return `Podobny poziom co tydzień ${week.index}.`;
+        if (week.deltaPercent > 0.5) return `Wyższa średnia dzienna niż w tygodniu ${week.index}.`;
+        if (week.deltaPercent < -0.5) return `Niższa średnia dzienna niż w tygodniu ${week.index}.`;
+        return `Średnia dzienna na podobnym poziomie co tydzień ${week.index}.`;
     }
 
     renderPaymentsReminder(container, { summary, upcoming, revenueTotal, itemCount }) {

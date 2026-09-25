@@ -1,0 +1,31 @@
+{
+  "location": "Osiek",
+  "date": "25.09.2026",
+  "revenue": 1659,
+  "cardRevenue": 924,
+  "glovoRevenue": 0,
+  "employees": {
+    "sebastian.mąsior": "14:00,20:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

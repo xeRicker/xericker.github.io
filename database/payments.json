@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-25T08:38:05.343Z",
+  "updatedAt": "2026-09-25T19:57:09.616Z",
   "items": [
     {
       "id": "item-mug6gubx-6gg3g5",
@@ -53,7 +53,7 @@
       "dueDate": "2026-09-30",
       "recurrence": "one-time",
       "note": "",
-      "archived": false,
+      "archived": true,
       "createdAt": "2026-09-25T08:36:48.847Z",
       "order": 3,
       "payments": [
@@ -95,7 +95,7 @@
       "dueDate": "2026-10-20",
       "recurrence": "monthly",
       "note": "",
-      "archived": false,
+      "archived": true,
       "createdAt": "2026-09-25T08:37:53.710Z",
       "order": 5,
       "payments": []

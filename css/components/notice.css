@@ -122,6 +122,42 @@
     margin: -4px 0 16px;
 }
 
+.notice-toast-layer {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100030;
+    display: grid;
+    gap: 8px;
+    width: min(420px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.notice--toast {
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+    animation: notice-toast-in 0.2s ease-out;
+}
+
+.notice--toast.is-leaving {
+    animation: notice-toast-out 0.25s ease-in forwards;
+}
+
+@keyframes notice-toast-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notice-toast-out {
+    to { opacity: 0; transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notice--toast,
+    .notice--toast.is-leaving { animation: none; }
+}
+
 /* --- Pasek postępu dla stanu ładowania --- */
 
 .notice__bar {

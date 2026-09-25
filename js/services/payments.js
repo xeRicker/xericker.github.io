@@ -1,16 +1,16 @@
 import { apiService } from './api.js?v=169';
 
 export const PAYMENT_KINDS = [
-    { id: 'zus', label: 'ZUS' },
-    { id: 'us', label: 'Urząd skarbowy' },
-    { id: 'faktura', label: 'Faktura' },
-    { id: 'dostawca', label: 'Dostawca' },
-    { id: 'kredyt', label: 'Kredyt' },
-    { id: 'leasing', label: 'Leasing' },
-    { id: 'subskrypcja', label: 'Subskrypcja' },
-    { id: 'pensja', label: 'Wynagrodzenia' },
-    { id: 'dlug', label: 'Dług' },
-    { id: 'inne', label: 'Inne' }
+    { id: 'zus', label: 'ZUS', icon: 'account_balance' },
+    { id: 'us', label: 'Urząd skarbowy', icon: 'receipt_long' },
+    { id: 'faktura', label: 'Faktura', icon: 'description' },
+    { id: 'dostawca', label: 'Dostawca', icon: 'local_shipping' },
+    { id: 'kredyt', label: 'Kredyt', icon: 'account_balance_wallet' },
+    { id: 'leasing', label: 'Leasing', icon: 'directions_car' },
+    { id: 'subskrypcja', label: 'Subskrypcja', icon: 'autorenew' },
+    { id: 'pensja', label: 'Wynagrodzenia', icon: 'payments' },
+    { id: 'dlug', label: 'Dług', icon: 'money_off' },
+    { id: 'inne', label: 'Inne', icon: 'more_horiz' }
 ];
 
 export const PAYMENT_RECURRENCES = [
@@ -212,6 +212,10 @@ export function getUpcomingPayments(views, days = 14) {
 
 export function getPaymentKindLabel(id) {
     return PAYMENT_KINDS.find(entry => entry.id === id)?.label || 'Inne';
+}
+
+export function getPaymentKindIcon(id) {
+    return PAYMENT_KINDS.find(entry => entry.id === id)?.icon || 'more_horiz';
 }
 
 export function getPaymentRecurrenceLabel(id) {

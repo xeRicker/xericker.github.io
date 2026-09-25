@@ -1,6 +1,6 @@
 @import url("css/base.css?v=2");
 @import url("css/theme/palette.css");
-@import url("css/components/notice.css?v=5");
+@import url("css/components/notice.css?v=6");
 @import url("css/layout.css?v=62");
 @import url("css/generator.css?v=65");
 @import url("css/burgers.css?v=61");
@@ -8,7 +8,7 @@
 @import url("css/admin-products-lists.css?v=61");
 @import url("css/admin-employees.css?v=64");
 @import url("css/admin-locations.css?v=3");
-@import url("css/admin-payments.css?v=4");
+@import url("css/admin-payments.css?v=5");
 @import url("css/feedback.css?v=63");
-@import url("css/components/custom-controls.css?v=7");
+@import url("css/components/custom-controls.css?v=8");
 @import url("css/theme/atlassian-overrides.css?v=8");

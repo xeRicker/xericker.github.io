@@ -1,7 +1,7 @@
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { cardClass } from './components/Card.js';
 import { resolveEmployee } from '../services/employees.js';
-import { formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=101';
+import { formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=102';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',

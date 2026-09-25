@@ -8,6 +8,7 @@ import {
     derivePayment,
     filterPaymentViews,
     formatPaymentDate,
+    getPaymentKindIcon,
     getPaymentKindLabel,
     getPaymentRecurrenceLabel,
     getPaymentViews,
@@ -16,9 +17,10 @@ import {
     normalizePaymentsCatalog,
     summarizePayments,
     toIsoDate
-} from '../services/payments.js?v=101';
-import { escapeHtml, formatMoney } from '../utils.js';
-import { dialogService, enhanceCustomControls } from './components/customControls.js?v=172';
+} from '../services/payments.js?v=102';
+import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
+import { noticeService } from './components/notice.js?v=102';
 
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
@@ -102,13 +104,17 @@ class AdminPayments {
     }
 
     buildForm() {
-        const kindOptions = PAYMENT_KINDS.map(kind => `<option value="${kind.id}">${escapeHtml(kind.label)}</option>`).join('');
+        const kindOptions = PAYMENT_KINDS.map(kind => `<option value="${kind.id}" data-icon="${kind.icon}">${escapeHtml(kind.label)}</option>`).join('');
         const recurrenceOptions = PAYMENT_RECURRENCES.map(entry => `<option value="${entry.id}">${escapeHtml(entry.label)}</option>`).join('');
         return `
             <form class="payments-add-form" data-action="add-payment">
                 <label class="payments-field payments-field--wide">
                     <span>Nazwa</span>
                     <input name="title" class="calc-input" placeholder="np. ZUS luty" aria-label="Nazwa zobowiązania" required>
+                </label>
+                <label class="payments-field">
+                    <span>Kontrahent</span>
+                    <input name="contractor" class="calc-input" placeholder="Opcjonalnie" aria-label="Kontrahent">
                 </label>
                 <label class="payments-field">
                     <span>Kwota</span>
@@ -125,10 +131,6 @@ class AdminPayments {
                 <label class="payments-field">
                     <span>Cykliczność</span>
                     <select name="recurrence" class="calc-input" aria-label="Cykliczność opłaty">${recurrenceOptions}</select>
-                </label>
-                <label class="payments-field">
-                    <span>Kontrahent</span>
-                    <input name="contractor" class="calc-input" placeholder="Opcjonalnie" aria-label="Kontrahent">
                 </label>
                 <button class="chart-btn active payments-add-btn" type="submit">+ Nowe zobowiązanie</button>
             </form>
@@ -174,7 +176,7 @@ class AdminPayments {
                 <div class="payment-row__head">
                     <div class="payment-row__title">
                         <strong>${escapeHtml(view.title)}</strong>
-                        <span>${escapeHtml(getPaymentKindLabel(view.kind))}${view.contractor ? ` · ${escapeHtml(view.contractor)}` : ''}</span>
+                        <span class="payment-kind">${renderMaterialIcon(getPaymentKindIcon(view.kind))}${escapeHtml(getPaymentKindLabel(view.kind))}${view.contractor ? ` · ${escapeHtml(view.contractor)}` : ''}</span>
                     </div>
                     <span class="payment-badge ${status.tone}">${escapeHtml(status.label)}</span>
                 </div>
@@ -371,7 +373,7 @@ class AdminPayments {
             this.savedSnapshot = this.serialize();
             this.isDirty = false;
             this.onSaved?.(this.catalog);
-            await dialogService.success('Opłaty zostały zapisane.', 'Zapisano');
+            noticeService.toast({ variant: 'success', text: 'Opłaty zostały zapisane.' });
         } catch (error) {
             await dialogService.error(error.message, 'Błąd zapisu opłat');
         }

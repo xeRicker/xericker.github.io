@@ -41,7 +41,7 @@
 .payment-tile.is-watch .payment-tile__value { color: var(--glovo-color); }
 .payment-tile.is-positive .payment-tile__value { color: var(--success-color); }
 
-.payments-add-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin-bottom: 16px; }
+.payments-add-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin-bottom: 18px; }
 .payments-field { display: grid; gap: 4px; min-width: 0; }
 .payments-field > span { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; }
 .payments-field--wide { grid-column: span 2; }
@@ -55,6 +55,8 @@
 .payment-row__title { display: grid; gap: 2px; min-width: 0; }
 .payment-row__title strong { color: var(--text-primary); }
 .payment-row__title span { color: var(--text-secondary); font-size: 12px; }
+.payment-kind { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+.payment-kind .material-symbols-rounded { flex: 0 0 auto; color: var(--text-muted); font-size: 15px; }
 .payment-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: var(--radius-pill); font: 700 10px/1.5 var(--font-heading); letter-spacing: .04em; background: color-mix(in srgb, var(--text-primary) 8%, transparent); color: var(--text-secondary); white-space: nowrap; }
 .payment-badge .material-symbols-rounded { font-size: 14px; }
 .payment-badge.is-negative { background: var(--app-danger-bg); color: var(--danger-color); }
@@ -67,12 +69,13 @@
 .payment-progress span { display: block; height: 100%; background: var(--primary-color); }
 .payment-row__meta { display: flex; gap: 10px; flex-wrap: wrap; color: var(--text-secondary); font-size: 12px; }
 .payment-recur { color: var(--text-muted); }
-.payment-row__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.payment-row__actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .payment-action { min-height: 34px; padding: 6px 12px; font-size: 12px; }
 .payment-action--primary { background: var(--primary-color); border-color: var(--primary-color); color: var(--app-text-inverse); }
 .payments-empty { padding: 18px; border: 1px dashed var(--border-color); border-radius: var(--radius-md); color: var(--text-muted); text-align: center; }
 
 @media (max-width: 760px) {
-    .payments-field--wide { grid-column: span 1; }
+    .payments-add-form,
     .payments-toolbar { grid-template-columns: 1fr; }
+    .payments-field--wide { grid-column: span 1; }
 }

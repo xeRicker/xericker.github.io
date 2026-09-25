@@ -2,7 +2,8 @@ import { apiService } from '../services/api.js?v=169';
 import { createId } from '../services/products.js?v=161';
 import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=166';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=172';
+import { dialogService } from './components/customControls.js?v=173';
+import { noticeService } from './components/notice.js?v=102';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }
@@ -91,7 +92,7 @@ class AdminEmployees {
         if (!this.isDirty) return;
         const button = this.container.querySelector('#saveEmployeesBtn');
         button.disabled = true; button.classList.add('is-saving');
-        try { this.catalog.updatedAt = new Date().toISOString(); await apiService.saveEmployees(this.catalog); this.savedSnapshot = this.serialize(); this.isDirty = false; await dialogService.success('Lista ekipy została zapisana.', 'Zapisano'); }
+        try { this.catalog.updatedAt = new Date().toISOString(); await apiService.saveEmployees(this.catalog); this.savedSnapshot = this.serialize(); this.isDirty = false; noticeService.toast({ variant: 'success', text: 'Lista ekipy została zapisana.' }); }
         catch (error) { await dialogService.error(error.message, 'Błąd zapisu ekipy'); }
         this.render();
     }

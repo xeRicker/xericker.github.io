@@ -1,7 +1,7 @@
 import { formatMoney, parseLocalDateInput } from '../utils.js';
-import { refreshCustomControls } from './components/customControls.js?v=172';
-import { noticeService } from './components/notice.js?v=101';
-import { DEFAULT_MONTH_HOURS } from './payrollCalculator.js?v=165';
+import { refreshCustomControls } from './components/customControls.js?v=173';
+import { noticeService } from './components/notice.js?v=102';
+import { DEFAULT_MONTH_HOURS } from './payrollCalculator.js?v=166';
 
 const WIDTH = 1000;
 const SCALE = 2;

@@ -1,4 +1,5 @@
-import { normalizeVariant, noticeHtml } from './notice.js?v=101';
+import { normalizeVariant, noticeHtml } from './notice.js?v=102';
+import { escapeHtml, renderMaterialIcon } from '../../utils.js';
 
 const enhancedControls = new WeakMap();
 let controlsBootstrapped = false;
@@ -235,7 +236,12 @@ function enhanceSelect(select) {
             const item = document.createElement('button');
             item.type = 'button';
             item.className = 'custom-option';
-            item.textContent = option.textContent;
+            if (option.dataset.icon) {
+                item.classList.add('custom-option--icon');
+                item.innerHTML = `${renderMaterialIcon(option.dataset.icon)}<span>${escapeHtml(option.textContent)}</span>`;
+            } else {
+                item.textContent = option.textContent;
+            }
             item.disabled = option.disabled;
             item.dataset.value = option.value;
             item.setAttribute('role', 'option');
@@ -444,6 +450,8 @@ function renderCalendar(container, viewDate, selectedValue, markers, onSelect, o
     const startOffset = (monthStart.getDay() || 7) - 1;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const label = monthStart.toLocaleString('pl-PL', { month: 'long', year: 'numeric' });
+    const today = new Date();
+    const todayIso = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
 
     container.innerHTML = `
         <div class="custom-calendar__header">
@@ -479,6 +487,7 @@ function renderCalendar(container, viewDate, selectedValue, markers, onSelect, o
         item.className = 'custom-calendar__day';
         item.innerHTML = `<span class="custom-calendar__day-number">${day}</span>`;
         item.classList.toggle('is-selected', selectedValue === iso);
+        item.classList.toggle('is-today', iso === todayIso);
         if (markers[iso]) {
             item.classList.add('has-marker');
             item.insertAdjacentHTML('beforeend', `<span class="custom-calendar__marker">${formatHoursMarker(markers[iso])}</span>`);

@@ -34,6 +34,27 @@ export function noticeHtml({ variant = 'info', text = '', title = '', icon = '',
         ${showBar ? '<span class="notice__bar"><i></i></span>' : ''}`;
 }
 
+let toastLayer = null;
+let toastTimer = null;
+
+function ensureToastLayer() {
+    if (toastLayer?.isConnected) return toastLayer;
+    toastLayer = document.createElement('div');
+    toastLayer.className = 'notice-toast-layer';
+    document.body.appendChild(toastLayer);
+    return toastLayer;
+}
+
+function dismissToast(element) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        element.remove();
+        return;
+    }
+    element.classList.add('is-leaving');
+    element.addEventListener('animationend', () => element.remove(), { once: true });
+    setTimeout(() => element.remove(), 400);
+}
+
 export const noticeService = {
     /** Zwraca kompletny element komunikatu, gotowy do wstawienia w DOM. */
     element(options = {}) {
@@ -42,6 +63,16 @@ export const noticeService = {
         el.className = `notice notice--${variant}${options.className ? ' ' + options.className : ''}`;
         el.role = variant === 'danger' ? 'alert' : 'status';
         el.innerHTML = noticeHtml(options);
+        return el;
+    },
+
+    toast(options = {}) {
+        const layer = ensureToastLayer();
+        clearTimeout(toastTimer);
+        const el = this.element({ ...options, className: ['notice--toast', options.className].filter(Boolean).join(' ') });
+        el.setAttribute('aria-live', 'polite');
+        layer.replaceChildren(el);
+        toastTimer = setTimeout(() => dismissToast(el), Number(options.duration) || 2400);
         return el;
     },
 

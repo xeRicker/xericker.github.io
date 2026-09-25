@@ -6,7 +6,8 @@ import {
     slugifyLocation
 } from '../services/locations.js?v=167';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=172';
+import { dialogService } from './components/customControls.js?v=173';
+import { noticeService } from './components/notice.js?v=102';
 
 class AdminLocations {
     constructor() {
@@ -247,7 +248,7 @@ class AdminLocations {
         this.savedSnapshot = this.serialize();
         this.isDirty = false;
         this.render();
-        await dialogService.success('Katalog punktów został zapisany.', 'Zapisano');
+        noticeService.toast({ variant: 'success', text: 'Katalog punktów został zapisany.' });
 
         // Odświeżenie widoków jest osobnym krokiem: gdyby się nie udało, zapis
         // i tak jest już wykonany i komunikat nie może mówić o błędzie zapisu.

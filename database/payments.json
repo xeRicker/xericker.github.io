@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-24T23:58:21.087Z",
+  "updatedAt": "2026-09-25T08:38:05.343Z",
   "items": [
     {
       "id": "item-mug6gubx-6gg3g5",
@@ -25,9 +25,79 @@
       "dueDate": "2026-09-01",
       "recurrence": "one-time",
       "note": "",
-      "archived": false,
+      "archived": true,
       "createdAt": "2026-09-24T23:58:19.627Z",
       "order": 1,
+      "payments": []
+    },
+    {
+      "id": "item-mugpi8l5-ilhq0s",
+      "title": "Czynsz",
+      "kind": "zus",
+      "contractor": "Delfin",
+      "amountTotal": 7000,
+      "dueDate": "2026-09-30",
+      "recurrence": "one-time",
+      "note": "",
+      "archived": true,
+      "createdAt": "2026-09-25T08:36:20.345Z",
+      "order": 2,
+      "payments": []
+    },
+    {
+      "id": "item-mugpiukv-imrc14",
+      "title": "Czynsz",
+      "kind": "inne",
+      "contractor": "Delfin",
+      "amountTotal": 7000,
+      "dueDate": "2026-09-30",
+      "recurrence": "one-time",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-09-25T08:36:48.847Z",
+      "order": 3,
+      "payments": [
+        {
+          "id": "pay-mugpkedx-pm6vsl",
+          "date": "2026-09-25",
+          "amount": 3500,
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "item-mugpjegm-19jh1a",
+      "title": "Wypłata",
+      "kind": "pensja",
+      "contractor": "Sebastian",
+      "amountTotal": 4000,
+      "dueDate": "2026-09-20",
+      "recurrence": "monthly",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-09-25T08:37:14.614Z",
+      "order": 4,
+      "payments": [
+        {
+          "id": "pay-mugpjl2f-palmm8",
+          "date": "2026-09-25",
+          "amount": 4000,
+          "note": "spłata"
+        }
+      ]
+    },
+    {
+      "id": "item-mugpk8mm-2yvcss",
+      "title": "Wypłata",
+      "kind": "pensja",
+      "contractor": "Sebastian",
+      "amountTotal": 4000,
+      "dueDate": "2026-10-20",
+      "recurrence": "monthly",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-09-25T08:37:53.710Z",
+      "order": 5,
       "payments": []
     }
   ]

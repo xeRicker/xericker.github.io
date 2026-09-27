@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "27.09.2026",
+  "revenue": 535,
+  "cardRevenue": 287,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,18:30"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Frytura": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Szmaty": 1
+  }
+}

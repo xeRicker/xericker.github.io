@@ -113,9 +113,17 @@
 .admin-list-preview__head {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 16px;
     margin-bottom: 16px;
+}
+
+.admin-list-preview__head > div {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    min-width: 0;
 }
 
 .admin-list-preview__head h3 {

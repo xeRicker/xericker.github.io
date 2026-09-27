@@ -5,8 +5,8 @@
 .marketing-field--wide { grid-column: 1 / -1; }
 .marketing-textarea { display: block; width: 100%; min-height: 84px; resize: vertical; line-height: 1.5; }
 
-.marketing-options { grid-column: 1 / -1; min-inline-size: 0; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
-.marketing-options legend { width: 100%; margin-bottom: 2px; padding: 0; color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; }
+.marketing-options { grid-column: 1 / -1; min-width: 0; display: flex; flex-wrap: wrap; gap: 10px 8px; margin: 0; padding: 6px 0 0; border: 0; }
+.marketing-options__legend { flex: 0 0 100%; margin-bottom: 2px; color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; }
 .marketing-option { position: relative; display: inline-flex; }
 .marketing-option__chip { display: inline-flex; align-items: center; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: var(--radius-pill); background: var(--surface-raised); color: var(--text-secondary); font: 700 12px/1 var(--font-heading); cursor: pointer; transition: border-color .15s, background-color .15s, color .15s; }
 .marketing-option__chip:hover { border-color: var(--app-border-strong); color: var(--text-primary); }

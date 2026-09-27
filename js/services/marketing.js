@@ -1,27 +1,34 @@
 import {
     MARKETING_BRAND,
-    BURGER_MARKETING,
-    MARKETING_HOOKS,
-    MARKETING_BODIES,
+    MARKETING_TEMPLATES,
+    MARKETING_CTAS,
+    MARKETING_QUESTIONS,
     MARKETING_INSTAGRAM,
     MARKETING_PROMPTS,
     MARKETING_TYPE_HASHTAGS,
     MARKETING_BASE_HASHTAGS
-} from '../config/marketing.js?v=2';
+} from '../config/marketing.js?v=3';
+import { BURGER_MARKETING } from '../config/marketingBurgers.js?v=1';
 
 const EXCLUDED_INGREDIENTS = new Set(['bun', 'sauce']);
 
-const HOOK_EMOJI = { burger: '🍔', locations: '📍', glovo: '🛵', promo: '🔥', behind: '🔥' };
+const POST_EMOJI = { burger: '🍔', locations: '📍', glovo: '🛵', promo: '🔥', behind: '🔥' };
 
 export async function loadMarketingBurgers() {
     const response = await fetch('database/burgers.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('Nie udało się wczytać database/burgers.json.');
     const config = await response.json();
-    return Object.entries(config.presets).map(([id, preset]) => ({
-        id,
-        label: preset.label,
-        description: BURGER_MARKETING[id]?.description || describePreset(preset, config.products)
-    }));
+    return Object.entries(config.presets).map(([id, preset]) => {
+        const descriptions = buildBurgerDescriptions(id, preset, config.products);
+        return { id, label: preset.label, descriptions, description: descriptions[0] || '' };
+    });
+}
+
+function buildBurgerDescriptions(id, preset, products) {
+    const configured = BURGER_MARKETING[id]?.descriptions;
+    if (configured?.length) return configured;
+    const fallback = describePreset(preset, products);
+    return fallback ? [fallback] : [];
 }
 
 function describePreset(preset, products) {
@@ -42,22 +49,43 @@ function ingredientLabel(id, products) {
 
 export function buildMarketingPost({ type, burgerId = '', burger = '', promo = '', description = '', options = {}, brand = MARKETING_BRAND }) {
     const copy = BURGER_MARKETING[burgerId] || null;
-    const hookPool = type === 'burger' && copy?.hooks?.length ? copy.hooks : MARKETING_HOOKS[type];
-    const hookText = fillTemplate(pickRandom(hookPool), {
-        label: burger || 'nasze burgery',
-        promo: promo || 'wyjątkowa oferta',
-        locations: brand.locations.map(location => location.name).join(' i ')
-    });
-    const hook = withEmoji(HOOK_EMOJI[type], hookText, options.includeEmoji);
-    const action = pickRandom(MARKETING_BODIES[type]);
-    const facebookBody = type === 'burger' && description ? `${description}\n\n${action}` : action;
-    const instagramBody = type === 'burger' && copy?.short ? copy.short : pickRandom(MARKETING_INSTAGRAM[type]);
-    const prompt = options.includeCommentPrompt ? pickRandom(MARKETING_PROMPTS) : '';
-    const footer = buildFooter(brand, options);
+    const values = buildValues({ type, copy, label: burger, promo, description, brand, options });
 
     return {
-        facebook: joinSections([hook, facebookBody, prompt, footer, buildHashtags(brand, options, type, burger, 6)]),
-        instagram: joinSections([hook, instagramBody, prompt, footer, buildHashtags(brand, options, type, burger, 15)])
+        description: values.description,
+        facebook: assemblePost(type, MARKETING_TEMPLATES, values, brand, options, burger, 6),
+        instagram: assemblePost(type, MARKETING_INSTAGRAM, values, brand, options, burger, 15)
+    };
+}
+
+function assemblePost(type, pool, values, brand, options, burger, hashtagLimit) {
+    return joinSections([
+        fillTemplate(pickRandom(pool[type]), values),
+        options.includeCommentPrompt ? fillTemplate(pickRandom(MARKETING_PROMPTS), values) : '',
+        buildFooter(brand, options),
+        buildHashtags(brand, options, type, burger, hashtagLimit)
+    ]);
+}
+
+function buildValues({ type, copy, label, promo, description, brand, options }) {
+    const locations = brand.locations.map(location => location.name);
+    const glovoLocations = brand.locations.filter(location => location.glovo).map(location => location.name);
+    const sample = pickRandom(brand.locations) || {};
+
+    return {
+        emoji: options.includeEmoji ? `${POST_EMOJI[type]} ` : '',
+        brand: brand.name,
+        label: label || 'nasze burgery',
+        description: description || pickRandom(copy?.descriptions) || '',
+        hook: pickRandom(copy?.hooks) || '',
+        taste: pickRandom(copy?.tastes) || '',
+        cta: pickRandom(MARKETING_CTAS[type]) || '',
+        question: pickRandom(MARKETING_QUESTIONS[type]) || '',
+        promo: promo || 'wyjątkowa oferta',
+        locations: locations.join(' i '),
+        location: sample.name || '',
+        hours: sample.hours || '',
+        glovo: glovoLocations.join(' i ')
     };
 }
 
@@ -103,7 +131,8 @@ function fold(value) {
 }
 
 function fillTemplate(template, values) {
-    return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template || '');
+    const text = Object.entries(values).reduce((result, [key, value]) => result.replaceAll(`{${key}}`, value ?? ''), template || '');
+    return text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
 function withEmoji(emoji, text, includeEmoji) {

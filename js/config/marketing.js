@@ -14,154 +14,249 @@ export const MARKETING_POST_TYPES = [
     { id: 'behind', label: 'Za kulisami', icon: 'local_fire_department' }
 ];
 
-export const BURGER_MARKETING = {
-    classic: {
-        hooks: [
-            'Nie wymyślamy koła na nowo. Klasyk robi robotę.',
-            'Klasyk, od którego zaczęła się cała historia.'
-        ],
-        short: 'Klasyk, który nigdy nie zawodzi.',
-        description: 'Soczysta wołowina, chrupiąca sałata, pomidor, ogórek i cebula, a wszystko na bułce brioche z grilla. Zero udziwnień, maksimum smaku.'
-    },
-    cheese: {
-        hooks: [
-            'Podwójny cheddar, który ciągnie się przy każdym gryzie.',
-            'Dla tych, którzy mówią: „poproszę więcej sera”.'
-        ],
-        short: 'Cheddar, który ciągnie się do ostatniego kęsa.',
-        description: 'Do klasyka dokładamy solidną porcję cheddara, który rozpływa się po ciepłej wołowinie. Ser ciągnie się aż do ostatniego kęsa, więc przygotuj się na lekki bałagan na palcach.'
-    },
-    bacon: {
-        hooks: [
-            'Bekon chrupie tak głośno, że słychać go przy stoliku obok.',
-            'Dymny, wędzony i bez litości — bekon rządzi.'
-        ],
-        short: 'Chrupiący bekon i wędzony cheddar.',
-        description: 'Chrupiący bekon, wędzony cheddar i sos, który spina to wszystko w jedną całość. Jeśli lubisz dymny smak, ten burger jest dla Ciebie jak znalazł.'
-    },
-    vege: {
-        hooks: [
-            'Halloumi z grilla. Mięso dziś zostaje w domu.',
-            'Wege, które nie smakuje jak „opcja zapasowa”.'
-        ],
-        short: 'Grillowane halloumi zamiast mięsa.',
-        description: 'Grillowane halloumi zamiast wołowiny, a do tego wszystkie świeże dodatki i sos. Wegetariański, ale tak samo konkretny jak reszta naszej karty.'
-    },
-    spicy: {
-        hooks: [
-            'Ostry tak, że sięgasz po kolejny kęs i po wodę.',
-            'Chorizo, jalapeño i bekon. Ostrzeżenie: wciąga.'
-        ],
-        short: 'Chorizo, jalapeño i bekon. Ostro.',
-        description: 'Chorizo, jalapeño, bekon i cheddar — ostre, ale wciąż zbalansowane. Jeśli lubisz, gdy burger daje kopa, zamów coś do picia i nie mów, że nie ostrzegaliśmy.'
-    },
-    chicken: {
-        hooks: [
-            'Chrupiące stripsy zamiast wołowiny. Robi się ciekawie.',
-            'Kurczak w panierce, świeże warzywa i sos.'
-        ],
-        short: 'Chrupiące stripsy zamiast wołowiny.',
-        description: 'Stripsy w chrupiącej panierce, świeże warzywa i sos, który wszystko spina. Lżejsza wersja burgera, ale wcale nie mniej konkretna.'
-    },
-    dwarf: {
-        hooks: [
-            'Krasnolud jest niski tylko z nazwy.',
-            'Niepozorny? Dopóki nie spróbujesz go podnieść.'
-        ],
-        short: 'Podwójna wołowina i zero umiaru.',
-        description: 'Podwójna wołowina, krążki cebulowe, placek ziemniaczany, cheddar i bekon. Krasnolud wygląda skromnie, a potem okazuje się, że ledwo mieści się w dłoni. Dla naprawdę głodnych.'
-    },
-    beast: {
-        hooks: [
-            'Bydlak. Prawie pół kilo wołowiny. Powodzenia.',
-            'Trzy kotlety, góra sera i zero umiaru.'
-        ],
-        short: 'Prawie pół kilo wołowiny. Wyzwanie.',
-        description: 'Trzy duże kotlety wołowe, dziewięć plastrów cheddara, bekonu i chorizo. Bydlak nie jest dla każdego — jest dla tych, którzy podchodzą do burgera jak do wyzwania.'
-    }
-};
-
-export const MARKETING_HOOKS = {
+export const MARKETING_TEMPLATES = {
     burger: [
-        'Dziś na grillu: {label}.',
-        'Kto dziś zamawia {label}?',
-        'Dziś króluje: {label}.',
-        'Świeżo z grilla: {label}.',
-        'Głodny? Dziś mamy {label}.'
+        '{emoji}{label}',
+        '{label}. {taste}',
+        '{hook}',
+        '{hook} {cta}',
+        'Dziś zachcianka: {label}.',
+        'Dzisiejsza zachcianka? {label}.',
+        '{description}',
+        '{label} — {taste}',
+        '{question}',
+        'Szukasz konkretu? {label} jest gotowy.',
+        'Dziś bez zastanawiania się: {label}.',
+        'Chodzą za nami myśli o {label}.',
+        '{label}, świeżo z grilla.',
+        'Na tapecie: {label}.',
+        'Masz ochotę? {label} czeka.',
+        'Dzisiaj {label}. Reszta się nie liczy.',
+        '{taste} {cta}',
+        'Krótko: {label}. {taste}',
+        'Dziś wybierz {label}. {cta}',
+        'Ktoś tu ma ochotę na {label}? My też.',
+        '{hook} {taste}',
+        '{question} {cta}'
     ],
     locations: [
-        'Dziś stoimy w {locations}.',
-        'Gdzie nas dziś znajdziesz? Podpowiadamy.',
-        'Dwa food trucki, dwa miasta, jeden grill.',
-        'Blisko Ciebie? Sprawdź, gdzie jesteśmy dziś.',
-        '{locations} — wybierz, gdzie Ci wygodniej.',
-        'Truck rozstawiony, grill rozgrzany. Zapraszamy.'
+        'Dziś stoimy: {locations}.',
+        '{emoji}Dziś jesteśmy: {locations}.',
+        'Dziś znajdziesz nas tu: {locations}.',
+        'Rozstawiliśmy się: {locations}.',
+        'Dziś {location} — {hours}.',
+        'Jeśli jesteś w okolicy, wpadnij. Dziś {locations}.',
+        'Blisko Ciebie? Dziś {locations}.',
+        'Truck rozstawiony, grill rozgrzany. {locations}.',
+        'Dziś znowu na miejscu: {locations}.',
+        '{locations}. Bez rezerwacji i ceregieli.',
+        '{location}, dziś coś się dzieje. Grill.',
+        '{location} dziś gra. Kto wpadnie?',
+        '{location}, mamy dla Was grilla.',
+        'Dziś na miejscu: {locations}.',
+        'Grill rozgrzany, warzywa pokrojone. {locations}.',
+        'Wpadnij, gdy będziesz w pobliżu. Dziś {locations}.',
+        'Nie trzeba daleko szukać. Dziś jesteśmy tu: {locations}.',
+        'Dziś {location}, godziny {hours}.',
+        'Spotkamy się? {location}, my już jesteśmy.',
+        '{emoji}{locations}, czekamy.',
+        'Krótkie przypomnienie: dziś {locations}.',
+        'Masz ochotę na burgera? Dziś {locations}.',
+        '{question}',
+        'Jesteśmy tam, gdzie zwykle. {locations}.'
     ],
     glovo: [
-        'Nie chce Ci się nigdzie ruszać? Glovo dowozi.',
-        'Burger bez wychodzenia z kanapy. Da się.',
-        'Otwórz Glovo i wpisz Burbone.',
-        'Zostań w domu, my przywieziemy.',
-        'Głodny? Kilka kliknięć i jedzie.',
-        'Dostawa prosto pod drzwi — bez wychodzenia z domu.'
+        'Nie chce Ci się wychodzić? Glovo dowozi.',
+        'Burger prosto pod drzwi.',
+        'Zamów w Glovo i czekaj na kuriera.',
+        '{emoji}Zostań w domu, my przywieziemy.',
+        'Wpisujesz {brand} w Glovo i gotowe.',
+        'Wieczór, kanapa i Glovo. Brzmi znajomo?',
+        'Dostawa na wyciągnięcie ręki — Glovo.',
+        'Nie musisz nigdzie ruszać się z domu.',
+        'Kilka kliknięć i burger jest w drodze.',
+        'Dziś dostawa. Glovo.',
+        'Dla wygodnych: Glovo.',
+        'Głodny, a nie chce Ci się wychodzić? Jest Glovo.',
+        'Wolisz kanapę? Zamów przez Glovo.',
+        'Twoje zamówienie, nasz grill, kurier Glovo.',
+        'Dostawa przez Glovo: {glovo}. Burger dojedzie sam.',
+        'Zamawiasz, my robimy, Glovo dowozi.',
+        'Bez wychodzenia z domu. Serio da się.',
+        'Czasem po prostu nie chce się wychodzić. Wtedy Glovo.',
+        '{question}',
+        'Glovo i tyle w temacie.',
+        'Dostawa pod drzwi, bez parkowania i kolejek.',
+        'Dziś dowozimy. Sprawdź Glovo.'
     ],
     promo: [
-        'Tylko teraz: {promo}',
-        'Łap okazję: {promo}',
+        'Dziś: {promo}',
+        'Mamy coś dla Was: {promo}',
+        'Okazja na dziś: {promo}',
+        '{emoji}{promo}',
+        'Łap, póki trwa: {promo}',
+        'Ktoś tu coś kombinuje: {promo}',
+        'Skorzystaj, póki trwa: {promo}',
         'Dziś działa: {promo}',
-        'Nie mów nikomu, ale dziś: {promo}.',
-        'Mamy coś dla Was: {promo}.'
+        'Wpadnij i skorzystaj: {promo}',
+        'Nie mów nikomu, ale: {promo}',
+        'Coś dla głodnych: {promo}',
+        'Sprawdź: {promo}',
+        'Dobra wiadomość: {promo}',
+        'Zgadnij, co dziś przygotowaliśmy? {promo}',
+        'Mamy to: {promo}',
+        'Wpadnij, zanim się skończy: {promo}',
+        'Okazja dnia: {promo}',
+        'Krótko: {promo}',
+        '{promo} — tyle dziś potrzebujesz wiedzieć.',
+        'Dla tych, którzy dziś wpadną: {promo}'
     ],
     behind: [
-        'Zapach z grilla czuć z drugiej strony ulicy.',
-        'Zanim trafi do Ciebie, musi przejść przez grill.',
-        'Kulisy: bułki, mięso, ogień i dużo cierpliwości.',
-        'Świeże warzywa kroimy na bieżąco. Zawsze.',
-        'Najlepszy moment dnia? Kiedy bekon trafia na patelnię.'
+        'Mięso na grillu, dym w powietrzu. Tak wygląda u nas zwykły dzień.',
+        'Zanim burger trafi do Ciebie, przechodzi przez grill.',
+        'Smażenie mięsa to u nas codzienny rytuał.',
+        'Składanie burgera to kilka sekund. Wcześniej jest przygotowanie.',
+        'Warzywa kroimy na bieżąco. Zawsze świeże.',
+        'Przygotowania przed otwarciem: bułki, mięso, sosy.',
+        'Food truck to nie tylko grill. To też cała logistyka.',
+        'Zdjęcie z grilla. Bez filtra i bez ściemy.',
+        'Kawałek naszego punktu między jednym zamówieniem a drugim.',
+        'Nasz pracownik przy przygotowywaniu zamówienia. Klatka z życia.',
+        'Od kuchni: tak powstaje jeden burger.',
+        'Kiedy nie ma kolejki, robimy dokładnie to samo. Tylko spokojniej.',
+        'Świeży bekon na patelni. Najlepszy moment dnia.',
+        'Każdy kotlet trafia na grill dopiero po zamówieniu.',
+        'Za kulisami: składniki przygotowane, grill gotowy.',
+        'Krojenie warzyw, formowanie kotletów, grill. Powtarzamy to codziennie.',
+        'Ruch w punkcie? Wtedy każda sekunda się liczy.',
+        'Zanim otworzymy, mamy już za sobą godzinę przygotowań.',
+        '{emoji}Dziś z grilla: bułki i mięso. Jak zawsze.',
+        'Nie ma tu wielkiej filozofii. Jest dobra robota.',
+        'Zdjęcie z zaplecza. Tak to naprawdę wygląda.',
+        'Praca przy food trucku to ciągły ruch i ład.',
+        'Sos, ser, warzywa, mięso, bułka. W tej kolejności.',
+        'Grill nie czeka. Dlatego robimy wszystko na bieżąco.',
+        'Jeszcze chwilę i zaczynamy wydawać. Zapach już czuć.',
+        'Codziennie od pierwszej do ostatniej bułki.',
+        'Świeże składniki to nie hasło, to lista zakupów.',
+        'Tak wygląda nasz truck przed otwarciem.'
     ]
 };
 
-export const MARKETING_BODIES = {
+export const MARKETING_CTAS = {
     burger: [
-        'Wpadnij i sprawdź, jak smakuje na żywo.',
-        'Przekonaj się, czy to Twój nowy numer jeden.',
+        'Wpadnij i sprawdź na żywo.',
         'Czekamy z rozgrzanym grillem.',
-        'Dostępny na miejscu albo w Glovo.'
+        'Dostępny na miejscu albo w Glovo.',
+        'Do zobaczenia przy okienku.',
+        'Przekonaj się sam.',
+        'Wpadnij, gdy będziesz głodny.'
     ],
     locations: [
-        'Wpadnij na miejscu — burgery lecą prosto z grilla.',
-        'Bez rezerwacji i ceregieli. Przyjeżdżaj, kiedy chcesz.',
-        'Zabierz ekipę i zamówcie na miejscu.',
-        'Stoimy tam, gdzie zawsze. Do zobaczenia!',
-        'Świeże warzywa pokrojone, mięso gotowe. Czekamy.'
+        'Wpadnij, kiedy chcesz.',
+        'Bez rezerwacji i ceregieli.',
+        'Do zobaczenia na miejscu.',
+        'Zabierz ekipę i zamówcie razem.',
+        'Świeże warzywa już pokrojone.',
+        'Czekamy z grillem.',
+        'Przyjeżdżaj, kiedy chcesz.'
     ],
     glovo: [
-        'Wpisz Burbone w aplikacji Glovo i czekaj na kuriera.',
-        'Otwórz Glovo, wrzuć burgera do koszyka i gotowe.',
-        'Zamów z dostawą, gdziekolwiek jesteś w zasięgu.',
-        'Kilka kliknięć i burger jedzie do Ciebie.',
-        'Dostawa prosto pod drzwi, bez wychodzenia z domu.'
+        'Wpisz {brand} i czekaj na kuriera.',
+        'Kilka kliknięć i gotowe.',
+        'Dostawa, gdy tylko masz ochotę.',
+        'Zamów bez wychodzenia z domu.',
+        'Otwórz Glovo i działaj.',
+        'Twój burger już może być w drodze.'
     ],
     promo: [
         'Skorzystaj, póki trwa.',
-        'Wpadnij, zanim się skończy.',
-        'Okazja dostępna w obu truckach.',
-        'Zamów na miejscu albo przez Glovo.'
+        'Wpadnij albo zamów w Glovo.',
+        'Okazja działa w naszych punktach.',
+        'Zamów, zanim się skończy.'
     ],
     behind: [
         'Do zobaczenia przy okienku.',
         'Wpadnij i zobacz, jak to robimy.',
-        'Robimy to codziennie, od pierwszej do ostatniej bułki.',
-        'Dla nas liczy się każdy szczegół — od bułki po ostatni plaster sera.'
+        'Robimy to codziennie.',
+        'Dla nas liczy się każdy szczegół.'
+    ]
+};
+
+export const MARKETING_QUESTIONS = {
+    burger: [
+        'Którego dziś wybierasz?',
+        'Masz już swojego faworyta?',
+        'Klasyk czy coś mocniejszego?',
+        'Kto dziś na burgera?',
+        'A Ty co bierzesz?',
+        'Głodny?',
+        'Zgadniesz, co dziś polecamy?'
+    ],
+    locations: [
+        'Który punkt wybierasz dziś?',
+        'Jesteś blisko któregoś z nas?',
+        'Widzimy się dziś?',
+        'Do którego trucka dziś wpadniesz?'
+    ],
+    glovo: [
+        'Wolisz kanapę czy stolik przy trucku?',
+        'Zamawiasz dziś do domu?',
+        'Głodny, a nie chce Ci się wychodzić?'
+    ],
+    promo: [
+        'Korzystasz?',
+        'Wchodzisz w to?'
+    ],
+    behind: [
+        'Zgadniesz, co robimy?',
+        'Ciekawi Cię, jak to wygląda od środka?'
     ]
 };
 
 export const MARKETING_INSTAGRAM = {
-    burger: ['Dziś na grillu.', 'Dla głodnych.', 'Wpadnij, zanim się skończy.', 'Świeżo z grilla.'],
-    locations: ['Oświęcim i Osiek. Czekamy!', 'Dwa trucki, jeden smak.', 'Jesteśmy na miejscu.'],
-    glovo: ['Zamów przez Glovo.', 'Klik, klik i gotowe.', 'Dowozimy pod drzwi.'],
-    promo: ['Tylko teraz!', 'Wpadnij i skorzystaj.', 'Okazja dnia.'],
-    behind: ['Kulisy grillowania.', 'Tak to robimy.', 'Od grilla do Ciebie.']
+    burger: [
+        '{emoji}{label}',
+        'Dziś {label}.',
+        '{taste}',
+        '{label}. {cta}',
+        'Świeżo z grilla.',
+        '{hook}',
+        'Dla głodnych.',
+        '{label} czeka.'
+    ],
+    locations: [
+        '{emoji}{locations}',
+        'Dziś {locations}.',
+        'Dwa trucki, jeden grill.',
+        'Jesteśmy na miejscu.',
+        'Wpadnij, gdy będziesz w pobliżu.',
+        '{location}, czekamy.',
+        'Grill rozgrzany.'
+    ],
+    glovo: [
+        '{emoji}Zamów przez Glovo.',
+        'Burger pod drzwiami.',
+        'Klik, klik i jedzie.',
+        'Dowozimy.',
+        'Nie chce Ci się wychodzić? Glovo.',
+        'Dziś dostawa.'
+    ],
+    promo: [
+        '{emoji}{promo}',
+        'Okazja dnia.',
+        '{promo} — wpadnij.',
+        'Mamy coś dla Was.',
+        'Dziś działa: {promo}'
+    ],
+    behind: [
+        '{emoji}Kulisy grillowania.',
+        'Tak to robimy.',
+        'Od grilla do Ciebie.',
+        'Świeże składniki, codzienna robota.',
+        'Zdjęcie z zaplecza.',
+        'Kawałek naszego dnia.'
+    ]
 };
 
 export const MARKETING_PROMPTS = [
@@ -170,7 +265,11 @@ export const MARKETING_PROMPTS = [
     'Który burger kusi Cię najbardziej? Pisz śmiało.',
     'Oznacz kogoś, z kim zjadłbyś takiego burgera.',
     'Jesteś team klasyk czy team bydlak?',
-    'Zgadnij, ile waży Bydlak. Nagroda: szacunek.'
+    'Zgadnij, ile waży Bydlak. Nagroda: szacunek.',
+    'Wrzuć serduszko, jeśli dziś burger.',
+    'Napisz, z czym lubisz go najbardziej.',
+    'Oznacz kogoś, kto dziś stawia.',
+    'Który punkt wybierasz? Pisz w komentarzu.'
 ];
 
 export const MARKETING_TYPE_HASHTAGS = {

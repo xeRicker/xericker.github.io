@@ -13,7 +13,7 @@ import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolve
 import { adminEmployees } from './ui/adminEmployees.js?v=171';
 import { adminLocations } from './ui/adminLocations.js?v=174';
 import { adminPayments } from './ui/adminPayments.js?v=103';
-import { adminMarketing } from './ui/adminMarketing.js?v=3';
+import { adminMarketing } from './ui/adminMarketing.js?v=4';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=168';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=102';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
@@ -396,7 +396,7 @@ function buildWeekTabs(data, { label = 'Cały miesiąc', showWeeks = true } = {}
     currentWeeks.forEach((weekData, index) => {
         const start = weekData[0].dateStr.slice(0, 5);
         const end = weekData[weekData.length - 1].dateStr.slice(0, 5);
-        tabsContainer.appendChild(createWeekTab(String(index), `TYDZIEŃ ${index + 1} (${start}-${end})`));
+        tabsContainer.appendChild(createWeekTab(String(index), `T${index + 1} (${start}–${end})`));
     });
 }
 

@@ -1,5 +1,5 @@
-import { MARKETING_BRAND, MARKETING_POST_TYPES } from '../config/marketing.js?v=2';
-import { buildMarketingPost, loadMarketingBurgers } from '../services/marketing.js?v=3';
+import { MARKETING_BRAND, MARKETING_POST_TYPES } from '../config/marketing.js?v=3';
+import { buildMarketingPost, loadMarketingBurgers } from '../services/marketing.js?v=4';
 import { escapeHtml, fallbackCopyToClipboard, renderMaterialIcon } from '../utils.js';
 import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
 
@@ -39,7 +39,6 @@ class AdminMarketing {
             <div class="admin-products-head">
                 <div class="section-heading">
                     <h3>${renderMaterialIcon('campaign')} Marketing</h3>
-                    <p>Wybierz rodzaj postu, uzupełnij szczegóły i kliknij „Generuj”. Każde kliknięcie losuje nowy wariant, a gotowy tekst możesz jeszcze poprawić i skopiować obok.</p>
                 </div>
             </div>
             <form class="marketing-form" data-action="generate">
@@ -59,10 +58,10 @@ class AdminMarketing {
                     <span>Promocja</span>
                     <input id="marketingPromo" class="calc-input" placeholder="np. drugi burger -30%" aria-label="Opis promocji">
                 </label>
-                <fieldset class="marketing-options">
-                    <legend>Uwzględnij w poście</legend>
+                <div class="marketing-options" role="group" aria-label="Uwzględnij w poście">
+                    <span class="marketing-options__legend">Uwzględnij w poście</span>
                     ${MARKETING_OPTIONS.map(option => this.buildOption(option)).join('')}
-                </fieldset>
+                </div>
                 <button class="chart-btn active marketing-generate" type="submit">${renderMaterialIcon('auto_awesome')} Generuj post</button>
             </form>
             <div class="marketing-outputs">
@@ -112,7 +111,9 @@ class AdminMarketing {
         const textarea = this.container.querySelector('#marketingDescription');
         if (!select || !textarea) return;
         const burger = this.burgers.find(entry => entry.id === select.value);
-        textarea.value = burger?.description || '';
+        const description = burger?.descriptions?.[0] || '';
+        textarea.value = description;
+        this.syncedDescription = description;
     }
 
     syncContextFields() {
@@ -142,17 +143,24 @@ class AdminMarketing {
         event.preventDefault();
         const burger = this.burgers.find(entry => entry.id === this.container.querySelector('#marketingBurger')?.value);
         const isBurger = this.type === 'burger';
+        const descriptionField = this.container.querySelector('#marketingDescription');
+        const description = descriptionField?.value.trim() || '';
+        const isCustomDescription = description !== this.syncedDescription;
         const post = buildMarketingPost({
             type: this.type,
             burgerId: isBurger ? burger?.id || '' : '',
             burger: isBurger ? burger?.label || '' : '',
             promo: this.container.querySelector('#marketingPromo')?.value.trim() || '',
-            description: this.container.querySelector('#marketingDescription')?.value.trim() || '',
+            description: isCustomDescription ? description : '',
             options: this.options,
             brand: MARKETING_BRAND
         });
         this.setOutput('facebook', post.facebook);
         this.setOutput('instagram', post.instagram);
+        if (isBurger && !isCustomDescription && post.description && descriptionField) {
+            descriptionField.value = post.description;
+            this.syncedDescription = post.description;
+        }
     }
 
     handleClick(event) {

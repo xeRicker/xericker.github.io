@@ -96,9 +96,6 @@ function positionPopover(wrapper, popover) {
     const left = Math.min(Math.max(rect.left, viewportGap), window.innerWidth - desiredWidth - viewportGap);
     const spaceBelow = window.innerHeight - rect.bottom - viewportGap;
     const spaceAbove = rect.top - viewportGap;
-    // How much room this popover wants before it has to scroll. The calendar is
-    // tall enough to be cut off if it always opens downwards, so it gets a real
-    // measurement and flips up whenever the space below cannot hold it.
     const preferredHeight = getPreferredPopoverHeight(wrapper, popover);
 
     const openUp = spaceBelow < preferredHeight + 8 && spaceAbove > spaceBelow;
@@ -120,11 +117,6 @@ function positionPopover(wrapper, popover) {
     }
 }
 
-/**
- * Height the popover needs before it would have to scroll. Each control type
- * declares its own expectation so the flip decision can account for it: a
- * calendar cut off mid-month is worse than opening upwards.
- */
 function getPreferredPopoverHeight(wrapper, popover) {
     if (popover.classList.contains('custom-calendar')) {
         return measureCalendarHeight(popover);
@@ -186,12 +178,6 @@ function resetPopoverPosition(popover) {
     }
 }
 
-/**
- * The visible control is a generated button, so the native <label for="...">
- * would otherwise leave it without an accessible name. Copy the label text onto
- * the button, which also keeps the control usable when a visible field label is
- * dropped as redundant with its section heading.
- */
 function applyLabelAsAccessibleName(control, button) {
     const id = control.id;
     const label = id ? document.querySelector(`label[for="${id}"]`) : null;
@@ -227,8 +213,6 @@ function enhanceSelect(select) {
     const render = () => {
         const selected = select.selectedOptions[0];
         value.textContent = selected?.textContent || 'Wybierz';
-        // Natywny select jest ukryty, więc stan `disabled` musi przejąć widoczny
-        // przycisk — inaczej dałoby się kliknąć pole, które jest wyłączone.
         button.disabled = select.disabled;
         wrapper.classList.toggle('is-disabled', select.disabled);
         menu.innerHTML = '';
@@ -522,13 +506,7 @@ function formatHoursMarker(value) {
 }
 
 export const dialogService = {
-    /**
-     * @param {string} message   Treść komunikatu.
-     * @param {string} [title]
-     * @param {{variant?: 'info'|'success'|'danger'|'warning'|'muted', detail?: string}} [options]
-     *   Wariant dobiera ikonę i kolor panelu komunikatu. Gdy `detail` jest podany,
-     *   pojawia się panel z ikoną pod treścią — ten sam, co komunikaty inline.
-     */
+
     alert(message, title = 'Komunikat', options = {}) {
         return openDialog({
             title,
@@ -565,9 +543,6 @@ export const dialogService = {
             input: {
                 type: options.type || 'text',
                 value: options.value || '',
-                // Rodzaj klawiatury ustawia wywołujący: hasło administratora jest
-                // numeryczne, więc dostaje inputmode 'numeric', ale pole tekstowe
-                // nadal może prosić o pełną klawiaturę.
                 inputmode: options.inputmode,
                 autocomplete: options.autocomplete || 'off',
                 autoSubmit: options.autoSubmit,
@@ -693,9 +668,6 @@ function openDialog(config) {
                 clearTimeout(autoSubmitTimer);
                 const checkedValue = field.value;
                 if (!checkedValue) return;
-                // Weryfikacja bywa asynchroniczna (np. PBKDF2 hasła), więc wynik
-                // liczy się tylko wtedy, gdy pole nadal ma tę samą wartość —
-                // spóźnione sprawdzenie nie może zamknąć dialogu po dalszym pisaniu.
                 autoSubmitTimer = setTimeout(async () => {
                     let accepted = false;
                     try {

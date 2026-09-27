@@ -40,7 +40,6 @@
     box-shadow: 0 0 0 2px var(--primary-glow);
 }
 
-/* Wyłączona kontrolka: brak reakcji na hover i wyraźnie słabsza hierarchia. */
 .custom-control.is-disabled .custom-control__button,
 .custom-control__button:disabled {
     opacity: .55;
@@ -321,7 +320,6 @@
     font: inherit;
 }
 
-/* Pole z akcją (np. pokaż hasło): input i przycisk tworzą jeden kontrolkę. */
 .custom-dialog__field {
     display: grid;
     gap: 8px;
@@ -367,10 +365,8 @@
 }
 .custom-dialog__field-action .material-symbols-rounded { font-size: 20px; }
 
-/* Pole z akcją potrzebuje więcej miejsca niż jednopolowe okno. */
 .custom-dialog--wide { width: min(460px, 100%); }
 
-/* Ekran logowania: wyższa hierarchia i pełniejsza szerokość, zwłaszcza na mobile. */
 .custom-dialog--prominent h3 { font-size: 24px; }
 .custom-dialog--prominent > p { font-size: 14px; }
 .custom-dialog--prominent.custom-dialog--wide { width: min(520px, 100%); }
@@ -379,7 +375,6 @@
     padding: 14px;
 }
 
-/* Nagłówek dziedziczy wagę komunikatu, więc błąd czyta się jak błąd. */
 .custom-dialog--danger h3 { color: var(--danger-color); }
 .custom-dialog--success h3 { color: var(--success-color); }
 

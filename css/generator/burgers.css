@@ -497,8 +497,6 @@
         flex-direction: column;
     }
 
-    /* Produkt zajmuje cały wiersz, a ilość i przycisk dzielą drugi — inaczej
-       „+” rozciąga się na całą szerokość i wygląda jak główna akcja. */
     .burger-add-row {
         grid-template-columns: minmax(0, 1fr) auto;
     }

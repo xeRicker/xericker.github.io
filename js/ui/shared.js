@@ -11,8 +11,6 @@ export const uiShared = {
 
     closeModals() {
         document.querySelectorAll('.bottom-sheet, .overlay').forEach(el => el.classList.remove('visible'));
-        // Metoda bywa podpinana wprost jako listener kliknięcia, więc `this`
-        // nie jest wtedy obiektem uiShared.
         uiShared.stopFireworks();
     },
 

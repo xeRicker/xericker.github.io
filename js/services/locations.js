@@ -1,28 +1,11 @@
 import { apiService } from './api.js?v=169';
 
-/**
- * Punkt (lokal) to pozycja katalogu, a nie stała w kodzie. Katalog trzyma
- * rozdzielone celowo:
- *  - `name`  – to, co widzi człowiek (można zmienić, np. Osiek na Kęty),
- *  - `path`  – folder w `database/` (stały, dzięki temu archiwum zostaje pod tą
- *              samą nazwą, nawet po zmianie nazwy punktu),
- *  - `aliases` – dawne nazwy punktu, żeby historyczne raporty dalej się scalały
- *              z bieżącą nazwą po zmianie,
- *  - `enabled` – widoczność w generatorze listy,
- *  - `stats`   – czy punkt wchodzi do obliczeń w panelu,
- *  - `deleted` – archiwum: punkt znika i z generatora, i ze statystyk.
- */
 export const DEFAULT_LOCATIONS = [
     { name: 'Oświęcim', path: 'oświęcim', enabled: true, stats: true, deleted: false, aliases: [] },
     { name: 'Osiek', path: 'osiek', enabled: true, stats: true, deleted: false, aliases: [] },
     { name: 'Wilamowice', path: 'wilamowice', enabled: false, stats: true, deleted: false, aliases: [] }
 ].map((location, index) => ({ ...location, order: index }));
 
-/**
- * Klucz porównawczy: bez wielkości liter, bez polskich znaków i bez znaków,
- * które w nazwach folderów bywają zapisane różnie. Dzięki temu „Oświęcim”,
- * „oswiecim” i „OŚWIĘCIM” trafiają w ten sam punkt.
- */
 export function normalizeLocationKey(value) {
     return String(value ?? '')
         .normalize('NFD')
@@ -33,7 +16,6 @@ export function normalizeLocationKey(value) {
         .trim();
 }
 
-/** Bezpieczna nazwa folderu w `database/` dla nowego punktu. */
 export function slugifyLocation(value) {
     return normalizeLocationKey(value).replace(/\s+/g, '-').replace(/^-+|-+$/g, '');
 }
@@ -66,24 +48,14 @@ function sortByOrder(locations) {
     return [...locations].sort((left, right) => left.order - right.order);
 }
 
-/** Punkty dostępne w generatorze listy: nieusunięte i z włączoną widocznością. */
 export function getSelectableLocations(catalog) {
     return sortByOrder(normalizeLocationCatalog(catalog).locations.filter(location => location.enabled && !location.deleted));
 }
 
-/**
- * Punkty obecne w panelu (filtr w Listach): wszystko poza archiwum. Punkt
- * pomijany w statystykach nadal ma swoje zapisane listy do podejrzenia.
- */
 export function getPanelLocations(catalog) {
     return sortByOrder(normalizeLocationCatalog(catalog).locations.filter(location => !location.deleted));
 }
 
-/**
- * Tłumaczy nazwę zapisaną w raporcie na bieżący punkt z katalogu. Raporty
- * historyczne trzymają nazwę z dnia zapisu, więc bez tego kroku zmiana nazwy
- * punktu rozbiłaby statystyki na dwie pozycje.
- */
 export function createLocationResolver(catalog) {
     const entries = sortByOrder(normalizeLocationCatalog(catalog).locations);
     const index = new Map();

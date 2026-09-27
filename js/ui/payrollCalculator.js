@@ -35,11 +35,6 @@ export function setupPayrollCalculator(config) {
 
     const scope = () => select.closest('.calc-card, .worker-card, .section-card') || document;
 
-    /**
-     * Stawka i zakres dat nie mają sensu bez pracownika, więc są nieaktywne,
-     * dopóki ktoś nie wybierze osoby. Stan musi trafić też na podmienione
-     * kontrolki (`customControls`), bo to one przyjmują kliknięcia.
-     */
     const syncEmployeeFields = () => {
         const enabled = Boolean(select.value);
         [rateInput, dateFromInput, dateToInput].forEach(field => {
@@ -127,7 +122,6 @@ export function setupPayrollCalculator(config) {
         reports.forEach(report => {
             if (!report.employees) return;
             Object.keys(report.employees).forEach(name => {
-                // Osoba ukryta w EKIPIE nie pojawia się na liście do wyboru.
                 if (isEmployeeAvailable(name)) employees.add(name);
             });
         });

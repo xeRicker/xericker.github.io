@@ -1,5 +1,3 @@
-export const EMPLOYEES = ["Paweł", "Radek", "Sebastian", "Tomek", "Kacper", "Natalia", "Dominik"];
-
 export const EMPLOYEE_COLORS = {
     "Paweł": "var(--employee-color-1)", "Radek": "var(--employee-color-2)", "Sebastian": "var(--employee-color-3)",
     "Tomek": "var(--employee-color-4)", "Natalia": "var(--employee-color-5)", "Kacper": "var(--employee-color-6)", "Dominik": "var(--employee-color-7)"

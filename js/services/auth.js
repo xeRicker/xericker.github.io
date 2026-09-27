@@ -1,12 +1,3 @@
-/**
- * Admin password check.
- *
- * Only a PBKDF2-SHA256 salt and digest live in the source, so the password
- * itself is not readable in the inspector. A static site can never hide the
- * check itself — the digest is public and brute forceable — so this raises the
- * cost of reading the password, it does not make the panel cryptographically
- * private.
- */
 const CREDENTIALS = {
     hash: 'SHA-256',
     iterations: 210000,
@@ -41,13 +32,9 @@ async function deriveBits(password, salt, iterations) {
 }
 
 export const authService = {
-    /**
-     * @param {string} password
-     * @returns {Promise<boolean>} true when the password matches the stored digest.
-     */
+
     async verifyPassword(password) {
         if (typeof password !== 'string') return false;
-        // Mobile keyboards and copy-paste routinely add stray whitespace.
         const candidate = password.trim();
         if (!candidate) return false;
         if (!globalThis.crypto?.subtle) {

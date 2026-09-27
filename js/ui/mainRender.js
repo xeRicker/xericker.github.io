@@ -82,10 +82,6 @@ export const mainRender = {
         return container.querySelector(`[data-employee-id="${employee.id}"]`);
     },
 
-    /**
-     * Lista punktów w arkuszu „SKOPIUJ LISTĘ” pochodzi z katalogu punktów,
-     * więc dodanie punktu w panelu admina wystarcza — bez zmian w kodzie.
-     */
     renderLocations(container, locations = []) {
         if (!container) return;
         if (!locations.length) {

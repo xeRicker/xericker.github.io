@@ -37,7 +37,6 @@ function toPromise(request) {
     });
 }
 
-/** Drops oldest cached reports once the store grows past MAX_ENTRIES. */
 async function prune(db) {
     const count = await toPromise(db.transaction(STORE, 'readonly').objectStore(STORE).count());
     if (count <= MAX_ENTRIES) return;
@@ -61,10 +60,6 @@ async function prune(db) {
     });
 }
 
-/**
- * Report files are immutable per Git blob SHA, so raw report JSON is cached by
- * SHA and only changed/never-seen files are downloaded again.
- */
 export const reportCache = {
     async getMany(shas) {
         const result = new Map();

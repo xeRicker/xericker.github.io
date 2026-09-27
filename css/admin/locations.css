@@ -93,8 +93,6 @@
     justify-content: flex-end;
 }
 
-/* Dwa stany punktu muszą być czytelne bez zgadywania ikony, więc przełączniki
-   mają etykiety i rozmiar zależny od treści. */
 .admin-location-row .state-switch--labelled {
     width: auto;
     min-width: 0;

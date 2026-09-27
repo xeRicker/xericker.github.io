@@ -16,7 +16,7 @@ const CATEGORY_ICONS = {
     "📋": "receipt_long"
 };
 
-export function legacyCategoriesToCatalog(categories = CATEGORIES) {
+function legacyCategoriesToCatalog(categories = CATEGORIES) {
     return {
         version: 1,
         updatedAt: null,

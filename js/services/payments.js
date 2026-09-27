@@ -55,7 +55,7 @@ export function normalizePaymentDate(value) {
     return Number.isNaN(date.getTime()) ? '' : toIsoDate(date);
 }
 
-export function parsePaymentDate(value) {
+function parsePaymentDate(value) {
     const iso = normalizePaymentDate(value);
     if (!iso) return null;
     const [year, month, day] = iso.split('-').map(Number);
@@ -83,7 +83,7 @@ function normalizePaymentsList(items) {
         .filter(entry => entry.date && entry.amount > 0);
 }
 
-export function normalizePaymentItem(item = {}, index = 0) {
+function normalizePaymentItem(item = {}, index = 0) {
     const title = String(item.title ?? item.name ?? '').trim();
     if (!title) return null;
     return {
@@ -136,7 +136,7 @@ export function derivePayment(item, reference = new Date()) {
     };
 }
 
-export function comparePaymentViews(left, right) {
+function comparePaymentViews(left, right) {
     const leftTime = left.dueDateObj ? left.dueDateObj.getTime() : Infinity;
     const rightTime = right.dueDateObj ? right.dueDateObj.getTime() : Infinity;
     if (leftTime !== rightTime) return leftTime - rightTime;
@@ -222,9 +222,6 @@ export function getPaymentRecurrenceLabel(id) {
     return PAYMENT_RECURRENCES.find(entry => entry.id === id)?.label || 'Jednorazowo';
 }
 
-export function getPaymentStatusLabel(status) {
-    return PAYMENT_STATUSES[status]?.label || 'Do zapłaty';
-}
 
 export async function loadPaymentsCatalog() {
     return normalizePaymentsCatalog(await apiService.fetchPayments());

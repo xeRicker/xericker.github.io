@@ -15,7 +15,7 @@ export function buildReportText(report, catalog, employeeCatalog) {
     return lines.join('\n').trim();
 }
 
-export function buildProductsText(products, catalog) {
+function buildProductsText(products, catalog) {
     const categories = Array.isArray(catalog?.categories) ? catalog.categories : [];
     const usedProducts = new Set();
     const sections = [];

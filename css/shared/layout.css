@@ -1,6 +1,3 @@
-/* =================================
-   Layout & Header
-   ================================= */
 .container {
     max-width: 600px;
     margin: 20px auto;
@@ -90,9 +87,6 @@
     background: transparent;
 }
 
-/* =================================
-   Cards (Sections & Products)
-   ================================= */
 .section-card,
 .card--section {
     background: var(--surface-color);
@@ -162,8 +156,7 @@
 
 .title-icon,
 .field-icon,
-.loc-icon,
-.filter-icon {
+.loc-icon{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -180,10 +173,6 @@
 .loc-icon {
     min-width: 22px;
     font-size: 20px;
-}
-
-.filter-icon {
-    font-size: 18px;
 }
 
 .field-icon--glovo {

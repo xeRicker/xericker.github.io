@@ -37,10 +37,6 @@ export function getActiveEmployees(catalog) {
     return normalizeEmployeeCatalog(catalog).employees.filter(employee => employee.enabled);
 }
 
-/**
- * Raporty zapisują osobę raz jako identyfikator (`pawel.komendera`), a raz jako
- * samo imię z legacy list, więc dopasowanie musi być odporne na oba zapisy.
- */
 function normalizeEmployeeKey(value) {
     return String(value ?? '')
         .normalize('NFD')
@@ -62,11 +58,6 @@ export function resolveEmployee(rawName, catalog) {
         || null;
 }
 
-/**
- * Osoba ukryta w EKIPIE nie pojawia się na listach pracowników (kalulator
- * wynagrodzeń, tabela godzin), ale jej historyczne godziny zostają w danych.
- * Nazwy spoza katalogu (np. jednorazowy pracownik) nie są ukrywane.
- */
 export function isEmployeeVisible(rawName, catalog) {
     return resolveEmployee(rawName, catalog)?.enabled !== false;
 }

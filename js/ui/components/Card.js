@@ -8,8 +8,3 @@ export function cardClass(variant = 'section', additionalClass = '') {
     return ['card', `card--${safeVariant}`, additionalClass].filter(Boolean).join(' ');
 }
 
-export function renderCard({ variant = 'section', className = '', tag = 'section', attributes = '', content = '' } = {}) {
-    return `<${tag} class="${cardClass(variant, className)}"${attributes ? ` ${attributes}` : ''}>${content}</${tag}>`;
-}
-
-export const Card = { cardClass, renderCard };

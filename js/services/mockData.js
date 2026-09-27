@@ -16,10 +16,6 @@ const DEFAULT_PRODUCTS = [
     { name: 'Sos: Czosnek', toggle: false }
 ];
 
-/**
- * Localhost-only fallback: fills the last months with report-shaped data so a
- * fresh clone or an empty database folder still renders every admin view.
- */
 export function generateMockReports({ months = 3, referenceDate = new Date(), locations, employees, products } = {}) {
     const locationNames = normalizeLocations(locations);
     const employeeKeys = normalizeEmployees(employees);

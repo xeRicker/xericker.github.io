@@ -73,8 +73,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         locationCatalog = await loadLocationCatalog();
         locationResolver = createLocationResolver(locationCatalog);
 
-        // Katalog punktów tłumaczy nazwy z historycznych list na bieżące nazwy
-        // punktów, wycina archiwum i punkty pomijane w statystykach.
         sourceData = rawData;
         allData = applyLocationCatalog(sourceData);
         statsData = applyStatisticsFilter(allData);
@@ -86,9 +84,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         await adminProducts.init(document.getElementById('adminProductsPage'));
         await adminEmployees.init(document.getElementById('adminEmployeesPage'));
         adminLocations.onSaved = catalog => {
-            // Po zapisie katalogu widoki liczymy od nowa z surowych raportów, żeby
-            // zmiana nazwy, przełączniki i archiwum działały bez przeładowania
-            // strony — i żeby przywrócenie punktu odzyskało jego dane.
             locationCatalog = catalog;
             locationResolver = createLocationResolver(locationCatalog);
             applyLoadedData(sourceData);
@@ -118,7 +113,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/** Nazwy punktów z raportów sprowadza do katalogu i pomija punkty usunięte. */
 function applyLocationCatalog(reports) {
     if (!locationResolver) return reports;
     return reports
@@ -129,10 +123,6 @@ function applyLocationCatalog(reports) {
         });
 }
 
-/**
- * Zbiór do obliczeń: punkty pomijane w statystykach zostają w zapisanych
- * listach, ale nie wchodzą do utargów, godzin ani kalkulatora wypłat.
- */
 function applyStatisticsFilter(reports) {
     if (!locationResolver) return reports;
     return reports.filter(report => locationResolver.inStatistics(report.location));

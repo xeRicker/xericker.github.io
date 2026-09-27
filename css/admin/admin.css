@@ -1,6 +1,3 @@
-/* =================================
-   ADMIN SPECIFIC STYLES
-   ================================= */
 [hidden] { display: none !important; }
 
 .admin-container { max-width: 1200px; margin: 40px auto; padding: 0 20px 60px 20px; }
@@ -14,15 +11,9 @@ select {
 }
 select:focus { border-color: var(--primary-color); }
 
-.admin-toolbar {
-    display: grid;
-    gap: 18px;
-    margin-bottom: 24px;
-}
-
 .header-actions {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
@@ -379,8 +370,7 @@ select:focus { border-color: var(--primary-color); }
 .summary-box p,
 .insight-card strong,
 .location-total,
-.cell-primary,
-.alert-badge {
+.cell-primary{
     font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
 }
@@ -455,57 +445,6 @@ select:focus { border-color: var(--primary-color); }
 .summary-box small { display: block; margin-top: 0; color: var(--text-muted); font-size: 12px; }
 .summary-box p.highlight { color: var(--primary-color); }
 
-.insight-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-}
-
-.insight-card {
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 18px 20px;
-}
-
-.insight-card--warning {
-    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
-    background: color-mix(in srgb, var(--glovo-color) 12%, var(--surface-raised));
-}
-
-.insight-card--accent {
-    border-color: color-mix(in srgb, var(--primary-color) 45%, transparent);
-    background: color-mix(in srgb, var(--primary-color) 8%, transparent);
-}
-
-.insight-card--glovo {
-    border-color: var(--border-color);
-    background: var(--surface-color);
-}
-
-.insight-card--events {
-    position: relative;
-    overflow: hidden;
-    border-color: color-mix(in srgb, var(--app-chart-3) 64%, transparent);
-    background: radial-gradient(circle at top right, color-mix(in srgb, var(--app-chart-3) 18%, transparent), transparent 42%),
-        linear-gradient(180deg, rgba(24, 33, 45, 0.98), rgba(18, 21, 27, 0.98));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--app-chart-3) 12%, transparent) inset, 0 14px 32px color-mix(in srgb, var(--app-chart-3) 12%, transparent);
-    cursor: help;
-    animation: event-card-pulse 2.8s ease-in-out infinite;
-}
-
-.insight-card--events::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    pointer-events: none;
-    background: linear-gradient(110deg, transparent 0%, color-mix(in srgb, var(--app-chart-3) 0%, transparent) 38%, color-mix(in srgb, var(--app-chart-3) 18%, transparent) 50%, color-mix(in srgb, var(--app-chart-3) 0%, transparent) 62%, transparent 100%);
-    clip-path: inset(0 round var(--radius-md));
-    transform: translateX(-120%);
-    animation: event-card-shine 4.2s ease-in-out infinite;
-}
-
 .insight-card--events strong {
     color: var(--app-chart-3);
 }
@@ -530,15 +469,6 @@ select:focus { border-color: var(--primary-color); }
 @keyframes event-card-shine {
     0%, 56% { transform: translateX(-120%); }
     82%, 100% { transform: translateX(120%); }
-}
-
-.insight-label {
-    display: block;
-    color: var(--text-muted);
-    font-size: 11px;
-    font-family: var(--font-heading);
-    letter-spacing: 0;
-    margin-bottom: 10px;
 }
 
 .insight-card strong {
@@ -608,7 +538,6 @@ select:focus { border-color: var(--primary-color); }
 .section-heading p { margin: 6px 0 0; color: var(--text-muted); font-size: 14px; text-transform: none; font-family: var(--font-body); letter-spacing: 0; }
 .section-heading--stack { margin-bottom: 20px; }
 
-/* Wspólny język nagłówków paneli */
 .section-heading h3 {
     display: inline-flex;
     align-items: center;
@@ -624,8 +553,8 @@ select:focus { border-color: var(--primary-color); }
 @media (prefers-reduced-motion: reduce) {
     .admin-top-progress-bar,
     .admin-load-all-icon,
-    .event-card-pulse,
-    .event-card-shine,
+
+
     .daily-report-loading .material-symbols-rounded {
         animation: none !important;
         transition-duration: 0.01ms !important;
@@ -719,21 +648,14 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 .cell-primary { color: var(--text-primary); font-weight: 600; }
 .cell-secondary { color: var(--text-muted); font-size: 12px; margin-top: 4px; }
 
-.point-pill-list,
-.employee-loc-list {
+.point-pill-list{
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.point-pill-list--stack {
-    flex-direction: column;
-    align-items: stretch;
-    min-width: 190px;
-}
-
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill {
     display: inline-flex;
     align-items: center;
@@ -748,14 +670,6 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
     font-family: var(--font-body);
 }
 
-.point-pill-list--stack .point-pill {
-    width: 100%;
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    background: linear-gradient(180deg, color-mix(in srgb, var(--text-primary) 5%, transparent), color-mix(in srgb, var(--text-primary) 2%, transparent));
-    border-color: color-mix(in srgb, var(--text-primary) 8%, transparent);
-}
-
 .point-pill__name {
     color: var(--text-secondary);
 }
@@ -767,8 +681,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 
 .point-pill strong,
 .employee-loc-pill strong,
-.calc-breakdown-pill strong,
-.employee-loc-pill {
+.calc-breakdown-pill strong{
     font-size: 12px;
 }
 
@@ -776,47 +689,6 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
     border-color: color-mix(in srgb, var(--primary-color) 42%, transparent);
     background: color-mix(in srgb, var(--primary-color) 8%, transparent);
     color: var(--primary-hover);
-}
-
-.alert-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 12px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    font-size: 12px;
-    font-family: var(--font-heading);
-    letter-spacing: 0;
-}
-
-.alert-badge--success {
-    background: color-mix(in srgb, var(--success-color) 14%, var(--surface-raised));
-    border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
-    color: var(--success-color);
-}
-
-.alert-badge--warning {
-    background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised));
-    border-color: color-mix(in srgb, var(--glovo-color) 42%, var(--border-color));
-    color: var(--glovo-color);
-}
-
-.alert-badge--danger {
-    background: color-mix(in srgb, var(--danger-color) 14%, var(--surface-raised));
-    border-color: color-mix(in srgb, var(--danger-color) 42%, var(--border-color));
-    color: var(--danger-color);
-}
-
-.alert-badge--accent {
-    background: color-mix(in srgb, var(--primary-color) 12%, transparent);
-    border-color: color-mix(in srgb, var(--primary-color) 38%, transparent);
-    color: var(--primary-hover);
-}
-
-.alert-badge--muted {
-    background: color-mix(in srgb, var(--text-primary) 4%, transparent);
-    border-color: color-mix(in srgb, var(--text-primary) 8%, transparent);
-    color: var(--text-muted);
 }
 
 .weekly-overview { margin-bottom: 24px; }
@@ -879,8 +751,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
     box-shadow: 0 16px 34px color-mix(in srgb, var(--primary-color) 12%, transparent);
 }
 
-.location-card-head,
-.location-foot {
+.location-card-head{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -940,7 +811,6 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 
 @keyframes admin-spin { to { transform: rotate(360deg); } }
 
-/* Filtr tygodni: stabilne kafelki i czytelny przewijany tor */
 .admin-period-weeks { align-items: stretch; }
 .week-tabs { padding: 3px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-raised); gap: 5px; scrollbar-width: none; }
 .week-tab { flex: 0 0 auto; min-height: 36px; padding: 8px 13px; border: 0; border-radius: var(--radius-sm); background: transparent; font-size: 12px; }
@@ -1036,7 +906,6 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 .rate-input-wrapper input { border: none; padding: 10px 0; background: transparent; text-align: left; width: 100%; color: var(--text-primary); font-size: 16px; }
 .rate-input-wrapper span { color: var(--primary-color); font-weight: bold; font-size: 14px; margin-left: 8px; font-family: var(--font-heading); }
 
-/* Pola zależne od wyboru pracownika: bez wybranej osoby są nieaktywne. */
 .calc-input-group.is-disabled label { color: var(--text-muted); }
 .calc-input-group.is-disabled .rate-input-wrapper,
 .calc-input-group.is-disabled .calc-input { opacity: .55; }
@@ -1044,8 +913,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 .calc-input-group.is-disabled .rate-input-wrapper input { cursor: not-allowed; }
 
 .calc-result-box { background: var(--surface-raised); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-/* Ikona i etykieta tworzą jeden wiersz: ikona ma własny box o rozmiarze glifu,
-   inaczej glif 24px wychodzi poza box i nachodzi na tekst. */
+
 .calc-res-item h4 {
     display: flex;
     align-items: center;
@@ -1086,10 +954,6 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 .calc-payslip .calc-payslip-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); color: var(--app-text-inverse); }
 .calc-payslip .calc-payslip-btn:disabled { opacity: .6; cursor: progress; }
 .calc-payslip-status { flex: 1 1 260px; }
-
-.loc-bar-container { display: flex; height: 6px; width: 100%; background: var(--border-color); border-radius: var(--radius-pill); overflow: hidden; margin-top: 6px; }
-.loc-bar-segment { height: 100%; }
-.loc-text { font-size: 16px; color: var(--text-secondary); margin-bottom: 3px; display: block; }
 
 @media (max-width: 760px) {
     .header-actions {
@@ -1154,4 +1018,3 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
     #revenueTable td { padding: 9px 12px; }
     #revenueTable .point-pill--compact { padding: 4px 8px; }
 }
-

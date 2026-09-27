@@ -39,8 +39,10 @@ Static HTML (`index.html`, `admin.html`) + ES modules, no bundler. CSS via `styl
 
 ## Layout
 List the repo and grep actual usage before writing code — don't trust a hardcoded tree, a remembered file layout, or a memorized library API/version; verify against what's actually imported/called here. Stable shape:
-- `css/theme/palette.css` — design tokens & active palette
-- `css/*.css`, `css/components/` — per-feature and shared styles
+- `css/theme/palette.css` — design tokens & active palette; `css/theme/overrides.css` — component consistency pass
+- `css/shared/` — base, layout, animations/loader/feedback
+- `css/components/` — shared controls (notice, custom-controls)
+- `css/admin/` — per-tab admin styles; `css/generator/` — generator and burgers styles
 - `js/config/` — static config, fixed team data
 - `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)

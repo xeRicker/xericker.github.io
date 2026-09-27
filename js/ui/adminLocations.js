@@ -95,8 +95,6 @@ class AdminLocations {
                     ${this.renderSwitch({
                         action: 'toggle-statistics',
                         on: location.stats,
-                        // `monitoring_off` nie istnieje w Material Symbols — nazwa
-                        // bez ligatury renderuje się jako nachodzący tekst.
                         icon: location.stats ? 'monitoring' : 'do_not_disturb_on',
                         label: 'Statystyki',
                         title: location.stats
@@ -159,7 +157,6 @@ class AdminLocations {
         }
 
         if (button.dataset.action === 'restore') {
-            // Przełączniki zostają takie, jakie były przed archiwizacją.
             location.deleted = false;
         }
 
@@ -182,8 +179,6 @@ class AdminLocations {
                 return dialogService.warning('Inny punkt w katalogu używa już tej nazwy.', 'Duplikat punktu');
             }
 
-            // Stara nazwa zostaje jako alias, żeby historyczne listy dalej
-            // wliczały się do tego samego punktu po zmianie nazwy.
             location.aliases = Array.from(new Set([...location.aliases, location.name]));
             location.name = nextName;
         }
@@ -220,7 +215,6 @@ class AdminLocations {
                 'Katalog zmienił się w międzyczasie'
             );
             if (!overwrite) {
-                // Wczytujemy rzeczywisty stan, żeby panel pokazywał prawdę.
                 this.catalog = await loadLocationCatalog();
                 this.loadedUpdatedAt = this.catalog.updatedAt || null;
                 this.savedSnapshot = this.serialize();
@@ -250,8 +244,6 @@ class AdminLocations {
         this.render();
         noticeService.toast({ variant: 'success', text: 'Katalog punktów został zapisany.' });
 
-        // Odświeżenie widoków jest osobnym krokiem: gdyby się nie udało, zapis
-        // i tak jest już wykonany i komunikat nie może mówić o błędzie zapisu.
         try {
             this.onSaved?.(this.catalog);
         } catch (error) {
@@ -260,10 +252,6 @@ class AdminLocations {
         }
     }
 
-    /**
-     * Zapis nadpisuje cały plik, więc praca z dwóch kart kończyła się cofnięciem
-     * zmian. `updatedAt` jest znacznikiem, czy katalog zmienił się poza tą kartą.
-     */
     async hasExternalChanges() {
         if (!this.loadedUpdatedAt) return false;
         try {
@@ -280,7 +268,6 @@ function sortLocations(locations) {
     return [...locations].sort((left, right) => left.order - right.order);
 }
 
-/** Jedno zdanie opisujące oba przełączniki — łatwiej czytać niż dwie ikony. */
 function describeVisibility(location) {
     if (location.enabled && location.stats) return 'Widoczny w generatorze i uwzględniany w statystykach';
     if (location.enabled) return 'Widoczny w generatorze · pomijany w statystykach';

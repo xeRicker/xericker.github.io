@@ -1,7 +1,5 @@
 const KEY = "burbone_state";
 
-// Saved form state lives until the end of the local calendar day, so a list
-// started at 21:00 is still there after closing the page and resets next day.
 function endOfLocalDay(time = Date.now()) {
     const end = new Date(time);
     end.setHours(23, 59, 59, 999);

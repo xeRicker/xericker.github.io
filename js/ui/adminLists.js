@@ -42,8 +42,6 @@ export function createAdminListsPage(config) {
         const select = locationSelect();
         if (!select) return;
         const current = select.value;
-        // Punkty pochodzą z katalogu (kolejność z panelu), a nie z samych danych,
-        // żeby lista filtrów była taka sama jak kolejność punktów w adminie.
         const fromCatalog = getPanelLocations(config.getLocationCatalog?.()).map(location => location.name);
         const fromData = getAllData().map(report => report.location).filter(Boolean);
         const locations = Array.from(new Set([...fromCatalog, ...fromData]))

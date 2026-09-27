@@ -1,6 +1,3 @@
-/* =================================
-   Atlassian Design Token Pass
-   ================================= */
 body {
     background: var(--bg-color);
     color: var(--text-primary);
@@ -15,9 +12,9 @@ body {
 .section-card,
 .chart-card,
 .table-card,
-.filter-panel,
+
 .summary-box,
-.insight-card,
+
 .location-card,
 .bottom-sheet,
 .product-card,
@@ -59,11 +56,9 @@ body {
 .sheet-btn,
 .icon-button,
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill,
-.filter-chip,
-.toggle-pill,
-.alert-badge {
+.filter-chip{
     background: var(--surface-active);
     border-color: var(--border-color);
     color: var(--text-primary);
@@ -87,7 +82,7 @@ body {
 .admin-page-tab.is-active,
 .view-btn.active,
 .week-tab.active,
-.toggle-pill.active,
+
 .chart-controls button.active,
 .chart-btn.active,
 .primary-fab,
@@ -146,8 +141,6 @@ select:focus,
     outline: none;
 }
 
-/* One focus ring per field: the visible control is its wrapper, so a nested
-   input never draws a second border or glow on top of the wrapper's. */
 .input-group,
 .calc-input,
 .rate-input-wrapper,
@@ -183,7 +176,6 @@ select:focus,
     color: var(--text-secondary);
 }
 
-.filter-panel,
 .summary-box--primary,
 .location-card--lead {
     background: linear-gradient(180deg, color-mix(in srgb, var(--primary-soft) 34%, transparent), transparent 68%),
@@ -196,23 +188,15 @@ select:focus,
     border-color: color-mix(in srgb, var(--glovo-color) 38%, var(--border-color)) !important;
 }
 
-.summary-box--glovo,
-.insight-card--glovo {
+.summary-box--glovo{
     background: var(--surface-color) !important;
     border-color: var(--border-color) !important;
-}
-
-.insight-card--events {
-    background: radial-gradient(circle at top right, color-mix(in srgb, var(--app-chart-3) 20%, transparent), transparent 42%),
-        linear-gradient(180deg, color-mix(in srgb, var(--app-info-bg) 62%, var(--surface-color)), var(--surface-color)) !important;
-    border-color: color-mix(in srgb, var(--app-chart-3) 64%, var(--border-color)) !important;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--app-chart-3) 16%, transparent) inset, 0 16px 38px color-mix(in srgb, var(--app-chart-3) 18%, transparent) !important;
 }
 
 .location-stats div,
 .calc-breakdown-report,
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill,
 .tt-day {
     background: var(--surface-raised);
@@ -222,8 +206,7 @@ select:focus,
 .employee-row.active,
 .product-card.active,
 .point-pill--accent,
-.calc-breakdown-pill.is-main,
-.alert-badge--accent {
+.calc-breakdown-pill.is-main{
     background: var(--primary-soft);
     border-color: var(--border-focused);
     color: var(--primary-hover);
@@ -255,8 +238,7 @@ select:focus,
 }
 
 .btn-plus,
-.calc-res-item p.money,
-.alert-badge--success {
+.calc-res-item p.money{
     color: var(--success-color);
 }
 
@@ -270,8 +252,7 @@ select:focus,
 
 .btn-minus,
 .reset-button,
-.cancel-btn,
-.alert-badge--danger {
+.cancel-btn{
     color: var(--danger-color);
 }
 
@@ -289,8 +270,7 @@ select:focus,
 }
 
 .sheet-handle,
-.tt-divider,
-.loc-bar-container {
+.tt-divider{
     background: var(--border-color);
 }
 
@@ -405,7 +385,6 @@ tbody tr:hover td,
     color: var(--app-chart-3);
 }
 
-/* Ikony są częścią nagłówka, nie osobnymi badge'ami. */
 .summary-icon-badge,
 .summary-icon-badge--revenue,
 .summary-icon-badge--cards,
@@ -432,14 +411,11 @@ tbody tr:hover td,
     box-shadow: var(--shadow-overlay);
 }
 
-/* =================================
-   Burbone Palette Consistency Pass
-   ================================= */
 .header-copy p,
 .admin-page-tab,
 .generator-tab,
 .view-btn,
-.toggle-pill,
+
 .filter-chip,
 .chart-btn,
 .chart-controls button,
@@ -458,7 +434,7 @@ tbody tr:hover td,
 .summary-kicker,
 .summary-box h3,
 .summary-box small,
-.insight-label,
+
 .insight-card p,
 .heatmap-day-header,
 .cell-secondary,
@@ -466,8 +442,7 @@ tbody tr:hover td,
 .location-foot span,
 .calc-input-group label,
 .calc-breakdown-label,
-.calc-breakdown-pill,
-.loc-text {
+.calc-breakdown-pill{
     color: var(--text-secondary);
 }
 
@@ -521,9 +496,9 @@ tbody tr:hover td,
 
 .header-bar,
 .section-card,
-.filter-panel,
+
 .summary-box,
-.insight-card,
+
 .chart-card,
 .table-card,
 .location-card,
@@ -538,7 +513,6 @@ tbody tr:hover td,
     background: var(--surface-color);
 }
 
-.filter-panel,
 .summary-box--primary,
 .admin-category-card,
 .admin-list-empty,
@@ -549,8 +523,7 @@ tbody tr:hover td,
     border-color: color-mix(in srgb, var(--primary-color) 38%, var(--border-color));
 }
 
-.summary-box--glovo,
-.insight-card--glovo {
+.summary-box--glovo{
     background: var(--surface-color) !important;
     border-color: var(--border-color) !important;
 }
@@ -563,7 +536,7 @@ tbody tr:hover td,
 .week-tab,
 .chart-btn,
 .chart-controls button,
-.toggle-pill,
+
 .filter-chip,
 .icon-action,
 .admin-save-btn.is-clean,
@@ -571,7 +544,7 @@ tbody tr:hover td,
 .icon-picker-button,
 .product-icon-option,
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill,
 .location-stats div,
 .tt-day {
@@ -585,7 +558,7 @@ tbody tr:hover td,
 .admin-product-list.is-drop-target,
 .point-pill--accent,
 .calc-breakdown-pill.is-main,
-.alert-badge--accent,
+
 .type-switch.is-toggle,
 .product-icon-option.is-selected {
     background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-raised));
@@ -601,14 +574,12 @@ tbody tr:hover td,
     color: var(--primary-hover);
 }
 
-.alert-badge--success,
 .state-switch.is-on {
     background: color-mix(in srgb, var(--success-color) 16%, var(--surface-raised));
     border-color: color-mix(in srgb, var(--success-color) 42%, var(--border-color));
     color: var(--success-color);
 }
 
-.alert-badge--danger,
 .state-switch.is-off,
 .cancel-btn {
     background: color-mix(in srgb, var(--danger-color) 14%, var(--surface-raised));
@@ -616,7 +587,6 @@ tbody tr:hover td,
     color: var(--danger-color);
 }
 
-.alert-badge--warning,
 .location-stat--glovo,
 .summary-icon-badge--glovo {
     background: color-mix(in srgb, var(--glovo-color) 14%, var(--surface-raised)) !important;
@@ -625,7 +595,7 @@ tbody tr:hover td,
 }
 
 .type-switch.is-quantity,
-.insight-card--events,
+
 .summary-icon-badge--cards,
 .summary-icon-badge--event {
     background: color-mix(in srgb, var(--app-chart-3) 14%, var(--surface-raised));
@@ -633,7 +603,6 @@ tbody tr:hover td,
     color: var(--app-chart-3);
 }
 
-.alert-badge--muted,
 .filter-chip--status {
     background: var(--surface-raised);
     border-color: var(--border-color);
@@ -689,29 +658,24 @@ tbody tr:hover td,
 }
 
 .summary-box h3,
-.insight-label,
-.alert-badge,
+
 .calc-breakdown-label,
 .product-icon-dialog h3 {
     letter-spacing: 0;
 }
 
 @supports not (color: color-mix(in srgb, white, black)) {
-    .filter-panel,
+
     .summary-box--primary,
     .location-card--lead,
     .employee-row.active,
     .product-card.active,
     .point-pill--accent,
-    .calc-breakdown-pill.is-main,
-    .alert-badge--accent {
+    .calc-breakdown-pill.is-main{
         background: var(--primary-soft);
     }
 }
 
-/* =================================
-   Unified Burbone component contract
-   ================================= */
 .admin-page { display: none; overflow-x: hidden; }
 
 .header-bar,
@@ -719,9 +683,9 @@ tbody tr:hover td,
 .section-card,
 .chart-card,
 .table-card,
-.filter-panel,
+
 .summary-box,
-.insight-card,
+
 .location-card,
 .product-card,
 .employee-row,
@@ -777,7 +741,6 @@ a:focus-visible,
     box-shadow: var(--focus-ring);
 }
 
-/* Jedna hierarchia nagłówków: brand w tym samym stopniu na obu powierzchniach. */
 .header-bar h1 { font-size: 24px; line-height: 1.25; }
 
 .btn-admin,
@@ -826,7 +789,6 @@ a:focus-visible,
     .header-bar { gap: var(--space-3); }
 }
 
-/* Stronger panel headings: icon and title are one readable unit. */
 .section-card h2,
 .section-heading h3,
 .table-head h3 {
@@ -849,7 +811,6 @@ a:focus-visible,
 }
 .section-card h2 { margin-bottom: var(--space-5); }
 
-/* Heatmap: a restrained ember language that scales with the day's revenue. */
 .heatmap-cell {
     overflow: hidden;
     isolation: isolate;
@@ -926,7 +887,6 @@ a:focus-visible,
     .heatmap-cell--super::after, .heatmap-cell--extra::after { animation: none; }
 }
 
-/* Lists: clear hierarchy, contained controls and a stable mobile stack. */
 .admin-lists-head { display: grid; gap: var(--space-5); margin-bottom: var(--space-6); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border-color); }
 .admin-lists-filters { display: grid; grid-template-columns: minmax(150px, .8fr) minmax(150px, .8fr) minmax(230px, 1.4fr); gap: var(--space-3); width: 100%; }
 .admin-filter-field { display: grid; gap: 6px; min-width: 0; }
@@ -939,7 +899,6 @@ a:focus-visible,
 .admin-list-preview__head { background: transparent; }
 @media (max-width: 760px) { .admin-lists-filters { grid-template-columns: 1fr; } .admin-list-items { max-height: none; } }
 
-/* Żadna ikona nie dostaje własnego kółka ani kafelka. */
 .summary-icon-badge,
 .summary-icon-badge--revenue,
 .summary-icon-badge--cards,
@@ -951,15 +910,6 @@ a:focus-visible,
     background: transparent !important;
     border-color: transparent !important;
 }
-
-/* =================================
-   Burbone design system
-   Jeden kontrakt na typografię, geometrię kontrolek, ikony i kolory.
-   Ten blok jest ostatnim słowem kaskady — rozstrzyga wszystkie wcześniejsze
-   lokalne wyjątki.
-   ================================= */
-
-/* --- Typografia --- */
 
 .header-bar h1 {
     font-size: var(--font-size-2xl);
@@ -1034,7 +984,7 @@ a:focus-visible,
 }
 
 .summary-kicker,
-.insight-label,
+
 .calc-breakdown-label,
 .weekly-card__label,
 .payment-tile__label,
@@ -1087,13 +1037,13 @@ a:focus-visible,
 .cell-secondary,
 .payment-tile__hint,
 .weekly-card__avg,
-.weekly-card__verdict,
+
 .payment-row__title span,
 .payment-row__meta,
 .payment-row__money span,
 .location-stats span,
 .location-foot span,
-.loc-text,
+
 .heatmap-day-header {
     color: var(--text-secondary);
     font-size: var(--font-size-xs);
@@ -1115,8 +1065,6 @@ a:focus-visible,
     font-weight: 700;
     letter-spacing: var(--label-tracking);
 }
-
-/* --- Geometria kontrolek --- */
 
 .btn-admin,
 .btn-back,
@@ -1180,19 +1128,16 @@ a:focus-visible,
     font-size: var(--icon-size);
 }
 
-.alert-badge,
 .payment-badge,
 .weekly-flag,
 .filter-chip,
-.toggle-pill,
+
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill,
 #revenueTable .point-pill--compact {
     border-radius: var(--radius-pill);
 }
-
-.point-pill-list--stack .point-pill { border-radius: var(--radius-sm); }
 
 input,
 select,
@@ -1219,8 +1164,6 @@ select,
 .calc-input,
 .custom-control__button { font-size: var(--font-size-base); }
 
-/* --- Ikony --- */
-
 .calc-icon,
 .notice__icon {
     display: inline-flex;
@@ -1234,8 +1177,7 @@ select,
 }
 
 .field-icon,
-.loc-icon,
-.filter-icon {
+.loc-icon{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1273,11 +1215,9 @@ select,
     flex: 0 0 auto;
 }
 
-/* --- Karty i powierzchnie --- */
-
 .chart-card,
 .table-card,
-.insight-card,
+
 .location-card,
 .admin-list-empty,
 .product-icon-dialog,
@@ -1294,7 +1234,7 @@ select,
 
 .chart-card,
 .table-card,
-.insight-card,
+
 .location-card,
 .summary-box,
 .product-card {
@@ -1308,10 +1248,8 @@ select,
 
 .admin-product-row { background: var(--bg-color); }
 
-/* --- Kolory: tylko tokeny --- */
-
 .summary-box--primary,
-.insight-card--accent,
+
 .location-card--lead,
 .admin-category-card {
     background: radial-gradient(circle at top right, color-mix(in srgb, var(--primary-color) 16%, transparent), transparent 38%), var(--surface-color);
@@ -1321,7 +1259,6 @@ select,
 
 .summary-kicker { color: var(--text-muted); }
 .summary-box h3 { color: var(--text-secondary); }
-.insight-label { color: var(--text-muted); }
 .insight-card p,
 .heatmap-day-header { color: var(--text-secondary); }
 .cell-primary,
@@ -1407,7 +1344,7 @@ select,
 .admin-save-btn.is-copied { background: var(--success-color); border-color: var(--success-color); color: var(--app-text-inverse); }
 
 .point-pill,
-.employee-loc-pill,
+
 .calc-breakdown-pill {
     border-color: var(--border-color);
     background: var(--surface-raised);
@@ -1419,7 +1356,6 @@ select,
     background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-raised));
     color: var(--primary-hover);
 }
-.alert-badge--accent { color: var(--primary-hover); }
 
 .product-card { border-color: var(--border-color); }
 .product-card.active {
@@ -1438,8 +1374,7 @@ select,
     color: var(--text-primary);
 }
 
-.sheet-handle,
-.loc-bar-container { background: var(--border-color); }
+.sheet-handle{ background: var(--border-color); }
 .bottom-sheet {
     border-top-left-radius: var(--radius-xl);
     border-top-right-radius: var(--radius-xl);
@@ -1454,8 +1389,6 @@ select,
 .tt-loc-col h5 { color: var(--primary-color); }
 
 .avatar { color: var(--app-text-inverse); }
-
-/* --- Przycisk "Załaduj dane": jeden spokojny zestaw stanów --- */
 
 .admin-load-all-wrap { grid-template-columns: 178px 178px; }
 
@@ -1503,10 +1436,6 @@ select,
     animation: none;
 }
 
-/* --- Animacje: tylko tam, gdzie coś naprawdę trwa --- */
-
-.insight-card--events,
-.insight-card--events::after,
 .heatmap-cell--super::before,
 .heatmap-cell--extra::before,
 .heatmap-cell--super::after,
@@ -1538,9 +1467,6 @@ button:disabled:hover,
     transform: none;
 }
 
-
-/* --- Zwarte selecty w paskach narzędziowych --- */
-
 .admin-load-range .custom-control__button,
 .admin-month-select .custom-control__button {
     min-height: var(--control-h-md);
@@ -1556,8 +1482,6 @@ button:disabled:hover,
     border-radius: var(--radius-sm);
     font-size: var(--font-size-xs);
 }
-
-/* --- Responsywność --- */
 
 @media (max-width: 900px) {
     .admin-load-all-wrap {
@@ -1579,4 +1503,3 @@ button:disabled:hover,
     .table-head h3 { font-size: var(--font-size-lg); }
     .summary-box p { font-size: var(--font-size-2xl); }
 }
-

@@ -3,7 +3,7 @@ import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from 
 import { parseReportDate } from './reportDates.js';
 import { slugifyLocation } from './locations.js?v=167';
 
-export class AnalyticsService {
+class AnalyticsService {
     processReports(reports) {
         const map = new Map();
         reports
@@ -61,8 +61,6 @@ export class AnalyticsService {
             locationEntry.reports.push(r);
 
             if (locationKey) {
-                // Klucze per punkt (np. `oswiecim`, `oswiecimCard`) powstają z nazwy
-                // punktu, więc nowy punkt w katalogu działa bez zmian w kodzie.
                 if (!(locationKey in entry)) {
                     entry[locationKey] = 0;
                     entry[`${locationKey}Card`] = 0;

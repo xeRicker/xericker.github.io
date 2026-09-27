@@ -19,10 +19,6 @@ class ApiService {
         return Boolean(GITHUB_CONFIG.TOKEN && GITHUB_CONFIG.TOKEN !== '__GH_TOKEN__');
     }
 
-    /**
-     * Folder punktu pochodzi z katalogu punktów, więc zmiana nazwy punktu nie
-     * przenosi archiwum. Gdy katalog nie zna punktu, zostaje dawny schemat.
-     */
     getLocationFolder(data, folder) {
         return folder || String(data?.location || '').toLowerCase();
     }
@@ -161,10 +157,6 @@ class ApiService {
         await this.verifyLocalSave(filePath, data, message);
     }
 
-    /**
-     * Potwierdzenie, że plik naprawdę zawiera to, co wysłaliśmy. Bez tego
-     * nieudany zapis wyglądał jak sukces i zmiany znikały po odświeżeniu.
-     */
     async verifyLocalSave(filePath, data, message) {
         const response = await fetch(`${filePath}?v=${Date.now()}`);
         if (!response.ok) {
@@ -211,11 +203,6 @@ class ApiService {
         return this.fetchRootCatalog('database/locations.json', 'Locations');
     }
 
-    /**
-     * Katalogi w `database/` czytamy najpierw przez API GitHuba, a dopiero potem
-     * ze statycznego pliku. GitHub Pages potrafi jeszcze serwować poprzednie
-     * wdrożenie, więc po zapisie statyczny plik bywał starszy od zapisanej wersji.
-     */
     async fetchRootCatalog(path, label) {
         try {
             if (this.hasGithubToken()) {
@@ -274,10 +261,6 @@ class ApiService {
         await this.verifyGithubSave(response, filePath, data);
     }
 
-    /**
-     * Odpowiedź API zawiera złozony plik, więc można potwierdzić, że w repo leży
-     * dokładnie to, co wysłaliśmy — a nie tylko że HTTP zwróciło 200.
-     */
     async verifyGithubSave(response, filePath, data) {
         let saved;
         try {
@@ -369,7 +352,6 @@ class ApiService {
             const payload = await response.json();
             details = payload?.message ? `: ${payload.message}` : '';
         } catch {
-            // The HTTP status is still enough to explain the failed request.
         }
 
         const error = new Error(`GitHub API (${resource}) zwróciło błąd HTTP ${response.status}${details}`);
@@ -451,7 +433,6 @@ class ApiService {
         }
     }
 
-    /** Real database files win; generated reports only fill missing location-days. */
     mergeLocalReports(localReports, generatedReports) {
         const taken = new Set(localReports.map(getReportKey));
         return localReports.concat(generatedReports.filter(report => !taken.has(getReportKey(report))));

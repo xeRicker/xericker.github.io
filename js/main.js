@@ -1,4 +1,4 @@
-import { EMPLOYEES, EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
+import { EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
 import { mainRender } from './ui/mainRender.js?v=162';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
@@ -25,7 +25,6 @@ let burgerConfiguratorReady = false;
 let employeeCatalog = null;
 let locationCatalog = null;
 
-// Stany danych kalkulatora wynagrodzeń mapowane na warianty komunikatu.
 const WORKER_STATUS_VARIANTS = {
     loading: 'loading',
     ready: 'success',
@@ -33,8 +32,6 @@ const WORKER_STATUS_VARIANTS = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Brama admina podpinamy przed pobieraniem katalogów: kliknięcie ADMIN ma
-    // zostać przechwycone nawet wtedy, gdy dane jeszcze się ładują.
     setupAdminEntry();
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     employeeCatalog = await loadEmployeeCatalog();
@@ -83,12 +80,6 @@ function handleLocationChoice(event) {
     generateReport();
 }
 
-/**
- * ADMIN prowadzi do panelu, ale o hasło pytamy już tutaj. Nawigacja na nową
- * stronę gubi gest użytkownika, a bez niego telefon nie otwiera klawiatury —
- * dlatego okno z hasłem startuje w tym samym kliknięciu i dopiero po
- * poprawnym haśle przechodzimy do panelu.
- */
 function setupAdminEntry() {
     const adminLink = document.querySelector('.btn-admin');
     if (!adminLink) return;
@@ -154,7 +145,6 @@ async function initBurgerConfigurator() {
 }
 
 function handleProductClick(e) {
-    // Obsługa przycisków +/-
     const btn = e.target.closest('button');
     if (btn && btn.classList.contains('btn-qty')) {
         const name = btn.dataset.name;
@@ -167,14 +157,12 @@ function handleProductClick(e) {
         return;
     }
 
-    // Obsługa kliknięcia w kartę typu "checkbox" (np. Bułki, Drwal)
     const card = e.target.closest('.product-card.type-toggle');
     if (card) {
         const name = card.dataset.name;
         const checkbox = document.getElementById(`checkbox-${name}`);
         if (checkbox) {
             checkbox.checked = !checkbox.checked;
-            // Wywołujemy ręcznie change, aby obsłużyć logikę podświetlania
             checkbox.dispatchEvent(new Event('change', { bubbles: true }));
         }
     }
@@ -184,7 +172,6 @@ function handleProductChange(e) {
     if(e.target.type === 'checkbox') {
         const name = e.target.dataset.name;
         mainRender.toggleHighlight(name, e.target.checked);
-        // Klasa active jest dodawana w toggleHighlight, ale upewnijmy się
         const card = e.target.closest('.product-card');
         if(card) card.classList.toggle('active', e.target.checked);
     }

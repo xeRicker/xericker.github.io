@@ -10,10 +10,6 @@ const CONTENT = WIDTH - PAD * 2;
 const GAP = 24;
 const FONT = '"Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif';
 
-/**
- * Wires the admin "PASEK" button: renders the calculator summary to a PNG and
- * opens it in a new tab. All drawing lives here so the admin page stays thin.
- */
 export function setupPayslipGenerator(config) {
     const {
         getSummary,

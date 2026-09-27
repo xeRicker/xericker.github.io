@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "26.09.2026",
+  "revenue": 1153,
+  "cardRevenue": 435,
+  "glovoRevenue": 175,
+  "employees": {
+    "pawel.komendera": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sriracha": 1
+  }
+}

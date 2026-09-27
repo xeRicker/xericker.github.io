@@ -53,8 +53,7 @@
     min-width: 0;
 }
 
-.burger-field label,
-.burger-range-control label {
+.burger-field label {
     color: var(--text-secondary);
     font-size: 12px;
     font-weight: 700;
@@ -95,109 +94,58 @@
 
 .burger-option-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
 }
 
-.burger-range-control {
+.burger-choice {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     padding: 14px;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     background: var(--surface-raised);
 }
 
-.burger-range-control > div {
+.burger-choice__label {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.burger-choice__options {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 4px 12px;
+    gap: 8px;
 }
 
-.burger-range-control label {
-    flex: 1 1 auto;
+.burger-choice__option {
+    flex: 1 1 0;
     min-width: 0;
-}
-
-.burger-range-control span {
-    margin-left: auto;
-    color: var(--primary-hover);
-    font-size: 13px;
-    text-align: right;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-}
-
-/*
- * Suwak ma własny tor i uchwyt, bo domyślny wygląda jak jasny pasek systemowy
- * i wypada z ciemnego panelu. Postęp koloruje zmienna ustawiana z JS.
- */
-.burger-range-control input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 22px;
-    margin: 0;
-    padding: 0;
-    background: transparent;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--app-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface-overlay);
+    color: var(--text-primary);
+    font: 600 13px/1.25 var(--font-heading);
     cursor: pointer;
 }
 
-.burger-range-control input[type="range"]::-webkit-slider-runnable-track {
-    height: 6px;
-    border-radius: var(--radius-pill);
-    background: linear-gradient(
-        90deg,
-        var(--primary-color) var(--burger-range-progress, 0%),
-        color-mix(in srgb, var(--text-primary) 14%, transparent) var(--burger-range-progress, 0%)
-    );
+.burger-choice__option:hover {
+    border-color: var(--border-focused);
+    color: var(--primary-hover);
 }
 
-.burger-range-control input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    margin-top: -6px;
-    border: 2px solid var(--surface-raised);
-    border-radius: 50%;
-    background: var(--primary-color);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 60%, transparent);
+.burger-choice__option.is-active {
+    border-color: color-mix(in srgb, var(--primary-color) 44%, var(--border-color));
+    background: color-mix(in srgb, var(--primary-color) 16%, var(--surface-raised));
+    color: var(--primary-hover);
 }
 
-.burger-range-control input[type="range"]:focus-visible {
+.burger-choice__option:focus-visible {
     outline: none;
-}
-
-.burger-range-control input[type="range"]:focus-visible::-webkit-slider-thumb {
-    box-shadow: 0 0 0 3px var(--primary-glow);
-}
-
-.burger-range-control input[type="range"]::-moz-range-track {
-    height: 6px;
-    border-radius: var(--radius-pill);
-    background: color-mix(in srgb, var(--text-primary) 14%, transparent);
-}
-
-.burger-range-control input[type="range"]::-moz-range-progress {
-    height: 6px;
-    border-radius: var(--radius-pill);
-    background: var(--primary-color);
-}
-
-.burger-range-control input[type="range"]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--surface-raised);
-    border-radius: 50%;
-    background: var(--primary-color);
-}
-
-.burger-range-control input[type="range"]:focus-visible::-moz-range-thumb {
-    box-shadow: 0 0 0 3px var(--primary-glow);
+    box-shadow: var(--focus-ring);
 }
 
 .burger-actions {
@@ -543,6 +491,10 @@
     .burger-control-grid,
     .burger-option-grid {
         grid-template-columns: 1fr;
+    }
+
+    .burger-choice__options {
+        flex-direction: column;
     }
 
     /* Produkt zajmuje cały wiersz, a ilość i przycisk dzielą drugi — inaczej

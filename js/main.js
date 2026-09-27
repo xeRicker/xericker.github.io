@@ -11,7 +11,7 @@ import { getActiveProductCatalog, loadProductCatalog } from './services/products
 import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=166';
 import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=167';
 import { buildReportText } from './services/reportFormatter.js';
-import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=163';
+import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=165';
 import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
 import { noticeService } from './ui/components/notice.js?v=102';
 

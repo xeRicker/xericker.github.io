@@ -68,8 +68,7 @@
     font-family: var(--font-heading);
 }
 
-.input-group input,
-input[type="number"] {
+.input-group input {
     width: 100%;
     min-width: 0;
     min-height: 0;

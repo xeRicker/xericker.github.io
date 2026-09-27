@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=187">
+  <link rel="stylesheet" href="style.css?v=191">
 </head>
 <body>
 
@@ -103,6 +103,7 @@
           <select id="burgerSauce" class="burger-input">
             <option value="mayoSauce">Majonez</option>
             <option value="ketchup">Ketchup</option>
+            <option value="none">Bez sosu</option>
           </select>
         </div>
       </div>
@@ -119,20 +120,23 @@
       <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">tune</span> Opcje</h2>
 
       <div class="burger-option-grid">
-        <div class="burger-range-control">
-          <div>
-            <label for="burgerFatRetention">Wysmażenie mięsa</label>
-            <span id="burgerDonenessLabel">Średnio</span>
+        <div class="burger-choice">
+          <span class="burger-choice__label">Wysmażenie mięsa</span>
+          <div class="burger-choice__options" data-state="doneness" role="group" aria-label="Wysmażenie mięsa">
+            <button class="burger-choice__option" type="button" data-value="50" aria-pressed="false">Bardzo mocno</button>
+            <button class="burger-choice__option" type="button" data-value="60" aria-pressed="false">Mocno</button>
+            <button class="burger-choice__option is-active" type="button" data-value="75" aria-pressed="true">Średnio</button>
+            <button class="burger-choice__option" type="button" data-value="90" aria-pressed="false">Lekko</button>
           </div>
-          <input id="burgerFatRetention" type="range" min="50" max="95" step="5" value="75">
         </div>
 
-        <div class="burger-range-control">
-          <div>
-            <label for="burgerOilAbsorption">Wchłonięty olej</label>
-            <span id="burgerOilAbsorptionLabel">8 g / 100 g</span>
+        <div class="burger-choice">
+          <span class="burger-choice__label">Wchłonięty olej</span>
+          <div class="burger-choice__options" data-state="oilAbsorption" role="group" aria-label="Wchłonięty olej">
+            <button class="burger-choice__option" type="button" data-value="14" aria-pressed="false">Od razu z frytury</button>
+            <button class="burger-choice__option is-active" type="button" data-value="8" aria-pressed="true">Poczekaj, aż skapnie</button>
+            <button class="burger-choice__option" type="button" data-value="4" aria-pressed="false">Odsącz na papierze</button>
           </div>
-          <input id="burgerOilAbsorption" type="range" min="0" max="20" step="1" value="8">
         </div>
       </div>
     </div>
@@ -141,7 +145,7 @@
       <div class="burger-section-head">
         <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">inventory_2</span> Składniki</h2>
         <button id="burgerReset" class="burger-secondary-action" type="button">
-          <span class="material-symbols-rounded" aria-hidden="true">restart_alt</span>
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>
           Wyczyść
         </button>
       </div>
@@ -257,6 +261,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=176"></script>
+<script type="module" src="js/main.js?v=178"></script>
 </body>
 </html>

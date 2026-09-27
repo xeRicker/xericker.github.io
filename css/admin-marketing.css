@@ -22,6 +22,7 @@
 .marketing-output-head h4 .material-symbols-rounded { color: var(--primary-color); font-size: 18px; }
 .marketing-output { display: block; width: 100%; min-height: 260px; padding: 16px; border: 0; background: var(--bg-color); color: var(--text-primary); font: 14px/1.6 var(--font-body); resize: vertical; }
 .marketing-output::placeholder { color: var(--text-muted); }
+.marketing-output:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--primary-glow); }
 
 @media (max-width: 760px) {
     .marketing-form { grid-template-columns: 1fr; }

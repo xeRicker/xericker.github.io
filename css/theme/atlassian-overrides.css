@@ -1008,7 +1008,7 @@ a:focus-visible,
 .revenue-field label,
 .calc-input-group label,
 .burger-field label,
-.burger-range-control label,
+.burger-choice__label,
 .custom-dialog__field > label,
 .period-label {
     color: var(--text-secondary);
@@ -1287,7 +1287,7 @@ select,
 .admin-location-row,
 .admin-employee-row,
 .burger-ingredient-row,
-.burger-range-control,
+.burger-choice,
 .calc-breakdown-card {
     border-color: var(--border-color);
 }

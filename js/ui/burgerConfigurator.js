@@ -11,7 +11,9 @@ export async function setupBurgerConfigurator(root) {
         items: [],
         nextId: 1,
         sortKey: 'calories',
-        sortDir: 'desc'
+        sortDir: 'desc',
+        doneness: 75,
+        oilAbsorption: 8
     };
 
     const presetSelect = root.querySelector('#burgerPreset');
@@ -19,10 +21,6 @@ export async function setupBurgerConfigurator(root) {
     const sauceSelect = root.querySelector('#burgerSauce');
     const ingredientSelect = root.querySelector('#burgerIngredient');
     const ingredientQty = root.querySelector('#burgerIngredientQty');
-    const fatRetention = root.querySelector('#burgerFatRetention');
-    const donenessLabel = root.querySelector('#burgerDonenessLabel');
-    const oilAbsorption = root.querySelector('#burgerOilAbsorption');
-    const oilAbsorptionLabel = root.querySelector('#burgerOilAbsorptionLabel');
     const list = root.querySelector('#burgerIngredients');
     const summary = root.querySelector('#burgerMacroSummary');
     const details = root.querySelector('#burgerMacroDetails');
@@ -49,8 +47,16 @@ export async function setupBurgerConfigurator(root) {
     });
     sizeSelect.addEventListener('change', render);
     sauceSelect.addEventListener('change', render);
-    fatRetention.addEventListener('input', render);
-    oilAbsorption.addEventListener('input', render);
+    root.querySelectorAll('.burger-choice__options').forEach(group => {
+        group.addEventListener('click', event => {
+            const option = event.target.closest('.burger-choice__option');
+            if (!option) return;
+            state[group.dataset.state] = Number(option.dataset.value);
+            syncChoiceGroup(group, state);
+            render();
+        });
+        syncChoiceGroup(group, state);
+    });
     list.addEventListener('click', event => handleIngredientClick(event, state, render));
     summary.addEventListener('click', event => {
         const card = event.target.closest('.burger-macro-card[data-sort-key]');
@@ -63,12 +69,8 @@ export async function setupBurgerConfigurator(root) {
     render();
 
     function render() {
-        updateRangeProgress(fatRetention);
-        updateRangeProgress(oilAbsorption);
-        updateDonenessLabel(donenessLabel, Number(fatRetention.value));
-        updateOilAbsorptionLabel(oilAbsorptionLabel, Number(oilAbsorption.value));
-        renderIngredientList(list, products, beefConfig, state.items, Number(fatRetention.value), Number(oilAbsorption.value));
-        const rows = state.items.map(item => calculateItem(products, beefConfig, item, Number(fatRetention.value), Number(oilAbsorption.value)));
+        renderIngredientList(list, products, beefConfig, state.items, state.doneness, state.oilAbsorption);
+        const rows = state.items.map(item => calculateItem(products, beefConfig, item, state.doneness, state.oilAbsorption));
         const sortedRows = sortRows(rows, state.sortKey, state.sortDir);
         const totals = sumRows(rows);
         renderSummary(summary, totals, state);
@@ -77,13 +79,12 @@ export async function setupBurgerConfigurator(root) {
     }
 }
 
-/** Kolor wypełnienia toru suwaka wynika z wartości, więc liczy go JS. */
-function updateRangeProgress(input) {
-    const min = Number(input.min) || 0;
-    const max = Number(input.max) || 100;
-    const value = Number(input.value) || 0;
-    const percent = max === min ? 0 : ((value - min) / (max - min)) * 100;
-    input.style.setProperty('--burger-range-progress', `${percent}%`);
+function syncChoiceGroup(group, state) {
+    group.querySelectorAll('.burger-choice__option').forEach(option => {
+        const isActive = Number(option.dataset.value) === state[group.dataset.state];
+        option.classList.toggle('is-active', isActive);
+        option.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
 }
 
 async function loadBurgerConfig() {
@@ -110,13 +111,13 @@ function applyPreset(state, products, presets, presetId, size, sauceId) {
     state.items = [];
     preset.ingredients.forEach(entry => {
         const resolvedId = resolvePresetProduct(entry.id, size, sauceId);
-        const qty = resolveQty(entry.qty, size);
-        addItem(state, products, resolvedId, qty);
+        if (!resolvedId) return;
+        addItem(state, products, resolvedId, resolveQty(entry.qty, size));
     });
 }
 
 function resolvePresetProduct(id, size, sauceId) {
-    if (id === 'sauce') return sauceId;
+    if (id === 'sauce') return sauceId === 'none' ? null : sauceId;
     if (id === 'beef') return size === 'large' ? 'beefLarge' : 'beefSmall';
     return id;
 }
@@ -358,20 +359,6 @@ function renderDetails(details, rows) {
             </tbody>
         </table>
     `;
-}
-
-function updateDonenessLabel(label, fatRetention) {
-    if (fatRetention >= 85) {
-        label.textContent = `Mało wysmażone · zostaje ${fatRetention}% tłuszczu`;
-    } else if (fatRetention <= 60) {
-        label.textContent = `Mocno wysmażone · zostaje ${fatRetention}% tłuszczu`;
-    } else {
-        label.textContent = `Średnio · zostaje ${fatRetention}% tłuszczu`;
-    }
-}
-
-function updateOilAbsorptionLabel(label, oilAbsorption) {
-    label.textContent = `${formatNumber(oilAbsorption)} g / 100 g`;
 }
 
 function formatNumber(value) {

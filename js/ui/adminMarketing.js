@@ -1,5 +1,5 @@
-import { MARKETING_BRAND, MARKETING_POST_TYPES } from '../config/marketing.js';
-import { buildMarketingPost, loadMarketingBurgers } from '../services/marketing.js?v=2';
+import { MARKETING_BRAND, MARKETING_POST_TYPES } from '../config/marketing.js?v=2';
+import { buildMarketingPost, loadMarketingBurgers } from '../services/marketing.js?v=3';
 import { escapeHtml, fallbackCopyToClipboard, renderMaterialIcon } from '../utils.js';
 import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
 
@@ -18,7 +18,6 @@ class AdminMarketing {
         this.container = null;
         this.burgers = [];
         this.type = MARKETING_POST_TYPES[0].id;
-        this.variantIndex = 0;
         this.options = Object.fromEntries(MARKETING_OPTIONS.map(option => [option.id, option.defaultOn !== false]));
     }
 
@@ -40,7 +39,7 @@ class AdminMarketing {
             <div class="admin-products-head">
                 <div class="section-heading">
                     <h3>${renderMaterialIcon('campaign')} Marketing</h3>
-                    <p>Ustaw post, kliknij „Generuj”, a gotowy tekst skopiuj na Facebooka albo Instagrama.</p>
+                    <p>Wybierz rodzaj postu, uzupełnij szczegóły i kliknij „Generuj”. Każde kliknięcie losuje nowy wariant, a gotowy tekst możesz jeszcze poprawić i skopiować obok.</p>
                 </div>
             </div>
             <form class="marketing-form" data-action="generate">
@@ -54,7 +53,7 @@ class AdminMarketing {
                 </label>
                 <label class="marketing-field marketing-field--wide" data-context="burger">
                     <span>Opis burgera</span>
-                    <textarea id="marketingDescription" class="calc-input marketing-textarea" rows="3"></textarea>
+                    <textarea id="marketingDescription" class="calc-input marketing-textarea" rows="4"></textarea>
                 </label>
                 <label class="marketing-field marketing-field--wide" data-context="promo" hidden>
                     <span>Promocja</span>
@@ -103,7 +102,7 @@ class AdminMarketing {
                     <h4>${renderMaterialIcon(icon)} ${label}</h4>
                     <button class="btn-back admin-save-btn" type="button" data-action="copy" data-target="${target}">${renderMaterialIcon('content_copy')} Kopiuj</button>
                 </div>
-                <textarea id="marketing-${target}" class="marketing-output" readonly placeholder="Kliknij „Generuj post”."></textarea>
+                <textarea id="marketing-${target}" class="marketing-output" placeholder="Kliknij „Generuj post”."></textarea>
             </section>
         `;
     }
@@ -142,14 +141,15 @@ class AdminMarketing {
         if (event.target.dataset.action !== 'generate') return;
         event.preventDefault();
         const burger = this.burgers.find(entry => entry.id === this.container.querySelector('#marketingBurger')?.value);
+        const isBurger = this.type === 'burger';
         const post = buildMarketingPost({
             type: this.type,
-            burger: this.type === 'burger' ? burger?.label || '' : '',
+            burgerId: isBurger ? burger?.id || '' : '',
+            burger: isBurger ? burger?.label || '' : '',
             promo: this.container.querySelector('#marketingPromo')?.value.trim() || '',
             description: this.container.querySelector('#marketingDescription')?.value.trim() || '',
             options: this.options,
-            brand: MARKETING_BRAND,
-            variantIndex: this.variantIndex++
+            brand: MARKETING_BRAND
         });
         this.setOutput('facebook', post.facebook);
         this.setOutput('instagram', post.instagram);

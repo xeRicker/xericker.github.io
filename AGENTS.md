@@ -1,4 +1,4 @@
-# Agent Instructions
+# AGENTS.md
 
 ## Quick Reference
 - Run: `node dev-server.js` — serves static files and handles local JSON `PUT` writes under `database/`. Without it the site still opens but saves fail.

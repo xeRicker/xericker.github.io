@@ -1,0 +1,18 @@
+{
+  "location": "Oświęcim",
+  "date": "29.09.2026",
+  "revenue": 524,
+  "cardRevenue": 482,
+  "glovoRevenue": 0,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Jalapeno": 1,
+    "Bułki": 25,
+    "Tabasco": 1
+  }
+}

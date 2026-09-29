@@ -1,0 +1,23 @@
+{
+  "location": "Oświęcim",
+  "date": "28.09.2026",
+  "revenue": 695,
+  "cardRevenue": 378,
+  "glovoRevenue": 106,
+  "employees": {
+    "kacper.jarnot": "12:00,21:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Sól do frytek": 1,
+    "Szmaty": 1
+  }
+}

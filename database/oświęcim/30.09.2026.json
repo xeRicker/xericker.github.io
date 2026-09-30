@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "30.09.2026",
+  "revenue": 1258,
+  "cardRevenue": 792,
+  "glovoRevenue": 143,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Stripsy": 3,
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 4,
+    "Placki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Tabasco": 1,
+    "Sól do frytek": 1,
+    "Zbój: Cytryna": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 10,20": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "location": "Osiek",
+  "date": "30.09.2026",
+  "revenue": 590,
+  "cardRevenue": 378,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Stripsy": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 16,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1
+  }
+}

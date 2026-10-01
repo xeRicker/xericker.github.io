@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "01.10.2026",
+  "revenue": 949,
+  "cardRevenue": 513,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,20:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 7,
+    "Cebula prażona": 1,
+    "Sos: Sweet Chilli": 1,
+    "Odtłuszczacz": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

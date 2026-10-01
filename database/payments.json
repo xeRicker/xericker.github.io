@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-25T19:57:09.616Z",
+  "updatedAt": "2026-10-01T19:51:13.171Z",
   "items": [
     {
       "id": "item-mug6gubx-6gg3g5",
@@ -98,6 +98,20 @@
       "archived": true,
       "createdAt": "2026-09-25T08:37:53.710Z",
       "order": 5,
+      "payments": []
+    },
+    {
+      "id": "item-mupy8ziz-aw0zye",
+      "title": "K/169/26",
+      "kind": "faktura",
+      "contractor": "Śmieci",
+      "amountTotal": 736.56,
+      "dueDate": "2026-10-07",
+      "recurrence": "one-time",
+      "note": "",
+      "archived": false,
+      "createdAt": "2026-10-01T19:51:00.827Z",
+      "order": 6,
       "payments": []
     }
   ]

@@ -1,0 +1,22 @@
+{
+  "location": "Oświęcim",
+  "date": "01.10.2026",
+  "revenue": 807,
+  "cardRevenue": 466,
+  "glovoRevenue": 129,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Halloumi": 1,
+    "Bułki": 16,
+    "Sos: Ketchup": 1,
+    "Sos: Carolina": 1
+  }
+}

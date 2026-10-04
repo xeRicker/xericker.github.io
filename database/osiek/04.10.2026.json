@@ -1,0 +1,21 @@
+{
+  "location": "Osiek",
+  "date": "04.10.2026",
+  "revenue": 1393,
+  "cardRevenue": 954,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Stripsy": 2,
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Ogórki": 3,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki": 14,
+    "Odtłuszczacz": 1
+  }
+}

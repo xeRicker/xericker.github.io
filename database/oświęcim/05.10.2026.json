@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "05.10.2026",
+  "revenue": 852,
+  "cardRevenue": 555,
+  "glovoRevenue": 37,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Boczek": 2,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Bułki": 13,
+    "Sriracha": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

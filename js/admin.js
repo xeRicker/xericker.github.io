@@ -1,8 +1,8 @@
 import { apiService } from './services/api.js?v=169';
 import { analytics } from './services/analytics.js';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=174';
-import { adminProducts } from './ui/adminProducts.js?v=166';
+import { adminRender } from './ui/adminRender.js?v=175';
+import { adminProducts } from './ui/adminProducts.js?v=168';
 import { createAdminListsPage } from './ui/adminLists.js?v=165';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';
 import { setupPayslipGenerator } from './ui/payslip.js?v=103';
@@ -12,7 +12,7 @@ import { getActiveProductCatalog, loadProductCatalog } from './services/products
 import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=167';
 import { adminEmployees } from './ui/adminEmployees.js?v=171';
 import { adminLocations } from './ui/adminLocations.js?v=174';
-import { adminPayments } from './ui/adminPayments.js?v=103';
+import { adminPayments } from './ui/adminPayments.js?v=104';
 import { adminMarketing } from './ui/adminMarketing.js?v=4';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=168';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=102';
@@ -30,7 +30,7 @@ let currentData = [];
 let currentWeeks = [];
 let chartType = 'bar';
 let chartDisplayMode = 'combined';
-let chartRange = { from: '', to: '' };
+let customRange = { from: '', to: '' };
 let viewMode = 'total';
 let currentViewData = [];
 let revenuePage = 0;
@@ -337,24 +337,40 @@ function populateMonthFilter(data) {
     });
 
     const allOption = months.length > 1 ? '<option value="all">Wszystkie</option>' : '';
-    select.innerHTML = [...monthOptions, allOption].join('');
+    const rangeOption = '<option value="custom">Własny zakres dat</option>';
+    select.innerHTML = [...monthOptions, allOption, rangeOption].join('');
 }
 
 function handleMonthChange(fullData) {
     const value = document.getElementById('monthFilter').value;
     const isAllMonths = value === 'all';
+    const isCustomRange = value === 'custom';
     const [year, month] = value.split('-');
 
-    currentData = isAllMonths
-        ? fullData
-        : analytics.filterByMonth(fullData, year, month);
+    if (isCustomRange) {
+        currentData = filterByCustomRange(fullData);
+    } else {
+        currentData = isAllMonths ? fullData : analytics.filterByMonth(fullData, year, month);
+    }
 
     revenuePage = 0;
     heatmapPage = 0;
-    populateChartRange(currentData);
-    buildWeekTabs(currentData, isAllMonths ? { label: 'Cały okres', showWeeks: false } : {});
+    toggleDateRangeControls(isCustomRange);
+    populateRangeBounds(fullData);
+    const weekTabDefaults = isAllMonths
+        ? { label: 'Cały okres', showWeeks: false }
+        : isCustomRange ? { label: 'Cały zakres' } : {};
+    buildWeekTabs(currentData, weekTabDefaults);
     activeWeekKey = 'all';
     updateView();
+    syncPayrollDateRange(fullData, { year, month, isAllMonths, isCustomRange });
+}
+
+function syncPayrollDateRange(fullData, { year, month, isAllMonths, isCustomRange }) {
+    if (isCustomRange) {
+        payrollCalculator?.setDateRange(customRange.from, customRange.to);
+        return;
+    }
 
     if (isAllMonths) {
         const newest = fullData[0];
@@ -370,6 +386,52 @@ function handleMonthChange(fullData) {
         `${year}-${month}-01`,
         `${year}-${month}-${String(lastDay).padStart(2, '0')}`
     );
+}
+
+function filterByCustomRange(data) {
+    if (!isCustomRangeReady()) return data;
+    return data.filter(day => {
+        const iso = reportDateToIso(day.dateStr);
+        return iso >= customRange.from && iso <= customRange.to;
+    });
+}
+
+function isCustomRangeReady() {
+    return Boolean(customRange.from && customRange.to && customRange.from <= customRange.to);
+}
+
+function setCustomRangeBound(bound, value) {
+    customRange[bound] = value;
+    if (customRange.from && customRange.to && customRange.from > customRange.to) {
+        customRange[bound === 'from' ? 'to' : 'from'] = value;
+        const input = document.getElementById(bound === 'from' ? 'rangeTo' : 'rangeFrom');
+        if (input) input.value = value;
+    }
+    refreshCustomControls();
+    handleMonthChange(processedData);
+}
+
+function toggleDateRangeControls(visible) {
+    const controls = document.getElementById('dateRangeControls');
+    if (controls) controls.hidden = !visible;
+    if (!visible) {
+        customRange = { from: '', to: '' };
+        const from = document.getElementById('rangeFrom');
+        const to = document.getElementById('rangeTo');
+        if (from) from.value = '';
+        if (to) to.value = '';
+    }
+}
+
+function populateRangeBounds(data) {
+    const from = document.getElementById('rangeFrom');
+    const to = document.getElementById('rangeTo');
+    if (!from || !to || !data.length) return;
+    const dates = data.map(day => reportDateToIso(day.dateStr)).filter(Boolean).sort();
+    from.max = dates[dates.length - 1];
+    to.min = dates[0];
+    from.min = dates[0];
+    to.max = dates[dates.length - 1];
 }
 
 function buildWeekTabs(data, { label = 'Cały miesiąc', showWeeks = true } = {}) {
@@ -431,26 +493,12 @@ function setupListeners() {
         updateChart();
     });
 
-    document.getElementById('chartRangeFrom')?.addEventListener('change', event => {
-        chartRange.from = event.target.value;
-        if (chartRange.from > chartRange.to) {
-            chartRange.to = chartRange.from;
-            const toSelect = document.getElementById('chartRangeTo');
-            if (toSelect) toSelect.value = chartRange.to;
-            refreshCustomControls();
-        }
-        updateChart();
+    document.getElementById('rangeFrom')?.addEventListener('change', event => {
+        setCustomRangeBound('from', event.target.value);
     });
 
-    document.getElementById('chartRangeTo')?.addEventListener('change', event => {
-        chartRange.to = event.target.value;
-        if (chartRange.to < chartRange.from) {
-            chartRange.from = chartRange.to;
-            const fromSelect = document.getElementById('chartRangeFrom');
-            if (fromSelect) fromSelect.value = chartRange.from;
-            refreshCustomControls();
-        }
-        updateChart();
+    document.getElementById('rangeTo')?.addEventListener('change', event => {
+        setCustomRangeBound('to', event.target.value);
     });
 
     const viewModeButtons = document.querySelectorAll('.view-toggle .view-btn');
@@ -529,7 +577,7 @@ function updateView() {
 
     if (ctx) {
         adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
-        adminRender.renderChart(ctx, getChartData(), chartType, getRenderOptions());
+        updateChart();
         adminRender.renderLocationPerformance(
             document.getElementById('locationPerformanceSection'),
             currentViewData,
@@ -631,46 +679,33 @@ function buildWeekSummaries() {
 }
 
 function updateChart() {
-    const ctx = document.getElementById('revenueChart')?.getContext('2d');
-    if (!ctx) return;
-    adminRender.renderChart(ctx, getChartData(), chartType, getRenderOptions());
-}
+    const canvas = document.getElementById('revenueChart');
+    const wrapper = canvas?.closest('.chart-wrapper');
+    const ctx = canvas?.getContext('2d');
+    if (!ctx || !wrapper) return;
 
-function getChartData() {
-    const { from, to } = chartRange;
-    if (!from && !to) return currentViewData;
-    return currentViewData.filter(day => {
-        const key = getMonthKey(day.dateObj);
-        return (!from || key >= from) && (!to || key <= to);
-    });
-}
+    const chartData = getChartData();
+    const isEmpty = !chartData.length
+        || (chartDisplayMode === 'split' && !adminRender.getVisibleLocations(chartData).length);
 
-function populateChartRange(data) {
-    const wrapper = document.getElementById('chartRangeControls');
-    const fromSelect = document.getElementById('chartRangeFrom');
-    const toSelect = document.getElementById('chartRangeTo');
-    if (!wrapper || !fromSelect || !toSelect) return;
-
-    const keys = Array.from(new Set(data.map(day => getMonthKey(day.dateObj)))).sort();
-    if (keys.length <= 1) {
-        wrapper.hidden = true;
-        chartRange = { from: keys[0] || '', to: keys[0] || '' };
+    wrapper.querySelector('.chart-wrapper__empty')?.remove();
+    if (isEmpty) {
+        adminRender.destroyChart();
+        wrapper.classList.add('is-empty');
+        wrapper.insertAdjacentHTML('beforeend', `<div class="chart-wrapper__empty">${renderMaterialIcon('event_busy')}<span>Brak danych w wybranym zakresie dat.</span></div>`);
         return;
     }
 
-    const options = keys.map(key => {
-        const [year, month] = key.split('-');
-        return `<option value="${key}">${formatMonthLabel(year, month)}</option>`;
-    }).join('');
+    wrapper.classList.remove('is-empty');
+    adminRender.renderChart(ctx, chartData, chartType, getRenderOptions());
+}
 
-    wrapper.hidden = false;
-    fromSelect.innerHTML = options;
-    toSelect.innerHTML = options;
-    chartRange.from = keys[0];
-    chartRange.to = keys[keys.length - 1];
-    fromSelect.value = chartRange.from;
-    toSelect.value = chartRange.to;
-    refreshCustomControls();
+function getChartData() {
+    if (!isCustomRangeReady()) return currentViewData;
+    return currentViewData.filter(day => {
+        const iso = reportDateToIso(day.dateStr);
+        return iso >= customRange.from && iso <= customRange.to;
+    });
 }
 
 function renderHeatmapSection(data, monthValue) {
@@ -678,7 +713,7 @@ function renderHeatmapSection(data, monthValue) {
     const pager = document.getElementById('heatmapPager');
     if (!container) return;
 
-    if (monthValue !== 'all') {
+    if (monthValue !== 'all' && monthValue !== 'custom') {
         heatmapPage = 0;
         if (pager) {
             pager.hidden = true;
@@ -747,10 +782,11 @@ function getActiveWeekData() {
 function renderRevenueTable() {
     const sorted = [...currentViewData].sort((a, b) => compareRevenueRows(a, b, revenueSort));
     const pager = document.getElementById('revenueTablePager');
-    const isAllMonths = (document.getElementById('monthFilter')?.value || '') === 'all';
-    const totalPages = isAllMonths ? Math.max(1, Math.ceil(sorted.length / REVENUE_PAGE_SIZE)) : 1;
+    const monthValue = document.getElementById('monthFilter')?.value || '';
+    const isPaged = monthValue === 'all' || monthValue === 'custom';
+    const totalPages = isPaged ? Math.max(1, Math.ceil(sorted.length / REVENUE_PAGE_SIZE)) : 1;
     revenuePage = Math.min(revenuePage, totalPages - 1);
-    const pageRows = isAllMonths
+    const pageRows = isPaged
         ? sorted.slice(revenuePage * REVENUE_PAGE_SIZE, (revenuePage + 1) * REVENUE_PAGE_SIZE)
         : sorted;
 

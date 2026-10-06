@@ -299,6 +299,31 @@ select:focus { border-color: var(--primary-color); }
     flex-shrink: 0;
 }
 
+.date-range {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.date-range[hidden] { display: none; }
+
+.date-range__field {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.date-range__field > span {
+    color: var(--text-muted);
+    font: 700 10px/1.2 var(--font-heading);
+    letter-spacing: .05em;
+}
+
+.date-range .custom-control { width: 148px; }
+.date-range .custom-control__button { min-height: 38px; padding: 7px 10px; font-size: 12px; }
+.date-range .custom-control__chevron { font-size: 17px; }
+
 .admin-period-weeks {
     display: flex;
     align-items: center;
@@ -360,6 +385,12 @@ select:focus { border-color: var(--primary-color); }
         width: 100%;
         height: 1px;
     }
+    .date-range {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .date-range .custom-control { width: 100%; }
+    .date-range__field { flex: 1 1 0; }
     .admin-period-weeks {
         flex-direction: column;
         align-items: flex-start;
@@ -532,6 +563,24 @@ select:focus { border-color: var(--primary-color); }
 .chart-card { background: var(--surface-color); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
 .chart-card--feature .chart-wrapper { height: 460px; }
 .chart-wrapper { position: relative; min-height: 320px; }
+.chart-wrapper.is-empty canvas { visibility: hidden; }
+.chart-wrapper__empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.chart-wrapper__empty .material-symbols-rounded {
+    font-size: 40px;
+    color: var(--primary-color);
+    opacity: .7;
+}
 .calc-card { margin-top: 0; }
 .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .section-heading h3 { color: var(--text-primary); }

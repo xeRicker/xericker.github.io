@@ -21,6 +21,7 @@ import {
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
 import { noticeService } from './components/notice.js?v=102';
+import { openPaymentEditDialog } from './components/paymentEditDialog.js?v=1';
 
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
@@ -105,7 +106,7 @@ class AdminPayments {
 
     buildForm() {
         const kindOptions = PAYMENT_KINDS.map(kind => `<option value="${kind.id}" data-icon="${kind.icon}">${escapeHtml(kind.label)}</option>`).join('');
-        const recurrenceOptions = PAYMENT_RECURRENCES.map(entry => `<option value="${entry.id}">${escapeHtml(entry.label)}</option>`).join('');
+        const recurrenceOptions = PAYMENT_RECURRENCES.map(entry => `<option value="${escapeHtml(entry.id)}">${escapeHtml(entry.label)}</option>`).join('');
         return `
             <form class="payments-add-form" data-action="add-payment">
                 <label class="payments-field payments-field--wide">
@@ -131,6 +132,10 @@ class AdminPayments {
                 <label class="payments-field">
                     <span>Cykliczność</span>
                     <select name="recurrence" class="calc-input" aria-label="Cykliczność opłaty">${recurrenceOptions}</select>
+                </label>
+                <label class="payments-field payments-field--wide">
+                    <span>Notatka</span>
+                    <input name="note" class="calc-input" placeholder="Opcjonalnie" aria-label="Notatka do opłaty">
                 </label>
                 <button class="chart-btn active payments-add-btn" type="submit">+ Nowe zobowiązanie</button>
             </form>
@@ -188,6 +193,7 @@ class AdminPayments {
                 <div class="payment-row__meta">
                     <span class="payment-due ${view.status === 'overdue' ? 'is-negative' : ''} ${view.status === 'partial' ? 'is-watch' : ''}">${escapeHtml(this.buildDueLabel(view))}</span>
                     ${view.recurrence !== 'one-time' ? `<span class="payment-recur">${escapeHtml(getPaymentRecurrenceLabel(view.recurrence))}</span>` : ''}
+                    ${view.note ? `<span class="payment-note">${renderMaterialIcon('sticky_note_2')}${escapeHtml(view.note)}</span>` : ''}
                 </div>
                 <div class="payment-row__actions">
                     ${done ? '' : `
@@ -196,6 +202,7 @@ class AdminPayments {
                     `}
                     <button class="btn-back payment-action" type="button" data-action="edit">Edytuj</button>
                     <button class="btn-back payment-action" type="button" data-action="${view.archived ? 'restore' : 'archive'}">${view.archived ? 'Przywróć' : 'Archiwizuj'}</button>
+                    <button class="btn-back payment-action payment-action--danger" type="button" data-action="delete">Usuń</button>
                 </div>
             </div>
         `;
@@ -233,22 +240,24 @@ class AdminPayments {
             return dialogService.warning('Podaj nazwę, kwotę i termin zobowiązania.', 'Uzupełnij opłatę');
         }
 
-        this.catalog.items.push({
-            id: createPaymentId('item'),
-            title,
-            kind: String(data.get('kind') || 'inne'),
-            contractor: String(data.get('contractor') || '').trim(),
-            amountTotal,
-            dueDate,
-            recurrence: String(data.get('recurrence') || 'one-time'),
-            note: '',
-            archived: false,
-            createdAt: new Date().toISOString(),
-            order: this.catalog.items.length,
-            payments: []
-        });
-        this.markDirty();
-        this.render();
+        if (action === 'add-payment') {
+            this.catalog.items.push({
+                id: createPaymentId('item'),
+                title,
+                kind: String(data.get('kind') || 'inne'),
+                contractor: String(data.get('contractor') || '').trim(),
+                amountTotal,
+                dueDate,
+                recurrence: String(data.get('recurrence') || 'one-time'),
+                note: String(data.get('note') || '').trim(),
+                archived: false,
+                createdAt: new Date().toISOString(),
+                order: this.catalog.items.length,
+                payments: []
+            });
+            this.markDirty();
+            this.render();
+        }
     }
 
     async handleClick(event) {
@@ -266,6 +275,7 @@ class AdminPayments {
         else if (action === 'edit') changed = await this.editItem(item);
         else if (action === 'archive') changed = await this.setArchived(item, true);
         else if (action === 'restore') changed = await this.setArchived(item, false);
+        else if (action === 'delete') changed = await this.deleteItem(item);
         else changed = false;
 
         if (!changed) return;
@@ -330,18 +340,27 @@ class AdminPayments {
     }
 
     async editItem(item) {
-        const title = await dialogService.prompt('Nazwa', 'Edytuj zobowiązanie', { value: item.title });
-        if (!title || !title.trim()) return false;
-        const amountValue = await dialogService.prompt('Kwota', 'Edytuj zobowiązanie', { value: item.amountTotal.toFixed(2), inputmode: 'decimal' });
-        const amount = parseAmount(amountValue);
-        if (!amount) return false;
-        const dueValue = await dialogService.prompt('Termin (RRRR-MM-DD)', 'Edytuj zobowiązanie', { value: item.dueDate });
-        const dueDate = normalizePaymentDate(dueValue);
-        if (!dueDate) return false;
+        const values = await openPaymentEditDialog(item);
+        if (!values) return false;
+        item.title = values.title;
+        item.amountTotal = values.amountTotal;
+        item.dueDate = values.dueDate;
+        item.kind = values.kind;
+        item.recurrence = values.recurrence;
+        item.contractor = values.contractor;
+        item.note = values.note;
+        return true;
+    }
 
-        item.title = title.trim();
-        item.amountTotal = amount;
-        item.dueDate = dueDate;
+    async deleteItem(item) {
+        const view = derivePayment(item);
+        const paidNote = view.amountPaid > 0 ? ` Historia wpłat (${formatMoney(view.amountPaid)}) też zostanie usunięta.` : '';
+        const confirmed = await dialogService.confirm(
+            `Usunąć trwale „${item.title}” z listy opłat?${paidNote}`,
+            'Usuń opłatę'
+        );
+        if (!confirmed) return false;
+        this.catalog.items = this.catalog.items.filter(entry => entry.id !== item.id);
         return true;
     }
 

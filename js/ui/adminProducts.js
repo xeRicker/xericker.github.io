@@ -5,20 +5,17 @@ import { dialogService } from './components/customControls.js?v=173';
 import { noticeService } from './components/notice.js?v=102';
 import { cardClass } from './components/Card.js';
 
-const ICON_OPTIONS = [
-    'restaurant', 'eco', 'kitchen', 'lunch_dining', 'bakery_dining', 'science',
-    'inventory_2', 'construction', 'local_drink', 'shopping_bag', 'cleaning_services',
-    'receipt_long', 'set_meal', 'ramen_dining', 'local_pizza', 'local_cafe',
-    'icecream', 'liquor', 'takeout_dining', 'delivery_dining', 'payments',
-    'store', 'category', 'widgets', 'box', 'shelves', 'yard', 'water_drop',
-    'local_fire_department', 'hardware', 'build', 'fact_check', 'checklist'
-];
+import { openCategoryIconPicker } from './components/productIconPicker.js?v=1';
+import { setupProductDrag } from './components/productDrag.js?v=1';
+
+const DEFAULT_ICON = 'inventory_2';
 
 class AdminProducts {
     constructor() {
         this.catalog = normalizeProductCatalog();
         this.container = null;
-        this.draggedProductId = null;
+        this.animatedId = '';
+        this.animatedKind = '';
         this.savedSnapshot = '';
         this.isDirty = false;
     }
@@ -40,13 +37,31 @@ class AdminProducts {
     bindEvents() {
         this.container.addEventListener('click', event => this.handleClick(event));
         this.container.addEventListener('submit', event => this.handleSubmit(event));
-        this.container.addEventListener('dragstart', event => this.handleDragStart(event));
-        this.container.addEventListener('dragover', event => this.handleDragOver(event));
-        this.container.addEventListener('drop', event => this.handleDrop(event));
-        this.container.addEventListener('dragend', () => this.clearDropTargets());
-        this.container.addEventListener('click', event => {
-            if (event.target.closest('#saveProductsBtn')) this.save();
+        setupProductDrag(this.container, {
+            onProductsDropped: (productId, categoryId) => this.applyProductOrder(productId, categoryId),
+            onCategoriesDropped: categoryId => this.applyCategoryOrder(categoryId)
         });
+    }
+
+    applyProductOrder(productId, categoryId) {
+        const category = this.findCategory(categoryId);
+        const list = this.container.querySelector(`.admin-product-list[data-category-id="${categoryId}"]`);
+        if (!category || !list) return;
+        const orderedIds = Array.from(list.querySelectorAll('.admin-product-row')).map(row => row.dataset.productId);
+        category.items.sort((left, right) => orderedIds.indexOf(left.id) - orderedIds.indexOf(right.id));
+        this.syncDirtyState();
+        this.animatedId = productId;
+        this.animatedKind = 'product';
+        this.render();
+    }
+
+    applyCategoryOrder(categoryId) {
+        const orderedIds = Array.from(this.container.querySelectorAll('.admin-category-card')).map(card => card.dataset.categoryId);
+        this.catalog.categories.sort((left, right) => orderedIds.indexOf(left.id) - orderedIds.indexOf(right.id));
+        this.syncDirtyState();
+        this.animatedId = categoryId;
+        this.animatedKind = 'category';
+        this.render();
     }
 
     render() {
@@ -63,8 +78,8 @@ class AdminProducts {
 
             <form class="product-add-form" data-action="add-category">
                 <input name="name" class="calc-input" placeholder="Nazwa kategorii, np. Sosy" required>
-                <input name="icon" type="hidden" value="inventory_2">
-                <button class="icon-picker-button" type="button" data-action="pick-category-icon">
+                <input name="icon" type="hidden" value="${DEFAULT_ICON}">
+                <button class="icon-picker-button" type="button" data-action="pick-category-icon" title="Wybierz ikonę kategorii">
                     <span class="material-symbols-rounded" aria-hidden="true">category</span>
                 </button>
                 <button class="chart-btn active" type="submit">+ Kategoria</button>
@@ -74,14 +89,18 @@ class AdminProducts {
                 ${this.catalog.categories.map((category, index) => this.renderCategory(category, index)).join('')}
             </div>
         `;
+        this.animatedId = '';
+        this.animatedKind = '';
     }
 
     renderCategory(category, categoryIndex) {
         const categoryCount = this.catalog.categories.length;
+        const isLanded = this.animatedKind === 'category' && category.id === this.animatedId;
         return `
-            <section class="${cardClass('product', `admin-category-card ${category.enabled ? '' : 'is-disabled'}`)}" data-category-id="${category.id}">
+            <section class="${cardClass('product', `admin-category-card ${category.enabled ? '' : 'is-disabled'} ${isLanded ? 'is-landed' : ''}`)}" data-category-id="${category.id}">
                 <div class="admin-category-head">
                     <div class="admin-category-title">
+                        <span class="drag-handle drag-handle--category material-symbols-rounded" draggable="true" data-category-drag="${category.id}" role="button" tabindex="0" title="Przeciągnij, aby zmienić kolejność kategorii" aria-label="Przeciągnij, aby zmienić kolejność kategorii">drag_indicator</span>
                         ${renderMaterialIcon(category.icon, 'category-icon')}
                         <div>
                             <h4>${escapeHtml(category.name)}</h4>
@@ -123,8 +142,10 @@ class AdminProducts {
     }
 
     renderProduct(product, index, count) {
+        const isLanded = product.id === this.animatedId
+            && (this.animatedKind === 'product' || this.animatedKind === 'add');
         return `
-            <div class="admin-product-row ${product.enabled ? '' : 'is-disabled'}" draggable="true" data-product-id="${product.id}">
+            <div class="admin-product-row ${product.enabled ? '' : 'is-disabled'} ${isLanded ? 'is-landed' : ''}" draggable="true" data-product-id="${product.id}">
                 ${renderMaterialIcon('drag_indicator', 'drag-handle')}
                 <div class="admin-product-main">
                     <strong>${escapeHtml(product.name)}</strong>
@@ -160,9 +181,8 @@ class AdminProducts {
 
     async handleClick(event) {
         const action = event.target.closest('[data-action]')?.dataset.action;
-        if (!action) return;
+        if (!action || action === 'add-category' || action === 'add-product') return;
 
-        if (action === 'add-category' || action === 'add-product') return;
         const snapshotBefore = this.serializeCatalog();
         if (action === 'toggle-category') this.toggleCategory(event);
         if (action === 'move-category-up') this.moveCategory(event, -1);
@@ -178,10 +198,12 @@ class AdminProducts {
         if (action === 'edit-product') await this.editProduct(event);
         if (action === 'pick-category-icon') await this.pickFormIcon(event);
 
-        if (action !== 'pick-category-icon') {
-            this.syncDirtyState(snapshotBefore);
-            this.render();
-        }
+        if (action === 'pick-category-icon' || action === 'edit-category' || action === 'edit-product') return;
+
+        this.syncDirtyState(snapshotBefore);
+        if (action.startsWith('move-category') || action === 'delete-category') this.animatedKind = 'category';
+        else this.animatedKind = 'product';
+        this.render();
     }
 
     async handleSubmit(event) {
@@ -191,25 +213,30 @@ class AdminProducts {
 
         const formData = new FormData(event.target);
         if (action === 'add-category') {
-            this.catalog.categories.push({
+            const category = {
                 id: createId('category'),
                 name: formData.get('name').trim(),
-                icon: formData.get('icon')?.trim() || 'inventory_2',
+                icon: formData.get('icon')?.trim() || DEFAULT_ICON,
                 enabled: true,
                 items: []
-            });
+            };
+            this.catalog.categories.push(category);
+            this.animatedId = category.id;
+            this.animatedKind = 'category';
         }
 
         if (action === 'add-product') {
             const category = this.findCategory(event.target.closest('[data-category-id]')?.dataset.categoryId);
-            if (category) {
-                category.items.push({
-                    id: createId('product'),
-                    name: formData.get('name').trim(),
-                    type: formData.get('type') === 'toggle' ? 'toggle' : 'quantity',
-                    enabled: true
-                });
-            }
+            if (!category) return;
+            const product = {
+                id: createId('product'),
+                name: formData.get('name').trim(),
+                type: formData.get('type') === 'toggle' ? 'toggle' : 'quantity',
+                enabled: true
+            };
+            category.items.push(product);
+            this.animatedId = product.id;
+            this.animatedKind = 'product';
         }
 
         this.syncDirtyState();
@@ -238,46 +265,6 @@ class AdminProducts {
         }
     }
 
-    handleDragStart(event) {
-        const row = event.target.closest('.admin-product-row');
-        if (!row) return;
-        this.draggedProductId = row.dataset.productId;
-        event.dataTransfer.effectAllowed = 'move';
-    }
-
-    handleDragOver(event) {
-        const list = event.target.closest('.admin-product-list');
-        if (!list || !this.draggedProductId) return;
-        event.preventDefault();
-        this.clearDropTargets();
-        list.classList.add('is-drop-target');
-    }
-
-    handleDrop(event) {
-        const list = event.target.closest('.admin-product-list');
-        if (!list || !this.draggedProductId) return;
-        event.preventDefault();
-
-        const source = this.removeProduct(this.draggedProductId);
-        const target = this.findCategory(list.dataset.categoryId);
-        if (source && target) {
-            const beforeRow = event.target.closest('.admin-product-row');
-            const beforeIndex = beforeRow
-                ? target.items.findIndex(product => product.id === beforeRow.dataset.productId)
-                : -1;
-            if (beforeIndex >= 0) target.items.splice(beforeIndex, 0, source);
-            else target.items.push(source);
-        }
-
-        this.draggedProductId = null;
-        this.syncDirtyState();
-        this.render();
-    }
-
-    clearDropTargets() {
-        this.container.querySelectorAll('.is-drop-target').forEach(node => node.classList.remove('is-drop-target'));
-    }
-
     toggleCategory(event) {
         const category = this.findEventCategory(event);
         if (category) category.enabled = !category.enabled;
@@ -287,6 +274,7 @@ class AdminProducts {
         const category = this.findEventCategory(event);
         if (!category) return;
         this.moveItem(this.catalog.categories, category.id, direction);
+        this.animatedId = category.id;
     }
 
     async deleteCategory(event) {
@@ -307,7 +295,7 @@ class AdminProducts {
     async editCategoryIcon(event) {
         const category = this.findEventCategory(event);
         if (!category) return;
-        const icon = await this.openIconPicker(category.icon);
+        const icon = await openCategoryIconPicker(category.icon);
         if (icon) category.icon = icon;
     }
 
@@ -317,7 +305,7 @@ class AdminProducts {
         const input = form?.querySelector('input[name="icon"]');
         if (!button || !input) return;
 
-        const icon = await this.openIconPicker(input.value || 'inventory_2');
+        const icon = await openCategoryIconPicker(input.value || DEFAULT_ICON);
         if (!icon) return;
         input.value = icon;
         button.querySelector('.material-symbols-rounded').textContent = icon;
@@ -338,6 +326,7 @@ class AdminProducts {
         const category = this.catalog.categories.find(item => item.items.some(product => product.id === productId));
         if (!category) return;
         this.moveItem(category.items, productId, direction);
+        this.animatedId = productId;
     }
 
     async deleteProduct(event) {
@@ -353,77 +342,6 @@ class AdminProducts {
         if (!product) return;
         const name = await dialogService.prompt('Nazwa produktu', 'Edytuj produkt', { value: product.name });
         if (name) product.name = name.trim();
-    }
-
-    openIconPicker(currentIcon = 'inventory_2') {
-        const layer = this.ensureIconDialog();
-        const dialog = layer.querySelector('.product-icon-dialog');
-        const searchInput = dialog.querySelector('.product-icon-search');
-        const grid = dialog.querySelector('.product-icon-grid');
-
-        const renderIcons = filter => {
-            const normalizedFilter = filter.trim().toLowerCase();
-            grid.innerHTML = ICON_OPTIONS
-                .filter(icon => icon.includes(normalizedFilter))
-                .map(icon => `
-                    <button class="product-icon-option ${icon === currentIcon ? 'is-selected' : ''}" type="button" data-icon="${icon}">
-                        <span class="material-symbols-rounded" aria-hidden="true">${icon}</span>
-                        <span>${icon}</span>
-                    </button>
-                `)
-                .join('');
-        };
-
-        renderIcons('');
-        searchInput.value = '';
-        layer.classList.add('is-visible');
-        searchInput.focus();
-
-        return new Promise(resolve => {
-            const close = value => {
-                layer.classList.remove('is-visible');
-                grid.removeEventListener('click', onGridClick);
-                searchInput.removeEventListener('input', onSearch);
-                layer.querySelector('[data-icon-close]').removeEventListener('click', onCancel);
-                resolve(value);
-            };
-            const onGridClick = event => {
-                const option = event.target.closest('[data-icon]');
-                if (option) close(option.dataset.icon);
-            };
-            const onSearch = event => renderIcons(event.target.value);
-            const onCancel = () => close(null);
-
-            grid.addEventListener('click', onGridClick);
-            searchInput.addEventListener('input', onSearch);
-            layer.querySelector('[data-icon-close]').addEventListener('click', onCancel);
-        });
-    }
-
-    ensureIconDialog() {
-        let layer = document.getElementById('productIconDialogLayer');
-        if (layer) return layer;
-
-        layer = document.createElement('div');
-        layer.id = 'productIconDialogLayer';
-        layer.className = 'product-icon-dialog-layer';
-        layer.innerHTML = `
-            <div class="product-icon-dialog" role="dialog" aria-modal="true">
-                <div class="product-icon-dialog__head">
-                    <div>
-                        <h3>Wybierz ikonę</h3>
-                        <p>Ikona będzie widoczna przy kategorii w generatorze i adminie.</p>
-                    </div>
-                    <button class="icon-action" type="button" data-icon-close>
-                        <span class="material-symbols-rounded" aria-hidden="true">close</span>
-                    </button>
-                </div>
-                <input class="product-icon-search calc-input" placeholder="Szukaj ikony">
-                <div class="product-icon-grid"></div>
-            </div>
-        `;
-        document.body.appendChild(layer);
-        return layer;
     }
 
     findEventCategory(event) {

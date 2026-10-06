@@ -113,6 +113,16 @@
                     <select id="monthFilter" aria-label="Miesiąc list"></select>
             </div>
         </div>
+        <div id="dateRangeControls" class="date-range" hidden>
+            <label class="date-range__field">
+                <span>Od</span>
+                <input type="date" id="rangeFrom" class="calc-input" aria-label="Początek własnego zakresu dat">
+            </label>
+            <label class="date-range__field">
+                <span>Do</span>
+                <input type="date" id="rangeTo" class="calc-input" aria-label="Koniec własnego zakresu dat">
+            </label>
+        </div>
         <div class="admin-period-divider" aria-hidden="true"></div>
         <div class="admin-period-weeks">
             <span class="period-label">
@@ -151,8 +161,8 @@
                     <label class="chart-control-field">
                         <span>Pokazuj</span>
                         <select id="chartDisplaySelect" aria-label="Zakres danych na wykresie">
-                            <option value="combined">Cała firma razem</option>
-                            <option value="split">Osobno każdy punkt</option>
+                            <option value="combined">Wszystkie punkty</option>
+                            <option value="split">Osobno punkty</option>
                         </select>
                     </label>
                     <label class="chart-control-field">
@@ -162,16 +172,6 @@
                             <option value="line">Linia</option>
                         </select>
                     </label>
-                    <div id="chartRangeControls" class="chart-range" hidden>
-                        <label class="chart-range__field">
-                            <span>Od</span>
-                            <select id="chartRangeFrom" aria-label="Początek okresu wykresu"></select>
-                        </label>
-                        <label class="chart-range__field">
-                            <span>Do</span>
-                            <select id="chartRangeTo" aria-label="Koniec okresu wykresu"></select>
-                        </label>
-                    </div>
                 </div>
             </div>
             <div class="chart-wrapper">
@@ -317,6 +317,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-<script type="module" src="js/admin.js?v=203"></script>
+<script type="module" src="js/admin.js?v=204"></script>
 </body>
 </html>

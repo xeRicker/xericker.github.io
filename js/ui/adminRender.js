@@ -36,6 +36,12 @@ class AdminRender {
         return renderMaterialIcon(name, ['summary-icon-badge', extraClass].filter(Boolean).join(' '));
     }
 
+    destroyChart() {
+        if (!this.chart) return;
+        this.chart.destroy();
+        this.chart = null;
+    }
+
     renderChart(ctx, data, type, options) {
         const sorted = [...data].sort((a, b) => a.timestamp - b.timestamp);
         const labels = sorted.map(day => `${day.dateStr.slice(0, 5)} (${day.dayOfWeek.slice(0, 3)})`);
@@ -317,7 +323,7 @@ class AdminRender {
             <div class="${cardClass('summary', 'summary-box summary-box--primary')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('monitoring', 'summary-icon-badge--revenue')} Utarg</span>
                 <p class="highlight">${formatMoney(total)}</p>
-                <small>${data.length} dni / średnio ${formatMoney(averageDay)}</small>
+                <small>${data.length} ${data.length === 1 ? 'dzień' : 'dni'} / średnio ${formatMoney(averageDay)}</small>
             </div>
             <div class="${cardClass('summary', 'summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('credit_card', 'summary-icon-badge--cards')} Karty</span>

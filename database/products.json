@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-06T09:40:28.257Z",
+  "updatedAt": "2026-10-06T09:41:13.169Z",
   "categories": [
     {
       "id": "category-muwhm6ib-tfocg8",
       "name": "⭐",
-      "icon": "inventory_2",
+      "icon": "local_fire_department",
       "enabled": true,
       "items": [
         {

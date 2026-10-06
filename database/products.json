@@ -1,7 +1,21 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T07:59:40.940Z",
+  "updatedAt": "2026-10-06T09:40:28.257Z",
   "categories": [
+    {
+      "id": "category-muwhm6ib-tfocg8",
+      "name": "⭐",
+      "icon": "inventory_2",
+      "enabled": true,
+      "items": [
+        {
+          "id": "product-muwhn127-4cj9de",
+          "name": "Cheeser: Ser",
+          "type": "quantity",
+          "enabled": true
+        }
+      ]
+    },
     {
       "id": "category-1",
       "name": "🥩",

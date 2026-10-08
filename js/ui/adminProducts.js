@@ -1,5 +1,5 @@
-import { apiService } from '../services/api.js?v=169';
-import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=161';
+import { apiService } from '../services/api.js?v=170';
+import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=162';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
 import { dialogService } from './components/customControls.js?v=173';
 import { noticeService } from './components/notice.js?v=102';

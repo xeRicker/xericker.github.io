@@ -476,6 +476,82 @@ select:focus { border-color: var(--primary-color); }
 .summary-box small { display: block; margin-top: 0; color: var(--text-muted); font-size: 12px; }
 .summary-box p.highlight { color: var(--primary-color); }
 
+.summary-box--target { position: relative; overflow: hidden; gap: 12px; }
+.summary-box--target.is-ok {
+    border-color: color-mix(in srgb, var(--success-color) 38%, var(--border-color));
+    background: radial-gradient(circle at top right, color-mix(in srgb, var(--success-color) 12%, transparent), transparent 42%), var(--surface-color);
+    animation: revenue-target-glow 3.4s ease-in-out infinite;
+}
+.summary-box--target.is-ok::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--success-color) 14%, transparent), transparent);
+    animation: revenue-target-shine 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+.revenue-target__head { width: 100%; justify-content: space-between; gap: 12px; }
+.revenue-target__title { display: inline-flex; align-items: center; gap: 8px; }
+.summary-box--target .summary-icon-badge--target {
+    background: color-mix(in srgb, var(--success-color) 16%, transparent);
+    border-color: color-mix(in srgb, var(--success-color) 38%, transparent);
+    color: var(--success-color);
+}
+.summary-box--target.is-low .summary-icon-badge--target {
+    background: color-mix(in srgb, var(--glovo-color) 16%, transparent);
+    border-color: color-mix(in srgb, var(--glovo-color) 38%, transparent);
+    color: var(--glovo-color);
+}
+.summary-box--target.is-idle .summary-icon-badge--target,
+.summary-box--target.is-empty .summary-icon-badge--target {
+    background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    border-color: color-mix(in srgb, var(--text-primary) 12%, transparent);
+    color: var(--text-muted);
+}
+.revenue-target__trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    color: var(--text-secondary);
+    font: 700 var(--font-size-2xs)/1.5 var(--font-heading);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.revenue-target__trend strong { font-size: var(--font-size-2xs); }
+.revenue-target__trend .material-symbols-rounded { font-size: 14px; }
+.revenue-target__trend.is-positive { background: var(--app-success-bg); color: var(--success-color); }
+.revenue-target__trend.is-negative { background: var(--app-danger-bg); color: var(--danger-color); }
+.revenue-target__state { display: inline-flex; align-items: flex-start; gap: 7px; color: var(--text-secondary); font: 700 12px/1.45 var(--font-heading); }
+.revenue-target__state .material-symbols-rounded { flex: 0 0 auto; font-size: 16px; }
+.revenue-target__state--ok { color: var(--success-color); }
+.revenue-target__state--low { color: var(--glovo-color); }
+.revenue-target__state--idle { color: var(--text-muted); font-weight: 500; }
+.revenue-target__verdict { display: grid; gap: 2px; }
+.revenue-target__verdict strong { color: inherit; font-size: 13px; }
+.revenue-target__verdict > span { color: var(--text-secondary); font-weight: 500; }
+.summary-box--target .revenue-target__empty { font-size: 12px; }
+.summary-box--target .revenue-target__load { align-self: flex-start; margin-top: auto; min-height: var(--control-h-sm); padding: 4px 12px; font-size: var(--font-size-2xs); }
+.summary-box--target .revenue-target__load .material-symbols-rounded { font-size: 15px; color: var(--primary-color); }
+
+@keyframes revenue-target-glow {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50% { box-shadow: 0 0 22px color-mix(in srgb, var(--success-color) 16%, transparent); }
+}
+
+@keyframes revenue-target-shine {
+    0%, 40% { transform: translateX(-160%); }
+    75%, 100% { transform: translateX(320%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .summary-box--target.is-ok,
+    .summary-box--target.is-ok::after { animation: none; }
+}
+
 .insight-card--events strong {
     color: var(--app-chart-3);
 }

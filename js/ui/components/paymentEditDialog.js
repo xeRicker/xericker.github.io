@@ -3,7 +3,7 @@ import {
     PAYMENT_KINDS,
     PAYMENT_RECURRENCES,
     normalizePaymentDate
-} from '../../services/payments.js?v=102';
+} from '../../services/payments.js?v=103';
 import { dialogService, enhanceCustomControls } from './customControls.js?v=173';
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');

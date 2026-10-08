@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=169';
+import { apiService } from '../services/api.js?v=170';
 import {
     PAYMENT_FILTERS,
     PAYMENT_KINDS,
@@ -17,11 +17,12 @@ import {
     normalizePaymentsCatalog,
     summarizePayments,
     toIsoDate
-} from '../services/payments.js?v=102';
+} from '../services/payments.js?v=103';
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
 import { noticeService } from './components/notice.js?v=102';
-import { openPaymentEditDialog } from './components/paymentEditDialog.js?v=1';
+import { openPaymentEditDialog } from './components/paymentEditDialog.js?v=2';
+import { loadSettings, normalizeSettings, saveSettings } from '../services/settings.js?v=1';
 
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
@@ -40,18 +41,23 @@ function plural(count, one, few, many) {
 class AdminPayments {
     constructor() {
         this.catalog = normalizePaymentsCatalog();
+        this.settings = normalizeSettings();
         this.container = null;
         this.savedSnapshot = '';
+        this.savedSettingsSnapshot = '';
         this.isDirty = false;
         this.filterStatus = 'open';
         this.query = '';
         this.onSaved = null;
+        this.onSettingsSaved = null;
     }
 
     async init(container) {
         this.container = container;
         this.catalog = await loadPaymentsCatalog();
+        this.settings = await loadSettings();
         this.savedSnapshot = this.serialize();
+        this.savedSettingsSnapshot = this.serializeSettings();
         this.render();
         this.container.addEventListener('click', event => this.handleClick(event));
         this.container.addEventListener('submit', event => this.handleSubmit(event));
@@ -61,6 +67,10 @@ class AdminPayments {
 
     getCatalog() {
         return this.catalog;
+    }
+
+    getSettings() {
+        return this.settings;
     }
 
     render() {
@@ -74,6 +84,7 @@ class AdminPayments {
                     <span class="material-symbols-rounded" aria-hidden="true">save</span> Zapisz
                 </button>
             </div>
+            ${this.buildTargetSettings()}
             ${this.buildSummary(summary)}
             ${this.buildForm()}
             ${this.buildToolbar()}
@@ -81,6 +92,21 @@ class AdminPayments {
         `;
         this.renderList();
         enhanceCustomControls(this.container);
+    }
+
+    buildTargetSettings() {
+        const target = this.settings.dailyRevenueTarget;
+        return `
+            <div class="payments-target">
+                <label class="payments-field" for="revenueTargetInput">
+                    <span>${renderMaterialIcon('trending_up')} Próg średniego utargu</span>
+                    <div class="rate-input-wrapper">
+                        <input id="revenueTargetInput" class="payments-target__input" inputmode="decimal" placeholder="np. 2000" value="${target ? escapeHtml(String(target).replace('.', ',')) : ''}" aria-label="Próg średniego utargu dnia w złotych">
+                        <span>PLN</span>
+                    </div>
+                </label>
+            </div>
+        `;
     }
 
     buildSummary(summary) {
@@ -226,6 +252,11 @@ class AdminPayments {
         if (event.target.id === 'paymentsSearchInput') {
             this.query = event.target.value;
             this.renderList();
+            return;
+        }
+        if (event.target.id === 'revenueTargetInput') {
+            this.settings.dailyRevenueTarget = parseAmount(event.target.value);
+            this.markDirty();
         }
     }
 
@@ -376,27 +407,57 @@ class AdminPayments {
         return true;
     }
 
-    markDirty() { this.isDirty = this.serialize() !== this.savedSnapshot; }
+    markDirty() {
+        this.isDirty = this.serialize() !== this.savedSnapshot || this.serializeSettings() !== this.savedSettingsSnapshot;
+        this.updateSaveButton();
+    }
+
+    updateSaveButton() {
+        const button = this.container?.querySelector('#savePaymentsBtn');
+        if (!button) return;
+        button.disabled = !this.isDirty;
+        button.classList.toggle('has-unsaved-changes', this.isDirty);
+        button.classList.toggle('is-clean', !this.isDirty);
+    }
+
     serialize() { return JSON.stringify(this.catalog); }
+    serializeSettings() { return JSON.stringify(this.settings); }
     hasUnsavedChanges() { return this.isDirty; }
-    async confirmDiscardChanges() { return !this.isDirty || dialogService.confirm('Masz niezapisane zmiany w opłatach. Opuścić stronę bez zapisu?', 'Niezapisane zmiany'); }
+    async confirmDiscardChanges() { return !this.isDirty || dialogService.confirm('Masz niezapisane zmiany na stronie opłat. Opuścić stronę bez zapisu?', 'Niezapisane zmiany'); }
 
     async save() {
         if (!this.isDirty) return;
         const button = this.container.querySelector('#savePaymentsBtn');
         button.disabled = true;
         button.classList.add('is-saving');
+        const saved = { catalog: false, settings: false };
         try {
-            this.catalog.updatedAt = new Date().toISOString();
-            await apiService.savePayments(this.catalog);
-            this.savedSnapshot = this.serialize();
-            this.isDirty = false;
-            this.onSaved?.(this.catalog);
-            noticeService.toast({ variant: 'success', text: 'Opłaty zostały zapisane.' });
+            if (this.serialize() !== this.savedSnapshot) {
+                this.catalog.updatedAt = new Date().toISOString();
+                await apiService.savePayments(this.catalog);
+                this.savedSnapshot = this.serialize();
+                this.onSaved?.(this.catalog);
+                saved.catalog = true;
+            }
+            if (this.serializeSettings() !== this.savedSettingsSnapshot) {
+                this.settings = await saveSettings(this.settings);
+                this.savedSettingsSnapshot = this.serializeSettings();
+                this.onSettingsSaved?.(this.settings);
+                saved.settings = true;
+            }
+            noticeService.toast({ variant: 'success', text: this.buildSaveMessage(saved) });
         } catch (error) {
-            await dialogService.error(error.message, 'Błąd zapisu opłat');
+            await dialogService.error(error.message, 'Nie udało się zapisać');
         }
+        button.classList.remove('is-saving');
+        this.markDirty();
         this.render();
+    }
+
+    buildSaveMessage(saved) {
+        if (saved.catalog && saved.settings) return 'Zapisano opłaty i próg średniego utargu.';
+        if (saved.settings) return 'Zapisano próg średniego utargu.';
+        return 'Opłaty zostały zapisane.';
     }
 }
 

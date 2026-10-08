@@ -1,21 +1,21 @@
-import { apiService } from './services/api.js?v=169';
-import { analytics } from './services/analytics.js';
+import { apiService } from './services/api.js?v=170';
+import { analytics } from './services/analytics.js?v=2';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=175';
-import { adminProducts } from './ui/adminProducts.js?v=168';
-import { createAdminListsPage } from './ui/adminLists.js?v=165';
+import { adminRender } from './ui/adminRender.js?v=178';
+import { adminProducts } from './ui/adminProducts.js?v=169';
+import { createAdminListsPage } from './ui/adminLists.js?v=166';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';
 import { setupPayslipGenerator } from './ui/payslip.js?v=103';
 import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=173';
-import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=162';
-import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=167';
-import { adminEmployees } from './ui/adminEmployees.js?v=171';
-import { adminLocations } from './ui/adminLocations.js?v=174';
-import { adminPayments } from './ui/adminPayments.js?v=104';
+import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=163';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=168';
+import { adminEmployees } from './ui/adminEmployees.js?v=172';
+import { adminLocations } from './ui/adminLocations.js?v=175';
+import { adminPayments } from './ui/adminPayments.js?v=106';
 import { adminMarketing } from './ui/adminMarketing.js?v=4';
-import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=168';
-import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=102';
+import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=169';
+import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=103';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
 
 const DEFAULT_DATA_MONTHS = 1;
@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             paymentsCatalog = catalog;
             updateView();
         };
+        adminPayments.onSettingsSaved = () => updateView();
         await adminPayments.init(document.getElementById('adminPaymentsPage'));
         paymentsCatalog = adminPayments.getCatalog();
         await adminMarketing.init(document.getElementById('adminMarketingPage'));
@@ -501,6 +502,10 @@ function setupListeners() {
         setCustomRangeBound('to', event.target.value);
     });
 
+    document.getElementById('summarySection')?.addEventListener('click', event => {
+        if (event.target.closest('[data-load-more-data]')) loadFullDataInBackground();
+    });
+
     const viewModeButtons = document.querySelectorAll('.view-toggle .view-btn');
     viewModeButtons.forEach(button => {
         button.onclick = event => {
@@ -576,7 +581,10 @@ function updateView() {
     currentViewData = baseData;
 
     if (ctx) {
-        adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, getRenderOptions());
+        adminRender.renderSummary(document.getElementById('summarySection'), currentViewData, {
+            ...getRenderOptions(),
+            revenueTarget: getRevenueTargetKpi()
+        });
         updateChart();
         adminRender.renderLocationPerformance(
             document.getElementById('locationPerformanceSection'),
@@ -593,6 +601,20 @@ function updateView() {
     renderPaymentsReminder();
     renderWeeklyOverview();
     renderRevenueTable();
+}
+
+function getRevenueTargetKpi() {
+    const month = analytics.getLastFullMonth(processedData);
+    const target = adminPayments.getSettings().dailyRevenueTarget;
+
+    return {
+        hasFullMonth: Boolean(month),
+        averageDay: month ? month.averageDay : 0,
+        days: month ? month.days : 0,
+        target,
+        comparison: month ? analytics.getTargetComparison(month.averageDay, target) : null,
+        trend: analytics.getRecentTrend(processedData)
+    };
 }
 
 function renderPaymentsReminder() {

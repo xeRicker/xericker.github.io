@@ -251,6 +251,17 @@ class ApiService {
         throw new Error('Zapis do GitHuba nie jest skonfigurowany (brak tokenu).');
     }
 
+    async fetchSettings() {
+        return this.fetchRootCatalog('database/settings.json', 'Settings');
+    }
+
+    async saveSettings(data) {
+        const filePath = 'database/settings.json';
+        if (this.hasGithubToken()) return this.saveGithubConfig(filePath, data, 'Update settings');
+        if (isLocalhost()) return this.saveLocalJson(filePath, data, 'Nie udało się zapisać progu średniego utargu.');
+        throw new Error('Zapis do GitHuba nie jest skonfigurowany (brak tokenu).');
+    }
+
     async saveGithubConfig(filePath, data, message) {
         const url = `${this.baseUrl}${filePath}`;
         let sha;

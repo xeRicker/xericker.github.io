@@ -35,7 +35,7 @@
 - Local save failures: check the `node dev-server.js` terminal output.
 
 ## Stack
-Static HTML (`index.html`, `admin.html`) + ES modules, no bundler. CSS via `style.css`. Chart.js from CDN (admin only). Icons: Material Symbols Rounded. Data: JSON in `database/<location>/<dd.mm.yyyy>.json`. Catalogs: `database/locations.json`, `employees.json`, `products.json`, `payments.json`.
+Static HTML (`index.html`, `admin.html`) + ES modules, no bundler. CSS via `style.css`. Chart.js from CDN (admin only). Icons: Material Symbols Rounded. Data: JSON in `database/<location>/<dd.mm.yyyy>.json`. Catalogs: `database/locations.json`, `employees.json`, `products.json`, `payments.json`, `settings.json`.
 
 ## Layout
 List the repo and grep actual usage before writing code — don't trust a hardcoded tree, a remembered file layout, or a memorized library API/version; verify against what's actually imported/called here. Stable shape:
@@ -44,7 +44,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `css/components/` — shared controls (notice, custom-controls)
 - `css/admin/` — per-tab admin styles; `css/generator/` — generator and burgers styles
 - `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
+- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, settings, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
 - `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
 - `database/` — catalogs + per-location report JSON
 
@@ -57,10 +57,10 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `ui/components/productIconPicker.js` — category icon dialog: `CATEGORY_ICON_OPTIONS` (Material Symbols ligatures) plus the icon-only grid, opened from the add-category form and from a category header
 - `ui/adminEmployees.js` — team catalog: add/rename/visibility/remove
 - `ui/adminLocations.js` — point catalog: add/rename/visibility/stats switch/archive-restore; `database/` folder slug is generated from the name (`slugifyLocation`), not typed by hand
-- `ui/adminPayments.js` — payments catalog: obligations/debts, kinds, due dates, recurrence, partial payments, archive, remove; dirty-state save like the other catalogs
+- `ui/adminPayments.js` — payments catalog: obligations/debts, kinds, due dates, recurrence, partial payments, archive, remove; dirty-state save like the other catalogs. Also owns `database/settings.json` for the page: the „Próg średniego utargu” field (`#revenueTargetInput`) at the top, saved by the same „Zapisz” button, exposed to the Utargi tile via `getSettings()`/`onSettingsSaved`
 - `ui/components/paymentEditDialog.js` — the „Edytuj zobowiązanie” dialog (all fields incl. `kind`/`recurrence` in one custom-controls form), reused by `adminPayments.js`
 - `ui/adminMarketing.js` + `services/marketing.js` + `config/marketing.js`/`config/marketingBurgers.js` — Marketing tab: assembles Facebook/Instagram post drafts from `database/burgers.json` presets; `config/marketing.js` holds the post-type template pools (structures, CTAs, questions, Instagram captions), hashtags, brand phones/hours and post types, while `config/marketingBurgers.js` holds the per-burger hooks/tastes/descriptions. Locations, Glovo or a promo come from the form. Copy-only, nothing is saved
-- `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips, weekly overview, payments reminder for the Utargi page
+- `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips, weekly overview, payments reminder and the „Średnia” tile (target state + 7-day trend) for the Utargi page
 - `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded; exposes the last summary via `getSummary()` and an `onRecalc` callback
 - `ui/payslip.js` — admin Wynagrodzenia „PASEK”: draws the calculator summary to a branded PNG payslip (canvas) and opens it in a new tab; the PASEK panel is currently removed from `admin.html`, so `setupPayslipGenerator` returns a no-op until the panel returns
 - `ui/components/customControls.js` — custom select/date/time/dialog; mirrors native `disabled` onto the visible control
@@ -73,7 +73,8 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `services/employees.js` — team catalog: normalize, resolve report names → people, visibility
 - `services/auth.js` — admin password check; only PBKDF2 salt+digest live in source, never the plaintext
 - `services/payments.js` — payments catalog: normalize, derive status (do zapłaty/częściowe/przeterminowane/zapłacone), partial-payment sums, upcoming reminders, summaries
-- `services/analytics.js` — daily aggregation/stats; per-point keys derive from point name, so new points need no code change
+- `services/settings.js` — `database/settings.json` (`{ version, updatedAt, dailyRevenueTarget }`): normalize, load, save; `dailyRevenueTarget` is the profitability threshold (`0` = unset), edited only from the Opłaty tab
+- `services/analytics.js` — daily aggregation/stats; per-point keys derive from point name, so new points need no code change. Also the pure KPI helpers: `getLastFullMonth()` (newest month before the current one, average per calendar day), `getRecentTrend()` (last 7 days vs the previous 7) and `getTargetComparison()`
 
 ## Design Tokens
 Dark Atlassian-style dashboard, warm accent palette, compact radii, dense admin views, consistent type. Use aliases from `css/theme/palette.css` / `css/base.css` only.
@@ -135,6 +136,7 @@ Icons via `renderMaterialIcon()` — real ligature names only; a bad name render
 - Changing the JSON data shape requires updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel together.
 - Payments live in `database/payments.json` (new catalog; `{ version, updatedAt, items[] }`). Item: mutable `title`, `kind`, `contractor`, `amountTotal`, `dueDate` (ISO), `recurrence`, `note`, `archived`, plus `payments[]` partial payments `{ id, date, amount, note }`. Status and remaining amount are derived in `services/payments.js`, never stored. `PAYMENT_KINDS` entries carry an `icon` (Material Symbols ligature) rendered in the obligation list and the kind select. The Utargi page shows a reminder panel with overdue/due-soon totals and open obligations as a share of the selected period's utarg. „Edytuj” opens every field (including `kind`/`recurrence`) in one dialog; „Archiwizuj” keeps the item and its payment history, „Usuń” removes the item from the catalog outright — both go through `dialogService.confirm` and still need „Zapisz”.
 - Utargi period: `monthFilter` offers months plus `all` and `custom`; `custom` reveals the `#rangeFrom`/`#rangeTo` date inputs and filters `currentData` through `filterByCustomRange`. The range drives the visualization chart too (`getChartData`); an empty range renders the `.chart-wrapper__empty` state instead of an empty Chart.js instance.
+- Utargi summary tiles: Utarg, Karty, Glovo, „Średnia” and the week-events tile (the Gotówka tile was replaced — cash stays in the table column, tooltips and location cards). „Średnia” ignores the period filter and the month name: it shows the last full month (current month excluded) as `month total / calendar days of that month`, labelled `Ostatni pełny miesiąc · N dni`. With fewer than two loaded months it renders only the „Załaduj dane” prompt, whose button (`[data-load-more-data]`) runs the same `loadFullDataInBackground` as the header. Above `dailyRevenueTarget` it glows green, below it turns into a warning — the verdict is two lines (percentage over the threshold, then the surplus/shortfall per day) — and without a threshold it just says the threshold is unset. The 7-day trend (last 7 days vs the previous 7) is a chip in the tile head. The threshold itself is edited on the Opłaty page, not here.
 - Generator form state (`localStorage: burbone_state`) expires at local end-of-day — an evening list survives a browser close, resets the next day.
 - On localhost `fetchAllData` always merges real `database/` reports with generated data for the last 3 months (`services/mockData.js`); a real report for the same location+date wins. Prod (`GitHub Pages`) never generates.
 - Marketing posts are generated in the browser and copied to the clipboard — no catalog, no persistence. Brand data (locations, phones, opening hours, Glovo availability), post types, the per-type post templates/CTAs/questions/Instagram captions and hashtags live in `js/config/marketing.js`; per-burger hooks/tastes/descriptions live in `js/config/marketingBurgers.js`. Burger presets come from `database/burgers.json` and resolve to a preset id + copy entry, and an untouched `Opis burgera` field rotates through the burger's description pool. Each click composes a fresh template, so the FB/IG outputs differ between generations.

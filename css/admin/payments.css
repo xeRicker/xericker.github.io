@@ -41,6 +41,11 @@
 .payment-tile.is-watch .payment-tile__value { color: var(--glovo-color); }
 .payment-tile.is-positive .payment-tile__value { color: var(--success-color); }
 
+.payments-target { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--border-color); }
+.payments-target .payments-field { max-width: 280px; }
+.payments-target .payments-field > span { display: inline-flex; align-items: center; gap: 6px; }
+.payments-target .material-symbols-rounded { font-size: 15px; }
+
 .payments-add-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin-bottom: 18px; }
 .payments-field { display: grid; gap: 4px; min-width: 0; }
 .payments-field > span { color: var(--text-muted); font: 700 10px/1.2 var(--font-heading); letter-spacing: .05em; }

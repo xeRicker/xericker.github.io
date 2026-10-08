@@ -1,7 +1,7 @@
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
 import { cardClass } from './components/Card.js';
 import { resolveEmployee } from '../services/employees.js';
-import { formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=102';
+import { formatPaymentDate, getPaymentKindLabel } from '../services/payments.js?v=103';
 
 const LOCATION_COLOR_TOKENS = [
     '--app-chart-1',
@@ -315,7 +315,6 @@ class AdminRender {
         const total = data.reduce((sum, day) => sum + day.total, 0);
         const cards = data.reduce((sum, day) => sum + day.cardTotal, 0);
         const glovoNet = data.reduce((sum, day) => sum + day.glovoNetTotal, 0);
-        const cashDesk = data.reduce((sum, day) => sum + day.cashDeskTotal, 0);
         const averageDay = total / data.length;
         const weekEvents = this.getWeekEvents(data);
 
@@ -335,15 +334,86 @@ class AdminRender {
                 <p>${formatMoney(glovoNet)}</p>
                 <small>Po prowizji Glovo</small>
             </div>
-            <div class="${cardClass('summary', 'summary-box')} ">
-                <span class="summary-kicker">${this.buildSymbolIcon('savings', 'summary-icon-badge--cash')} Gotówka</span>
-                <p>${formatMoney(cashDesk)}</p>
-                <small>${this.formatPercent(cashDesk, total)} po odjęciu kart i Glovo</small>
-            </div>
+            ${this.buildRevenueTargetTile(options.revenueTarget)}
             ${this.buildWeekEventsTile(weekEvents)}
         `;
 
         this.bindWeekEvents(container, weekEvents);
+    }
+
+    buildRevenueTargetTile(kpi) {
+        if (!kpi) return '';
+        if (!kpi.hasFullMonth) return this.buildRevenueTargetEmptyTile();
+
+        const comparison = kpi.comparison;
+        const tone = !comparison ? 'is-idle' : comparison.isBelow ? 'is-low' : 'is-ok';
+
+        return `
+            <div class="${cardClass('summary', `summary-box summary-box--target ${tone}`)}">
+                <span class="summary-kicker revenue-target__head">
+                    <span class="revenue-target__title">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
+                    ${this.buildRevenueTargetTrend(kpi.trend)}
+                </span>
+                <p>${formatMoney(kpi.averageDay)}</p>
+                ${this.buildRevenueTargetState(comparison)}
+                <small>${escapeHtml(this.buildRevenueTargetMeta(kpi))}</small>
+            </div>
+        `;
+    }
+
+    buildRevenueTargetEmptyTile() {
+        return `
+            <div class="${cardClass('summary', 'summary-box summary-box--target is-empty')}">
+                <span class="summary-kicker">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
+                <small class="revenue-target__empty">Załaduj dane z co najmniej dwóch miesięcy, aby policzyć średni utarg dnia.</small>
+                <button class="btn-back revenue-target__load" type="button" data-load-more-data>
+                    ${renderMaterialIcon('database')} Załaduj dane
+                </button>
+            </div>
+        `;
+    }
+
+    buildRevenueTargetMeta(kpi) {
+        return `Ostatni pełny miesiąc · ${kpi.days} dni`;
+    }
+
+    buildRevenueTargetState(comparison) {
+        if (!comparison) {
+            return `<span class="revenue-target__state revenue-target__state--idle">${renderMaterialIcon('rule')} Próg nieustawiony — ustaw go w zakładce Opłaty.</span>`;
+        }
+
+        const percent = this.formatSignedPercent(comparison.percent);
+        const amount = formatMoney(Math.abs(comparison.difference));
+        const verdict = comparison.isBelow
+            ? { icon: 'warning', tone: 'low', head: `${percent} poniżej progu`, detail: `brakuje ${amount}/dzień` }
+            : { icon: 'verified', tone: 'ok', head: `${percent} nad progiem`, detail: `nadwyżka ${amount}/dzień` };
+
+        return `
+            <span class="revenue-target__state revenue-target__state--${verdict.tone}">
+                ${renderMaterialIcon(verdict.icon)}
+                <span class="revenue-target__verdict">
+                    <strong>${verdict.head}</strong>
+                    <span>${verdict.detail}</span>
+                </span>
+            </span>
+        `;
+    }
+
+    buildRevenueTargetTrend(trend) {
+        if (!trend) return '';
+
+        const flat = Math.abs(trend.percent) < 0.05;
+        const tone = flat ? '' : trend.percent > 0 ? 'is-positive' : 'is-negative';
+        const icon = flat ? 'trending_flat' : trend.percent > 0 ? 'trending_up' : 'trending_down';
+        return `
+            <span class="revenue-target__trend ${tone}" title="Średnia dzienna z 7 ostatnich dni vs poprzednie 7 dni">
+                ${renderMaterialIcon(icon)} 7 dni <strong>${this.formatSignedPercent(trend.percent)}</strong>
+            </span>
+        `;
+    }
+
+    formatSignedPercent(percent) {
+        return `${percent > 0 ? '+' : ''}${percent.toFixed(1).replace('.', ',')}%`;
     }
 
     renderWeeklyOverview(container, weeks, activeKey, viewMode) {

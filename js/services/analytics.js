@@ -1,7 +1,7 @@
 import { calculateHours } from '../utils.js';
 import { calculateCashDesk, calculateEffectiveRevenue, calculateGlovoNet } from './revenue.js';
 import { parseReportDate } from './reportDates.js';
-import { slugifyLocation } from './locations.js?v=167';
+import { slugifyLocation } from './locations.js?v=168';
 
 class AnalyticsService {
     processReports(reports) {
@@ -109,6 +109,67 @@ class AnalyticsService {
 
     getLocationKey(location) {
         return slugifyLocation(location);
+    }
+
+    getMonthKey(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    getLastFullMonth(data, reference = new Date()) {
+        const referenceKey = this.getMonthKey(reference);
+        const months = new Map();
+
+        data.forEach(day => {
+            if (!day.dateObj) return;
+            const key = this.getMonthKey(day.dateObj);
+            if (key >= referenceKey) return;
+            if (!months.has(key)) {
+                months.set(key, {
+                    key,
+                    year: day.dateObj.getFullYear(),
+                    month: day.dateObj.getMonth() + 1,
+                    total: 0
+                });
+            }
+            months.get(key).total += day.total;
+        });
+
+        const latest = Array.from(months.values()).sort((left, right) => right.key.localeCompare(left.key))[0];
+        if (!latest) return null;
+
+        const days = new Date(latest.year, latest.month, 0).getDate();
+        return { ...latest, days, averageDay: latest.total / days };
+    }
+
+    getRecentTrend(data, windowSize = 7) {
+        const days = [...data].sort((left, right) => left.timestamp - right.timestamp);
+        if (days.length < windowSize * 2) return null;
+
+        const recent = this.getAverageDay(days.slice(-windowSize));
+        const previous = this.getAverageDay(days.slice(-windowSize * 2, -windowSize));
+        if (!previous) return null;
+
+        return {
+            windowSize,
+            recent,
+            previous,
+            percent: ((recent - previous) / previous) * 100
+        };
+    }
+
+    getAverageDay(days) {
+        return days.reduce((sum, day) => sum + day.total, 0) / days.length;
+    }
+
+    getTargetComparison(averageDay, target) {
+        if (!target) return null;
+        const difference = averageDay - target;
+        return {
+            target,
+            difference,
+            percent: (difference / target) * 100,
+            isBelow: difference < 0
+        };
     }
 }
 

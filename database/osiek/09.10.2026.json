@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "09.10.2026",
+  "revenue": 1135,
+  "cardRevenue": 894,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 0,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Frytki": 2,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Zbój: Cytryna": 1,
+    "Odtłuszczacz": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

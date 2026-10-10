@@ -5,7 +5,7 @@ import { dialogService } from './components/customControls.js?v=173';
 import { noticeService } from './components/notice.js?v=102';
 import { cardClass } from './components/Card.js';
 
-import { openCategoryIconPicker } from './components/productIconPicker.js?v=1';
+import { openCategoryIconPicker } from './components/productIconPicker.js?v=2';
 import { setupProductDrag } from './components/productDrag.js?v=1';
 
 const DEFAULT_ICON = 'inventory_2';

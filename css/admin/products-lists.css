@@ -527,10 +527,55 @@
 
 .product-icon-grid {
     overflow-y: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     padding-right: 4px;
+}
+
+.product-icon-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.product-icon-group + .product-icon-group {
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.product-icon-group__label {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0;
+    padding: 2px 0 6px;
+    background: var(--surface-color);
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.product-icon-group__label span {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-muted);
+}
+
+.product-icon-group__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .product-icon-option {
@@ -675,13 +720,9 @@
 .admin-product-row.is-drop-before::before { top: -6px; }
 .admin-product-row.is-drop-after::after { bottom: -6px; }
 
-.product-icon-grid {
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-    gap: 8px;
-}
-
 .product-icon-option {
     position: relative;
+    flex: 0 0 66px;
     min-height: 66px;
     gap: 0;
 }

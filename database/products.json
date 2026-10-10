@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-06T17:52:22.897Z",
+  "updatedAt": "2026-10-10T21:47:18.136Z",
   "categories": [
     {
       "id": "category-muwhm6ib-tfocg8",
       "name": "⭐",
-      "icon": "local_fire_department",
+      "icon": "sell",
       "enabled": true,
       "items": [
         {
@@ -25,7 +25,7 @@
     {
       "id": "category-1",
       "name": "🥩",
-      "icon": "restaurant",
+      "icon": "egg_alt",
       "enabled": true,
       "items": [
         {
@@ -37,12 +37,6 @@
         {
           "id": "product-1-2",
           "name": "Mięso: Duże",
-          "type": "quantity",
-          "enabled": true
-        },
-        {
-          "id": "product-1-3",
-          "name": "Stripsy",
           "type": "quantity",
           "enabled": true
         },
@@ -137,14 +131,20 @@
           "enabled": true
         },
         {
-          "id": "product-4-2",
-          "name": "Placki",
+          "id": "product-mv2xbavl-taa6z1",
+          "name": "Stripsy",
           "type": "quantity",
           "enabled": true
         },
         {
           "id": "product-4-3",
           "name": "Krążki",
+          "type": "quantity",
+          "enabled": true
+        },
+        {
+          "id": "product-4-2",
+          "name": "Placki",
           "type": "quantity",
           "enabled": true
         },
@@ -282,7 +282,7 @@
       "id": "category-9",
       "name": "🥤",
       "icon": "local_drink",
-      "enabled": true,
+      "enabled": false,
       "items": [
         {
           "id": "product-9-1",
@@ -335,6 +335,18 @@
           "enabled": true
         },
         {
+          "id": "product-10-6",
+          "name": "Opakowania: Małe",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
+          "id": "product-mv2x9e29-zly5fm",
+          "name": "Opakowania: Duże",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
           "id": "product-10-4",
           "name": "Sos: Pojemniki",
           "type": "toggle",
@@ -343,12 +355,6 @@
         {
           "id": "product-10-5",
           "name": "Sos: Pokrywki",
-          "type": "toggle",
-          "enabled": true
-        },
-        {
-          "id": "product-10-6",
-          "name": "Opakowania na frytki",
           "type": "toggle",
           "enabled": true
         },
@@ -385,6 +391,12 @@
       "enabled": true,
       "items": [
         {
+          "id": "product-11-3",
+          "name": "Odtłuszczacz",
+          "type": "toggle",
+          "enabled": true
+        },
+        {
           "id": "product-11-1",
           "name": "Szmaty",
           "type": "toggle",
@@ -393,12 +405,6 @@
         {
           "id": "product-11-2",
           "name": "Zielony papier",
-          "type": "toggle",
-          "enabled": true
-        },
-        {
-          "id": "product-11-3",
-          "name": "Odtłuszczacz",
           "type": "toggle",
           "enabled": true
         },

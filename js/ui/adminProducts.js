@@ -180,6 +180,8 @@ class AdminProducts {
     }
 
     async handleClick(event) {
+        if (event.target.closest('#saveProductsBtn')) return this.save();
+
         const action = event.target.closest('[data-action]')?.dataset.action;
         if (!action || action === 'add-category' || action === 'add-product') return;
 
@@ -198,7 +200,7 @@ class AdminProducts {
         if (action === 'edit-product') await this.editProduct(event);
         if (action === 'pick-category-icon') await this.pickFormIcon(event);
 
-        if (action === 'pick-category-icon' || action === 'edit-category' || action === 'edit-product') return;
+        if (action === 'pick-category-icon') return;
 
         this.syncDirtyState(snapshotBefore);
         if (action.startsWith('move-category') || action === 'delete-category') this.animatedKind = 'category';

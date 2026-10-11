@@ -6,6 +6,56 @@
     pointer-events: none !important;
 }
 
+.field-clearable {
+    position: relative;
+    display: block;
+    width: 100%;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.input-group > .field-clearable,
+.rate-input-wrapper > .field-clearable,
+.employee-info > .field-clearable {
+    flex: 1 1 auto;
+}
+
+.field-clearable > input {
+    width: 100%;
+    min-width: 0;
+    padding-right: 42px;
+}
+
+.field-clearable__clear {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.field-clearable__clear[hidden] {
+    display: none;
+}
+
+.field-clearable__clear .material-symbols-rounded {
+    font-size: 18px;
+}
+
+.field-clearable__clear:hover,
+.field-clearable__clear:focus-visible {
+    color: var(--text-primary);
+}
+
 .custom-control {
     position: relative;
     width: 100%;
@@ -280,7 +330,7 @@
     z-index: 100000;
     display: none;
     place-items: center;
-    padding: 20px;
+    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
     background: color-mix(in srgb, var(--bg-color) 78%, transparent);
     backdrop-filter: blur(6px);
 }
@@ -420,4 +470,14 @@
     background: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--app-text-inverse);
+}
+
+.custom-dialog__button--danger {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: var(--app-text-inverse);
+}
+
+.custom-dialog--destructive h3 {
+    color: var(--danger-color);
 }

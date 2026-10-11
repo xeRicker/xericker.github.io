@@ -51,7 +51,7 @@ export const mainRender = {
                     </div>
                 </div>
                 <div class="time-inputs">
-                    <input type="time" id="${safeId}_od"><span style="color:var(--text-muted)">-</span><input type="time" id="${safeId}_do">
+                    <input type="time" id="${safeId}_od" aria-label="Godzina od — ${safeName}"><span style="color:var(--text-muted)">-</span><input type="time" id="${safeId}_do" aria-label="Godzina do — ${safeName}">
                 </div>
             </div>`;
     },
@@ -134,9 +134,9 @@ export const mainRender = {
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="counter-wrapper">
-                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${name}">${renderMaterialIcon('remove')}</button>
-                                    <input type="text" inputmode="numeric" id="input-${name}" class="qty-display" value="0" data-name="${name}">
-                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${name}">${renderMaterialIcon('add')}</button>
+                                    <button class="btn-qty btn-minus" data-act="dec" data-name="${name}" aria-label="Zmniejsz: ${name}">${renderMaterialIcon('remove')}</button>
+                                    <input type="text" inputmode="numeric" id="input-${name}" class="qty-display" value="0" data-name="${name}" aria-label="Ilość: ${name}">
+                                    <button class="btn-qty btn-plus" data-act="inc" data-name="${name}" aria-label="Zwiększ: ${name}">${renderMaterialIcon('add')}</button>
                                 </div>
                             </div>
                         </div>`;

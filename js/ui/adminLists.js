@@ -1,8 +1,9 @@
 import { buildReportText } from '../services/reportFormatter.js';
 import { getReportKey, getReportTimestamp } from '../services/reportDates.js';
 import { getPanelLocations } from '../services/locations.js?v=168';
-import { escapeHtml, fallbackCopyToClipboard } from '../utils.js';
+import { copyText, escapeHtml } from '../utils.js';
 import { cardClass } from './components/Card.js';
+import { noticeService } from './components/notice.js?v=103';
 
 export function createAdminListsPage(config) {
     let selectedListKey = null;
@@ -169,11 +170,11 @@ export function createAdminListsPage(config) {
 
     async function copyReportText(report, button) {
         const text = buildReportText(report, getCatalog(), getEmployeeCatalog());
+        const copied = await copyText(text);
 
-        try {
-            await navigator.clipboard.writeText(text);
-        } catch {
-            fallbackCopyToClipboard(text);
+        if (!copied) {
+            noticeService.toast({ variant: 'danger', text: 'Nie udało się skopiować listy. Spróbuj ponownie.' });
+            return;
         }
 
         button.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">check</span> Skopiowano';

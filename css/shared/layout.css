@@ -134,7 +134,7 @@
 .generator-tab.is-active {
     background: var(--primary-color);
     border-color: var(--primary-color);
-    color: var(--text-primary);
+    color: var(--app-text-inverse);
     box-shadow: 0 4px 15px var(--primary-glow);
 }
 

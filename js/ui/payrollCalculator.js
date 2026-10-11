@@ -1,6 +1,6 @@
-import { calculateHours, formatMoney, parseLocalDateInput } from '../utils.js';
+import { calculateHours, formatMoney, parseAmountInput, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
-import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=173';
+import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=174';
 import { cardClass } from './components/Card.js';
 
 export const DEFAULT_MONTH_HOURS = 160;
@@ -57,7 +57,7 @@ export function setupPayrollCalculator(config) {
             return;
         }
 
-        const rate = parseFloat(rateInput.value) || 0;
+        const rate = parseAmountInput(rateInput.value);
         const dateFrom = parseLocalDateInput(dateFromInput.value);
         const dateTo = parseLocalDateInput(dateToInput.value);
 

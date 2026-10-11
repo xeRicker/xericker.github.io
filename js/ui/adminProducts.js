@@ -1,8 +1,8 @@
 import { apiService } from '../services/api.js?v=170';
 import { createId, loadProductCatalog, normalizeProductCatalog } from '../services/products.js?v=162';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=173';
-import { noticeService } from './components/notice.js?v=102';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=174';
+import { noticeService } from './components/notice.js?v=103';
 import { cardClass } from './components/Card.js';
 
 import { openCategoryIconPicker } from './components/productIconPicker.js?v=2';
@@ -91,6 +91,7 @@ class AdminProducts {
         `;
         this.animatedId = '';
         this.animatedKind = '';
+        enhanceCustomControls(this.container);
     }
 
     renderCategory(category, categoryIndex) {
@@ -282,7 +283,7 @@ class AdminProducts {
     async deleteCategory(event) {
         const category = this.findEventCategory(event);
         if (!category) return;
-        const confirmed = await dialogService.confirm(`Usunąć kategorię "${category.name}" razem z produktami?`, 'Usuń kategorię');
+        const confirmed = await dialogService.confirm(`Usunąć kategorię "${category.name}" razem z produktami?`, 'Usuń kategorię', { destructive: true, confirmLabel: 'Usuń' });
         if (!confirmed) return;
         this.catalog.categories = this.catalog.categories.filter(item => item.id !== category.id);
     }
@@ -334,7 +335,7 @@ class AdminProducts {
     async deleteProduct(event) {
         const product = this.findEventProduct(event);
         if (!product) return;
-        const confirmed = await dialogService.confirm(`Usunąć produkt "${product.name}"?`, 'Usuń produkt');
+        const confirmed = await dialogService.confirm(`Usunąć produkt "${product.name}"?`, 'Usuń produkt', { destructive: true, confirmLabel: 'Usuń' });
         if (!confirmed) return;
         this.removeProduct(product.id);
     }

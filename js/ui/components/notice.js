@@ -43,6 +43,11 @@ function dismissToast(element) {
     setTimeout(() => element.remove(), 400);
 }
 
+function toastDuration(text) {
+    const length = String(text || '').length;
+    return Math.min(2400 + Math.max(0, length - 40) * 45, 8000);
+}
+
 export const noticeService = {
 
     element(options = {}) {
@@ -59,8 +64,15 @@ export const noticeService = {
         clearTimeout(toastTimer);
         const el = this.element({ ...options, className: ['notice--toast', options.className].filter(Boolean).join(' ') });
         el.setAttribute('aria-live', 'polite');
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.className = 'notice__close';
+        close.setAttribute('aria-label', 'Zamknij komunikat');
+        close.innerHTML = '<span class="material-symbols-rounded" aria-hidden="true">close</span>';
+        close.addEventListener('click', () => dismissToast(el));
+        el.appendChild(close);
         layer.replaceChildren(el);
-        toastTimer = setTimeout(() => dismissToast(el), Number(options.duration) || 2400);
+        toastTimer = setTimeout(() => dismissToast(el), Number(options.duration) || toastDuration(options.text));
         return el;
     },
 

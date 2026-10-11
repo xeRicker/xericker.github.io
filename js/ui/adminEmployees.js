@@ -2,8 +2,8 @@ import { apiService } from '../services/api.js?v=170';
 import { createId } from '../services/products.js?v=162';
 import { loadEmployeeCatalog, normalizeEmployeeCatalog } from '../services/employees.js?v=167';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=173';
-import { noticeService } from './components/notice.js?v=102';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=174';
+import { noticeService } from './components/notice.js?v=103';
 
 class AdminEmployees {
     constructor() { this.catalog = normalizeEmployeeCatalog(); this.container = null; this.savedSnapshot = ''; this.isDirty = false; }
@@ -36,6 +36,7 @@ class AdminEmployees {
             <div class="admin-employee-list">
                 ${employees.map(employee => this.renderEmployee(employee)).join('') || '<div class="empty-products">Brak osób w ekipie.</div>'}
             </div>`;
+        enhanceCustomControls(this.container);
     }
 
     renderEmployee(employee) {
@@ -71,7 +72,7 @@ class AdminEmployees {
         if (!employee) return;
         if (button.dataset.action === 'toggle') employee.enabled = !employee.enabled;
         if (button.dataset.action === 'delete') {
-            if (!await dialogService.confirm(`Usunąć osobę „${employee.firstName} ${employee.lastName}” z aktywnej ekipy? Historyczne raporty pozostaną bez zmian.`, 'Usuń osobę')) return;
+            if (!await dialogService.confirm(`Usunąć osobę „${employee.firstName} ${employee.lastName}” z aktywnej ekipy? Historyczne raporty pozostaną bez zmian.`, 'Usuń osobę', { destructive: true, confirmLabel: 'Usuń' })) return;
             this.catalog.employees = this.catalog.employees.filter(item => item.id !== employee.id);
         }
         if (button.dataset.action === 'edit') {

@@ -1,19 +1,19 @@
 import { EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=162';
+import { mainRender } from './ui/mainRender.js?v=163';
 import { uiShared } from './ui/shared.js';
 import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js?v=170';
 import { calculateCashDesk } from './services/revenue.js';
-import { getFormattedDate } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=173';
+import { getFormattedDate, parseAmountInput } from './utils.js';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=167';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=174';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=162';
 import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=167';
 import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=168';
 import { buildReportText } from './services/reportFormatter.js';
 import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=165';
 import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
-import { noticeService } from './ui/components/notice.js?v=102';
+import { noticeService } from './ui/components/notice.js?v=103';
 
 let selectedLocation = null;
 let workerReports = [];
@@ -24,6 +24,7 @@ let temporaryEmployeeCounter = 0;
 let burgerConfiguratorReady = false;
 let employeeCatalog = null;
 let locationCatalog = null;
+let isReportBusy = false;
 
 const WORKER_STATUS_VARIANTS = {
     loading: 'loading',
@@ -73,10 +74,11 @@ async function openLocationSheet() {
 
 function handleLocationChoice(event) {
     const button = event.target.closest('.location-button');
-    if (!button) return;
+    if (!button || isReportBusy) return;
     const location = getSelectableLocations(locationCatalog).find(item => item.path === button.dataset.locationPath);
     if (!location) return;
     selectedLocation = location;
+    uiShared.closeModals();
     generateReport();
 }
 
@@ -274,15 +276,31 @@ function restoreState() {
     refreshCustomControls();
 }
 
-function resetAll() {
+async function resetAll() {
+    const confirmed = await dialogService.confirm(
+        'Wyczyścić formularz? Zapisane produkty, godziny i kwoty zostaną usunięte.',
+        'Wyczyść formularz',
+        { destructive: true, confirmLabel: 'Wyczyść' }
+    );
+    if (!confirmed) return;
     storageService.clear();
     location.reload();
 }
 
+function setReportBusy(busy) {
+    isReportBusy = busy;
+    const button = document.getElementById('copyButton');
+    if (!button) return;
+    button.disabled = busy;
+    button.setAttribute('aria-busy', busy ? 'true' : 'false');
+    button.querySelector('span').textContent = busy ? 'Zapisuję…' : 'Skopiuj listę';
+}
+
 async function generateReport() {
-    const rev = parseFloat(document.getElementById('revenueInput').value) || 0;
-    const card = parseFloat(document.getElementById('cardRevenueInput').value) || 0;
-    const glovo = parseFloat(document.getElementById('glovoRevenueInput').value) || 0;
+    if (isReportBusy) return;
+    const rev = parseAmountInput(document.getElementById('revenueInput').value);
+    const card = parseAmountInput(document.getElementById('cardRevenueInput').value);
+    const glovo = parseAmountInput(document.getElementById('glovoRevenueInput').value);
     const cash = calculateCashDesk(rev, card, glovo);
     const date = getFormattedDate();
 
@@ -321,9 +339,10 @@ async function generateReport() {
     });
 
     const reportText = buildReportText(data, productCatalog, employeeCatalog);
+    setReportBusy(true);
     try {
         if (await apiService.checkFileExists(selectedLocation.name, date, selectedLocation.path)) {
-            if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?"))) return;
+            if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?", { destructive: true, confirmLabel: 'Nadpisz' }))) return;
         }
 
         await apiService.saveReport(data, selectedLocation.path);
@@ -331,6 +350,8 @@ async function generateReport() {
     } catch (error) {
         console.error('Report was not saved to GitHub.', error);
         uiShared.showSuccess(reportText, { saveError: error });
+    } finally {
+        setReportBusy(false);
     }
 }
 

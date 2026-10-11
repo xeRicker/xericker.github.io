@@ -1,18 +1,16 @@
-import { normalizeVariant, noticeHtml } from './notice.js?v=102';
 import { escapeHtml, renderMaterialIcon } from '../../utils.js';
+import { buildTimeOptions, formatDateLabel, parseIsoDate, renderCalendar } from './customCalendar.js?v=1';
+import { closeAllControls, getActiveFloatingControl, repositionOpenControl, toggleControl } from './controlPopover.js?v=1';
+import { enhanceCustomInputs, labelText } from './inputEnhance.js?v=1';
 
 const enhancedControls = new WeakMap();
 let controlsBootstrapped = false;
-let activeFloatingControl = null;
-
-const pad = value => String(value).padStart(2, '0');
-const weekDays = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'];
-const NOTICE_VARIANTS = ['info', 'success', 'danger', 'warning', 'muted', 'loading'];
 
 export function enhanceCustomControls(root = document) {
     if (!controlsBootstrapped) {
         document.addEventListener('click', event => {
-            const clickedPopover = activeFloatingControl?.popover && event.composedPath().includes(activeFloatingControl.popover);
+            const activePopover = getActiveFloatingControl()?.popover;
+            const clickedPopover = activePopover && event.composedPath().includes(activePopover);
             if (!clickedPopover && !event.target.closest('.custom-control, .preset-btn-wrapper, .custom-control__popover')) closeAllControls();
         });
         document.addEventListener('keydown', event => {
@@ -31,6 +29,7 @@ export function enhanceCustomControls(root = document) {
     });
     root.querySelectorAll('input[type="date"]').forEach(enhanceDateInput);
     root.querySelectorAll('input[type="time"]').forEach(enhanceTimeInput);
+    enhanceCustomInputs(root);
     refreshCustomControls(root);
 }
 
@@ -45,144 +44,17 @@ export function setDateMarkers(input, markers = {}) {
     enhancedControls.get(input)?.update?.();
 }
 
-function closeAllControls(except = null) {
-    document.querySelectorAll('.custom-control.is-open, .preset-btn-wrapper.is-open').forEach(control => {
-        if (control === except) return;
-        control.classList.remove('is-open');
-        const popover = control._floatingPopover || control.querySelector('.custom-control__popover');
-        if (popover) resetPopoverPosition(popover);
-    });
-    if (!except) {
-        activeFloatingControl = null;
-    }
-}
-
-function toggleControl(wrapper, popover) {
-    const willOpen = !wrapper.classList.contains('is-open');
-    closeAllControls(wrapper);
-    wrapper.classList.toggle('is-open', willOpen);
-    if (willOpen && popover) {
-        mountPopover(wrapper, popover);
-        activeFloatingControl = { wrapper, popover };
-        requestAnimationFrame(() => positionPopover(wrapper, popover));
-    } else if (popover) {
-        resetPopoverPosition(popover);
-        activeFloatingControl = null;
-    }
-}
-
-function mountPopover(wrapper, popover) {
-    popover._returnParent = popover.parentElement;
-    popover._returnNextSibling = popover.nextSibling;
-    wrapper._floatingPopover = popover;
-    document.body.appendChild(popover);
-    popover.classList.add('is-open');
-    if (!popover._floatingListenersBound) {
-        popover.addEventListener('click', stopScrollPropagation);
-        popover.addEventListener('pointerdown', stopScrollPropagation);
-        popover.addEventListener('wheel', stopScrollPropagation, { passive: true });
-        popover.addEventListener('touchmove', stopScrollPropagation, { passive: true });
-        popover._floatingListenersBound = true;
-    }
-}
-
-function positionPopover(wrapper, popover) {
-    const button = wrapper.querySelector('.custom-control__button, .btn-preset');
-    if (!button) return;
-
-    const rect = button.getBoundingClientRect();
-    const viewportGap = 10;
-    const desiredWidth = getPopoverWidth(rect, popover, viewportGap);
-    const left = Math.min(Math.max(rect.left, viewportGap), window.innerWidth - desiredWidth - viewportGap);
-    const spaceBelow = window.innerHeight - rect.bottom - viewportGap;
-    const spaceAbove = rect.top - viewportGap;
-    const preferredHeight = getPreferredPopoverHeight(wrapper, popover);
-
-    const openUp = spaceBelow < preferredHeight + 8 && spaceAbove > spaceBelow;
-    const available = (openUp ? spaceAbove : spaceBelow) - 8;
-    const maxHeight = Math.max(180, Math.min(preferredHeight, available));
-
-    popover.classList.add('is-floating');
-    popover.style.width = `${desiredWidth}px`;
-    popover.style.left = `${left + window.scrollX}px`;
-    popover.style.right = 'auto';
-    popover.style.maxHeight = `${maxHeight}px`;
-
-    if (openUp) {
-        popover.style.top = `${rect.top + window.scrollY - popover.offsetHeight - 6}px`;
-        popover.style.bottom = 'auto';
-    } else {
-        popover.style.top = `${rect.bottom + window.scrollY + 6}px`;
-        popover.style.bottom = 'auto';
-    }
-}
-
-function getPreferredPopoverHeight(wrapper, popover) {
-    if (popover.classList.contains('custom-calendar')) {
-        return measureCalendarHeight(popover);
-    }
-    if (popover.classList.contains('custom-time__popover')) return 320;
-    if (popover.classList.contains('custom-preset__popover')) return 260;
-    return Math.min(popover.scrollHeight || 0, 300) || 220;
-}
-
-function measureCalendarHeight(popover) {
-    const current = popover.style.maxHeight;
-    popover.style.maxHeight = 'none';
-    const measured = popover.offsetHeight;
-    popover.style.maxHeight = current;
-    return measured || 380;
-}
-
-function getPopoverWidth(rect, popover, viewportGap) {
-    const maxAvailable = window.innerWidth - viewportGap * 2;
-    if (popover.classList.contains('custom-time__popover')) {
-        return Math.min(Math.max(rect.width, 300), maxAvailable);
-    }
-    if (popover.classList.contains('custom-calendar')) {
-        return Math.min(Math.max(rect.width, 318), maxAvailable);
-    }
-    if (popover.classList.contains('custom-preset__popover')) {
-        return Math.min(Math.max(rect.width, 190), maxAvailable);
-    }
-    return Math.min(Math.max(rect.width, Math.min(240, maxAvailable)), maxAvailable);
-}
-
-function repositionOpenControl() {
-    if (!activeFloatingControl?.wrapper?.classList.contains('is-open')) return;
-    positionPopover(activeFloatingControl.wrapper, activeFloatingControl.popover);
-}
-
-function stopScrollPropagation(event) {
-    event.stopPropagation();
-}
-
-function resetPopoverPosition(popover) {
-    const wrapper = popover._returnParent?.closest?.('.custom-control, .preset-btn-wrapper');
-    popover.classList.remove('is-floating');
-    popover.classList.remove('is-open');
-    ['width', 'left', 'right', 'top', 'bottom', 'maxHeight'].forEach(prop => {
-        popover.style[prop] = '';
-    });
-
-    if (popover._returnParent && popover.parentElement !== popover._returnParent) {
-        popover._returnParent.insertBefore(popover, popover._returnNextSibling || null);
-    }
-
-    if (wrapper?._floatingPopover === popover) {
-        wrapper._floatingPopover = null;
-    }
-
-    if (activeFloatingControl?.popover === popover) {
-        activeFloatingControl = null;
-    }
-}
-
 function applyLabelAsAccessibleName(control, button) {
     const id = control.id;
     const label = id ? document.querySelector(`label[for="${id}"]`) : null;
-    const text = (label?.textContent || control.getAttribute('aria-label') || '').trim();
+    const text = (control.getAttribute('aria-label') || labelText(label) || '').trim();
     if (text) button.setAttribute('aria-label', text);
+}
+
+function markNativeControlHidden(element) {
+    element.classList.add('custom-native-control');
+    element.setAttribute('tabindex', '-1');
+    element.setAttribute('aria-hidden', 'true');
 }
 
 function enhanceSelect(select) {
@@ -195,11 +67,13 @@ function enhanceSelect(select) {
     button.type = 'button';
     button.className = 'custom-control__button';
     button.setAttribute('aria-haspopup', 'listbox');
+    button.setAttribute('aria-expanded', 'false');
     applyLabelAsAccessibleName(select, button);
     const value = document.createElement('span');
     value.className = 'custom-control__value';
     const chevron = document.createElement('span');
     chevron.className = 'custom-control__chevron material-symbols-rounded';
+    chevron.setAttribute('aria-hidden', 'true');
     chevron.textContent = 'expand_more';
     const menu = document.createElement('div');
     menu.className = 'custom-control__popover';
@@ -207,7 +81,7 @@ function enhanceSelect(select) {
 
     button.append(value, chevron);
     wrapper.append(button, menu);
-    select.classList.add('custom-native-control');
+    markNativeControlHidden(select);
     select.insertAdjacentElement('afterend', wrapper);
 
     const render = () => {
@@ -263,7 +137,8 @@ function enhancePresetSelect(select) {
     const menu = document.createElement('div');
     menu.className = 'custom-control__popover custom-preset__popover';
     wrapper.appendChild(menu);
-    select.classList.add('custom-native-control');
+    button.setAttribute('aria-expanded', 'false');
+    markNativeControlHidden(select);
 
     const render = () => {
         menu.innerHTML = '';
@@ -326,7 +201,7 @@ function enhanceDateInput(input) {
     const popover = document.createElement('div');
     popover.className = 'custom-control__popover custom-calendar';
     wrapper.append(button, popover);
-    input.classList.add('custom-native-control');
+    markNativeControlHidden(input);
     input.insertAdjacentElement('afterend', wrapper);
 
     let viewDate = input.value ? parseIsoDate(input.value) : new Date();
@@ -372,7 +247,7 @@ function enhanceTimeInput(input) {
     const popover = document.createElement('div');
     popover.className = 'custom-control__popover custom-time__popover';
     wrapper.append(button, popover);
-    input.classList.add('custom-native-control');
+    markNativeControlHidden(input);
     input.insertAdjacentElement('afterend', wrapper);
 
     const render = () => {
@@ -415,6 +290,7 @@ function buildControlButton(icon) {
     value.className = 'custom-control__value';
     const symbol = document.createElement('span');
     symbol.className = 'custom-control__chevron material-symbols-rounded';
+    symbol.setAttribute('aria-hidden', 'true');
     symbol.textContent = icon;
     button.append(value, symbol);
     return button;
@@ -427,274 +303,4 @@ function removeExistingCustomControl(element) {
     }
 }
 
-function renderCalendar(container, viewDate, selectedValue, markers, onSelect, onNavigate) {
-    const year = viewDate.getFullYear();
-    const month = viewDate.getMonth();
-    const monthStart = new Date(year, month, 1);
-    const startOffset = (monthStart.getDay() || 7) - 1;
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const label = monthStart.toLocaleString('pl-PL', { month: 'long', year: 'numeric' });
-    const today = new Date();
-    const todayIso = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
-
-    container.innerHTML = `
-        <div class="custom-calendar__header">
-            <button class="custom-calendar__nav" type="button" data-dir="-1">‹</button>
-            <span class="custom-calendar__month">${label.charAt(0).toUpperCase() + label.slice(1)}</span>
-            <button class="custom-calendar__nav" type="button" data-dir="1">›</button>
-        </div>
-        <div class="custom-calendar__grid"></div>
-    `;
-
-    container.querySelectorAll('.custom-calendar__nav').forEach(button => {
-        button.addEventListener('click', () => onNavigate(new Date(year, month + Number(button.dataset.dir), 1)));
-    });
-
-    const grid = container.querySelector('.custom-calendar__grid');
-    weekDays.forEach(day => {
-        const el = document.createElement('div');
-        el.className = 'custom-calendar__weekday';
-        el.textContent = day;
-        grid.appendChild(el);
-    });
-    for (let i = 0; i < startOffset; i++) {
-        const empty = document.createElement('button');
-        empty.type = 'button';
-        empty.className = 'custom-calendar__day';
-        empty.disabled = true;
-        grid.appendChild(empty);
-    }
-    for (let day = 1; day <= daysInMonth; day++) {
-        const iso = `${year}-${pad(month + 1)}-${pad(day)}`;
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'custom-calendar__day';
-        item.innerHTML = `<span class="custom-calendar__day-number">${day}</span>`;
-        item.classList.toggle('is-selected', selectedValue === iso);
-        item.classList.toggle('is-today', iso === todayIso);
-        if (markers[iso]) {
-            item.classList.add('has-marker');
-            item.insertAdjacentHTML('beforeend', `<span class="custom-calendar__marker">${formatHoursMarker(markers[iso])}</span>`);
-        }
-        item.addEventListener('click', () => onSelect(iso));
-        grid.appendChild(item);
-    }
-}
-
-function buildTimeOptions() {
-    const values = [];
-    for (let hour = 0; hour < 24; hour++) {
-        for (let minute = 0; minute < 60; minute += 15) {
-            values.push(`${pad(hour)}:${pad(minute)}`);
-        }
-    }
-    return values;
-}
-
-function parseIsoDate(value) {
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year, month - 1, day);
-}
-
-function formatDateLabel(value) {
-    if (!value) return 'Wybierz datę';
-    return parseIsoDate(value).toLocaleDateString('pl-PL');
-}
-
-function formatHoursMarker(value) {
-    return Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
-
-export const dialogService = {
-
-    alert(message, title = 'Komunikat', options = {}) {
-        return openDialog({
-            title,
-            message,
-            notice: options.detail ? { variant: options.variant || 'info', text: options.detail } : null,
-            actions: [{ label: 'OK', value: true, primary: true }]
-        });
-    },
-    success(message, title = 'Gotowe', options = {}) {
-        return this.alert(message, title, { ...options, variant: 'success' });
-    },
-    error(message, title = 'Błąd', options = {}) {
-        return this.alert(message, title, { ...options, variant: 'danger' });
-    },
-    warning(message, title = 'Uwaga', options = {}) {
-        return this.alert(message, title, { ...options, variant: 'warning' });
-    },
-    confirm(message, title = 'Potwierdź') {
-        return openDialog({
-            title,
-            message,
-            actions: [
-                { label: 'Anuluj', value: false },
-                { label: 'OK', value: true, primary: true }
-            ]
-        });
-    },
-    prompt(message, title = 'Wpisz wartość', options = {}) {
-        return openDialog({
-            title,
-            message,
-            notice: options.notice,
-            size: options.size,
-            input: {
-                type: options.type || 'text',
-                value: options.value || '',
-                inputmode: options.inputmode,
-                autocomplete: options.autocomplete || 'off',
-                autoSubmit: options.autoSubmit,
-                autoSubmitDelay: options.autoSubmitDelay,
-                label: options.label,
-                action: options.action
-            },
-            actions: [
-                { label: 'Anuluj', value: null },
-                { label: 'OK', value: 'input', primary: true }
-            ]
-        });
-    }
-};
-
-function buildDialogNotice(notice) {
-    const variant = normalizeVariant(notice.variant);
-    return `<div class="notice notice--${variant} notice--dialog" role="alert">${noticeHtml({ variant, text: notice.text })}</div>`;
-}
-
-function buildDialogField(input) {
-    const attributes = [
-        'class="custom-dialog__input"',
-        `type="${input.type}"`,
-        `value="${input.value}"`,
-        input.inputmode ? `inputmode="${input.inputmode}"` : '',
-        input.inputmode === 'numeric' ? ' pattern="[0-9]*"' : '',
-        input.autocomplete ? ` autocomplete="${input.autocomplete}"` : ''
-    ].filter(Boolean).join(' ');
-
-    if (!input.action) return `<input ${attributes}>`;
-
-    return `
-        <div class="custom-dialog__field">
-            ${input.label ? `<label for="customDialogInput">${input.label}</label>` : ''}
-            <div class="custom-dialog__field-row">
-                <input ${attributes} id="customDialogInput">
-                <button type="button" class="custom-dialog__field-action" aria-label="${input.action.label}">
-                    <span class="material-symbols-rounded" aria-hidden="true">${input.action.icon}</span>
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function openDialog(config) {
-    const layer = ensureDialogLayer();
-    const dialog = layer.querySelector('.custom-dialog');
-    const notice = config.notice?.text ? config.notice : null;
-    const input = config.input;
-    const variant = notice ? normalizeVariant(notice.variant) : null;
-    dialog.classList.toggle('custom-dialog--wide', Boolean(input?.action));
-    dialog.classList.toggle('custom-dialog--prominent', config.size === 'prominent');
-    if (variant) dialog.classList.add(`custom-dialog--${variant}`);
-    else dialog.classList.remove(...NOTICE_VARIANTS.map(name => `custom-dialog--${name}`));
-    dialog.innerHTML = `
-        <h3>${config.title}</h3>
-        <p>${config.message}</p>
-        ${input ? buildDialogField(input) : ''}
-        ${notice ? buildDialogNotice(notice) : ''}
-        <div class="custom-dialog__actions"></div>
-    `;
-
-    const actions = dialog.querySelector('.custom-dialog__actions');
-    const field = dialog.querySelector('.custom-dialog__input');
-    if (notice) field?.setAttribute('aria-invalid', 'true');
-    layer.classList.add('is-visible');
-
-    return new Promise(resolve => {
-        let settled = false;
-        let autoSubmitTimer = null;
-        const finish = value => {
-            if (settled) return;
-            settled = true;
-            clearTimeout(autoSubmitTimer);
-            layer.classList.remove('is-visible');
-            resolve(value);
-        };
-
-        config.actions.forEach(action => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = `custom-dialog__button ${action.primary ? 'custom-dialog__button--primary' : ''}`;
-            button.textContent = action.label;
-            button.addEventListener('click', () => {
-                if (action.value === 'input') {
-                    finish(field?.value ?? '');
-                    return;
-                }
-                finish(action.value);
-            });
-            actions.appendChild(button);
-        });
-
-        const fieldAction = dialog.querySelector('.custom-dialog__field-action');
-        if (fieldAction && field) {
-            fieldAction.addEventListener('click', () => {
-                const revealed = field.type === 'text';
-                field.type = revealed ? 'password' : 'text';
-                fieldAction.setAttribute('aria-label', revealed ? input.action.label : input.action.labelActive);
-                fieldAction.querySelector('.material-symbols-rounded').textContent =
-                    revealed ? input.action.icon : input.action.iconActive;
-                fieldAction.classList.toggle('is-revealed', !revealed);
-                field.focus({ preventScroll: true });
-            });
-        }
-
-        const clearDialogNotice = () => {
-            dialog.querySelector('.notice--dialog')?.remove();
-            if (variant) dialog.classList.remove(`custom-dialog--${variant}`);
-        };
-
-        if (field) {
-            field.focus({ preventScroll: true });
-            requestAnimationFrame(() => {
-                field.focus({ preventScroll: true });
-                field.select?.();
-            });
-            field.addEventListener('input', () => {
-                if (field.value !== '') field.removeAttribute('aria-invalid');
-                clearDialogNotice();
-                if (typeof input.autoSubmit !== 'function') return;
-                clearTimeout(autoSubmitTimer);
-                const checkedValue = field.value;
-                if (!checkedValue) return;
-                autoSubmitTimer = setTimeout(async () => {
-                    let accepted = false;
-                    try {
-                        accepted = await input.autoSubmit(checkedValue);
-                    } catch (error) {
-                        console.error('Nie udało się sprawdzić wpisanej wartości.', error);
-                    }
-                    if (accepted && field.value === checkedValue) finish(field.value);
-                }, Number(input.autoSubmitDelay) || 0);
-            });
-            field.addEventListener('keydown', event => {
-                if (event.key === 'Enter') finish(field.value);
-            });
-        } else {
-            actions.querySelector('.custom-dialog__button--primary')?.focus();
-        }
-    });
-}
-
-function ensureDialogLayer() {
-    let layer = document.getElementById('customDialogLayer');
-    if (layer) return layer;
-
-    layer = document.createElement('div');
-    layer.id = 'customDialogLayer';
-    layer.className = 'custom-dialog-layer';
-    layer.innerHTML = '<div class="custom-dialog" role="dialog" aria-modal="true"></div>';
-    document.body.appendChild(layer);
-    return layer;
-}
+export { dialogService } from './dialogService.js?v=1';

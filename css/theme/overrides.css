@@ -154,7 +154,9 @@ select:focus,
 }
 .qty-display:focus {
     outline: none;
-    box-shadow: none;
+}
+.qty-display:focus-visible {
+    box-shadow: var(--focus-ring);
 }
 .input-group input:focus,
 .input-group input:focus-visible {
@@ -1318,6 +1320,17 @@ select,
     border-color: var(--danger-color);
     color: var(--app-text-inverse);
 }
+
+.icon-action {
+    width: 44px;
+    height: 44px;
+}
+
+.state-switch,
+.type-switch,
+.icon-picker-button {
+    min-height: var(--control-height);
+}
 .type-switch.is-toggle {
     background: var(--primary-color);
     border-color: var(--primary-color);
@@ -1386,7 +1399,7 @@ select,
 .tt-header { border-color: var(--border-color); }
 .tt-day { background: var(--surface-raised); color: var(--text-secondary); }
 .tt-shift-item { border-color: var(--border-color); }
-.tt-loc-col h5 { color: var(--primary-color); }
+.tt-loc-col h5 { color: var(--primary-hover); }
 
 .avatar { color: var(--app-text-inverse); }
 

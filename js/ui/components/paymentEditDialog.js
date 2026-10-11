@@ -4,7 +4,7 @@ import {
     PAYMENT_RECURRENCES,
     normalizePaymentDate
 } from '../../services/payments.js?v=103';
-import { dialogService, enhanceCustomControls } from './customControls.js?v=173';
+import { dialogService, enhanceCustomControls } from './customControls.js?v=174';
 function parseAmount(value) {
     const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
     const amount = Number(normalized);

@@ -13,7 +13,7 @@
     --control-h-lg: 48px;
 
     --icon-size: 20px;
-    --focus-ring: 0 0 0 2px color-mix(in srgb, var(--primary-color) 28%, transparent);
+    --focus-ring: 0 0 0 2px var(--primary-hover);
 }
 
 .material-symbols-rounded {

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=204">
+  <link rel="stylesheet" href="style.css?v=205">
 </head>
 <body>
 
@@ -230,11 +230,11 @@
 
 <div id="generatorFloatingBar" class="floating-bar animate-slide-up">
   <div id="resetContainer" style="display: none;">
-    <button class="icon-button reset-button" aria-label="Reset">
-      <span class="material-symbols-rounded" aria-hidden="true">close</span>
+    <button class="icon-button reset-button" aria-label="Wyczyść formularz">
+      <span class="material-symbols-rounded" aria-hidden="true">restart_alt</span>
     </button>
   </div>
-  <button id="copyButton" class="primary-fab" type="button" aria-label="Generuj listę">
+  <button id="copyButton" class="primary-fab" type="button" aria-label="Skopiuj listę">
     <span>Skopiuj listę</span>
     <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
   </button>
@@ -242,16 +242,16 @@
 
 <div id="locationOverlay" class="overlay"></div>
 
-<div id="locationSheet" class="bottom-sheet">
+<div id="locationSheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="locationSheetTitle">
   <div class="sheet-handle"></div>
-  <h3>Wybierz punkt</h3>
+  <h3 id="locationSheetTitle">Wybierz punkt</h3>
   <div class="sheet-actions">
     <div id="locationOptions" class="location-options"></div>
     <button class="sheet-btn cancel-btn" type="button" data-close-location-overlay>Anuluj</button>
   </div>
 </div>
 
-<div id="successSheet" class="bottom-sheet">
+<div id="successSheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="successTitle">
   <div class="sheet-handle"></div>
   <div class="success-icon-wrapper" id="successIcon"></div>
   <h3 id="successTitle">Lista gotowa!</h3>
@@ -261,6 +261,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=180"></script>
+<script type="module" src="js/main.js?v=181"></script>
 </body>
 </html>

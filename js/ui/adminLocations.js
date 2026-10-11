@@ -6,8 +6,8 @@ import {
     slugifyLocation
 } from '../services/locations.js?v=168';
 import { escapeHtml, renderMaterialIcon } from '../utils.js';
-import { dialogService } from './components/customControls.js?v=173';
-import { noticeService } from './components/notice.js?v=102';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=174';
+import { noticeService } from './components/notice.js?v=103';
 
 class AdminLocations {
     constructor() {
@@ -61,6 +61,7 @@ class AdminLocations {
                         ${archived.map(location => this.renderLocation(location)).join('')}
                     </div>
                 </div>` : ''}`;
+        enhanceCustomControls(this.container);
     }
 
     renderLocation(location) {
@@ -163,7 +164,8 @@ class AdminLocations {
         if (button.dataset.action === 'delete') {
             const confirmed = await dialogService.confirm(
                 `Przenieść punkt „${location.name}” do archiwum? Zniknie z generatora listy i ze statystyk. Wszystkie jego dane zostaną w database/${location.path} jako archiwum.`,
-                'Przenieś punkt do archiwum'
+                'Przenieś punkt do archiwum',
+                { destructive: true, confirmLabel: 'Archiwizuj' }
             );
             if (!confirmed) return;
             location.deleted = true;

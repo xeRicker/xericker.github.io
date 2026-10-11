@@ -45,7 +45,7 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `css/admin/` — per-tab admin styles; `css/generator/` — generator and burgers styles
 - `js/config/` — static config, fixed team data
 - `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, settings, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
-- `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls, notice)
+- `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls + controlPopover/customCalendar/inputEnhance/dialogService, notice)
 - `database/` — catalogs + per-location report JSON
 
 ## Key Modules
@@ -63,8 +63,12 @@ List the repo and grep actual usage before writing code — don't trust a hardco
 - `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips, weekly overview, payments reminder and the „Średnia” tile (target state + 7-day trend) for the Utargi page
 - `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded; exposes the last summary via `getSummary()` and an `onRecalc` callback
 - `ui/payslip.js` — admin Wynagrodzenia „PASEK”: draws the calculator summary to a branded PNG payslip (canvas) and opens it in a new tab; the PASEK panel is currently removed from `admin.html`, so `setupPayslipGenerator` returns a no-op until the panel returns
-- `ui/components/customControls.js` — custom select/date/time/dialog; mirrors native `disabled` onto the visible control
-- `ui/components/notice.js` + `css/components/notice.css` — the only message system: `.notice--<info|success|danger|warning|muted|loading>` via `noticeService.render()`, transient success via `noticeService.toast()` (`.notice--toast`, auto-dismiss, replaces the previous toast), dialogs via `dialogService.*`
+- `ui/components/customControls.js` — custom select/date/time controls: turns native `select`/`date`/`time` into popovers, mirrors native `disabled` onto the visible control, keeps the hidden native control out of the tab order and sets `aria-expanded` on triggers; `enhanceCustomControls(root)` is the entry point and also runs `enhanceCustomInputs()`. Re-exports `dialogService` for its existing callers
+- `ui/components/controlPopover.js` — floating popover machinery behind the custom controls: open/close state, mounting to `body`, viewport-aware position/height, outside-click, Escape and resize handling
+- `ui/components/customCalendar.js` — month grid and time list for the date/time popovers (day markers, today, prev/next month)
+- `ui/components/inputEnhance.js` — text and number field enhancement for `enhanceCustomControls()`: clear button inside `.field-clearable`, `autocomplete`/`spellcheck`/`enterkeyhint` hints, select-on-focus for numeric fields, plus the shared `labelText()` helper
+- `ui/components/dialogService.js` — `dialogService.*` (`alert`/`success`/`error`/`warning`/`confirm`/`prompt`): locks page scroll, traps focus, closes on Esc (input dialogs) or backdrop click (confirm/alert) and returns focus to the opener; `confirm(message, title, { destructive, confirmLabel, cancelLabel })` renders a red action button and focuses „Anuluj”
+- `ui/components/notice.js` + `css/components/notice.css` — the only message system: `.notice--<info|success|danger|warning|muted|loading>` via `noticeService.render()`, transient success via `noticeService.toast()` (`.notice--toast`, auto-dismiss scaled to the text length, closable, replaces the previous toast), dialogs via `dialogService.*`
 - `services/reportDates.js` — report date parsing/keys/sorting
 - `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder; bulk report fetches run at higher concurrency and go through `reportCache`; on localhost merges real `database/` reports with generated ones
 - `services/reportCache.js` — IndexedDB cache of report JSON keyed by Git blob SHA, so bulk month loads download only new/changed files; oldest entries pruned past 4000

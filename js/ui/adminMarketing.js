@@ -1,7 +1,8 @@
 import { MARKETING_BRAND, MARKETING_POST_TYPES } from '../config/marketing.js?v=3';
 import { buildMarketingPost, loadMarketingBurgers } from '../services/marketing.js?v=4';
-import { escapeHtml, fallbackCopyToClipboard, renderMaterialIcon } from '../utils.js';
-import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
+import { copyText, escapeHtml, renderMaterialIcon } from '../utils.js';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=174';
+import { noticeService } from './components/notice.js?v=103';
 
 const MARKETING_OPTIONS = [
     { id: 'includeLocations', label: 'Punkty' },
@@ -171,10 +172,10 @@ class AdminMarketing {
     async copyOutput(target, button) {
         const text = this.container.querySelector(`#marketing-${target}`)?.value || '';
         if (!text) return;
-        try {
-            await navigator.clipboard.writeText(text);
-        } catch {
-            fallbackCopyToClipboard(text);
+        const copied = await copyText(text);
+        if (!copied) {
+            noticeService.toast({ variant: 'danger', text: 'Nie udało się skopiować posta. Spróbuj ponownie.' });
+            return;
         }
         button.innerHTML = `${renderMaterialIcon('check')} Skopiowano`;
         button.classList.add('is-copied');

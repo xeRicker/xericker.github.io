@@ -2,18 +2,18 @@ import { apiService } from './services/api.js?v=170';
 import { analytics } from './services/analytics.js?v=2';
 import { reportDateToIso } from './services/reportDates.js';
 import { adminRender } from './ui/adminRender.js?v=178';
-import { adminProducts } from './ui/adminProducts.js?v=169';
-import { createAdminListsPage } from './ui/adminLists.js?v=166';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=166';
+import { adminProducts } from './ui/adminProducts.js?v=170';
+import { createAdminListsPage } from './ui/adminLists.js?v=167';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=167';
 import { setupPayslipGenerator } from './ui/payslip.js?v=103';
 import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
-import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=173';
+import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=174';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=163';
 import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=168';
-import { adminEmployees } from './ui/adminEmployees.js?v=172';
-import { adminLocations } from './ui/adminLocations.js?v=175';
-import { adminPayments } from './ui/adminPayments.js?v=106';
-import { adminMarketing } from './ui/adminMarketing.js?v=4';
+import { adminEmployees } from './ui/adminEmployees.js?v=173';
+import { adminLocations } from './ui/adminLocations.js?v=176';
+import { adminPayments } from './ui/adminPayments.js?v=107';
+import { adminMarketing } from './ui/adminMarketing.js?v=5';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=169';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=103';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
@@ -297,12 +297,9 @@ function restoreMonthSelection(value) {
 }
 
 async function switchAdminPage(pageName) {
-    const currentTab = document.querySelector('.admin-page-tab.is-active')?.dataset.adminTab;
+    const currentTab = activeAdminTab();
     if (currentTab === pageName) return;
-    if (currentTab === 'products' && !(await adminProducts.confirmDiscardChanges())) return;
-    if (currentTab === 'employees' && !(await adminEmployees.confirmDiscardChanges())) return;
-    if (currentTab === 'locations' && !(await adminLocations.confirmDiscardChanges())) return;
-    if (currentTab === 'payments' && !(await adminPayments.confirmDiscardChanges())) return;
+    if (!(await confirmActiveDiscard())) return;
 
     document.querySelectorAll('.admin-page-tab').forEach(tab => {
         const active = tab.dataset.adminTab === pageName;
@@ -464,21 +461,59 @@ function buildWeekTabs(data, { label = 'Cały miesiąc', showWeeks = true } = {}
 }
 
 function createWeekTab(key, label, isActive = false) {
-    const tab = document.createElement('div');
+    const tab = document.createElement('button');
+    tab.type = 'button';
     tab.className = 'week-tab';
     tab.classList.toggle('active', isActive);
     tab.dataset.week = key;
     tab.innerText = label;
+    tab.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     tab.onclick = () => selectWeek(key);
     return tab;
 }
 
 function selectWeek(key) {
     activeWeekKey = key;
-    document.querySelectorAll('.week-tab').forEach(node => node.classList.toggle('active', node.dataset.week === key));
+    document.querySelectorAll('.week-tab').forEach(node => {
+        const active = node.dataset.week === key;
+        node.classList.toggle('active', active);
+        node.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
     revenuePage = 0;
     heatmapPage = 0;
     updateView();
+}
+
+function updateRevenueSortState() {
+    document.querySelectorAll('#revenueTable thead th[data-sort]').forEach(node => {
+        if (node !== revenueSort.th) {
+            node.setAttribute('aria-sort', 'none');
+            return;
+        }
+        node.setAttribute('aria-sort', revenueSort.direction === 'asc' ? 'ascending' : 'descending');
+    });
+}
+
+function activeAdminTab() {
+    return document.querySelector('.admin-page-tab.is-active')?.dataset.adminTab;
+}
+
+function hasActiveUnsavedChanges() {
+    const tab = activeAdminTab();
+    if (tab === 'products') return adminProducts.hasUnsavedChanges();
+    if (tab === 'employees') return adminEmployees.hasUnsavedChanges();
+    if (tab === 'locations') return adminLocations.hasUnsavedChanges();
+    if (tab === 'payments') return adminPayments.hasUnsavedChanges();
+    return false;
+}
+
+async function confirmActiveDiscard() {
+    const tab = activeAdminTab();
+    if (tab === 'products') return adminProducts.confirmDiscardChanges();
+    if (tab === 'employees') return adminEmployees.confirmDiscardChanges();
+    if (tab === 'locations') return adminLocations.confirmDiscardChanges();
+    if (tab === 'payments') return adminPayments.confirmDiscardChanges();
+    return true;
 }
 
 function setupListeners() {
@@ -508,21 +543,35 @@ function setupListeners() {
 
     const viewModeButtons = document.querySelectorAll('.view-toggle .view-btn');
     viewModeButtons.forEach(button => {
+        button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
         button.onclick = event => {
-            viewModeButtons.forEach(node => node.classList.remove('active'));
+            viewModeButtons.forEach(node => {
+                node.classList.remove('active');
+                node.setAttribute('aria-pressed', 'false');
+            });
             event.currentTarget.classList.add('active');
+            event.currentTarget.setAttribute('aria-pressed', 'true');
             viewMode = event.currentTarget.dataset.view;
             updateView();
         };
     });
 
     document.querySelectorAll('#revenueTable thead th[data-sort]').forEach(th => {
-        th.addEventListener('click', () => {
+        const sortRevenue = () => {
             const key = th.dataset.sort;
             revenueSort.direction = revenueSort.key === key && revenueSort.direction === 'asc' ? 'desc' : 'asc';
             revenueSort.key = key;
+            revenueSort.th = th;
             revenuePage = 0;
+            updateRevenueSortState();
             renderRevenueTable();
+        };
+        th.addEventListener('click', sortRevenue);
+        th.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                sortRevenue();
+            }
         });
     });
 
@@ -549,6 +598,7 @@ function setupListeners() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async event => {
             event.preventDefault();
+            if (!(await confirmActiveDiscard())) return;
             if (isLoadingFullData) {
                 const confirmed = await dialogService.confirm(
                     'Dane są w trakcie pobierania z bazy. Czy na pewno chcesz się wylogować?',
@@ -566,6 +616,12 @@ function setupListeners() {
             }
         });
     }
+
+    window.addEventListener('beforeunload', event => {
+        if (!hasActiveUnsavedChanges()) return;
+        event.preventDefault();
+        event.returnValue = '';
+    });
 }
 
 function logoutAdmin() {

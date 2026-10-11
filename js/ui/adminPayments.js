@@ -19,8 +19,8 @@ import {
     toIsoDate
 } from '../services/payments.js?v=103';
 import { escapeHtml, formatMoney, renderMaterialIcon } from '../utils.js';
-import { dialogService, enhanceCustomControls } from './components/customControls.js?v=173';
-import { noticeService } from './components/notice.js?v=102';
+import { dialogService, enhanceCustomControls } from './components/customControls.js?v=174';
+import { noticeService } from './components/notice.js?v=103';
 import { openPaymentEditDialog } from './components/paymentEditDialog.js?v=2';
 import { loadSettings, normalizeSettings, saveSettings } from '../services/settings.js?v=1';
 
@@ -388,7 +388,8 @@ class AdminPayments {
         const paidNote = view.amountPaid > 0 ? ` Historia wpłat (${formatMoney(view.amountPaid)}) też zostanie usunięta.` : '';
         const confirmed = await dialogService.confirm(
             `Usunąć trwale „${item.title}” z listy opłat?${paidNote}`,
-            'Usuń opłatę'
+            'Usuń opłatę',
+            { destructive: true, confirmLabel: 'Usuń' }
         );
         if (!confirmed) return false;
         this.catalog.items = this.catalog.items.filter(entry => entry.id !== item.id);
@@ -399,7 +400,8 @@ class AdminPayments {
         if (archived) {
             const confirmed = await dialogService.confirm(
                 `Zarchiwizować „${item.title}”? Historia wpłat zostanie zachowana.`,
-                'Archiwizuj zobowiązanie'
+                'Archiwizuj zobowiązanie',
+                { destructive: true, confirmLabel: 'Archiwizuj' }
             );
             if (!confirmed) return false;
         }

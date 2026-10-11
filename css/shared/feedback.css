@@ -306,7 +306,7 @@ input[type=number] {
 .tt-divider { height: 1px; background: var(--border-color); margin: 10px 0; }
 
 .tt-locations-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.tt-loc-col h5 { margin: 0 0 6px 0; font-size: 11px; color: var(--primary-color); letter-spacing: 0; }
+.tt-loc-col h5 { margin: 0 0 6px 0; font-size: 11px; color: var(--primary-hover); letter-spacing: 0; }
 .tt-loc-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; color: var(--text-secondary); }
 .tt-loc-row span:last-child { color: var(--text-primary); font-weight: 500; }
 

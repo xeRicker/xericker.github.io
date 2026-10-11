@@ -1,4 +1,4 @@
-import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=173';
+import { enhanceCustomControls, refreshCustomControls } from './components/customControls.js?v=174';
 
 const BURGER_DATA_URL = 'database/burgers.json?v=60';
 

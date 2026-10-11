@@ -10,6 +10,12 @@ export function formatMoney(amount) {
     return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(amount);
 }
 
+export function parseAmountInput(value) {
+    const normalized = String(value ?? '').replace(/\s/g, '').replace(',', '.');
+    const amount = Number(normalized);
+    return Number.isFinite(amount) ? amount : 0;
+}
+
 export function escapeHtml(value) {
     return String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -69,4 +75,13 @@ export function fallbackCopyToClipboard(text) {
     }
     document.body.removeChild(textArea);
     return success;
+}
+
+export async function copyText(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch {
+        return fallbackCopyToClipboard(text);
+    }
 }

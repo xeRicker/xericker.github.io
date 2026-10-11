@@ -29,19 +29,22 @@ function send(res, status, body, type = 'text/plain; charset=utf-8') {
     res.end(body);
 }
 
-async function readJsonFiles(dir) {
+async function readJsonFiles(dir, stats) {
     const entries = await fs.promises.readdir(dir, { withFileTypes: true });
     const results = [];
 
     for (const entry of entries) {
         const entryPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
-            results.push(...await readJsonFiles(entryPath));
+            results.push(...await readJsonFiles(entryPath, stats));
             continue;
         }
         if (!entry.name.endsWith('.json') || entry.name === 'products.json' || dir === path.join(root, 'database')) continue;
 
         try {
+            const fileStat = await fs.promises.stat(entryPath);
+            stats.latest = Math.max(stats.latest, fileStat.mtimeMs);
+            stats.count += 1;
             const parsed = JSON.parse(await fs.promises.readFile(entryPath, 'utf8'));
             if (parsed && parsed.location && parsed.date) {
                 results.push(parsed);
@@ -101,12 +104,21 @@ const server = http.createServer(async (req, res) => {
         try {
             const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
             const recentMonths = Number(url.searchParams.get('recentMonths')) || 0;
-            let data = await readJsonFiles(path.join(root, 'database'));
+            const stats = { latest: 0, count: 0 };
+            let data = await readJsonFiles(path.join(root, 'database'), stats);
+            const version = `${stats.count}-${Math.round(stats.latest)}`;
+
+            if (url.searchParams.get('version') === version) {
+                res.writeHead(204);
+                res.end();
+                return;
+            }
+
             if (recentMonths > 0) {
                 const monthKeys = new Set(getRecentMonthKeys(recentMonths));
                 data = data.filter(report => monthKeys.has(getReportMonthKey(report)));
             }
-            send(res, 200, JSON.stringify(data), 'application/json; charset=utf-8');
+            send(res, 200, JSON.stringify({ version, reports: data }), 'application/json; charset=utf-8');
         } catch (error) {
             send(res, 500, JSON.stringify({ ok: false, error: error.message }), 'application/json; charset=utf-8');
         }

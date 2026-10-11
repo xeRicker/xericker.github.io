@@ -2,9 +2,11 @@ import { GITHUB_CONFIG } from '../config/config.js';
 import { isLocalhost } from '../utils.js';
 import { getMonthKeyFromReportDate, getMonthKeyFromReportFileName, getReportKey } from './reportDates.js';
 import { generateMockReports } from './mockData.js?v=101';
-import { reportCache } from './reportCache.js?v=101';
+import { reportCache } from './reportCache.js?v=102';
 
 const FILE_FETCH_CONCURRENCY = 10;
+const REPORT_INDEX_KEY = 'report-index';
+const REPORT_INDEX_TTL_MS = 24 * 60 * 60 * 1000;
 
 class ApiService {
     constructor() {
@@ -45,6 +47,7 @@ class ApiService {
         const directory = this.getLocationFolder(data, folder);
         if (isLocalhost()) {
             await this.saveLocalJson(`database/${directory}/${data.date}.json`, data, 'Local report save failed.');
+            await reportCache.deleteEntry(REPORT_INDEX_KEY);
             return;
         }
         const filePath = `database/${directory}/${data.date}.json`;
@@ -64,6 +67,7 @@ class ApiService {
 
         const res = await this.fetchGithub(url, { method: 'PUT', headers: this.headers, body: JSON.stringify(body) }, filePath);
         if (!res.ok) throw await this.createGithubApiError(res, filePath);
+        await reportCache.deleteEntry(REPORT_INDEX_KEY);
     }
 
     async fetchProducts() {
@@ -183,16 +187,72 @@ class ApiService {
         return getMonthKeyFromReportFileName(fileName);
     }
 
-    filterReportsByRecentMonths(reports, monthCount = 2) {
-        const monthKeys = new Set(
-            Array.from(new Set(reports
-                .map(report => this.getMonthKeyFromDateString(report?.date))
-                .filter(Boolean)))
-                .sort()
-                .reverse()
-                .slice(0, monthCount)
-        );
-        return reports.filter(report => monthKeys.has(this.getMonthKeyFromDateString(report?.date)));
+    getReportMonthKeys(reports) {
+        return new Set(reports.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean));
+    }
+
+    pickRecentMonthKeys(monthKeys, monthCount) {
+        return new Set(Array.from(monthKeys).sort().reverse().slice(0, monthCount));
+    }
+
+    async fetchReportIndex({ force = false } = {}) {
+        if (isLocalhost()) return this.fetchLocalReportIndex();
+
+        const cached = force ? null : await reportCache.getEntry(REPORT_INDEX_KEY);
+        if (cached?.data?.kind === 'github' && Date.now() - cached.savedAt < REPORT_INDEX_TTL_MS) return cached.data;
+
+        const index = await this.buildGithubReportIndex();
+        await reportCache.putEntry(REPORT_INDEX_KEY, index);
+        return index;
+    }
+
+    async buildGithubReportIndex() {
+        const locRes = await this.fetchGithub(`${this.baseUrl}database`, { headers: this.headers }, 'database');
+        if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
+
+        const locations = (await locRes.json()).filter(item => item.type === 'dir');
+        const filesByLocation = await Promise.all(locations.map(async location => {
+            const filesRes = await this.fetchGithub(location.url, { headers: this.headers }, `database/${location.name}`);
+            if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${location.name}`);
+            return (await filesRes.json()).filter(file => file.name.endsWith('.json'));
+        }));
+
+        return {
+            kind: 'github',
+            files: filesByLocation.flat()
+                .map(file => ({
+                    name: file.name,
+                    path: file.path,
+                    sha: file.sha,
+                    download_url: file.download_url,
+                    monthKey: this.getMonthKeyFromFileName(file.name)
+                }))
+                .filter(file => file.monthKey)
+        };
+    }
+
+    async fetchLocalReportIndex() {
+        const cached = await reportCache.getEntry(REPORT_INDEX_KEY);
+        const cachedIndex = cached?.data?.kind === 'local' ? cached.data : null;
+        const version = cachedIndex?.version ? `?version=${encodeURIComponent(cachedIndex.version)}` : '';
+
+        try {
+            const response = await fetch(`__local-data${version}`);
+            if (response.status === 204 && cachedIndex) return cachedIndex;
+            if (!response.ok) return cachedIndex || { kind: 'local', version: '', reports: [] };
+
+            const payload = await response.json();
+            const index = {
+                kind: 'local',
+                version: payload?.version || '',
+                reports: Array.isArray(payload?.reports) ? payload.reports : []
+            };
+            await reportCache.putEntry(REPORT_INDEX_KEY, index);
+            return index;
+        } catch (error) {
+            console.warn('Local data endpoint unavailable, using generated data.', error);
+            return cachedIndex || { kind: 'local', version: '', reports: [] };
+        }
     }
 
     async fetchEmployees() {
@@ -286,15 +346,6 @@ class ApiService {
         }
     }
 
-    getRecentAvailableMonthKeys(files, monthCount) {
-        return new Set(Array.from(new Set(files
-            .map(file => this.getMonthKeyFromFileName(file.name))
-            .filter(Boolean)))
-            .sort()
-            .reverse()
-            .slice(0, monthCount));
-    }
-
     reportProgress(onProgress, loaded, total) {
         if (typeof onProgress === 'function') {
             onProgress({
@@ -372,55 +423,42 @@ class ApiService {
     }
 
     async fetchAllData(options = {}) {
-        const { recentMonths = null, onProgress = null, onMeta = null } = options;
-        if (isLocalhost()) {
-            const localData = await this.fetchLocalReports();
-            const merged = this.mergeLocalReports(localData, await this.getMockData());
-            const data = recentMonths ? this.filterReportsByRecentMonths(merged, recentMonths) : merged;
-            this.reportMeta(
-                onMeta,
-                new Set(data.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size,
-                new Set(merged.map(report => this.getMonthKeyFromDateString(report?.date)).filter(Boolean)).size
-            );
+        const { recentMonths = null, onProgress = null, onMeta = null, force = false } = options;
+        const index = await this.fetchReportIndex({ force });
+
+        if (index.kind === 'local') {
+            const merged = this.mergeLocalReports(index.reports, await this.getMockData());
+            const availableMonthKeys = this.getReportMonthKeys(merged);
+            const monthKeys = recentMonths ? this.pickRecentMonthKeys(availableMonthKeys, recentMonths) : null;
+            const data = monthKeys
+                ? merged.filter(report => monthKeys.has(this.getMonthKeyFromDateString(report?.date)))
+                : merged;
+            this.reportMeta(onMeta, monthKeys ? monthKeys.size : availableMonthKeys.size, availableMonthKeys.size);
             this.reportProgress(onProgress, data.length, data.length);
             return data;
         }
 
-        const locRes = await this.fetchGithub(`${this.baseUrl}database`, { headers: this.headers }, 'database');
-        if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
-
-        const locations = (await locRes.json()).filter(i => i.type === 'dir');
-        const filesByLocation = await Promise.all(locations.map(async loc => {
-            const filesRes = await this.fetchGithub(loc.url, { headers: this.headers }, `database/${loc.name}`);
-            if (!filesRes.ok) throw await this.createGithubApiError(filesRes, `database/${loc.name}`);
-            return (await filesRes.json())
-                .filter(f => f.name.endsWith('.json'));
-        }));
-
-        const availableFiles = filesByLocation.flat();
-        const availableMonthKeys = new Set(availableFiles.map(file => this.getMonthKeyFromFileName(file.name)).filter(Boolean));
-        const monthKeys = recentMonths ? this.getRecentAvailableMonthKeys(availableFiles, recentMonths) : null;
-        const files = monthKeys
-            ? availableFiles.filter(file => monthKeys.has(this.getMonthKeyFromFileName(file.name)))
-            : availableFiles;
-        this.reportMeta(onMeta, monthKeys ? new Set(files.map(file => this.getMonthKeyFromFileName(file.name)).filter(Boolean)).size : availableMonthKeys.size, availableMonthKeys.size);
+        const availableMonthKeys = new Set(index.files.map(file => file.monthKey));
+        const monthKeys = recentMonths ? this.pickRecentMonthKeys(availableMonthKeys, recentMonths) : null;
+        const files = monthKeys ? index.files.filter(file => monthKeys.has(file.monthKey)) : index.files;
+        this.reportMeta(onMeta, monthKeys ? monthKeys.size : availableMonthKeys.size, availableMonthKeys.size);
         let loaded = 0;
         this.reportProgress(onProgress, loaded, files.length);
 
-        const cached = await reportCache.getMany(files.map(f => f.sha));
+        const cached = await reportCache.getMany(files.map(file => file.sha));
         const fresh = [];
-        const results = await this.mapWithConcurrency(files, FILE_FETCH_CONCURRENCY, async f => {
-            if (f.sha && cached.has(f.sha)) {
+        const results = await this.mapWithConcurrency(files, FILE_FETCH_CONCURRENCY, async file => {
+            if (file.sha && cached.has(file.sha)) {
                 loaded += 1;
                 this.reportProgress(onProgress, loaded, files.length);
-                return cached.get(f.sha);
+                return cached.get(file.sha);
             }
 
             try {
-                const response = await this.fetchGithub(f.download_url, {}, f.path || f.name);
-                if (!response.ok) throw await this.createGithubApiError(response, f.path || f.name);
+                const response = await this.fetchGithub(file.download_url, {}, file.path || file.name);
+                if (!response.ok) throw await this.createGithubApiError(response, file.path || file.name);
                 const data = await response.json();
-                if (f.sha) fresh.push({ sha: f.sha, data });
+                if (file.sha) fresh.push({ sha: file.sha, data });
                 return data;
             } finally {
                 loaded += 1;
@@ -430,18 +468,6 @@ class ApiService {
         await reportCache.putMany(fresh);
 
         return results;
-    }
-
-    async fetchLocalReports() {
-        try {
-            const response = await fetch(`__local-data?v=${Date.now()}`);
-            if (!response.ok) return [];
-            const data = await response.json();
-            return Array.isArray(data) ? data : [];
-        } catch (error) {
-            console.warn('Local data endpoint unavailable, using generated data.', error);
-            return [];
-        }
     }
 
     mergeLocalReports(localReports, generatedReports) {

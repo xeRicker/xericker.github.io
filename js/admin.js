@@ -1,4 +1,4 @@
-import { apiService } from './services/api.js?v=170';
+import { apiService } from './services/api.js?v=171';
 import { analytics } from './services/analytics.js?v=3';
 import { reportDateToIso } from './services/reportDates.js';
 import { adminRender } from './ui/adminRender.js?v=179';
@@ -19,6 +19,7 @@ import { getPaymentViews, getUpcomingPayments, summarizePayments } from './servi
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
 
 const DEFAULT_DATA_MONTHS = 1;
+const PRELOAD_DATA_MONTHS = 4;
 const AVERAGE_WINDOW_DAYS = 31;
 const REVENUE_PAGE_SIZE = 14;
 const HEATMAP_MONTHS_PER_PAGE = 1;
@@ -45,6 +46,7 @@ let productCatalog = null;
 let adminListsPage = null;
 let isFullDataLoaded = false;
 let isLoadingFullData = false;
+let dataLoadGeneration = 0;
 let loadedMonthCount = 0;
 let availableMonthCount = 0;
 let employeeCatalog = null;
@@ -109,6 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         processedData = analytics.processReports(statsData);
         adminListsPage.init();
         initUI(processedData);
+        preloadOlderMonths();
     } catch (error) {
         console.error('Admin panel unavailable.', error);
         showAdminUnavailable(error);
@@ -185,6 +188,54 @@ function setupAdminPages() {
     switchAdminPage('revenue');
 }
 
+function stopDataPreload() {
+    dataLoadGeneration += 1;
+}
+
+function setTopProgress(percent) {
+    const topProgressBar = document.getElementById('adminTopProgressBar');
+    if (!topProgressBar) return;
+    topProgressBar.hidden = false;
+    topProgressBar.style.width = `${Math.max(5, percent)}%`;
+}
+
+function hideTopProgress(delay = 600) {
+    const topProgressBar = document.getElementById('adminTopProgressBar');
+    if (!topProgressBar) return;
+    setTimeout(() => {
+        topProgressBar.hidden = true;
+        topProgressBar.style.width = '0%';
+    }, delay);
+}
+
+async function preloadOlderMonths() {
+    const generation = ++dataLoadGeneration;
+    const targetMonths = Math.min(PRELOAD_DATA_MONTHS, availableMonthCount || PRELOAD_DATA_MONTHS);
+
+    for (let months = DEFAULT_DATA_MONTHS + 1; months <= targetMonths; months += 1) {
+        if (generation !== dataLoadGeneration || isFullDataLoaded) return;
+
+        try {
+            const data = await apiService.fetchAllData({
+                recentMonths: months,
+                onMeta: updateDataLoadInfo,
+                onProgress: progress => {
+                    if (generation === dataLoadGeneration) setTopProgress(progress.percent);
+                }
+            });
+            if (generation !== dataLoadGeneration) return;
+            if (data.length) applyLoadedData(data);
+        } catch (error) {
+            if (generation !== dataLoadGeneration) return;
+            setDataLoadStatus(formatDataLoadError(error), 'error');
+            hideTopProgress(0);
+            return;
+        }
+    }
+
+    if (generation === dataLoadGeneration) hideTopProgress();
+}
+
 async function loadFullDataInBackground() {
     if (isLoadingFullData) return;
 
@@ -193,6 +244,7 @@ async function loadFullDataInBackground() {
     const selectedRange = Number(document.getElementById('loadDataRange')?.value || 0);
     if (selectedRange && loadedMonthCount >= Math.min(selectedRange, availableMonthCount || selectedRange)) return;
     if (!selectedRange && isFullDataLoaded) return;
+    stopDataPreload();
     isLoadingFullData = true;
     setDataLoadStatus('', '');
     setLoadAllButtonState(button, 'Pobieranie danych…', true);
@@ -204,6 +256,7 @@ async function loadFullDataInBackground() {
     try {
         const fullData = await apiService.fetchAllData({
             recentMonths: selectedRange || null,
+            force: true,
             onMeta: updateDataLoadInfo,
             onProgress: progress => {
                 setLoadAllButtonState(button, 'Pobieranie danych…', true);
@@ -230,12 +283,7 @@ async function loadFullDataInBackground() {
         setDataLoadStatus(formatDataLoadError(error), 'error');
     } finally {
         isLoadingFullData = false;
-        if (topProgressBar) {
-            setTimeout(() => {
-                topProgressBar.hidden = true;
-                topProgressBar.style.width = '0%';
-            }, 600);
-        }
+        hideTopProgress();
     }
 }
 

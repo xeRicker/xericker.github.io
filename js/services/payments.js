@@ -1,4 +1,4 @@
-import { apiService } from './api.js?v=170';
+import { apiService } from './api.js?v=171';
 
 export const PAYMENT_KINDS = [
     { id: 'zus', label: 'ZUS', icon: 'account_balance' },

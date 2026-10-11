@@ -1,4 +1,4 @@
-import { apiService } from '../services/api.js?v=171';
+import { apiService } from '../services/api.js?v=172';
 import {
     loadLocationCatalog,
     normalizeLocationCatalog,

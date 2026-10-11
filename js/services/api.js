@@ -6,11 +6,11 @@ import { reportCache } from './reportCache.js?v=102';
 
 const FILE_FETCH_CONCURRENCY = 10;
 const REPORT_INDEX_KEY = 'report-index';
-const REPORT_INDEX_TTL_MS = 24 * 60 * 60 * 1000;
 
 class ApiService {
     constructor() {
-        this.baseUrl = `https://api.github.com/repos/${GITHUB_CONFIG.REPO_OWNER}/${GITHUB_CONFIG.REPO_NAME}/contents/`;
+        this.repoUrl = `https://api.github.com/repos/${GITHUB_CONFIG.REPO_OWNER}/${GITHUB_CONFIG.REPO_NAME}`;
+        this.baseUrl = `${this.repoUrl}/contents/`;
         this.headers = {
             'Accept': 'application/vnd.github+json',
         };
@@ -198,15 +198,31 @@ class ApiService {
     async fetchReportIndex({ force = false } = {}) {
         if (isLocalhost()) return this.fetchLocalReportIndex();
 
-        const cached = force ? null : await reportCache.getEntry(REPORT_INDEX_KEY);
-        if (cached?.data?.kind === 'github' && Date.now() - cached.savedAt < REPORT_INDEX_TTL_MS) return cached.data;
+        const cached = await reportCache.getEntry(REPORT_INDEX_KEY);
+        const cachedIndex = cached?.data?.kind === 'github' ? cached.data : null;
+        const token = await this.fetchReportToken();
+        if (!force && cachedIndex && (!token || token === cachedIndex.token)) return cachedIndex;
 
-        const index = await this.buildGithubReportIndex();
+        const index = await this.buildGithubReportIndex(token);
         await reportCache.putEntry(REPORT_INDEX_KEY, index);
         return index;
     }
 
-    async buildGithubReportIndex() {
+    async fetchReportToken() {
+        const url = `${this.repoUrl}/commits?path=database&per_page=1`;
+
+        try {
+            const response = await this.fetchGithub(url, { headers: this.headers }, 'database commits');
+            if (!response.ok) return null;
+            const commits = await response.json();
+            return Array.isArray(commits) ? commits[0]?.sha || null : null;
+        } catch (error) {
+            console.warn('Report index token unavailable, using the cached listing.', error);
+            return null;
+        }
+    }
+
+    async buildGithubReportIndex(token = null) {
         const locRes = await this.fetchGithub(`${this.baseUrl}database`, { headers: this.headers }, 'database');
         if (!locRes.ok) throw await this.createGithubApiError(locRes, 'database');
 
@@ -219,6 +235,7 @@ class ApiService {
 
         return {
             kind: 'github',
+            token: token || '',
             files: filesByLocation.flat()
                 .map(file => ({
                     name: file.name,

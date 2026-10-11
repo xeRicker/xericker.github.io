@@ -1,4 +1,4 @@
-import { apiService } from './services/api.js?v=171';
+import { apiService } from './services/api.js?v=172';
 import { analytics } from './services/analytics.js?v=3';
 import { reportDateToIso } from './services/reportDates.js';
 import { adminRender } from './ui/adminRender.js?v=179';
@@ -242,8 +242,8 @@ async function loadFullDataInBackground() {
     const button = document.getElementById('loadAllDataBtn');
     const topProgressBar = document.getElementById('adminTopProgressBar');
     const selectedRange = Number(document.getElementById('loadDataRange')?.value || 0);
-    if (selectedRange && loadedMonthCount >= Math.min(selectedRange, availableMonthCount || selectedRange)) return;
     if (!selectedRange && isFullDataLoaded) return;
+    const requestedMonths = selectedRange ? Math.max(selectedRange, loadedMonthCount) : null;
     stopDataPreload();
     isLoadingFullData = true;
     setDataLoadStatus('', '');
@@ -255,7 +255,7 @@ async function loadFullDataInBackground() {
 
     try {
         const fullData = await apiService.fetchAllData({
-            recentMonths: selectedRange || null,
+            recentMonths: requestedMonths,
             force: true,
             onMeta: updateDataLoadInfo,
             onProgress: progress => {

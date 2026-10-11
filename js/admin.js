@@ -1,7 +1,7 @@
 import { apiService } from './services/api.js?v=170';
-import { analytics } from './services/analytics.js?v=2';
+import { analytics } from './services/analytics.js?v=3';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=178';
+import { adminRender } from './ui/adminRender.js?v=179';
 import { adminProducts } from './ui/adminProducts.js?v=170';
 import { createAdminListsPage } from './ui/adminLists.js?v=167';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=167';
@@ -19,6 +19,7 @@ import { getPaymentViews, getUpcomingPayments, summarizePayments } from './servi
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
 
 const DEFAULT_DATA_MONTHS = 1;
+const AVERAGE_WINDOW_DAYS = 31;
 const REVENUE_PAGE_SIZE = 14;
 const HEATMAP_MONTHS_PER_PAGE = 1;
 
@@ -660,15 +661,13 @@ function updateView() {
 }
 
 function getRevenueTargetKpi() {
-    const month = analytics.getLastFullMonth(processedData);
+    const rolling = analytics.getRollingAverage(processedData, AVERAGE_WINDOW_DAYS);
     const target = adminPayments.getSettings().dailyRevenueTarget;
 
     return {
-        hasFullMonth: Boolean(month),
-        averageDay: month ? month.averageDay : 0,
-        days: month ? month.days : 0,
+        rolling,
         target,
-        comparison: month ? analytics.getTargetComparison(month.averageDay, target) : null,
+        comparison: rolling ? analytics.getTargetComparison(rolling.averageDay, target) : null,
         trend: analytics.getRecentTrend(processedData)
     };
 }

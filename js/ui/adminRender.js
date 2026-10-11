@@ -343,7 +343,7 @@ class AdminRender {
 
     buildRevenueTargetTile(kpi) {
         if (!kpi) return '';
-        if (!kpi.hasFullMonth) return this.buildRevenueTargetEmptyTile();
+        if (!kpi.rolling) return this.buildRevenueTargetEmptyTile();
 
         const comparison = kpi.comparison;
         const tone = !comparison ? 'is-idle' : comparison.isBelow ? 'is-low' : 'is-ok';
@@ -354,9 +354,10 @@ class AdminRender {
                     <span class="revenue-target__title">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
                     ${this.buildRevenueTargetTrend(kpi.trend)}
                 </span>
-                <p>${formatMoney(kpi.averageDay)}</p>
+                <p>${formatMoney(kpi.rolling.averageDay)}</p>
                 ${this.buildRevenueTargetState(comparison)}
-                <small>${escapeHtml(this.buildRevenueTargetMeta(kpi))}</small>
+                <small>${escapeHtml(this.buildRevenueTargetMeta(kpi.rolling))}</small>
+                ${kpi.rolling.isFull ? '' : this.buildRevenueTargetLoad()}
             </div>
         `;
     }
@@ -365,16 +366,25 @@ class AdminRender {
         return `
             <div class="${cardClass('summary', 'summary-box summary-box--target is-empty')}">
                 <span class="summary-kicker">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
-                <small class="revenue-target__empty">Załaduj dane z co najmniej dwóch miesięcy, aby policzyć średni utarg dnia.</small>
-                <button class="btn-back revenue-target__load" type="button" data-load-more-data>
-                    ${renderMaterialIcon('database')} Załaduj dane
-                </button>
+                <small class="revenue-target__empty">Brak danych do policzenia średniego utargu dnia.</small>
+                ${this.buildRevenueTargetLoad()}
             </div>
         `;
     }
 
-    buildRevenueTargetMeta(kpi) {
-        return `Ostatni pełny miesiąc · ${kpi.days} dni`;
+    buildRevenueTargetLoad() {
+        return `
+            <button class="btn-back revenue-target__load" type="button" data-load-more-data>
+                ${renderMaterialIcon('database')} Załaduj dane
+            </button>
+        `;
+    }
+
+    buildRevenueTargetMeta(rolling) {
+        const range = rolling.newest === rolling.oldest
+            ? rolling.newest
+            : `od ${rolling.oldest} do ${rolling.newest}`;
+        return `${rolling.isFull ? `Ostatnie ${rolling.windowSize} dni` : `Ostatnie ${rolling.days} z ${rolling.windowSize} dni`} · ${range}`;
     }
 
     buildRevenueTargetState(comparison) {

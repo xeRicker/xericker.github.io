@@ -111,34 +111,23 @@ class AnalyticsService {
         return slugifyLocation(location);
     }
 
-    getMonthKey(date) {
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    }
+    getRollingAverage(data, windowSize = 31) {
+        const days = [...data]
+            .filter(day => day.dateObj)
+            .sort((left, right) => right.timestamp - left.timestamp)
+            .slice(0, windowSize);
+        if (!days.length) return null;
 
-    getLastFullMonth(data, reference = new Date()) {
-        const referenceKey = this.getMonthKey(reference);
-        const months = new Map();
-
-        data.forEach(day => {
-            if (!day.dateObj) return;
-            const key = this.getMonthKey(day.dateObj);
-            if (key >= referenceKey) return;
-            if (!months.has(key)) {
-                months.set(key, {
-                    key,
-                    year: day.dateObj.getFullYear(),
-                    month: day.dateObj.getMonth() + 1,
-                    total: 0
-                });
-            }
-            months.get(key).total += day.total;
-        });
-
-        const latest = Array.from(months.values()).sort((left, right) => right.key.localeCompare(left.key))[0];
-        if (!latest) return null;
-
-        const days = new Date(latest.year, latest.month, 0).getDate();
-        return { ...latest, days, averageDay: latest.total / days };
+        const total = days.reduce((sum, day) => sum + day.total, 0);
+        return {
+            windowSize,
+            days: days.length,
+            isFull: days.length >= windowSize,
+            newest: days[0].dateStr,
+            oldest: days[days.length - 1].dateStr,
+            total,
+            averageDay: total / days.length
+        };
     }
 
     getRecentTrend(data, windowSize = 7) {

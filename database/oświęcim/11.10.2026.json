@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "11.10.2026",
+  "revenue": 601,
+  "cardRevenue": 315,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,21:00"
+  },
+  "products": {
+    "Cheeser: Ser": 1,
+    "Cheeser: Bułki": 11,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Frytki": 1,
+    "Bułki": 14,
+    "Cebula prażona": 1
+  }
+}

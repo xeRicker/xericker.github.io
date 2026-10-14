@@ -1,151 +1,57 @@
 # AGENTS.md
 
-## Quick Reference
-- Run: `node dev-server.js` — serves static files and handles local JSON `PUT` writes under `database/`. Without it the site still opens but saves fail.
-- No test suite, no build/lint step.
-- Prod = GitHub Pages, static only, no `PUT`. Catalog/report JSON writes in prod go through `services/api.js` via the GitHub API instead.
+Static admin + generator site for BURBONE food trucks. ES modules, no bundler, no build/lint/test step. UI copy is Polish, code identifiers English. Visual rules live in `DESIGN.md`.
+
+## Commands
+- `node dev-server.js` — serves the site and handles local JSON `PUT` under `database/`. Without it the site opens but saves fail; check its terminal for save errors.
+- No test runner. Verify by exercising the changed flow in `index.html` / `admin.html`. For non-trivial pure logic, sanity-check with a throwaway `node -e` assert; don't add test files.
+- After any CSS change, check a mobile viewport (admin has dense grids and fixed row actions).
 
 ## Never
-- Native `alert/confirm/prompt` or native pickers — `select`/`date`/`time` go through `enhanceCustomControls()`, dialogs through `dialogService`.
-- Raw hex/rgb outside `css/theme/palette.css` (`color-mix()` only, derived from an approved variable).
-- A new dependency, wrapper, or abstraction when an existing `services/`/`components/` util already covers it.
-- A bespoke styled message — always `noticeService`/`dialogService` (`.notice--<info|success|danger|warning|muted|loading>`).
-- Decorative cards inside cards — cards are for repeated items, tables, panels, modals only.
-- Comments in code, of any kind (see Comment Policy).
-- An empty or silently-logged `catch` block (see Error Handling).
-- Deleting data under `database/`, changing the JSON data shape, or touching `auth.js` without confirming first.
+- Native `alert/confirm/prompt` or native `select`/`date`/`time` — use `dialogService` and `enhanceCustomControls()`.
+- Bespoke messages — only `noticeService` / `dialogService` (`.notice--<info|success|danger|warning|muted|loading>`).
+- Raw hex/rgb outside `css/theme/palette.css`; derive with `color-mix()` from an existing variable.
+- A new dependency, wrapper or abstraction when something in `js/services/` or `js/ui/components/` already covers it.
+- Cards inside cards. Cards are for repeated items, tables, panels and modals only.
+- Code comments of any kind. Strip ones you find in code you touch; no separate cleanup pass.
+- Empty or log-only `catch`. Every catch shows a notice/dialog or rethrows. A failed fetch/API call never resolves to a silent default.
+- Hardcoding, logging or printing the GitHub token used by `services/api.js`.
 
-## Setup
-- No install step confirmed — static HTML/ES modules, no bundler, no `package.json` dependencies referenced in this file. <!-- TODO: confirm whether `node dev-server.js` requires `npm install` -->
-- Run locally: `node dev-server.js` — serves static files and handles local JSON `PUT` writes under `database/`. Without it the site still opens but saves fail.
+## Ask first
+- Deleting anything under `database/`.
+- Changing the JSON data shape (requires updating `api.js`, `analytics.js`, `reportFormatter.js` and the admin panel together).
+- Touching `services/auth.js`.
+- Any request that could reasonably mean two different things.
 
-## Test
-- No test suite, no build/lint step. Verify by running `node dev-server.js` and exercising the changed flow in `index.html` / `admin.html`.
-- Non-trivial pure logic (new calc in `services/analytics.js`, date parsing, etc.): sanity-check with a throwaway `node -e` assert before wiring it in — don't add a permanent test file, there's no runner configured.
-- Check mobile viewport on any CSS change — admin has dense grids and fixed row actions.
+## Data model gotchas
+- Layout: `database/<location-folder>/<dd.mm.yyyy>.json` reports; catalogs `locations.json`, `employees.json`, `products.json`, `payments.json`, `settings.json`, `burgers.json`.
+- Dates: `dd.mm.yyyy` in reports, ISO `yyyy-mm-dd` in forms.
+- Locations: `path` (folder) is immutable, `name` is mutable, `aliases` keep old report names matched after a rename. Folder slug comes from `slugifyLocation`, never typed by hand. Names contain Polish characters (`Oświęcim`) — don't normalize paths. New/renamed locations need no code change.
+- Location switches are independent: `enabled: false` hides from the generator picker only; `stats: false` drops from every calculation but stays in generator and Listy; `deleted: true` archives from both, files stay, restore reinstates previous switches.
+- Admin data sets: `sourceData` (raw) → `allData` (archived removed, feeds Listy) → `statsData` (feeds all calculations). Calculations must use `statsData`.
+- Payments: status and remaining amount are derived in `services/payments.js`, never stored.
+- Generator state (`localStorage: burbone_state`) expires at local end-of-day; the one-shift temp employee is never persisted.
 
-## Deploy
-- Prod is GitHub Pages, static, no PUT. Code changes ship by pushing to the branch Pages serves. <!-- TODO: confirm branch name (main / gh-pages) -->
-- Catalog/report JSON writes in prod go through `services/api.js` via the GitHub API (commits files directly) — no separate deploy step for those.
-- The GitHub API token used by `services/api.js` comes from the runtime/session — never hardcode, log, or print it.
+## Environments
+- Prod is GitHub Pages: static, no `PUT`. Catalog/report writes go through `services/api.js` via the GitHub API; no separate deploy step for data. Code ships by pushing to the Pages branch.
+- Catalog reads prefer the GitHub API over the Pages CDN when a token is configured (Pages lags after a save). A catalog changed in another tab prompts for confirmation instead of silently reverting.
+- Localhost: `fetchAllData` merges real `database/` reports with generated mock data for the last 3 months (`services/mockData.js`); a real report for the same location+date wins. Prod never generates.
+- A failed catalog write keeps the panel dirty with an actionable message — read it before assuming a bug elsewhere.
+- The site must stay unindexed (`robots.txt` disallow, `noindex` on both pages).
 
-## Debug
-- User-facing errors/success surface only via `noticeService`/`dialogService` (see Key Modules) — never invent a bespoke message.
-- A failed catalog write keeps the panel dirty with an actionable message (`saveLocalJson` re-reads, `saveGithubConfig` diffs the API response) — read that message before assuming a bug elsewhere.
-- Local save failures: check the `node dev-server.js` terminal output.
+## Conventions
+- Tokens only: colors from `css/theme/palette.css`, fonts via `--font-body` / `--font-heading`. A new palette role is added to `palette.css` and `DESIGN.md` in the same change.
+- Icons via `renderMaterialIcon()` with real Material Symbols ligature names; a bad name renders as overlapping text.
+- Naming: one word per concept. `location` is canonical (not "point") in new code. Catalog modules use add / rename / visibility-toggle / remove — don't mix in create/update/delete. Booleans read as assertions: `isArchived`, `hasReport`, `canEdit`.
+- Size: files ~400 lines, functions ~50, nesting ~3 levels. Split along an existing seam (never a grab-bag `utils.js`) and flatten with guard clauses. These are splitting triggers, not rewrite triggers.
 
-## Stack
-Static HTML (`index.html`, `admin.html`) + ES modules, no bundler. CSS via `style.css`. Chart.js from CDN (admin only). Icons: Material Symbols Rounded. Data: JSON in `database/<location>/<dd.mm.yyyy>.json`. Catalogs: `database/locations.json`, `employees.json`, `products.json`, `payments.json`, `settings.json`.
+## Working style
+- Before writing code: reuse an existing util/pattern → native feature → installed dependency → shortest correct one-liner. Grep real usage; don't trust memory of file layout or library APIs.
+- A bug report names one symptom — grep every caller and fix the shared function once.
+- No unrequested features, options, copy or UI. Match existing patterns over parallel ones.
+- Reversible ambiguity: state the assumption in one line and proceed; list assumptions at the top of the summary.
+- Terse summaries: which files changed and why, one or two lines.
+- Update this file only when a change makes a statement here false.
 
-## Layout
-List the repo and grep actual usage before writing code — don't trust a hardcoded tree, a remembered file layout, or a memorized library API/version; verify against what's actually imported/called here. Stable shape:
-- `css/theme/palette.css` — design tokens & active palette; `css/theme/overrides.css` — component consistency pass
-- `css/shared/` — base, layout, animations/loader/feedback
-- `css/components/` — shared controls (notice, custom-controls)
-- `css/admin/` — per-tab admin styles; `css/generator/` — generator and burgers styles
-- `js/config/` — static config, fixed team data
-- `js/services/` — data models & I/O: api, auth, adminAccess, locations, employees, products, payments, settings, marketing, analytics, revenue, reportDates, reportFormatter, mockData, reportCache, storage
-- `js/ui/` — page controllers; `js/ui/components/` — shared UI (Card, customControls + controlPopover/customCalendar/inputEnhance/dialogService, notice)
-- `database/` — catalogs + per-location report JSON
-
-## Key Modules
-- `main.js` — report generator, generator/employees tabs, one-shift temp employee, persistent form state
-- `admin.js` — admin controller: filters, tabs, revenue, calculator, point-catalog mapping. Holds `sourceData` (raw), `allData` (archived points removed, feeds Listy), `statsData` (feeds all calculations)
-- `ui/adminLists.js` — saved lists, filtering, preview, copy
-- `ui/adminProducts.js` — product catalog: order, types, active state; delegates drag & drop to `ui/components/productDrag.js`
-- `ui/components/productDrag.js` — drag & drop reordering: categories move via the `[data-category-drag]` handle, products via the whole row; reports the new DOM order back through `onProductsDropped`/`onCategoriesDropped`, the model sort and the landing animation stay in `adminProducts.js`
-- `ui/components/productIconPicker.js` — category icon dialog: `CATEGORY_ICON_GROUPS` (`{ label, icons[] }` sections — dania i fast food, sałatki i warzywa, pieczywo i nabiał, słodycze i desery, napoje i alkohol, kuchnia i grill, opakowania i magazyn, sprzątanie i higiena, kasa/ceny/dokumenty, narzędzia) with an icon-only grid and sticky group headers; `CATEGORY_ICON_OPTIONS` is the flat list derived from the groups; opened from the add-category form and from a category header
-- `ui/adminEmployees.js` — team catalog: add/rename/visibility/remove
-- `ui/adminLocations.js` — point catalog: add/rename/visibility/stats switch/archive-restore; `database/` folder slug is generated from the name (`slugifyLocation`), not typed by hand
-- `ui/adminPayments.js` — payments catalog: obligations/debts, kinds, due dates, recurrence, partial payments, archive, remove; dirty-state save like the other catalogs. Also owns `database/settings.json` for the page: the „Próg średniego utargu” field (`#revenueTargetInput`) at the top, saved by the same „Zapisz” button, exposed to the Utargi tile via `getSettings()`/`onSettingsSaved`
-- `ui/components/paymentEditDialog.js` — the „Edytuj zobowiązanie” dialog (all fields incl. `kind`/`recurrence` in one custom-controls form), reused by `adminPayments.js`
-- `ui/adminMarketing.js` + `services/marketing.js` + `config/marketing.js`/`config/marketingBurgers.js` — Marketing tab: assembles Facebook/Instagram post drafts from `database/burgers.json` presets; `config/marketing.js` holds the post-type template pools (structures, CTAs, questions, Instagram captions), hashtags, brand phones/hours and post types, while `config/marketingBurgers.js` holds the per-burger hooks/tastes/descriptions. Locations, Glovo or a promo come from the form. Copy-only, nothing is saved
-- `ui/adminRender.js` — summaries, charts, tables, heatmap, tooltips, weekly overview, payments reminder and the „Średnia” tile (target state + 7-day trend) for the Utargi page
-- `ui/payrollCalculator.js` — shared hours calculator (main + admin); rate/date disabled until employee chosen; EKIPA-hidden people excluded; exposes the last summary via `getSummary()` and an `onRecalc` callback
-- `ui/payslip.js` — admin Wynagrodzenia „PASEK”: draws the calculator summary to a branded PNG payslip (canvas) and opens it in a new tab; the PASEK panel is currently removed from `admin.html`, so `setupPayslipGenerator` returns a no-op until the panel returns
-- `ui/components/customControls.js` — custom select/date/time controls: turns native `select`/`date`/`time` into popovers, mirrors native `disabled` onto the visible control, keeps the hidden native control out of the tab order and sets `aria-expanded` on triggers; `enhanceCustomControls(root)` is the entry point and also runs `enhanceCustomInputs()`. Re-exports `dialogService` for its existing callers
-- `ui/components/controlPopover.js` — floating popover machinery behind the custom controls: open/close state, mounting to `body`, viewport-aware position/height, outside-click, Escape and resize handling
-- `ui/components/customCalendar.js` — month grid and time list for the date/time popovers (day markers, today, prev/next month)
-- `ui/components/inputEnhance.js` — text and number field enhancement for `enhanceCustomControls()`: clear button inside `.field-clearable`, `autocomplete`/`spellcheck`/`enterkeyhint` hints, select-on-focus for numeric fields, plus the shared `labelText()` helper
-- `ui/components/dialogService.js` — `dialogService.*` (`alert`/`success`/`error`/`warning`/`confirm`/`prompt`): locks page scroll, traps focus, closes on Esc (input dialogs) or backdrop click (confirm/alert) and returns focus to the opener; `confirm(message, title, { destructive, confirmLabel, cancelLabel })` renders a red action button and focuses „Anuluj”
-- `ui/components/notice.js` + `css/components/notice.css` — the only message system: `.notice--<info|success|danger|warning|muted|loading>` via `noticeService.render()`, transient success via `noticeService.toast()` (`.notice--toast`, auto-dismiss scaled to the text length, closable, replaces the previous toast), dialogs via `dialogService.*`
-- `services/reportDates.js` — report date parsing/keys/sorting
-- `services/api.js` — GitHub API or local dev-server I/O; report paths come from the point's catalog folder; bulk report fetches run at higher concurrency and go through `reportCache`. The report index (per-location file listing) is cached, never stale: every load probes a freshness token — the SHA of the last commit touching `database/` on GitHub (`/commits?path=database&per_page=1`), the `__local-data` mtime version on localhost — and only re-lists the folders when the token differs from the cached one (a failed probe falls back to the cache; `fetchAllData({ force: true })` re-lists regardless, `saveReport` drops the cached index); on localhost merges real `database/` reports with generated ones
-- `services/reportCache.js` — IndexedDB cache: report JSON keyed by Git blob SHA (bulk month loads download only new/changed files, oldest entries pruned past 4000) plus named entries (`getEntry`/`putEntry`/`deleteEntry`) for the report index; both layers keep a per-session in-memory map so the same file is never read twice on a page
-- `services/mockData.js` — localhost-only generator: the last 3 months of report-shaped data (revenue, shifts, products) built from the live catalogs, used to fill missing location-days
-- `services/locations.js` — point catalog: normalize, resolve report names → points (name/folder/aliases), visibility, stats switch, filters
-- `services/employees.js` — team catalog: normalize, resolve report names → people, visibility
-- `services/auth.js` — admin password check; only PBKDF2 salt+digest live in source, never the plaintext
-- `services/payments.js` — payments catalog: normalize, derive status (do zapłaty/częściowe/przeterminowane/zapłacone), partial-payment sums, upcoming reminders, summaries
-- `services/settings.js` — `database/settings.json` (`{ version, updatedAt, dailyRevenueTarget }`): normalize, load, save; `dailyRevenueTarget` is the profitability threshold (`0` = unset), edited only from the Opłaty tab
-- `services/analytics.js` — daily aggregation/stats; per-point keys derive from point name, so new points need no code change. Also the pure KPI helpers: `getRollingAverage()` (mean daily utarg over the last N report days, `isFull` once the window is filled), `getRecentTrend()` (last 7 days vs the previous 7) and `getTargetComparison()`
-
-## Design Tokens
-Dark Atlassian-style dashboard, warm accent palette, compact radii, dense admin views, consistent type. Use aliases from `css/theme/palette.css` / `css/base.css` only.
-
-Colors — always via variables:
-- `--primary-color/-hover/-pressed` — brand & main actions (orange stays the only dominant accent)
-- `--primary-soft/--surface-active/--primary-glow` — soft selected/active surfaces
-- `--bg-color` / `--surface-color` / `--surface-raised` / `--surface-overlay` — page bg / default panels / raised panels & inputs / overlays, dropdowns, dialogs, tooltips
-- `--border-color` / `--border-focused` — borders / focus-active borders
-- `--text-primary` / `--text-secondary` / `--text-muted` — headings & key values / supporting text / low-emphasis metadata
-- `--app-text-inverse` — text on strong filled buttons/badges
-- `--success-color/--app-success-bg`, `--danger-color/--app-danger-bg`, `--glovo-color/-dark/-soft`, `--app-info/--app-info-bg` — semantic status colors
-- `--app-chart-1..5` — charts
-- New palette role → add to `css/theme/palette.css` AND this list, same change. Migrate hard-coded colors to variables when you touch that block.
-
-Typography — existing stacks only:
-- `--font-body` — body text, inputs, table cells, descriptions, report content
-- `--font-heading` — headings, labels, buttons, tabs, table headers, compact controls
-- Letter spacing `0` unless matching an existing uppercase label pattern. Fixed sizes — handle overflow via wrapping/layout, not shrinking text.
-
-Icons via `renderMaterialIcon()` — real ligature names only; a bad name renders as overlapping text, since `.material-symbols-rounded` clips via `overflow: hidden` rather than breaking layout.
-
-## Comment Policy
-- No comments in code. None. Not narrative, not a one-line purpose note, not a `ponytail:` marker — the project is vibe-coded, so skip all of it. If code needs explaining, fix naming/structure instead.
-- Strip any comments you find in code you touch in passing; don't do a separate cleanup pass unless asked.
-
-## Naming
-- Pick the existing word for a concept and use it everywhere — don't introduce a synonym mid-codebase. `location` (matches `locations.json`, `services/locations.js`, `ui/adminLocations.js`) is the canonical term for a food-truck site in the catalog; treat "point" as this file's casual shorthand, not a name to start using in new code or variables.
-- Match the CRUD verb set a catalog module already uses (`adminLocations.js`/`adminEmployees.js` use add/rename/visibility-toggle/remove) — don't introduce `create`/`update`/`delete` alongside it for the same catalog.
-- Booleans read as assertions: `isArchived`, `hasReport`, `canEdit` — not `archived`, `report`, `editable`.
-
-## Code Size
-- Files: soft limit ~400 lines. Past that, split along an existing seam (a sub-tab, a catalog, a render concern) into a new module in the same folder — never into a grab-bag `utils.js`.
-- Functions: ~50 lines. Past that, extract named helpers for each distinct step instead of one function doing everything.
-- Nesting: max ~3 levels of `if`/`for`/callback. Flatten with early returns/guard clauses instead of adding another level.
-- These are splitting triggers, not rewrite triggers — split without changing behavior; don't refactor logic you weren't asked to touch.
-
-## Error Handling
-- No empty `catch` and no `catch (e) { console.log(e) }` — every catch either shows a `noticeService`/`dialogService` message or rethrows so the caller can.
-- Never let a failed `fetch`/API call resolve to a silent default — surface it through the notice system so whoever's using the panel knows the save or load failed (see Debug on reading catalog-write error messages).
-
-## Working Style
-- Full read/write repo access; verify freely — see Never for the confirm-first exceptions.
-- Before writing code, climb: reuse an existing util/pattern → stdlib/native feature → an already-installed dependency → shortest correct one-liner (edge-case-correct beats merely shorter). Skip a rung only if the one above genuinely doesn't cover it. New options default to off, no unrequested abstractions.
-- A bug report names one symptom — grep every caller of the function you're fixing and patch the shared function once, not just the reported path.
-- No unrequested features/options/copy/UI beyond what was asked.
-- Match existing patterns (notice system, customControls, catalog model) over a parallel one.
-- Terse responses: which files changed and why, in a line or two. No restating the request, no explaining unchanged code.
-- State a reasonable assumption in one line and proceed, for anything reversible. Stop and ask instead when the request could reasonably mean two different things, or touches anything in the Never confirm-first list. List any assumption you did make at the top of your summary.
-- Keep this file in sync: renaming/moving/deleting a file, adding/removing a service, or changing a catalog field/switch documented here → update every reference in this file in the same change.
-
-## Data & Behavior Notes
-- Report dates: `dd.mm.yyyy`; UI form dates: ISO `yyyy-mm-dd`.
-- `js/config/data.js` teams are fixed; the generator can add one temporary employee per report (not persisted to `localStorage`, gone on reload/reset).
-- Points live in `database/locations.json`, not code: mutable `name`, immutable `path` (folder), `aliases` (keep old report names matched after a rename). Generator, Listy filter, and every stat resolve names through this catalog — new/renamed points need no code change.
-- Point switches, independent: `enabled: false` — hidden from generator picker only, still counted/saved. `stats: false` — stays in generator + Listy, dropped from every calculation (`statsData` in `admin.js`). `deleted: true` — archived out of both; files stay untouched in `database/<path>/`; restore reinstates prior switch values.
-- Catalog reads prefer the GitHub API over the Pages CDN when a token is configured (`fetchRootCatalog`), since Pages can lag right after a save. `locations.json` carries `updatedAt`; a catalog changed in another tab prompts for confirmation instead of silently reverting.
-- Locations may contain Polish characters (e.g. `Oświęcim`) — don't normalize aggressively without checking `database/` paths.
-- Changing the JSON data shape requires updating `api.js`, `analytics.js`, `reportFormatter.js`, and the admin panel together.
-- Payments live in `database/payments.json` (new catalog; `{ version, updatedAt, items[] }`). Item: mutable `title`, `kind`, `contractor`, `amountTotal`, `dueDate` (ISO), `recurrence`, `note`, `archived`, plus `payments[]` partial payments `{ id, date, amount, note }`. Status and remaining amount are derived in `services/payments.js`, never stored. `PAYMENT_KINDS` entries carry an `icon` (Material Symbols ligature) rendered in the obligation list and the kind select. The Utargi page shows a reminder panel with overdue/due-soon totals and open obligations as a share of the selected period's utarg. „Edytuj” opens every field (including `kind`/`recurrence`) in one dialog; „Archiwizuj” keeps the item and its payment history, „Usuń” removes the item from the catalog outright — both go through `dialogService.confirm` and still need „Zapisz”.
-- Utargi period: `monthFilter` offers months plus `all` and `custom`; `custom` reveals the `#rangeFrom`/`#rangeTo` date inputs and filters `currentData` through `filterByCustomRange`. The range drives the visualization chart too (`getChartData`); an empty range renders the `.chart-wrapper__empty` state instead of an empty Chart.js instance.
-- Utargi summary tiles: Utarg, Karty, Glovo, „Średnia” and the week-events tile (the Gotówka tile was replaced — cash stays in the table column, tooltips and location cards). „Średnia” ignores the period filter and the month name: it rolls over the last `AVERAGE_WINDOW_DAYS` (31) report days loaded in `processedData` — newest day included, days without a report are skipped, so it moves with every new list — and shows `sum of day totals / days in window`, labelled `Ostatnie 31 dni · od <dd.mm.rrrr> do <dd.mm.rrrr>` (or `Ostatnie N z 31 dni` while fewer than 31 report days are loaded). Under 31 loaded days the tile also keeps the „Załaduj dane” prompt, whose button (`[data-load-more-data]`) runs the same `loadFullDataInBackground` as the header; only with no report days at all does it render the empty tile. Above `dailyRevenueTarget` it glows green, below it turns into a warning — the verdict is two lines (percentage over the threshold, then the surplus/shortfall per day) — and without a threshold it just says the threshold is unset. The 7-day trend (last 7 days vs the previous 7) is a chip in the tile head. The threshold itself is edited on the Opłaty page, not here.
-- Generator form state (`localStorage: burbone_state`) expires at local end-of-day — an evening list survives a browser close, resets the next day.
-- On localhost `fetchAllData` always merges real `database/` reports with generated data for the last 3 months (`services/mockData.js`); a real report for the same location+date wins. Prod (`GitHub Pages`) never generates. The dev server's `__local-data` returns `{ version, reports }` (`version` = file count + newest mtime) and answers `204` when the caller sends a `version` that still matches, so an unchanged `database/` is never re-transferred.
-- Admin data loading: the panel opens on the newest month with reports (`DEFAULT_DATA_MONTHS = 1`), then `preloadOlderMonths()` pulls the older months one at a time, previous month first, up to `PRELOAD_DATA_MONTHS = 4`, re-applying the loaded set after each step. Every load first probes the report index token, so a list generated since the last visit is picked up without clearing anything — the day-long index cache only skips the folder listing itself. `loadFullDataInBackground` (`#loadAllDataBtn` and the „Średnia” tile prompt) stops the preload, bypasses the cached index and loads `max(selected range, already loaded months)`, so it re-checks for new data without shrinking the loaded range.
-- Marketing posts are generated in the browser and copied to the clipboard — no catalog, no persistence. Brand data (locations, phones, opening hours, Glovo availability), post types, the per-type post templates/CTAs/questions/Instagram captions and hashtags live in `js/config/marketing.js`; per-burger hooks/tastes/descriptions live in `js/config/marketingBurgers.js`. Burger presets come from `database/burgers.json` and resolve to a preset id + copy entry, and an untouched `Opis burgera` field rotates through the burger's description pool. Each click composes a fresh template, so the FB/IG outputs differ between generations.
-- Site is meant to stay unindexed: `robots.txt` disallows all, both pages carry `noindex`. GitHub Pages can't send custom headers, so `X-Robots-Tag` would need a proxy/CDN in front.
-
-## Failure Log
-This file grows from real mistakes, not anticipated ones. When you get corrected on something specific to this repo, add one line here in the imperative, then keep going. Keep it specific to this repo — general advice belongs in the sections above, not here.
+## Failure log
+Add one imperative line, specific to this repo, whenever you are corrected on something.

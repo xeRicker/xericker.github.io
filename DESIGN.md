@@ -1,6 +1,6 @@
 ---
 name: Burbone
-description: A professional operations hub for the daily work of a burger restaurant.
+description: Dark, dense operations hub for a burger restaurant. One neon-orange accent signals action and state.
 colors:
   brand-orange: "#D4521A"
   brand-orange-hover: "#E76A32"
@@ -23,11 +23,6 @@ typography:
     fontSize: "24px"
     fontWeight: 700
     lineHeight: 1.2
-  headline:
-    fontFamily: "Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif"
-    fontSize: "22px"
-    fontWeight: 700
-    lineHeight: 1.25
   title:
     fontFamily: "Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif"
     fontSize: "18px"
@@ -58,7 +53,7 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.brand-orange}"
-    textColor: "{colors.text-primary}"
+    textColor: "{colors.app-black}"
     rounded: "{rounded.sm}"
     padding: "8px 20px"
   button-ghost:
@@ -79,120 +74,53 @@ components:
 
 # Design System: Burbone
 
-## Overview
+Professional, calm, scannable. Hierarchy comes from tonal contrast, text size and sparing orange — never from decoration.
 
-**Creative North Star: "A night kitchen under control"**
+## Hard limits
+- **4 font sizes (24 / 18 / 14 / 12), 2 weights (400 / 700), one family.** No new sizes; handle overflow with wrapping or layout, not smaller text.
+- **Spacing only from the scale** (4, 8, 12, 16, 20, 24). No arbitrary pixel values.
+- **Colors only from the tokens above.** No new dominant colors, no gradients, no pure white or pure black as primary contrast.
+- **Emphasis budget:** roughly 60% app-black/neutral, 30% surfaces, 10% orange. If everything is highlighted, nothing is.
 
-Burbone has the character of a professional operations hub working in the background of the venue: dark surfaces limit visual noise, while a neon orange accent immediately signals an action, an active state, or an important result. The system is concrete and utilitarian, yet keeps the warmth that comes from the burger restaurant brand.
-
-The layout is dense, functional, and built on clear panels. Hierarchy comes primarily from tonal contrast, text size, and the limited use of orange, not from decorative flourishes.
-
-**Key Characteristics:**
-- Professional, operational tone
-- Black theme with a neon orange accent
-- Dense, scannable panels and controls
-- Warm neutral text instead of pure white
-- Material Symbols icons as functional markers
-
-## Colors
-
-The palette combines a near-black background with warm, brown-toned surfaces and one dominant accent: Burbone's neon orange.
-
-### Primary
-- **Burbone neon orange**: The main color for actions, active tabs, selected products, icons, and key results.
-- **Orange hover state**: A lighter reaction to interaction and focus.
-- **Dark orange pressed**: The pressed state and a stronger variant of the accent.
-
-### Neutral
-- **Operational black**: The app's main background.
-- **Warm surface**: Standard cards, sections, and tables.
-- **Raised surface**: Form fields, control groups, and tonally active elements.
-- **Overlay layer**: Dropdowns, dialogs, tooltips, and elements floating above the content.
-- **Warm white**: The most important values and primary text.
-- **Warm gray**: Descriptions, labels, and supporting text.
-
-### Named Rules
-**The One Accent Rule.** Orange is a signal of action or state; it is not meant to decorate every surface.
+## Color
+- Orange means action, active state or the key result. It is not decoration.
+- Hover: `brand-orange-hover`. Pressed: `brand-orange-pressed`. Selected/active fill: `brand-orange-subtle` plus an orange outline.
+- Text: `text-primary` for key values, `text-secondary` for descriptions, `text-muted` for metadata. Text on filled orange is `app-black`.
+- Semantic colors (`success`, `danger`, `warning`, `info`) only for status, and never as a second accent.
 
 ## Typography
-
-**Display Font:** Segoe UI (with system sans-serif fallbacks)
-
-**Body Font:** Segoe UI (with system sans-serif fallbacks)
-
-**Label/Mono Font:** No separate mono typeface; technical values use the existing body stack.
-
-**Character:** A single type family keeps a professional, calm rhythm. Heavier weights and label small caps support scanning panels, while body text stays neutral and readable.
-
-### Hierarchy
-- **Display** (700, 24px, 1.2): The brand name and the most important titles.
-- **Headline** (700, 22px, 1.25): Main surface headings and key values.
-- **Title** (700, 18px, 1.3): Section and card headings.
-- **Body** (400, 14px, 1.5): Descriptions, forms, tables, and report content.
-- **Label** (700, 12px, 1.2, slightly increased tracking): Control labels, statuses, and supporting headings.
+- Display 24/700: brand name and top-level titles. Title 18/700: section and card headings. Body 14/400: forms, tables, reports. Label 12/700 with +0.02em tracking: control labels and statuses.
+- Large numbers (KPIs, totals): body family with `font-variant-numeric: tabular-nums` so values don't jump as digits change. For a decimal part, reuse the Title size instead of adding one.
 
 ## Layout
+- Generator: single column, ~600px container, tabs switch views. Admin: ~1240px, dense grids, tables, analytic panels.
+- Group related elements tightly and separate groups with larger gaps; spacing inside elements follows the same scale.
+- Mobile: grids collapse to one column, tabs wrap or scroll, filters stack. Touch targets stay comfortable without losing density.
 
-The generator uses a central container about 600px wide, while the admin panel expands to about 1240px. Sections are stacked vertically and grouped into cards; the generator switches between main views with tabs, while administration uses dense grids, tables, and analytical panels.
-
-The rhythm is based mainly on spacing of 8, 12, 16, 20, and 24px. On smaller screens, grids collapse to a single column, tabs may wrap, and filter controls stack vertically. The interface must keep comfortable touch targets without losing information density.
-
-## Elevation & Depth
-
-The system uses a hybrid of tonal layering and subtle shadows. Ordinary cards are distinguished from the background primarily by surface color and a thin outline. Shadow is reserved for raised elements, overlays, dialogs, and selected interaction states.
-
-### Shadow Vocabulary
-- **Raised:** `0 1px 1px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 244, 238, 0.04)` — the standard card lift.
-- **Overlay:** `0 12px 28px rgba(0, 0, 0, 0.46), 0 0 0 1px var(--app-border)` — dropdowns, tooltips, and dialogs.
-
-### Named Rules
-**The Layered Surface Rule.** Use surface difference first, shadow only after; shadow should not replace structure.
-
-## Shapes
-
-The form is compact and slightly rounded. Standard cards and larger groups use a 12px radius, smaller controls use 6px, and statuses and toggles use pill shapes. Outlines are thin, warm, and semi-transparent; a stronger outline appears on focus or activity.
+## Depth and shape
+- Layer by surface tone first, shadow only for lift or overlay. Cards: `surface-dark` + thin warm outline.
+- Raised: `0 1px 1px rgba(0,0,0,.5), 0 0 0 1px rgba(255,244,238,.04)`. Overlay: `0 12px 28px rgba(0,0,0,.46), 0 0 0 1px var(--app-border)`.
+- Radius: 12px cards/groups, 6px controls, pill for statuses and toggles. Outlines are thin and warm; stronger on focus or active.
 
 ## Components
+- **Button primary:** orange, 6px radius, `8px 20px`, lighter on hover, visible focus ring. **Ghost:** transparent or tonal, `text-secondary`, outline.
+- **Input:** `surface-raised`, thin outline, 6px radius; focus = orange outline + subtle ring; error = `danger`; disabled lowers contrast but stays visible.
+- **Tabs/toggles:** neutral text, gentle surface change on hover; active = orange label/icon/outline + tonal background.
+- **Icons:** Material Symbols Rounded as functional markers, not ornaments.
+- **Daily Operations Generator:** one flow (revenue, team, burgers, ingredients, hours) that shows the next step, keeps form state, and ends in a clear generate/copy action.
 
-### Buttons
-- **Shape:** A compact 6px radius with a clear touch target.
-- **Primary:** Neon orange with dark contrasting text, usually `8px 20px` of padding.
-- **Hover / Focus:** A lighter orange hover and a visible focus ring based on the brand color.
-- **Secondary / Ghost:** A transparent or tonal background, calmer text, and an outline; used for supporting actions.
+## Copy
+- Labels are short and say what the action does. A button names its real outcome, not an adjacent one.
+- Don't repeat words already in the heading or section label above. State once, then drop it from values and buttons.
+- Prefer clarity over completeness; if a label needs a second sentence, the layout is wrong.
 
-### Cards / Containers
-- **Corner Style:** 12px for sections and cards, 6px for smaller elements.
-- **Background:** A warm dark surface on a black background; raised surface for control groups.
-- **Shadow Strategy:** Shadows only for lift or overlay.
-- **Border:** A thin semantic outline, orange when active.
-- **Internal Padding:** Most often 16–24px.
+## Do
+- Reuse the same visual pattern for related things (same marker, same chip) so users connect them without reading.
+- Choose the simpler visual when unsure: a clear chart beats a fancy one.
+- Keep labels, keyboard focus and semantic control states.
+- Design the mobile generator and dense admin together.
 
-### Inputs / Fields
-- **Style:** A raised dark surface, a thin outline, a 6px radius, and readable primary text.
-- **Focus:** An orange outline and a subtle ring.
-- **Error / Disabled:** Error uses the semantic danger color; disabled lowers contrast without hiding the state.
-
-### Navigation
-- **Style:** Tabs and toggles are compact, built on UI typography and the active surface.
-- **Default / Hover:** Neutral text and a gentle surface change.
-- **Active:** An orange label, icon, or outline plus a tonal active background.
-- **Mobile:** Tabs may move to a single column or a scrollable list depending on context.
-
-### Signature Component: Daily Operations Generator
-The generator is the product's main component: it combines the revenue, team, burgers, ingredients, and hours calculator sections into one flow. It should expose the next step, keep the form state, and end with a clear action to generate or copy the list.
-
-## Do's and Don'ts
-
-### Do:
-- **Do** use the existing color aliases and tokens instead of new values.
-- **Do** reserve neon orange for action, activity, and important results.
-- **Do** keep one type family and a spacing rhythm based on small, repeatable steps.
-- **Do** design for the mobile generator and the dense admin panel in parallel.
-- **Do** preserve labels, keyboard focus, and semantic control states.
-
-### Don't:
-- **Don't** add new dominant colors or arbitrary gradients.
-- **Don't** use pure white and pure black as the primary contrast when warm text and surface tokens exist.
-- **Don't** turn every section into a decorative card inside another card.
-- **Don't** sacrifice data readability for visual effects.
-- **Don't** change existing data formats, features, or control behavior during visual work.
+## Don't
+- Put cards inside cards or add effects that cost data readability.
+- Add gradients, blur, stacked shadows or skeuomorphic effects.
+- Change data formats, features or control behavior during visual work.

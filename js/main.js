@@ -5,7 +5,7 @@ import { storageService } from './services/storage.js';
 import { apiService } from './services/api.js?v=172';
 import { calculateCashDesk } from './services/revenue.js';
 import { getFormattedDate, parseAmountInput } from './utils.js';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=167';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=168';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=174';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=162';
 import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=167';

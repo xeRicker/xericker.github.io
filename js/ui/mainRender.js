@@ -36,7 +36,7 @@ export const mainRender = {
         const safeName = escapeHtml(name);
 
         return `
-            <div class="${cardClass('employee-row', `employee-row animate-stagger ${temporary ? 'employee-row--temporary active' : ''}`)}" data-employee-id="${safeId}" data-temporary-employee="${temporary ? 'true' : 'false'}" style="animation-delay:${delay}s">
+            <div class="${cardClass(`employee-row animate-stagger ${temporary ? 'employee-row--temporary active' : ''}`)}" data-employee-id="${safeId}" data-temporary-employee="${temporary ? 'true' : 'false'}" style="animation-delay:${delay}s">
                 <div class="employee-info">
                     <div class="avatar" style="background-color:${escapeHtml(color)}">${escapeHtml((name || 'N')[0])}</div>
                     ${temporary
@@ -58,7 +58,7 @@ export const mainRender = {
 
     renderTemporaryEmployeeButton(delay = 0) {
         return `
-            <button class="${cardClass('employee-row', 'employee-row employee-row--add animate-stagger')}" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
+            <button class="${cardClass('employee-row employee-row--add animate-stagger')}" type="button" data-add-temporary-employee="true" style="animation-delay:${delay}s">
                 <div class="employee-info">
                     <div class="avatar avatar--new">${renderMaterialIcon('person_add')}</div>
                     <div class="emp-name">
@@ -119,7 +119,7 @@ export const mainRender = {
             const name = escapeHtml(p.name);
             if(p.type === 's' || p.type === 'toggle') {
                 return `
-                        <div class="${cardClass('product', 'product-card animate-stagger type-toggle')}" data-name="${name}" style="animation-delay:${delay}s">
+                        <div class="${cardClass('product-card animate-stagger type-toggle')}" data-name="${name}" style="animation-delay:${delay}s">
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <span class="toggle-indicator">
@@ -130,7 +130,7 @@ export const mainRender = {
                         </div>`;
             } else {
                 return `
-                        <div class="${cardClass('product', 'product-card animate-stagger')}" data-name="${name}" style="animation-delay:${delay}s">
+                        <div class="${cardClass('product-card animate-stagger')}" data-name="${name}" style="animation-delay:${delay}s">
                             <div class="product-name">${name}</div>
                             <div class="controls">
                                 <div class="counter-wrapper">

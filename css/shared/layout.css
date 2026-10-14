@@ -8,7 +8,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     background: var(--surface-color);
     padding: 20px 24px;
     border-radius: var(--radius-md);
@@ -18,7 +18,7 @@
 }
 
 .header-bar h1 {
-    font-size: 22px;
+    font-size: 24px;
     color: var(--primary-color);
     margin: 0;
 }
@@ -26,7 +26,7 @@
 .brand-block {
     display: inline-flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     min-width: 0;
 }
 
@@ -37,7 +37,7 @@
 .brand-logo {
     width: 42px;
     height: 42px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     object-fit: cover;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-raised);
@@ -45,7 +45,7 @@
 }
 
 .header-copy p {
-    margin: 6px 0 0;
+    margin: 8px 0 0;
     color: var(--text-secondary);
     font-size: 14px;
 }
@@ -57,7 +57,7 @@
     gap: 8px;
     padding: 8px 20px;
     border-radius: var(--radius-pill);
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-primary);
     background: var(--surface-raised);
     border: 1px solid var(--border-color);
@@ -107,7 +107,7 @@
 .generator-tabs {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 24px;
 }
 
@@ -116,7 +116,7 @@
     background: var(--surface-color);
     color: var(--text-secondary);
     border-radius: var(--radius-pill);
-    padding: 14px 18px;
+    padding: 12px 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -172,7 +172,7 @@
 .field-icon,
 .loc-icon {
     min-width: 22px;
-    font-size: 20px;
+    font-size: var(--icon-size);
 }
 
 .field-icon--glovo {
@@ -180,5 +180,5 @@
 }
 
 .generator-tab .material-symbols-rounded {
-    font-size: 20px;
+    font-size: var(--icon-size);
 }

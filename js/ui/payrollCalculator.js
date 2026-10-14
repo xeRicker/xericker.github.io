@@ -1,7 +1,6 @@
 import { calculateHours, formatMoney, parseAmountInput, parseLocalDateInput } from '../utils.js';
 import { reportDateToIso } from '../services/reportDates.js';
 import { enhanceCustomControls, refreshCustomControls, setDateMarkers } from './components/customControls.js?v=174';
-import { cardClass } from './components/Card.js';
 
 export const DEFAULT_MONTH_HOURS = 160;
 
@@ -225,19 +224,19 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocati
 
     return `
         <div class="calc-breakdown-summary">
-            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
+            <div class="calc-breakdown-card">
                 <span class="calc-breakdown-label">Liczba zmian</span>
                 <strong>${shiftCount}</strong>
             </div>
-            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
+            <div class="calc-breakdown-card">
                 <span class="calc-breakdown-label">Średnio na zmianę</span>
                 <strong>${shiftCount ? (totalHours / shiftCount).toFixed(1) : '0.0'} h</strong>
             </div>
-            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
+            <div class="calc-breakdown-card">
                 <span class="calc-breakdown-label">% etatu</span>
                 <strong>${employmentPercent}%</strong>
             </div>
-            <div class="${cardClass('summary', 'calc-breakdown-card')} ">
+            <div class="calc-breakdown-card">
                 <span class="calc-breakdown-label">Stawka</span>
                 <strong>${rate.toFixed(2)} PLN</strong>
             </div>
@@ -245,7 +244,7 @@ function buildDetailsHtml(breakdown, locationHours, totalHours, rate, showLocati
 
         ${showLocationPills ? `<div class="calc-breakdown-pills">${summaryHtml}</div>` : ''}
 
-        <section class="${cardClass('table', 'calc-breakdown-report')} ">
+        <section class="calc-breakdown-report">
             <div class="table-head calc-breakdown-head">
                 <div class="section-heading">
                     <h3><span class="material-symbols-rounded" aria-hidden="true">payments</span> Podsumowanie</h3>

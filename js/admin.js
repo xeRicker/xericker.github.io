@@ -1,15 +1,14 @@
 import { apiService } from './services/api.js?v=172';
 import { analytics } from './services/analytics.js?v=3';
 import { reportDateToIso } from './services/reportDates.js';
-import { adminRender } from './ui/adminRender.js?v=179';
-import { adminProducts } from './ui/adminProducts.js?v=170';
-import { createAdminListsPage } from './ui/adminLists.js?v=167';
-import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=167';
-import { setupPayslipGenerator } from './ui/payslip.js?v=103';
+import { adminRender } from './ui/adminRender.js?v=180';
+import { adminProducts } from './ui/adminProducts.js?v=171';
+import { createAdminListsPage } from './ui/adminLists.js?v=168';
+import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=168';
 import { escapeHtml, isLocalhost, renderMaterialIcon } from './utils.js';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=174';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=163';
-import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog, resolveEmployee } from './services/employees.js?v=168';
+import { getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=168';
 import { adminEmployees } from './ui/adminEmployees.js?v=173';
 import { adminLocations } from './ui/adminLocations.js?v=176';
 import { adminPayments } from './ui/adminPayments.js?v=107';
@@ -41,7 +40,6 @@ let activeWeekKey = 'all';
 let revenueSort = { key: 'date', direction: 'desc' };
 let employeeSort = { key: 'name', direction: 'asc' };
 let payrollCalculator = null;
-let payslipGenerator = null;
 let productCatalog = null;
 let adminListsPage = null;
 let isFullDataLoaded = false;
@@ -1015,23 +1013,8 @@ function initCalculator() {
         defaultRate: 30,
         employeeLabel: name => getEmployeeDisplayName(name, employeeCatalog),
         isEmployeeAvailable: name => isEmployeeVisible(name, employeeCatalog),
-        showLocationPills: false,
-        onRecalc: summary => payslipGenerator?.syncDefaults(summary)
+        showLocationPills: false
     });
 
     payrollCalculator.refresh();
-
-    payslipGenerator = setupPayslipGenerator({
-        getSummary: () => payrollCalculator.getSummary(),
-        buttonId: 'calcPayslipBtn',
-        statusBoxId: 'payslipStatus',
-        paymentFormId: 'payslipPaymentForm',
-        paymentDateId: 'payslipPaymentDate',
-        logoUrl: 'favicon.png',
-        resolveEmployeeName: rawName => {
-            const employee = resolveEmployee(rawName, employeeCatalog);
-            return employee ? `${employee.firstName} ${employee.lastName}` : rawName;
-        }
-    });
-    payslipGenerator.syncDefaults(payrollCalculator.getSummary());
 }

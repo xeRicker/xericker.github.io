@@ -12,7 +12,7 @@ colors:
   surface-overlay: "#302824"
   text-primary: "#F2ECE8"
   text-secondary: "#C8BAB3"
-  text-muted: "#94847C"
+  text-muted: "#A3948B"
   success: "#7DCE82"
   danger: "#FF8F82"
   warning: "#F6C85F"
@@ -64,12 +64,12 @@ components:
   card:
     backgroundColor: "{colors.surface-dark}"
     rounded: "{rounded.md}"
-    padding: "20px"
+    padding: "24px"
   input:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.text-primary}"
     rounded: "{rounded.sm}"
-    padding: "10px 12px"
+    padding: "8px 12px"
 ---
 
 # Design System: Burbone

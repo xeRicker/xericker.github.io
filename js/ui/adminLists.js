@@ -97,7 +97,7 @@ export function createAdminListsPage(config) {
 
         if (!reports.length) {
             container().innerHTML = `
-                <div class="${cardClass('summary', 'admin-list-empty')} ">
+                <div class="${cardClass('admin-list-empty')} ">
                     <span class="material-symbols-rounded" aria-hidden="true">content_paste_search</span>
                     <strong>Brak list</strong>
                     <p>Nie znaleziono zapisanych list dla wybranych filtrów.</p>
@@ -107,12 +107,12 @@ export function createAdminListsPage(config) {
         }
 
         container().innerHTML = `
-            <section class="${cardClass('summary', 'admin-category-card admin-list-panel')} ">
+            <section class="${cardClass('admin-category-card admin-list-panel')} ">
                 <div class="admin-product-list admin-list-items">
                     ${reports.map(report => renderListItem(report, selectedListKey)).join('')}
                 </div>
             </section>
-            <section class="${cardClass('summary', 'admin-category-card admin-list-preview')} ">
+            <section class="${cardClass('admin-category-card admin-list-preview')} ">
                 ${renderListPreview(selectedReport)}
             </section>
         `;

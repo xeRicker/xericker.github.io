@@ -55,3 +55,4 @@ Static admin + generator site for BURBONE food trucks. ES modules, no bundler, n
 
 ## Failure log
 Add one imperative line, specific to this repo, whenever you are corrected on something.
+- Never rewrite repo files through PowerShell `Get-Content`/`Set-Content`: Windows PowerShell decodes UTF-8 as ANSI and silently corrupts Polish characters (`Oświęcim`, `Ilość`). Use the editor tools, or `[System.IO.File]::ReadAllText`/`WriteAllText` with an explicit UTF-8 encoder.

@@ -5,14 +5,13 @@
     --space-4: 16px;
     --space-5: 20px;
     --space-6: 24px;
-    --space-7: 32px;
 
     --control-h-sm: 36px;
     --control-h-md: 40px;
     --control-height: 44px;
-    --control-h-lg: 48px;
 
     --icon-size: 20px;
+    --icon-size-lg: 24px;
     --focus-ring: 0 0 0 2px var(--primary-hover);
 }
 
@@ -57,11 +56,11 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     font-family: var(--font-body);
 }
 .u-hidden { display: none !important; }
-.u-card-spacing { margin-bottom: var(--space-7); }
-.u-detail-note { margin-top: var(--space-3); font-size: var(--font-size-sm); color: var(--text-secondary); }
+.u-card-spacing { margin-bottom: var(--space-6); }
+.u-detail-note { margin-top: var(--space-3); font-size: var(--font-size-base); color: var(--text-secondary); }
 
 button, input, select, textarea { min-height: var(--control-height); }
-button { cursor: pointer; font-family: var(--font-heading); font-size: var(--font-size-sm); font-weight: 700; letter-spacing: 0; }
+button { cursor: pointer; font-family: var(--font-heading); font-size: var(--font-size-base); font-weight: 700; letter-spacing: 0; }
 button:disabled { cursor: not-allowed; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }

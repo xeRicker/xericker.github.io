@@ -319,17 +319,17 @@ class AdminRender {
         const weekEvents = this.getWeekEvents(data);
 
         container.innerHTML = `
-            <div class="${cardClass('summary', 'summary-box summary-box--primary')} ">
+            <div class="${cardClass('summary-box summary-box--primary')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('monitoring', 'summary-icon-badge--revenue')} Utarg</span>
                 <p class="highlight">${formatMoney(total)}</p>
                 <small>${data.length} ${data.length === 1 ? 'dzień' : 'dni'} / średnio ${formatMoney(averageDay)}</small>
             </div>
-            <div class="${cardClass('summary', 'summary-box')} ">
+            <div class="${cardClass('summary-box')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('credit_card', 'summary-icon-badge--cards')} Karty</span>
                 <p>${formatMoney(cards)}</p>
                 <small>${this.formatPercent(cards, total)} całego utargu</small>
             </div>
-            <div class="${cardClass('summary', 'summary-box summary-box--glovo')} ">
+            <div class="${cardClass('summary-box summary-box--glovo')} ">
                 <span class="summary-kicker">${this.buildSymbolIcon('takeout_dining', 'summary-icon-badge--glovo')} Glovo</span>
                 <p>${formatMoney(glovoNet)}</p>
                 <small>Po prowizji Glovo</small>
@@ -349,7 +349,7 @@ class AdminRender {
         const tone = !comparison ? 'is-idle' : comparison.isBelow ? 'is-low' : 'is-ok';
 
         return `
-            <div class="${cardClass('summary', `summary-box summary-box--target ${tone}`)}">
+            <div class="${cardClass(`summary-box summary-box--target ${tone}`)}">
                 <span class="summary-kicker revenue-target__head">
                     <span class="revenue-target__title">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
                     ${this.buildRevenueTargetTrend(kpi.trend)}
@@ -364,7 +364,7 @@ class AdminRender {
 
     buildRevenueTargetEmptyTile() {
         return `
-            <div class="${cardClass('summary', 'summary-box summary-box--target is-empty')}">
+            <div class="${cardClass('summary-box summary-box--target is-empty')}">
                 <span class="summary-kicker">${this.buildSymbolIcon('trending_up', 'summary-icon-badge--target')} Średnia</span>
                 <small class="revenue-target__empty">Brak danych do policzenia średniego utargu dnia.</small>
                 ${this.buildRevenueTargetLoad()}
@@ -435,7 +435,7 @@ class AdminRender {
         const metric = viewMode === 'total' ? '' : ` · ${this.getViewLabel(viewMode)}`;
         const monthTotal = weeks.reduce((sum, week) => sum + week.total, 0);
         container.innerHTML = `
-            <div class="${cardClass('chart', 'chart-card weekly-overview-card')}">
+            <div class="${cardClass('chart-card weekly-overview-card')}">
                 <div class="section-heading">
                     <h3>${renderMaterialIcon('calendar_view_week')} Tygodnie${metric}</h3>
                     <p>${escapeHtml(this.buildWeeklySummary(weeks))}</p>
@@ -499,7 +499,7 @@ class AdminRender {
 
         if (!hasItems) {
             container.innerHTML = `
-                <div class="${cardClass('chart', 'chart-card payments-reminder payments-reminder--positive')}">
+                <div class="${cardClass('chart-card payments-reminder payments-reminder--positive')}">
                     <div class="section-heading">${heading}</div>
                     <div class="payments-reminder__state payments-reminder__state--ok">${renderMaterialIcon('task_alt')} Brak zobowiązań — wszystko pod kontrolą.</div>
                     <button class="btn-back payments-reminder__more" type="button" data-open-payments>Dodaj opłatę</button>
@@ -511,7 +511,7 @@ class AdminRender {
         if (summary.openCount === 0) {
             const paidText = summary.paidThisMonth > 0 ? ` W tym miesiącu zapłacono ${formatMoney(summary.paidThisMonth)}.` : '';
             container.innerHTML = `
-                <div class="${cardClass('chart', 'chart-card payments-reminder payments-reminder--positive')}">
+                <div class="${cardClass('chart-card payments-reminder payments-reminder--positive')}">
                     <div class="section-heading">${heading}<p>Wszystkie zobowiązania rozliczone.</p></div>
                     <div class="payments-reminder__state payments-reminder__state--ok">${renderMaterialIcon('task_alt')} Wszystko zapłacone — brak otwartych zobowiązań.${escapeHtml(paidText)}</div>
                     ${more}
@@ -539,7 +539,7 @@ class AdminRender {
             : '<div class="payments-reminder__empty">Brak płatności w najbliższych 14 dniach.</div>';
 
         container.innerHTML = `
-            <div class="${cardClass('chart', 'chart-card payments-reminder')}">
+            <div class="${cardClass('chart-card payments-reminder')}">
                 <div class="section-heading">${openHeading}<p>${escapeHtml(shareText)}</p></div>
                 <div class="payments-reminder__grid">
                     ${this.buildReminderTile('Przeterminowane', summary.overdueAmount, `${summary.overdueCount} ${plural(summary.overdueCount, 'pozycja', 'pozycje', 'pozycji')}`, 'is-negative')}
@@ -613,7 +613,7 @@ class AdminRender {
             : 'Brak wydarzeń';
 
         return `
-            <div class="${cardClass('summary', `summary-box summary-box--events ${weekEvents.length ? 'has-events' : 'is-calm'}`)}" data-week-events="true" data-callout-anchor="week-events">
+            <div class="${cardClass(`summary-box summary-box--events ${weekEvents.length ? 'has-events' : 'is-calm'}`)}" data-week-events="true" data-callout-anchor="week-events">
                 <span class="summary-kicker">${this.buildSymbolIcon(weekEvents.length ? 'celebration' : 'event_available', 'summary-icon-badge--event')} Kalendarz tygodnia</span>
                 <p class="summary-box__event-title">${leadEvent ? escapeHtml(leadEvent.name) : 'Spokojny tydzień'}</p>
                 <small>${leadEvent ? `${escapeHtml(leadEvent.dateStr)} · ${countLabel}` : 'Brak świąt i wydarzeń w tym tygodniu'}</small>
@@ -637,7 +637,7 @@ class AdminRender {
 
         const aggregated = this.aggregateLocations(data);
         container.innerHTML = aggregated.map((location, index) => `
-            <div class="${cardClass('location', `location-card ${index === 0 ? 'location-card--lead' : ''}`)}">
+            <div class="${cardClass(`location-card ${index === 0 ? 'location-card--lead' : ''}`)}">
                 <div class="location-card-head">
                     <h3 class="location-card-title">${this.buildSymbolIcon('place')} ${escapeHtml(location.name)}</h3>
                     <span class="location-rank">#${index + 1}</span>
@@ -1150,7 +1150,7 @@ class AdminRender {
     }
 
     buildEmptyState(label) {
-        return `<div class="${cardClass('summary', 'summary-box summary-box--empty')}"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
+        return `<div class="${cardClass('summary-box summary-box--empty')}"><h3>${label}</h3><small>Zmień zakres lub resetuj filtry.</small></div>`;
     }
 
 }

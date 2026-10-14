@@ -1,4 +1,4 @@
-export const CATEGORY_ICON_GROUPS = [
+const CATEGORY_ICON_GROUPS = [
     {
         label: 'Dania i fast food',
         icons: [
@@ -73,8 +73,6 @@ export const CATEGORY_ICON_GROUPS = [
         ]
     }
 ];
-
-export const CATEGORY_ICON_OPTIONS = CATEGORY_ICON_GROUPS.flatMap(group => group.icons);
 
 const FALLBACK_ICON = 'inventory_2';
 

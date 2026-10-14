@@ -5,7 +5,7 @@ import { dialogService, enhanceCustomControls } from './components/customControl
 import { noticeService } from './components/notice.js?v=103';
 import { cardClass } from './components/Card.js';
 
-import { openCategoryIconPicker } from './components/productIconPicker.js?v=2';
+import { openCategoryIconPicker } from './components/productIconPicker.js?v=3';
 import { setupProductDrag } from './components/productDrag.js?v=1';
 
 const DEFAULT_ICON = 'inventory_2';
@@ -98,7 +98,7 @@ class AdminProducts {
         const categoryCount = this.catalog.categories.length;
         const isLanded = this.animatedKind === 'category' && category.id === this.animatedId;
         return `
-            <section class="${cardClass('product', `admin-category-card ${category.enabled ? '' : 'is-disabled'} ${isLanded ? 'is-landed' : ''}`)}" data-category-id="${category.id}">
+            <section class="${cardClass(`admin-category-card ${category.enabled ? '' : 'is-disabled'} ${isLanded ? 'is-landed' : ''}`)}" data-category-id="${category.id}">
                 <div class="admin-category-head">
                     <div class="admin-category-title">
                         <span class="drag-handle drag-handle--category material-symbols-rounded" draggable="true" data-category-drag="${category.id}" role="button" tabindex="0" title="Przeciągnij, aby zmienić kolejność kategorii" aria-label="Przeciągnij, aby zmienić kolejność kategorii">drag_indicator</span>

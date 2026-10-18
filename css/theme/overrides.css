@@ -32,13 +32,16 @@ body {
 .header-bar h1,
 .summary-box p.highlight,
 .tt-value-main,
-.product-card.active .product-name,
 .btn-preset,
 .calc-icon,
-.rate-input-wrapper span,
 .category-icon,
 .tt-loc-col h5 {
     color: var(--primary-color);
+}
+
+.product-card.active .product-name,
+.rate-input-wrapper span {
+    color: var(--primary-hover);
 }
 
 .brand-logo {
@@ -87,15 +90,15 @@ body {
 .chart-btn.active,
 .primary-fab,
 .success-close-btn {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-fill);
+    border-color: var(--primary-fill);
     color: var(--app-text-inverse);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 20%, transparent), 0 8px 18px var(--primary-glow);
 }
 
 .primary-fab:hover,
 .success-close-btn:hover {
-    background: var(--primary-hover);
+    background: var(--primary-fill-hover);
 }
 
 input,
@@ -170,7 +173,7 @@ select:focus,
 .summary-box small,
 .cell-secondary,
 .calc-input-group label,
-.calc-res-item h4,
+.calc-res-item :is(h3, h4),
 .tt-label,
 .tt-shift-time,
 .heatmap-day-header {
@@ -697,7 +700,7 @@ tbody tr:hover td,
 .section-card h2,
 .section-heading h3,
 .table-head h3,
-.calc-res-item h4 {
+.calc-res-item :is(h3, h4) {
     font-family: var(--font-heading);
     font-weight: 700;
     letter-spacing: var(--label-tracking);
@@ -989,7 +992,7 @@ a:focus-visible,
 }
 
 .admin-location-archive h4,
-.calc-res-item h4 {
+.calc-res-item :is(h3, h4) {
     color: var(--text-secondary);
     font-family: var(--font-heading);
     font-size: var(--font-size-xs);
@@ -1259,8 +1262,8 @@ select,
     min-height: var(--control-height);
 }
 .type-switch.is-toggle {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-fill);
+    border-color: var(--primary-fill);
     color: var(--app-text-inverse);
 }
 .type-switch.is-quantity {
@@ -1276,8 +1279,8 @@ select,
     color: var(--text-muted);
 }
 .admin-save-btn.has-unsaved-changes {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-fill);
+    border-color: var(--primary-fill);
     color: var(--app-text-inverse);
     box-shadow: 0 0 18px var(--primary-glow);
 }
@@ -1433,4 +1436,29 @@ button:disabled:hover,
     .admin-load-all-btn { width: 100%; min-width: 0; }
     .admin-load-info { text-align: left; }
     .header-actions { justify-content: flex-start; }
+}
+
+.generator-tab.is-active,
+.admin-page-tab.is-active,
+.view-btn.active,
+.week-tab.active,
+.chart-btn.active,
+.chart-controls button.active,
+.primary-fab,
+.success-close-btn,
+.admin-save-btn.has-unsaved-changes,
+.burger-primary-action,
+.payment-action--primary,
+.custom-dialog__button--primary,
+.type-switch.is-toggle {
+    background: var(--primary-fill);
+    border-color: var(--primary-fill);
+    color: var(--app-text-inverse);
+}
+
+.primary-fab:hover,
+.success-close-btn:hover,
+.burger-primary-action:hover {
+    background: var(--primary-fill-hover);
+    border-color: var(--primary-fill-hover);
 }

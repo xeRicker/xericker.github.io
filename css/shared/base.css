@@ -56,6 +56,14 @@ input, select, textarea, td, .val-cell, .heatmap-date, .header-copy p, .section-
     font-family: var(--font-body);
 }
 .u-hidden { display: none !important; }
+.status-announcer {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
 .u-card-spacing { margin-bottom: var(--space-6); }
 .u-detail-note { margin-top: var(--space-3); font-size: var(--font-size-base); color: var(--text-secondary); }
 
@@ -67,3 +75,8 @@ button:disabled { cursor: not-allowed; }
 ::-webkit-scrollbar-track { background: var(--bg-color); }
 ::-webkit-scrollbar-thumb { background: var(--surface-overlay); border-radius: var(--radius-pill); }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+::selection {
+    background: color-mix(in srgb, var(--primary-color) 34%, transparent);
+    color: var(--text-primary);
+}

@@ -1,4 +1,4 @@
-import { apiService } from './api.js?v=172';
+import { apiService } from './api.js?v=173';
 
 export const DEFAULT_LOCATIONS = [
     { name: 'Oświęcim', path: 'oświęcim', enabled: true, stats: true, deleted: false, aliases: [] },

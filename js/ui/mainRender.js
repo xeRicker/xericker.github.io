@@ -125,7 +125,7 @@ export const mainRender = {
                                 <span class="toggle-indicator">
                                     ${renderMaterialIcon('check')}
                                 </span>
-                                <input type="checkbox" id="checkbox-${name}" data-name="${name}" style="display:none">
+                                <input type="checkbox" id="checkbox-${name}" class="custom-native-control" data-name="${name}" aria-label="${name}">
                             </div>
                         </div>`;
             } else {

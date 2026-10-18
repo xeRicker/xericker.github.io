@@ -6,6 +6,17 @@ export function getFormattedDate() {
     return `${day}.${month}.${year}`;
 }
 
+export function isoToReportDate(value) {
+    const [year, month, day] = String(value || '').split('-').map(Number);
+    if (!year || !month || !day) return '';
+
+    return [
+        String(day).padStart(2, '0'),
+        String(month).padStart(2, '0'),
+        year
+    ].join('.');
+}
+
 export function formatMoney(amount) {
     return new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(amount);
 }

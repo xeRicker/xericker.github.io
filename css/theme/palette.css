@@ -5,6 +5,9 @@
     --brand-primary-subtle: #3A2118;
     --brand-primary-subtler: #2A1A15;
 
+    --brand-primary-fill: var(--brand-primary-hover);
+    --brand-primary-fill-hover: color-mix(in srgb, var(--brand-primary-hover) 84%, var(--app-text));
+
     --app-bg: #151312;
     --app-surface: #1F1B19;
     --app-surface-raised: #28221F;
@@ -62,6 +65,8 @@
     --primary-color: var(--brand-primary);
     --primary-hover: var(--brand-primary-hover);
     --primary-pressed: var(--brand-primary-pressed);
+    --primary-fill: var(--brand-primary-fill);
+    --primary-fill-hover: var(--brand-primary-fill-hover);
     --primary-soft: var(--brand-primary-subtle);
     --primary-glow: rgba(212, 82, 26, 0.32);
     --glovo-color: var(--app-warning);

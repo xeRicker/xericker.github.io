@@ -1,7 +1,5 @@
 # AGENTS.md
 
-Static admin + generator site for BURBONE food trucks. ES modules, no bundler, no build/lint/test step. UI copy is Polish, code identifiers English. Visual rules live in `DESIGN.md`.
-
 ## Commands
 - `node dev-server.js` — serves the site and handles local JSON `PUT` under `database/`. Without it the site opens but saves fail; check its terminal for save errors.
 - No test runner. Verify by exercising the changed flow in `index.html` / `admin.html`. For non-trivial pure logic, sanity-check with a throwaway `node -e` assert; don't add test files.
@@ -40,7 +38,8 @@ Static admin + generator site for BURBONE food trucks. ES modules, no bundler, n
 - The site must stay unindexed (`robots.txt` disallow, `noindex` on both pages).
 
 ## Conventions
-- Tokens only: colors from `css/theme/palette.css`, fonts via `--font-body` / `--font-heading`. A new palette role is added to `palette.css` and `DESIGN.md` in the same change.
+- Tokens only: colors from `css/theme/palette.css`, fonts via `--font-body` / `--font-heading`.
+- `css/theme/palette.css` is the single source of token values; `DESIGN.md` describes how those tokens are used (palette, type, layout, elevation, shapes, components). It is a reference, not a checklist.
 - Icons via `renderMaterialIcon()` with real Material Symbols ligature names; a bad name renders as overlapping text.
 - Naming: one word per concept. `location` is canonical (not "point") in new code. Catalog modules use add / rename / visibility-toggle / remove — don't mix in create/update/delete. Booleans read as assertions: `isArchived`, `hasReport`, `canEdit`.
 - Size: files ~400 lines, functions ~50, nesting ~3 levels. Split along an existing seam (never a grab-bag `utils.js`) and flatten with guard clauses. These are splitting triggers, not rewrite triggers.

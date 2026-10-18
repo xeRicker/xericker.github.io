@@ -10,13 +10,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=206">
+  <link rel="stylesheet" href="style.css?v=212">
 </head>
 <body>
 
 <div id="confetti-container"></div>
 
-<div class="container">
+<main class="container">
 
   <div class="header-bar animate-stagger">
     <div class="brand-block">
@@ -29,22 +29,38 @@
     </a>
   </div>
 
+  <div class="card card--section section-card report-identity animate-stagger">
+    <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">edit_calendar</span> Raport</h2>
+    <div class="calc-grid">
+      <div class="calc-input-group">
+        <label for="reportLocation">Punkt</label>
+        <select id="reportLocation" class="calc-input"></select>
+      </div>
+      <div class="calc-input-group">
+        <label for="reportDate">Data</label>
+        <input type="date" id="reportDate" class="calc-input">
+      </div>
+    </div>
+  </div>
+
+  <p id="catalogStatus" class="notice" hidden></p>
+
   <div class="generator-tabs animate-stagger" role="tablist" aria-label="Widoki aplikacji">
-    <button class="generator-tab is-active" type="button" data-tab="generator" role="tab" aria-selected="true">
+    <button class="generator-tab is-active" type="button" id="tabGenerator" data-tab="generator" role="tab" aria-selected="true" aria-controls="generatorPanel">
       <span class="material-symbols-rounded" aria-hidden="true">format_list_bulleted</span>
       Lista
     </button>
-    <button class="generator-tab" type="button" data-tab="burgers" role="tab" aria-selected="false">
+    <button class="generator-tab" type="button" id="tabBurgers" data-tab="burgers" role="tab" aria-selected="false" aria-controls="burgersPanel">
       <span class="material-symbols-rounded" aria-hidden="true">lunch_dining</span>
       Burgery
     </button>
-    <button class="generator-tab" type="button" data-tab="workers" role="tab" aria-selected="false">
+    <button class="generator-tab" type="button" id="tabWorkers" data-tab="workers" role="tab" aria-selected="false" aria-controls="workersPanel">
       <span class="material-symbols-rounded" aria-hidden="true">badge</span>
       Wynagrodzenia
     </button>
   </div>
 
-  <div id="generatorPanel" class="tab-panel is-active">
+  <div id="generatorPanel" class="tab-panel is-active" role="tabpanel" aria-labelledby="tabGenerator" tabindex="0">
     <div class="card card--section section-card animate-stagger">
       <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">payments</span> Utarg</h2>
       <div class="revenue-grid">
@@ -82,7 +98,7 @@
     <div class="spacer-bottom"></div>
   </div>
 
-  <div id="burgersPanel" class="tab-panel">
+  <div id="burgersPanel" class="tab-panel" role="tabpanel" aria-labelledby="tabBurgers" tabindex="0">
     <div class="card card--section section-card burger-configurator animate-stagger">
       <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">lunch_dining</span> Burgery</h2>
 
@@ -177,7 +193,7 @@
     </div>
   </div>
 
-  <div id="workersPanel" class="tab-panel">
+  <div id="workersPanel" class="tab-panel" role="tabpanel" aria-labelledby="tabWorkers" tabindex="0">
     <div class="card card--section section-card calc-card animate-stagger worker-card">
       <h2><span class="title-icon material-symbols-rounded" aria-hidden="true">schedule</span> Pracownik</h2>
       <p id="workerDataStatus" class="notice worker-data-status" hidden></p>
@@ -209,24 +225,26 @@
 
       <div id="workerCalcResult" class="calc-result-box" style="display:none;">
         <div class="calc-res-item">
-          <h4>
+          <h3>
             <span class="calc-icon material-symbols-rounded" aria-hidden="true">schedule</span>
             Godziny
-          </h4>
+          </h3>
           <p id="workerResHours">0 h</p>
         </div>
         <div class="calc-res-item">
-          <h4>
+          <h3>
             <span class="calc-icon material-symbols-rounded" aria-hidden="true">payments</span>
             Wypłata
-          </h4>
+          </h3>
           <p id="workerResMoney" class="money">0 zł</p>
         </div>
       </div>
       <div id="workerCalcDetails" class="u-detail-note"></div>
     </div>
   </div>
-</div>
+</main>
+
+<p id="generatorStatus" class="status-announcer" role="status"></p>
 
 <div id="generatorFloatingBar" class="floating-bar animate-slide-up">
   <div id="resetContainer" style="display: none;">
@@ -261,6 +279,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=183"></script>
+<script type="module" src="js/main.js?v=191"></script>
 </body>
 </html>

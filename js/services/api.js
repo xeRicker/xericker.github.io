@@ -6,15 +6,35 @@ import { reportCache } from './reportCache.js?v=102';
 
 const FILE_FETCH_CONCURRENCY = 10;
 const REPORT_INDEX_KEY = 'report-index';
+const READ_RESOURCE_LABELS = {
+    Products: 'produkty',
+    Employees: 'ekipa',
+    Locations: 'punkty',
+    Payments: 'opłaty',
+    Settings: 'ustawienia',
+    'Report index': 'lista raportów'
+};
 
 class ApiService {
     constructor() {
         this.repoUrl = `https://api.github.com/repos/${GITHUB_CONFIG.REPO_OWNER}/${GITHUB_CONFIG.REPO_NAME}`;
         this.baseUrl = `${this.repoUrl}/contents/`;
+        this.failedReads = [];
         this.headers = {
             'Accept': 'application/vnd.github+json',
         };
         if (this.hasGithubToken()) this.headers.Authorization = `Bearer ${GITHUB_CONFIG.TOKEN}`;
+    }
+
+    noteReadFailure(label) {
+        const name = READ_RESOURCE_LABELS[label] || String(label);
+        if (!this.failedReads.includes(name)) this.failedReads.push(name);
+    }
+
+    takeReadFailures() {
+        const failures = this.failedReads;
+        this.failedReads = [];
+        return failures;
     }
 
     hasGithubToken() {
@@ -86,13 +106,17 @@ class ApiService {
             return null;
         } catch (error) {
             console.warn('Products config unavailable, falling back to defaults.', error);
+            this.noteReadFailure('Products');
             return null;
         }
     }
 
     async fetchGithubProducts(path) {
         const response = await fetch(`${this.baseUrl}${path}?v=${Date.now()}`, { headers: this.headers });
-        if (!response.ok) return null;
+        if (!response.ok) {
+            if (response.status !== 404) this.noteReadFailure('Products');
+            return null;
+        }
         const file = await response.json();
         if (file.content) {
             return JSON.parse(decodeURIComponent(escape(atob(file.content))));
@@ -102,7 +126,11 @@ class ApiService {
 
     async fetchLocalProducts(path) {
         const response = await fetch(`${path}?v=${Date.now()}`);
-        return response.ok ? response.json() : null;
+        if (!response.ok) {
+            if (response.status !== 404) this.noteReadFailure('Products');
+            return null;
+        }
+        return response.json();
     }
 
     async saveProducts(data) {
@@ -287,11 +315,14 @@ class ApiService {
                 if (response.ok) {
                     const file = await response.json();
                     if (file.content) return JSON.parse(decodeURIComponent(escape(atob(file.content))));
+                } else if (response.status !== 404) {
+                    this.noteReadFailure(label);
                 }
             }
 
             const staticResponse = await fetch(`${path}?v=${Date.now()}`);
             if (staticResponse.ok) return await staticResponse.json();
+            if (staticResponse.status !== 404) this.noteReadFailure(label);
 
             if (isLocalhost()) {
                 const response = await fetch(`${path}?v=${Date.now()}`);
@@ -299,6 +330,7 @@ class ApiService {
             }
         } catch (error) {
             console.warn(`${label} config unavailable, falling back to defaults.`, error);
+            this.noteReadFailure(label);
         }
         return null;
     }

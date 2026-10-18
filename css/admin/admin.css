@@ -214,8 +214,8 @@ select:focus { border-color: var(--primary-color); }
 }
 
 .admin-page-tab.is-active {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-fill);
+    border-color: var(--primary-fill);
     color: var(--app-text-inverse);
     box-shadow: 0 4px 15px var(--primary-glow);
 }
@@ -355,9 +355,9 @@ select:focus { border-color: var(--primary-color); }
 }
 
 .week-tab.active {
-    background-color: var(--primary-color);
+    background-color: var(--primary-fill);
     color: var(--app-text-inverse);
-    border-color: var(--primary-color);
+    border-color: var(--primary-fill);
     box-shadow: 0 2px 12px color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
@@ -398,7 +398,7 @@ select:focus { border-color: var(--primary-color); }
 .view-toggle { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
 .view-btn { background: var(--surface-raised); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 8px 20px; border-radius: var(--radius-md); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: var(--font-heading); }
 .view-btn:hover { border-color: var(--border-focused); color: var(--text-primary); }
-.view-btn.active { background: var(--primary-color); border-color: var(--primary-color); color: var(--app-text-inverse); box-shadow: 0 4px 15px var(--primary-glow); }
+.view-btn.active { background: var(--primary-fill); border-color: var(--primary-fill); color: var(--app-text-inverse); box-shadow: 0 4px 15px var(--primary-glow); }
 
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
 .summary-box { background: var(--surface-color); display: flex; flex-direction: column; gap: 8px; padding: 20px 20px; border-radius: var(--radius-md); text-align: left; border: 1px solid var(--border-color); }
@@ -937,7 +937,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 
 .rate-input-wrapper { display: flex; align-items: center; background: var(--surface-raised); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0 8px; }
 .rate-input-wrapper input { border: none; padding: 8px 0; background: transparent; text-align: left; width: 100%; color: var(--text-primary); font-size: 14px; }
-.rate-input-wrapper span { color: var(--primary-color); font-weight: 700; font-size: 14px; margin-left: 8px; font-family: var(--font-heading); }
+.rate-input-wrapper span { color: var(--primary-hover); font-weight: 700; font-size: 14px; margin-left: 8px; font-family: var(--font-heading); }
 
 .calc-input-group.is-disabled label { color: var(--text-muted); }
 .calc-input-group.is-disabled .rate-input-wrapper,
@@ -947,7 +947,7 @@ tbody tr:hover td { background: color-mix(in srgb, var(--primary-color) 4%, tran
 
 .calc-result-box { background: var(--surface-raised); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
 
-.calc-res-item h4 {
+.calc-res-item :is(h3, h4) {
     display: flex;
     align-items: center;
     gap: 8px;

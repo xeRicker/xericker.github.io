@@ -1,16 +1,17 @@
 import { EMPLOYEE_COLORS, TIME_PRESETS } from './config/data.js';
-import { mainRender } from './ui/mainRender.js?v=163';
-import { uiShared } from './ui/shared.js';
+import { mainRender } from './ui/mainRender.js?v=164';
+import { uiShared } from './ui/shared.js?v=3';
 import { storageService } from './services/storage.js';
-import { apiService } from './services/api.js?v=172';
+import { apiService } from './services/api.js?v=173';
 import { calculateCashDesk } from './services/revenue.js';
-import { getFormattedDate, parseAmountInput } from './utils.js';
+import { getFormattedDate, escapeHtml, isoToReportDate, parseAmountInput } from './utils.js';
 import { setupPayrollCalculator } from './ui/payrollCalculator.js?v=168';
 import { dialogService, enhanceCustomControls, refreshCustomControls } from './ui/components/customControls.js?v=174';
 import { getActiveProductCatalog, loadProductCatalog } from './services/products.js?v=162';
 import { getActiveEmployees, getEmployeeDisplayName, isEmployeeVisible, loadEmployeeCatalog } from './services/employees.js?v=167';
 import { getSelectableLocations, loadLocationCatalog } from './services/locations.js?v=168';
 import { buildReportText } from './services/reportFormatter.js';
+import { reportDateToIso } from './services/reportDates.js';
 import { setupBurgerConfigurator } from './ui/burgerConfigurator.js?v=165';
 import { needsAdminAccess, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
 import { noticeService } from './ui/components/notice.js?v=103';
@@ -34,12 +35,15 @@ const WORKER_STATUS_VARIANTS = {
 
 document.addEventListener('DOMContentLoaded', async () => {
     setupAdminEntry();
+    apiService.takeReadFailures();
     productCatalog = getActiveProductCatalog(await loadProductCatalog());
     employeeCatalog = await loadEmployeeCatalog();
     locationCatalog = await loadLocationCatalog();
+    uiShared.renderCatalogStatus(apiService.takeReadFailures());
     mainRender.renderEmployees(document.getElementById('employees'), getActiveEmployees(employeeCatalog), EMPLOYEE_COLORS, TIME_PRESETS);
     mainRender.renderProducts(document.getElementById('products'), productCatalog);
     mainRender.renderLocations(document.getElementById('locationOptions'), getSelectableLocations(locationCatalog));
+    initReportIdentity();
     enhanceCustomControls();
     restoreState();
     setupEvents();
@@ -69,7 +73,28 @@ async function openLocationSheet() {
         await dialogService.warning('Brak punktów z włączoną widocznością. Dodaj punkt w panelu admina (zakładka Punkty).', 'Nie ma punktu do wyboru');
         return;
     }
+    if (selectedLocation) {
+        await generateReport();
+        return;
+    }
     uiShared.showModal('locationSheet');
+}
+
+function initReportIdentity() {
+    const select = document.getElementById('reportLocation');
+    const dateInput = document.getElementById('reportDate');
+    const locations = getSelectableLocations(locationCatalog);
+
+    select.innerHTML = [
+        '<option value="">Wybierz punkt</option>',
+        ...locations.map(location => `<option value="${escapeHtml(location.path)}">${escapeHtml(location.name)}</option>`)
+    ].join('');
+    select.value = selectedLocation?.path || '';
+    dateInput.value = reportDateToIso(getFormattedDate());
+
+    select.addEventListener('change', () => {
+        selectedLocation = locations.find(location => location.path === select.value) || null;
+    });
 }
 
 function handleLocationChoice(event) {
@@ -78,6 +103,8 @@ function handleLocationChoice(event) {
     const location = getSelectableLocations(locationCatalog).find(item => item.path === button.dataset.locationPath);
     if (!location) return;
     selectedLocation = location;
+    const select = document.getElementById('reportLocation');
+    if (select) select.value = location.path;
     uiShared.closeModals();
     generateReport();
 }
@@ -98,11 +125,26 @@ function setupAdminEntry() {
 }
 
 function setupTabs() {
-    const tabs = document.querySelectorAll('.generator-tab');
+    const tabs = Array.from(document.querySelectorAll('.generator-tab'));
     tabs.forEach(tab => {
         tab.addEventListener('click', async () => {
             const nextTab = tab.dataset.tab;
             await switchTab(nextTab);
+        });
+        tab.addEventListener('keydown', async event => {
+            const index = tabs.indexOf(event.currentTarget);
+            const keys = {
+                ArrowRight: (index + 1) % tabs.length,
+                ArrowLeft: (index - 1 + tabs.length) % tabs.length,
+                Home: 0,
+                End: tabs.length - 1
+            };
+            const nextIndex = keys[event.key];
+            if (nextIndex === undefined) return;
+            event.preventDefault();
+            const next = tabs[nextIndex];
+            next.focus();
+            await switchTab(next.dataset.tab);
         });
     });
 }
@@ -119,6 +161,7 @@ async function switchTab(tabName) {
         const active = tab.dataset.tab === tabName;
         tab.classList.toggle('is-active', active);
         tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.tabIndex = active ? 0 : -1;
     });
 
     generatorPanel.classList.toggle('is-active', isGenerator);
@@ -158,6 +201,8 @@ function handleProductClick(e) {
         saveState();
         return;
     }
+
+    if (e.target.type === 'checkbox') return;
 
     const card = e.target.closest('.product-card.type-toggle');
     if (card) {
@@ -294,6 +339,8 @@ function setReportBusy(busy) {
     button.disabled = busy;
     button.setAttribute('aria-busy', busy ? 'true' : 'false');
     button.querySelector('span').textContent = busy ? 'Zapisuję…' : 'Skopiuj listę';
+    const status = document.getElementById('generatorStatus');
+    if (status) status.textContent = busy ? 'Zapisywanie raportu…' : '';
 }
 
 async function generateReport() {
@@ -302,7 +349,7 @@ async function generateReport() {
     const card = parseAmountInput(document.getElementById('cardRevenueInput').value);
     const glovo = parseAmountInput(document.getElementById('glovoRevenueInput').value);
     const cash = calculateCashDesk(rev, card, glovo);
-    const date = getFormattedDate();
+    const date = isoToReportDate(document.getElementById('reportDate').value) || getFormattedDate();
 
     if(rev === 0 && !(await dialogService.confirm("Utarg wynosi 0. Kontynuować?", "Pusty utarg"))) return;
     if (cash < 0) {
@@ -342,7 +389,12 @@ async function generateReport() {
     setReportBusy(true);
     try {
         if (await apiService.checkFileExists(selectedLocation.name, date, selectedLocation.path)) {
-            if(!(await dialogService.confirm("Lista z tego dnia już istnieje. Nadpisać?", "Nadpisać listę?", { destructive: true, confirmLabel: 'Nadpisz' }))) return;
+            const overwrite = await dialogService.confirm(
+                `Lista dla ${selectedLocation.name} z ${date} już istnieje. Nadpisać?`,
+                'Nadpisać listę?',
+                { destructive: true, confirmLabel: 'Nadpisz' }
+            );
+            if (!overwrite) return;
         }
 
         await apiService.saveReport(data, selectedLocation.path);

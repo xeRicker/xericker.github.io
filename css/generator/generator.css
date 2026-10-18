@@ -272,7 +272,12 @@ input:focus { outline: none; }
     box-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 15%, transparent);
     background: color-mix(in srgb, var(--primary-color) 8%, transparent);
 }
-.product-card.active .product-name { color: var(--primary-color); font-weight: 700; }
+.product-card.active .product-name { color: var(--primary-hover); font-weight: 700; }
+
+.product-card.type-toggle:focus-within {
+    border-color: var(--border-focused);
+    box-shadow: var(--focus-ring);
+}
 
 .product-name {
     font-size: 14px;
@@ -373,7 +378,9 @@ input:focus { outline: none; }
     margin: 0;
     outline: none;
 }
-.qty-display:focus { color: var(--primary-color); }
+.qty-display:focus { color: var(--primary-hover); }
+
+.report-identity .calc-grid { margin-bottom: 0; }
 
 .spacer-bottom { height: 100px; }
 
@@ -498,7 +505,7 @@ input:focus { outline: none; }
     font-family: var(--font-body);
 }
 .success-close-btn {
-    background: var(--primary-color);
+    background: var(--primary-fill);
     color: var(--text-primary);
     border: none;
 }

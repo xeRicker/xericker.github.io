@@ -84,6 +84,16 @@ export const uiShared = {
         if (target?.isConnected) target.focus({ preventScroll: true });
     },
 
+    renderCatalogStatus(failures = []) {
+        noticeService.render(document.getElementById('catalogStatus'), failures.length
+            ? {
+                variant: 'warning',
+                title: 'Dane katalogów niedostępne',
+                text: `Nie udało się wczytać: ${failures.join(', ')}. Pracujesz na liście domyślnej — może brakować ostatnich zmian. Sprawdź połączenie z GitHub i odśwież stronę.`
+            }
+            : {});
+    },
+
     showSuccess(text, { saveError = null } = {}) {
         this.closeModals();
         const sheet = document.getElementById('successSheet');
@@ -99,7 +109,7 @@ export const uiShared = {
         message.innerText = saveFailed
             ? `GitHub nie zapisał listy. Możesz mimo to ją skopiować. ${saveError.message || ''}`
             : 'Kliknij poniżej, aby skopiować i wklej na Messengerze.';
-        btn.innerText = "Skopiuj listę";
+        btn.innerText = "Skopiuj";
         btn.style.background = "";
 
         btn.onclick = async () => {

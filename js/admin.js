@@ -1,4 +1,4 @@
-import { apiService } from './services/api.js?v=172';
+import { apiService } from './services/api.js?v=173';
 import { analytics } from './services/analytics.js?v=3';
 import { reportDateToIso } from './services/reportDates.js';
 import { adminRender } from './ui/adminRender.js?v=180';
@@ -13,6 +13,7 @@ import { adminEmployees } from './ui/adminEmployees.js?v=173';
 import { adminLocations } from './ui/adminLocations.js?v=176';
 import { adminPayments } from './ui/adminPayments.js?v=107';
 import { adminMarketing } from './ui/adminMarketing.js?v=5';
+import { uiShared } from './ui/shared.js?v=3';
 import { createLocationResolver, loadLocationCatalog } from './services/locations.js?v=169';
 import { getPaymentViews, getUpcomingPayments, summarizePayments } from './services/payments.js?v=103';
 import { clearAdminAccess, hasValidAdminAccess, isAdminLogoutRequested, requestAdminAccess, saveAdminAccess } from './services/adminAccess.js?v=102';
@@ -69,9 +70,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         setupAdminPages();
+        apiService.takeReadFailures();
         productCatalog = getActiveProductCatalog(await loadProductCatalog());
         employeeCatalog = await loadEmployeeCatalog();
         locationCatalog = await loadLocationCatalog();
+        uiShared.renderCatalogStatus(apiService.takeReadFailures());
         locationResolver = createLocationResolver(locationCatalog);
 
         sourceData = rawData;

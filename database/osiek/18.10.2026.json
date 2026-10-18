@@ -1,0 +1,29 @@
+{
+  "location": "Osiek",
+  "date": "18.10.2026",
+  "revenue": 2440,
+  "cardRevenue": 1591,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 0,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 3,
+    "Stripsy": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Cebula prażona": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Małe": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

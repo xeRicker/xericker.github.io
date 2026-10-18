@@ -380,8 +380,6 @@ input:focus { outline: none; }
 }
 .qty-display:focus { color: var(--primary-hover); }
 
-.report-identity .calc-grid { margin-bottom: 0; }
-
 .spacer-bottom { height: 100px; }
 
 .floating-bar {

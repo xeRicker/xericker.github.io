@@ -1,0 +1,28 @@
+{
+  "location": "Oświęcim",
+  "date": "16.10.2026",
+  "revenue": 989,
+  "cardRevenue": 515,
+  "glovoRevenue": 181,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 10,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Frytki": 1,
+    "Stripsy": 1,
+    "Bułki": 11,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Sos: Barbecue": 1,
+    "Torby: Małe": 1,
+    "Serwetki": 1,
+    "Odtłuszczacz": 1,
+    "Zielony papier": 1
+  }
+}

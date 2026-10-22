@@ -1,0 +1,22 @@
+{
+  "location": "Osiek",
+  "date": "22.10.2026",
+  "revenue": 332,
+  "cardRevenue": 292,
+  "glovoRevenue": 0,
+  "employees": {
+    "sebastian.mąsior": "14:00,20:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 11,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Stripsy": 1,
+    "Bułki": 25,
+    "Tabasco": 1,
+    "Sos: Czosnek": 1,
+    "Torby: Małe": 1,
+    "Odtłuszczacz": 1
+  }
+}

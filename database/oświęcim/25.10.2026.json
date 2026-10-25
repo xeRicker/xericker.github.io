@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "25.10.2026",
+  "revenue": 719,
+  "cardRevenue": 573,
+  "glovoRevenue": 0,
+  "employees": {
+    "sebastian.mąsior": "14:00,21:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 0,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Stripsy": 1,
+    "Bułki": 0,
+    "Torby: Małe": 1,
+    "Torby: Średnie": 1,
+    "Opakowania: Duże": 1,
+    "Zielony papier": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

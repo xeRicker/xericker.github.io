@@ -1,0 +1,18 @@
+{
+  "location": "Osiek",
+  "date": "26.10.2026",
+  "revenue": 504,
+  "cardRevenue": 398,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:00"
+  },
+  "products": {
+    "Cheeser: Bułki": 0,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Pomidory": 1,
+    "Bułki": 18
+  }
+}

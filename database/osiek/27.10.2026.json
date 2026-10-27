@@ -1,0 +1,26 @@
+{
+  "location": "Osiek",
+  "date": "27.10.2026",
+  "revenue": 774,
+  "cardRevenue": 405,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:30"
+  },
+  "products": {
+    "Cheeser: Bułki": 0,
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Stripsy": 1,
+    "Krążki": 1,
+    "Bułki": 7,
+    "Odtłuszczacz": 1,
+    "Szmaty": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

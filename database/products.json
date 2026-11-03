@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-10T21:47:18.136Z",
+  "updatedAt": "2026-11-03T23:28:51.878Z",
   "categories": [
     {
       "id": "category-muwhm6ib-tfocg8",
@@ -12,13 +12,13 @@
           "id": "product-muwhn127-4cj9de",
           "name": "Cheeser: Ser",
           "type": "quantity",
-          "enabled": true
+          "enabled": false
         },
         {
           "id": "product-muwz7kps-h99qp6",
           "name": "Cheeser: Bułki",
           "type": "quantity",
-          "enabled": true
+          "enabled": false
         }
       ]
     },

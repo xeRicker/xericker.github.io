@@ -1,0 +1,13 @@
+{
+  "location": "Osiek",
+  "date": "05.11.2026",
+  "revenue": 358,
+  "cardRevenue": 193,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,19:30"
+  },
+  "products": {
+    "Bułki": 0
+  }
+}

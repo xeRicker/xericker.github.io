@@ -1,0 +1,30 @@
+{
+  "location": "Oświęcim",
+  "date": "06.11.2026",
+  "revenue": 1257,
+  "cardRevenue": 941,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "12:00,21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Placki": 1,
+    "Bułki": 19,
+    "Cebula prażona": 1,
+    "Sól do frytek": 1,
+    "Torby: Średnie": 1,
+    "Torby: Duże": 1,
+    "Opakowania: Duże": 1,
+    "Rękawiczki": 1,
+    "Odtłuszczacz": 1,
+    "Szmaty": 1,
+    "Worki na śmieci 120L": 1,
+    "Drobne: 10,20": 1
+  }
+}

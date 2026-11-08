@@ -1,0 +1,31 @@
+{
+  "location": "Oświęcim",
+  "date": "08.11.2026",
+  "revenue": 641,
+  "cardRevenue": 198,
+  "glovoRevenue": 160,
+  "employees": {
+    "sebastian.mąsior": "14:30,20:30"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Majonez": 1,
+    "Krążki": 1,
+    "Bułki": 0,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Torby: Małe": 1,
+    "Torby: Duże": 1,
+    "Opakowania: Duże": 1,
+    "Serwetki": 1,
+    "Papier pod grilla": 1,
+    "Zielony papier": 1
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "location": "Osiek",
+  "date": "09.11.2026",
+  "revenue": 1085,
+  "cardRevenue": 846,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:30"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Pomidory": 1,
+    "Cebula": 1,
+    "Halloumi": 1,
+    "Majonez": 1,
+    "Frytki": 1,
+    "Bułki": 3,
+    "Tabasco": 1,
+    "Folia": 1,
+    "Drobne: 1,2,5": 1,
+    "Drobne: 10,20": 1
+  }
+}

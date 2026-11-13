@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "13.11.2026",
+  "revenue": 785,
+  "cardRevenue": 597,
+  "glovoRevenue": 0,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cebula": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 500,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Sól do frytek": 1,
+    "Saszetki: Ketchup": 1,
+    "Szmaty": 1,
+    "Papier do kasy": 1
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "location": "Oświęcim",
+  "date": "16.11.2026",
+  "revenue": 959,
+  "cardRevenue": 271,
+  "glovoRevenue": 417,
+  "employees": {
+    "kacper.jarnot": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Bułki": 12,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Drobne: 10,20": 1
+  }
+}

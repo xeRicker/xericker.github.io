@@ -1,0 +1,22 @@
+{
+  "location": "Osiek",
+  "date": "17.11.2026",
+  "revenue": 272,
+  "cardRevenue": 82,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,20:00"
+  },
+  "products": {
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Stripsy": 1,
+    "Bułki": 0,
+    "Zbój: Czosnek": 1,
+    "Zbój: Pieprz": 1,
+    "Zbój: Cytryna": 1,
+    "Opakowania: Małe": 1,
+    "Papier pod grilla": 1
+  }
+}

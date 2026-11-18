@@ -1,0 +1,27 @@
+{
+  "location": "Oświęcim",
+  "date": "18.11.2026",
+  "revenue": 931,
+  "cardRevenue": 561,
+  "glovoRevenue": 208,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Boczek": 3,
+    "Chorizo": 1,
+    "Sałata": 1,
+    "Ogórki": 3,
+    "Pomidory": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Stripsy": 1,
+    "Bułki": 15,
+    "Sriracha": 1,
+    "Sos: Carolina": 1,
+    "Sos: Czosnek": 1,
+    "Saszetki: Ketchup": 1,
+    "Torby: Małe": 1,
+    "Drobne: 1,2,5": 1
+  }
+}

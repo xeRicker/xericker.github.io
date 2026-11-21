@@ -1,0 +1,26 @@
+{
+  "location": "Oświęcim",
+  "date": "21.11.2026",
+  "revenue": 1234,
+  "cardRevenue": 906,
+  "glovoRevenue": 82,
+  "employees": {
+    "kacper.jarnot": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Małe": 1,
+    "Mięso: Duże": 1,
+    "Boczek": 2,
+    "Sałata": 1,
+    "Jalapeno": 1,
+    "Cheddar": 1,
+    "Frytki": 2,
+    "Krążki": 1,
+    "Placki": 1,
+    "Bułki": 15,
+    "Cebula prażona": 1,
+    "Sos: Carolina": 1,
+    "Torby: Małe": 1,
+    "Worki na śmieci 120L": 1
+  }
+}

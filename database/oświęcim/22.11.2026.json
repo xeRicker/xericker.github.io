@@ -1,0 +1,20 @@
+{
+  "location": "Oświęcim",
+  "date": "22.11.2026",
+  "revenue": 754,
+  "cardRevenue": 424,
+  "glovoRevenue": 188,
+  "employees": {
+    "natalia.duraj": "14:00,21:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 13,
+    "Cebula prażona": 1,
+    "Sos: Czosnek": 1,
+    "Odtłuszczacz": 1
+  }
+}

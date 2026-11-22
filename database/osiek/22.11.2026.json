@@ -1,0 +1,23 @@
+{
+  "location": "Osiek",
+  "date": "22.11.2026",
+  "revenue": 828,
+  "cardRevenue": 171,
+  "glovoRevenue": 0,
+  "employees": {
+    "kacper.jarnot": "14:00,20:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 1,
+    "Cheddar": 1,
+    "Krążki": 1,
+    "Bułki": 20,
+    "Cebula prażona": 1,
+    "Sos: Ketchup": 1,
+    "Opakowania: Małe": 1,
+    "Drobne: 10,20": 1
+  }
+}

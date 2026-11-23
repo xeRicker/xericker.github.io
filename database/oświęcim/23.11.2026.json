@@ -1,0 +1,24 @@
+{
+  "location": "Oświęcim",
+  "date": "23.11.2026",
+  "revenue": 816,
+  "cardRevenue": 471,
+  "glovoRevenue": 88,
+  "employees": {
+    "sebastian.mąsior": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 4,
+    "Jalapeno": 1,
+    "Halloumi": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 14,
+    "Sriracha": 1,
+    "Sos: Carolina": 1,
+    "Folia": 1
+  }
+}

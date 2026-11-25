@@ -1,0 +1,21 @@
+{
+  "location": "Oświęcim",
+  "date": "25.11.2026",
+  "revenue": 659,
+  "cardRevenue": 572,
+  "glovoRevenue": 72,
+  "employees": {
+    "kacper.jarnot": "12:00,21:00"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Bułki": 16,
+    "Cebula prażona": 1,
+    "Sriracha": 1,
+    "Torby: Małe": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "location": "Osiek",
+  "date": "26.11.2026",
+  "revenue": 696,
+  "cardRevenue": 546,
+  "glovoRevenue": 0,
+  "employees": {
+    "pawel.komendera": "14:00,20:30"
+  },
+  "products": {
+    "Mięso: Duże": 1,
+    "Boczek": 1,
+    "Sałata": 1,
+    "Ogórki": 2,
+    "Cheddar": 1,
+    "Frytki": 1,
+    "Krążki": 1,
+    "Bułki": 0
+  }
+}
